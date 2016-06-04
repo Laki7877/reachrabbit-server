@@ -1,6 +1,6 @@
 /**
  * Express app entry point
- * 
+ *
  * @author     Poon Wu <poon.wuthi@gmail.com>
  * @since      0.0.1
  */
@@ -47,10 +47,10 @@ require('./passport.js')(app, config);
 // development-only
 if (process.env.NODE_ENV == 'development') {
 	app.use(handler());
-	app.use(morgan('dev'));	
+	app.use(morgan('dev'));
 }
 // production-only
-if (process.env.NODE_ENV == 'production') {	
+if (process.env.NODE_ENV == 'production') {
 	app.use(morgan('combined', { stream: accessLogStream}));
 }
 
