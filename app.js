@@ -41,6 +41,9 @@ app.use(cors());
 app.use(cookie());
 app.use(session({secret: process.env.SESSION_KEY || 'mySecretKey'}))
 
+// use passport
+require('./passport.js')(app, config);
+
 // development-only
 if (process.env.NODE_ENV == 'development') {
 	app.use(handler());
