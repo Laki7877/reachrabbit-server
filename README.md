@@ -1,1 +1,1 @@
-# projectx-server
+# Skeleton project for Swagger

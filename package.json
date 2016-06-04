@@ -1,0 +1,45 @@
+{
+  "name": "projectx-server",
+  "version": "0.0.1",
+  "private": true,
+  "description": "New Swagger API Project",
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "main": "app.js",
+  "dependencies": {
+    "common-errors": "^0.5.6",
+    "cors": "^2.7.1",
+    "dotenv": "^2.0.0",
+    "errorhandler": "^1.4.3",
+    "express": "^4.12.3",
+    "express-session": "^1.13.0",
+    "lodash": "^4.13.1",
+    "morgan": "^1.7.0",
+    "node-mime": "^1.0.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "passport-local-sequelize": "^0.6.0",
+    "pg": "^4.5.6",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^3.23.3",
+    "swagger-express-mw": "^0.1.0",
+    "tracer": "^0.8.3"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-exec": "^2.1.2",
+    "gulp-help": "^1.6.1",
+    "gulp-jshint": "^2.0.1",
+    "gulp-util": "^3.0.7",
+    "jshint": "^2.9.2",
+    "jshint-stylish": "^2.2.0",
+    "should": "^7.1.0",
+    "supertest": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "swagger project test"
+  }
+}
