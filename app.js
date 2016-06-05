@@ -48,12 +48,12 @@ require('./passport.js')(app, config);
 require('express-sequelize');
 
 // development-only
-if (process.env.NODE_ENV == 'development') {
+if (process.env.NODE_ENV === 'development') {
 	app.use(handler());
 	app.use(morgan('dev'));
 }
 // production-only
-if (process.env.NODE_ENV == 'production') {
+if (process.env.NODE_ENV === 'production') {
 	app.use(morgan('combined', { stream: accessLogStream}));
 }
 
