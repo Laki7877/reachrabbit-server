@@ -119,7 +119,9 @@
         //"iLoveDouglas"
     ],
     "globals": {
-        "angular": false
+        "angular": false,
+        "_": true,
+        "tracer": true
     },
-    "indent"        : 4         // Specify indentation spacing
+    "indent"        : 2         // Specify indentation spacing
 }
