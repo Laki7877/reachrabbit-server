@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
       get: function() {
         return _.parseInt(this.getDataValue('id'));
       }
-    }
+    },
     username: DataTypes.STRING,
     password: DataTypes.STRING,
     facebookId: DataTypes.STRING,
