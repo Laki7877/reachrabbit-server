@@ -37,7 +37,8 @@
     "jshint": "^2.9.2",
     "jshint-stylish": "^2.2.0",
     "should": "^7.1.0",
-    "supertest": "^1.0.0"
+    "supertest": "^1.0.0",
+    "yargs": "^4.7.1"
   },
   "scripts": {
     "start": "node app.js",
