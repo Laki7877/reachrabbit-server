@@ -1,8 +1,8 @@
 /**
  * Handle all sequelize models
- * 
+ *
  * @author     Poon Wu <poon.wuthi@gmail.com>
- * @since      0.0.1 
+ * @since      0.0.1
  */
 'use strict';
 
@@ -11,14 +11,8 @@ var path      = require('path');
 var Sequelize = require('sequelize');
 var basename  = path.basename(module.filename);
 var env       = process.env.NODE_ENV || 'development';
-var config    = require(__dirname + '/..\config\config.json')[env];
 var db        = {};
-
-if (config.use_env_variable) {
-  var sequelize = new Sequelize(process.env[config.use_env_variable]);
-} else {
-  var sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
+var sequelize = new Sequelize(process.env.POSTGRES_CONNECTION_URI);
 
 // parse all models in this dir
 fs
