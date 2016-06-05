@@ -1,9 +1,10 @@
 /**
  * sequelize-cli configuration
- * 
+ *
  * @author     Poon Wu <poon.wuthi@gmail.com>
  * @since      0.0.1
  */
+require('dotenv').config();
 var path = require('path');
 var basePath = 'api';
 
@@ -14,12 +15,18 @@ module.exports = {
   "config": __filename,
 
   "production": {
-  	"use_env_variable": "POSTGRES_URI"
+  	"use_env_variable": "POSTGRES_CONNECTION_URI",
+    "url": process.env.POSTGRES_CONNECTION_URI,
+    "dialect": "postgres"
   },
   "development": {
-  	"use_env_variable": "POSTGRES_URI"
+  	"use_env_variable": "POSTGRES_CONNECTION_URI",
+    "url": process.env.POSTGRES_CONNECTION_URI,
+    "dialect": "postgres"
   },
   "test": {
-  	"use_env_variable": "POSTGRES_URI"
+  	"use_env_variable": "POSTGRES_CONNECTION_URI",
+    "url": process.env.POSTGRES_CONNECTION_URI,
+    "dialect": "postgres"
   }
 }
