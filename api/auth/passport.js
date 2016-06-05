@@ -24,11 +24,10 @@ module.exports = function(app, config) {
      */
     passport.use(new JwtStrategy({
         secretOrKey: process.env.JWT_SECRET || 'mySecretKey',
-        jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
+        jwtFromRequest: JwtExtractor.fromAuthHeaderWithScheme('Bearer'),
     }, function(payload, done) {
         User.findOne({id: payload.sub}, function(user) {
             done(null, user);
         }, done);
-    });
-
+    }));
 }
