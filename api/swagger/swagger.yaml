@@ -12,22 +12,21 @@ consumes:
 produces:
   - application/json
 paths:
-  /hello:
-    x-swagger-router-controller: hello_world
+  /users/{id}:
+    x-swagger-router-controller: UserController
     get:
-      description: Returns 'Hello' to the caller
-      operationId: hello
+      description: Return User Object
       parameters:
-        - name: name
-          in: query
-          description: The name of the person to whom to say hello
-          required: false
+        - name: id
+          in: path
+          description: User ID
+          required: true
           type: string
       responses:
         "200":
-          description: Success
+          description: Successfully found
           schema:
-            $ref: "#/definitions/HelloWorldResponse"
+            $ref: "#/definitions/UserResponse"
         default:
           description: Error
           schema:
@@ -35,11 +34,14 @@ paths:
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
-  HelloWorldResponse:
+  UserResponse:
     required:
-      - message
+      - username
+      - facebookId
     properties:
-      message:
+      username:
+        type: string
+      facebookId:
         type: string
   ErrorResponse:
     required:

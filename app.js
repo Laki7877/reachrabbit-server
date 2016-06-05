@@ -44,6 +44,9 @@ app.use(cookie());
 // use passport
 require('./passport.js')(app, config);
 
+// use modified express function for sequelize
+require('express-sequelize');
+
 // development-only
 if (process.env.NODE_ENV == 'development') {
 	app.use(handler());
