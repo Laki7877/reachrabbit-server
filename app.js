@@ -39,7 +39,7 @@ var SwaggerExpress = require('swagger-express-mw'),
  */
 app.use(cors());
 app.use(cookie());
-app.use(session({secret: process.env.SESSION_KEY || 'mySecretKey'}))
+//app.use(session({secret: process.env.SESSION_KEY || 'mySecretKey'}));
 
 // use passport
 require('./passport.js')(app, config);

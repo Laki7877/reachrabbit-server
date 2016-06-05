@@ -1,19 +1,24 @@
 /**
  * User model
- * 
+ *
  * @author     Poon Wu <poon.wuthi@gmail.com>
  * @since      0.0.1
  */
 'use strict';
 
-// passport js
-var passportLocalSequelize = require('passport-local-sequelize');
-
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement:true,
+      get: function() {
+        return _.parseInt(this.getDataValue('id'));
+      }
+    }
     username: DataTypes.STRING,
     password: DataTypes.STRING,
-    salt: DataTypes.STRING
+    token: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
@@ -22,12 +27,5 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-  // attach User to passportjs
-  passportLocalSequelize.attachToUser(User, {
-    usernameField: 'username',
-    passwordField: 'password',
-    saltField: 'salt'
-  });
-  
   return User;
 };
