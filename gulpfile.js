@@ -9,48 +9,50 @@
 require('dotenv').config();
 
 var _ = require('lodash'),
+  async = require('async'),
+  fs = require('fs'),
 	gulp = require('gulp-help')(require('gulp')),
 	gutil = require('gulp-util'),
 	path = require('path'),
-	exec = require('child_process').exec,
+	_exec = require('child_process').exec,
   plugins = require('gulp-load-plugins')({
       pattern: ['gulp-*', 'gulp.*'],
       replaceString: /\bgulp[\-.]/
   }),
-  args = require('yargs').argv;
+  args = process.argv.slice(3),
+  argv    = require('yargs').argv,
+  sequelizeCliPath = './node_modules/sequelize-cli/bin/sequelize';
 
-// lint
-gulp.task('lint', 'Lint all server side js', function() {
-	return gulp.src(['./**/*.js', '!./node_modules/**/*.js'])
-		.pipe(plugins.jshint())
-		.pipe(plugins.jshint.reporter(require('jshint-stylish')));
-});
+// exec with piped output
+var exec = function(cmd, obj, done) {
+  var task = _exec(cmd, obj, done);
+  task.stderr.pipe(process.stderr);
+  task.stdout.pipe(process.stdout);
+};
 
-// run express-swagger app
-gulp.task('start', 'Start express app', function(cb) {
-	var task = exec('swagger project start', {}, function(err) {
-		cb(err);
-	});
-	task.stderr.pipe(process.stderr);
-	task.stdout.pipe(process.stdout);
-});
+// exec with sequelize cli
+var seqExec = function(cmd, done) {
+  var cli = args.slice().map(function(e) {
+    if(_.indexOf(e, ' ') >= 0) {
+      return '"' + e + '"';
+    }
+    return e;
+  }).join(' ');
+  exec('node ' + sequelizeCliPath + ' ' + cmd + ' ' + cli, {}, done);
+};
 
-// run swagger edit mode
-gulp.task('edit', 'Start swagger edit mode', function(cb) {
-	var task = exec('swagger project edit', {}, function(err) {
-		cb(err);
-	});
-	task.stderr.pipe(process.stderr);
-	task.stdout.pipe(process.stdout);
-});
+// pass gulp task directly to seqExec
+var seqExecTask = function(done) {
+  seqExec(this.seq.slice(-1)[0], done);
+};
 
-gulp.task('autogen:migrations', 'Autogenerate migration files for all models', function() {
+// create model migration files task
+var createMigrationFiles = function(done) {
   var db = require('./api/models');
-  var fs = require('fs');
 
   // check if there's flag for singular model
   var isModel = function(model, key) {
-    return args.model ? key === args.model || model.tableName === args.model : true;
+    return argv.name ? key === argv.name || model.tableName === argv.name : true;
   }
 
   // each model
@@ -64,19 +66,91 @@ gulp.task('autogen:migrations', 'Autogenerate migration files for all models', f
 
 
       if(tableName !== undefined) {
-        var date = new Date();
-        var filename = [date.getFullYear(), date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()]
-          .map(function(num) {
-            return num <= 60 && (num + 100).toString().substring(1) || num;
-          })
-          .join('') + '-create-' + _.lowerCase(tableName);
+        var filename = _.lowerCase(key);
         fs.writeFileSync('./api/migrations/' + filename + '.js', template);
       }
     }
   });
+  done(null);
+}
+
+// lint
+gulp.task('lint', 'Lint all server side js', function() {
+	return gulp.src(['./**/*.js', '!./node_modules/**/*.js'])
+		.pipe(plugins.jshint())
+		.pipe(plugins.jshint.reporter(require('jshint-stylish')));
+});
+
+// run express-swagger app
+gulp.task('start', 'Start express app', function(done) {
+  exec('swagger project start', {}, done);
+});
+
+// run swagger edit mode
+gulp.task('edit', 'Start swagger edit mode', function(done) {
+  exec('swagger project edit', {}, done);
+});
+
+// mimick sequelize cli
+gulp.task('db:migrate', 'Run pending migrations', seqExecTask);
+gulp.task('db:migrate:undo', 'Revert last migration ran', seqExecTask);
+gulp.task('db:migrate:undo:all', 'Revert all migration ran', seqExecTask);
+
+gulp.task('db:seed', 'Run specified seed', seqExecTask);
+gulp.task('db:seed:all', 'Run every seeder', seqExecTask);
+gulp.task('db:seed:undo', 'Delete data from the database', seqExecTask);
+gulp.task('db:seed:undo:all', 'Delete data from the database', seqExecTask);
+
+gulp.task('model:create', 'Generate model', function(done) {
+  var migrationPath = './api/migrations';
+  async.waterfall([
+    // call to sequelize model creation
+    function(cb) {
+      seqExec('model:create', cb);
+    },
+    // remove sequelize migration file (we don't need theirs)
+    function(stdout, stderr, cb) {
+      // delete native migration file
+      var toBeDeleted = null;
+      fs.readdir('./api/migrations', function(err, list) {
+        if(err) {
+          return cb(err);
+        }
+
+        // get latest created file
+        _.forEach(list, function(f) {
+          if(_.isNil(toBeDeleted)) {
+            toBeDeleted = f;
+          } else if(fs.statSync(path.resolve(migrationPath, toBeDeleted)).ctime.getTime() > fs.statSync(path.resolve(migrationPath, f)).ctime.getTime()) {
+            toBeDeleted = f;
+          }
+        });
+
+        if(toBeDeleted === null) {
+          return cb(null);
+        }
+
+        // delete it
+        fs.unlink(path.resolve(migrationPath, toBeDeleted), cb);
+      });
+    },
+    // add our own migration file
+    function(cb) {
+      createMigrationFiles(cb);
+    }
+  ], done);
 }, {
-  aliases: ['gm', 'GM'],
+  aliases: ['model:generate'],
   options: {
-    model: 'Only migrate specific model'
+    attributes: 'Model attributes in string form i.e, "username:string, phone:integer"',
+    name: 'Model name'
+  }
+});
+
+gulp.task('migration:create', 'Autogenerate migration files from models', function(done) {
+  createMigrationFiles(done);
+}, {
+  options: {
+    name: 'Model name'
   }
 });
