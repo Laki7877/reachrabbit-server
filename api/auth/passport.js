@@ -12,6 +12,15 @@ var passport = require('passport'),
 	User = require('./model').User;
 
 module.exports = function(app, config) {
+  // handle swagger config
+  config.swaggerSecurityHandler = {
+    jwt: function(req, def, scopes, done) {
+      passport.authenticate('jwt', { session: false } , function(req, res) {
+
+      });
+    }
+  };
+
 	// init passport
 	app.use(passport.initialize());
 	app.use(passport.session());
