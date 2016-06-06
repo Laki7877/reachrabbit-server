@@ -8,8 +8,10 @@
 
 // global var
 global._ = require('lodash'); // your best util friend
-global.tracer = require('tracer').colorConsole(); // elegant version of console
+global.logger = require('tracer').colorConsole(); // elegant version of console
 global.async = require('async'); // async library
+global.errors = require('common-errors'); // express common-errors
+global.httpStatus = require('http-status'); // http status code by name
 
 // .env configuration
 require('dotenv').config();
@@ -22,7 +24,6 @@ var SwaggerExpress = require('swagger-express-mw'),
 
 	// packages
 	session = require('express-session'), //session handler
-	cookie = require('cookie-parser'), // cookie handler
 	handler = require('errorhandler'), // reporting error to client (dev-only)
 	morgan = require('morgan'), // logging api access
 	cors = require('cors'),
@@ -39,14 +40,12 @@ var SwaggerExpress = require('swagger-express-mw'),
  * Middleware
  */
 app.use(cors());
-app.use(cookie());
+app.use(errors.middleware.crashProtector());
+//app.use(cookie());
 //app.use(session({secret: process.env.SESSION_KEY || 'mySecretKey'}));
 
 // use passport
-require('./passport.js')(app, config);
-
-// use modified express function for sequelize
-require('express-sequelize');
+require('./api/auth/passport.js')(app, config);
 
 // development-only
 if (process.env.NODE_ENV === 'development') {
@@ -66,6 +65,8 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 
   // install middleware
   swaggerExpress.register(app);
+
+  app.use(errors.middleware.errorHandler);
 
   // app start
   app.listen(process.env.PORT || 3000);
