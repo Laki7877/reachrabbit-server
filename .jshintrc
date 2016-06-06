@@ -121,7 +121,10 @@
     "globals": {
         "angular": false,
         "_": true,
-        "tracer": true
+        "async": true,
+        "logger": true,
+        "it": true,
+        "should": true
     },
     "indent"        : 2         // Specify indentation spacing
 }
