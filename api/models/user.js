@@ -89,6 +89,9 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
       generateHash: function(password, done) {
         return bcrypt.hash(password, 10, done);
+      },
+      verifyPassword: function(password, done) {
+        return bcrypt.compare(password, this.password, done);
       }
     }
   });
