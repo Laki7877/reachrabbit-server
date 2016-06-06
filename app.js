@@ -9,6 +9,7 @@
 // global var
 global._ = require('lodash'); // your best util friend
 global.tracer = require('tracer').colorConsole(); // elegant version of console
+global.async = require('async'); // async library
 
 // .env configuration
 require('dotenv').config();

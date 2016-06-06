@@ -8,6 +8,7 @@
   "license": "",
   "main": "app.js",
   "dependencies": {
+    "async": "^2.0.0-rc.5",
     "common-errors": "^0.5.6",
     "cors": "^2.7.1",
     "dotenv": "^2.0.0",
