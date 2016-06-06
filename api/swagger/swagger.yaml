@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   version: "0.0.1"
   title: ProjectX
-host: localhost
+host: localhost:3000
 basePath: /
 schemes:
   - http
@@ -52,6 +52,26 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /users:
+    x-swagger-router-controller: UserController
+    post:
+      description: Create User Object
+      parameters:
+        - name: user
+          in: body
+          description: User Object
+          required: true
+          schema: 
+            $ref: "#/definitions/UserRequest"
+      responses:
+        "200":
+          description: Successfully found
+          schema:
+            $ref: "#/definitions/UserResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
@@ -67,11 +87,17 @@ definitions:
   UserRequest:
     required:
       - username
-      - facebookId
+      - password
     properties:
       username:
         type: string
-      facebookId:
+      password:
+        type: string
+  UserResponse:
+    required:
+      - username
+    properties:
+      username:
         type: string
   ErrorResponse:
     required:
