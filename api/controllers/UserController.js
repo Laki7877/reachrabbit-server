@@ -8,9 +8,18 @@
 
 var User = require('../models').User;
 
-function get(req, res) {
-    var id = req.swagger.params.id.value;
-    res.json(User.findById(id));
+/**
+ * Get user by id
+ *
+ * @param      {object}  req     The request
+ * @param      {object}  res     The resource
+ */
+function get(req, res, next) {
+  var id = req.swagger.params.id.value;
+  User.findById(id).then(function(user) {
+    res.json(_.omit(user, ['password']));
+  }, next);
+}
 
 /**
  * Create new user
