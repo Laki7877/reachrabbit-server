@@ -6,6 +6,9 @@
  */
 'use strict';
 
+// .env configuration
+require('dotenv').config();
+
 // global var
 global._ = require('lodash'); // your best util friend
 global.logger = require('tracer').colorConsole(); // elegant version of console
@@ -13,14 +16,12 @@ global.async = require('async'); // async library
 global.errors = require('common-errors'); // express common-errors
 global.httpStatus = require('http-status'); // http status code by name
 
-// .env configuration
-require('dotenv').config();
+require('./redis.js')(function(redis) {
+  global.redis = redis;
+});
 
 var SwaggerExpress = require('swagger-express-mw'),
 	app = require('express')(),
-
-	// database
-	db = require('./api/models'),
 
 	// packages
 	session = require('express-session'), //session handler
