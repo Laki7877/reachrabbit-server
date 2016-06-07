@@ -16,9 +16,15 @@ var User = require('../models').User;
  */
 function get(req, res, next) {
   var id = req.swagger.params.id.value;
-  User.findById(id).then(function(user) {
-    res.json(_.omit(user, ['password']));
-  }, next);
+  User.findOne({
+    where: { id: id },
+    attributes: ['username', 'password']
+  }).then(function(user) {
+    if(_.isNil(user)) {
+      return next(new errors.NotFoundError('User with id ' + id));
+    }
+  })
+  .catch(next);
 }
 
 /**
@@ -33,13 +39,14 @@ function post(req, res, next) {
     User.findOne({
       where: { username: req.body.username },
       attributes: ['username']
-      })
-      .then(function(user) {
-        if(!_.isNil(user)) {
-          cb(new errors.AlreadyInUseError(user.username, 'username'));
-        }
-        cb(null);
-      });
+    })
+    .then(function(user) {
+      if(!_.isNil(user)) {
+        return cb(new errors.AlreadyInUseError(user.username, 'username'));
+      }
+      cb(null);
+    })
+    .catch(cb);
   }, function(cb) {
     // create the user
     User.create(_.pick(req.body, ['username', 'password']))
@@ -47,9 +54,8 @@ function post(req, res, next) {
         cb(null, user.get({plain: true}));
       }, cb);
   }], function(err, user) {
-    if(err) {
-      return next(err);
-    }
+    // resolver
+    if(err) return next(err);
     return res.json(_.omit(user, ['password']));
   });
 }
