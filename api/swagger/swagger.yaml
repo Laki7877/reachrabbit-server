@@ -36,6 +36,8 @@ paths:
   /users/{id}:
     x-swagger-router-controller: UserController
     get:
+      security:
+        - JWT: []
       description: Return User Object
       parameters:
         - name: id
@@ -109,3 +111,9 @@ responses:
     description: Error Response
     schema:
       $ref: "#/definitions/ErrorResponse"
+securityDefinitions:
+  JWT:
+    type: apiKey
+    name: Authorization
+    description: Json web token
+    in: header

@@ -9,12 +9,12 @@
 var passport = require('passport'),
     JwtStrategy = require('passport-jwt').Strategy,
     JwtExtractor = require('passport-jwt').ExtractJwt,
-	User = require('../models').User;
+	  User = require('../models').User;
 
 module.exports = function(app, config) {
   // handle swagger security
-  config.swaggerSecurityHandler = {
-    jwt: function(req, def, scopes, done) {
+  config.swaggerSecurityHandlers = {
+    JWT: function(req, def, scopes, done) {
       passport.authenticate('jwt', { session: false } , function(err, user, info) {
         if(err) {
           return done(new errors.httpStatusError(httpStatus.UNAUTHORIZED, 'Token is invalid'));
@@ -42,8 +42,12 @@ module.exports = function(app, config) {
       secretOrKey: process.env.JWT_SECRET || 'mySecretKey',
       jwtFromRequest: JwtExtractor.fromAuthHeaderWithScheme('Bearer'),
   }, function(payload, done) {
-      User.findOne({id: payload.id}, function(user) {
-          done(null, user);
-      }, done);
+      User.findOne({
+        where: {id: payload.id}
+      })
+      .then(function(user) {
+        done(null, user);
+      })
+      .catch(done);
   }));
 }
