@@ -7,8 +7,10 @@ A Node-express-swagger RESTful API server with Sequelize ORM and Postgres integr
 
 Assuming you already have latest [node](https://nodejs.org) installed
 
+```
   npm install -g sequelize-cli gulp-cli swagger
   npm install
+```
 
 ## Quick start
 
