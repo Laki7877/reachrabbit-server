@@ -67,7 +67,7 @@ module.exports = function(sequelize, DataTypes) {
       unique: true
     },
     password: DataTypes.STRING,
-    facebookId: DataTypes.STRING,
+    facebook: DataTypes.STRING,
     token: DataTypes.STRING
   }, {
     hooks: {
