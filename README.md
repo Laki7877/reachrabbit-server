@@ -24,7 +24,7 @@ Run `gulp help` to see all available tasks
 
 ## Database Engine
 
-This project natively with (PostgreSQL)[www.postgresql.org] package. However, `sequelize` also support other database dialect: `mysql`, `sqlite`, `postgres`, and `mssql`. 
+This project natively with [PostgreSQL](www.postgresql.org) package. However, `sequelize` also support other database dialect: `mysql`, `sqlite`, `postgres`, and `mssql`. 
 
 ```
 	npm install pg pg-hstore // Postgres
