@@ -12,7 +12,7 @@ var Sequelize = require('sequelize');
 var basename  = path.basename(module.filename);
 var env       = process.env.NODE_ENV || 'development';
 var db        = {};
-var sequelize = new Sequelize(process.env.POSTGRES_CONNECTION_URI);
+var sequelize = new Sequelize(process.env.DB_CONNECTION_URI);
 
 // parse all models in this dir
 fs
