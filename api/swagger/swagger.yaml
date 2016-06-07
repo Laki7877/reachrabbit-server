@@ -69,9 +69,8 @@ paths:
           schema:
             $ref: "#/definitions/UserResponse"
         default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
+          $ref:
+            "#/responses/Error"
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
@@ -105,3 +104,8 @@ definitions:
     properties:
       message:
         type: string
+responses:
+  Error:
+    description: Error Response
+    schema:
+      $ref: "#/definitions/ErrorResponse"

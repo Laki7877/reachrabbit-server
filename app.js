@@ -33,9 +33,7 @@ var SwaggerExpress = require('swagger-express-mw'),
 	path = require('path'),
 
 	// config
-	config = { appRoot: __dirname },
-	accessLogStream = fs.createWriteStream(path.join(__dirname, 'log/access.log'), {flags: 'a'});
-
+	config = { appRoot: __dirname };
 /**
  * Middleware
  */
@@ -54,6 +52,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 // production-only
 if (process.env.NODE_ENV === 'production') {
+	var accessLogStream = fs.createWriteStream(path.join(__dirname, 'log/access.log'), {flags: 'a'});
 	app.use(morgan('combined', { stream: accessLogStream}));
 }
 
