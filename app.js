@@ -40,8 +40,6 @@ var SwaggerExpress = require('swagger-express-mw'),
  */
 app.use(cors());
 app.use(errors.middleware.crashProtector());
-//app.use(cookie());
-//app.use(session({secret: process.env.SESSION_KEY || 'mySecretKey'}));
 
 // use passport
 require('./api/auth/passport.js')(app, config);
@@ -52,7 +50,7 @@ if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
 }
 // production-only
-if (process.env.NODE_ENV === 'production') {
+else if (process.env.NODE_ENV === 'production') {
 	var accessLogStream = fs.createWriteStream(path.join(__dirname, 'log/access.log'), {flags: 'a'});
 	app.use(morgan('combined', { stream: accessLogStream}));
 }
@@ -64,7 +62,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }
   // install middleware
   swaggerExpress.register(app);
-  //app.use(errors.middleware.errorHandler);
+  app.use(errors.middleware.errorHandler);
 
   // app start
   app.listen(process.env.PORT || 3000);
