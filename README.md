@@ -14,9 +14,16 @@ Assuming you already have latest [node](https://nodejs.org) installed
 
 ## Quick start
 
+Assuming you have appropriate database setup. If not, I recommended [PostgreSQL](www.postgresql.org).
+
 1. Copy and rename `.env-sample` to `.env`
 2. Fill in `.env`
-3. Run `gulp start`
+3. `gulp db:migrate`
+4. `gulp start`
+
+## Editing Swagger API
+
+You can directly edit `./swagger/swagger.yaml` or run `gulp edit` to open up builtin editor. Please note that you have to run separate server process (`gulp start`) to be able to test API via swagger UI editor.
 
 ## Additional Informations
 
