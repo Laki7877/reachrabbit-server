@@ -89,7 +89,7 @@ gulp.task('test:api', 'Run API test', function(done) {
 
 // run express-swagger app
 gulp.task('start', 'Start express app', function(done) {
-  exec('swagger project start', {}, done);
+  exec('swagger project start --debug', {}, done);
 });
 
 // run swagger edit mode

@@ -6,6 +6,9 @@
  */
 'use strict';
 
+// enable debugger
+debugger;
+
 // .env configuration
 require('dotenv').config();
 
