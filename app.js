@@ -42,7 +42,7 @@ var SwaggerExpress = require('swagger-express-mw'),
  * Middleware
  */
 app.use(cors());
-app.use(errors.middleware.crashProtector());
+//app.use(errors.middleware.crashProtector());
 
 // use passport
 require('./api/auth/passport.js')(app, config);
@@ -65,10 +65,12 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }
   // install middleware
   swaggerExpress.register(app);
-  app.use(errors.middleware.errorHandler);
+  //app.use(errors.middleware.errorHandler);
 
-  // app start
-  app.listen(process.env.PORT || 3000);
+  // app start on next tick
+  process.nextTick(function() {
+    app.listen(process.env.PORT || 3000)
+  });
 });
 
 module.exports = app; // for testing
