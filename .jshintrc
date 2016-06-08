@@ -119,12 +119,17 @@
         //"iLoveDouglas"
     ],
     "globals": {
-        "angular": false,
         "_": true,
+        "angular": false,
         "async": true,
-        "logger": true,
+        "CJSON": true,
+        "errors": true,
         "it": true,
-        "should": true
+        "logger": true,
+        "should": true,
+        "describe": true,
+        "httpStatus": true
+
     },
     "indent"        : 2         // Specify indentation spacing
 }
