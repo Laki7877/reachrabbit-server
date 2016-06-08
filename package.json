@@ -9,6 +9,7 @@
   "main": "app.js",
   "dependencies": {
     "async": "^2.0.0-rc.5",
+    "authom": "^0.4.36",
     "bcryptjs": "^2.3.0",
     "circular-json": "^0.3.0",
     "common-errors": "^0.5.6",

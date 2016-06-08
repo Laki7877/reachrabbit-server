@@ -12,7 +12,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /login:
+  /auth:
     x-swagger-router-controller: AuthController
     post:
       description: Login with username and password
@@ -25,9 +25,33 @@ paths:
             $ref: "#/definitions/AuthRequest"
       responses:
         "200":
-          description: JWT Authentication token
+          description: JWT Authentication Token
           schema:
             $ref: "#/definitions/AuthResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /auth/{service}:
+    x-swagger-router-controller: AuthController
+    get:
+      operationId: oauth
+      description:
+        Login with OAuth2 service.
+        Currently only support **facebook** service
+      parameters:
+        - name: service
+          in: path
+          description: OAuth2 Service Name
+          required: true
+          type: string
+        - name: code
+          in: query
+          description: OAuth2 Code
+          type: string
+      responses:
+        "200":
+          description: JWT Authentication Token
         default:
           description: Error
           schema:
@@ -121,5 +145,5 @@ securityDefinitions:
     type: apiKey
     name: Authorization
     description: 
-      JSON web token obtained from auth endpoint. This token should be attached to header with **Bearer** prefix
+      JSON web token obtained from auth endpoint. This token should be attached to header with **JWT** prefix
     in: header

@@ -10,19 +10,24 @@ var passport = require('passport'),
     redis = require('../../redis.js'),
     JwtStrategy = require('passport-jwt').Strategy,
     JwtExtractor = require('passport-jwt').ExtractJwt,
-	  User = require('../models').User;
+	  User = require('../models').User,
+    Auth = require('../auth');
 
 module.exports = function(app, config) {
   // handle swagger security
   config.swaggerSecurityHandlers = {
     JWT: function(req, def, scopes, done) {
+      if(_.isNil(req.headers.Authorization)) {
+        return done(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, 'No Authorization Token'));
+      }
       passport.authenticate('jwt', { session: false } , function(err, user, info) {
         if(err) return done(err);
-        if(_.isNil(user)) {
-          return done(new errors.httpStatusError(httpStatus.UNAUTHORIZED, 'Token is invalid'));
+        // no user
+        if(_.isEmpty(user)) {
+          return done(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, 'Token is invalid'));
         }
         req.user = user;
-        return done();
+        return done(null, user);
       })(req, null, done);
     }
   };
@@ -32,14 +37,14 @@ module.exports = function(app, config) {
 	app.use(passport.session());
 
   /**
-   * Json Web Token strategy
+   * JWT Strategy
    *
    * @description Handle authentication with json web token strategy. User is required to attach "Bearer <JWT token>" to Authorization Header in each authorized endpoint request.
    * @see        https://github.com/themikenicholson/passport-jwt
    */
   passport.use(new JwtStrategy({
-      secretOrKey: process.env.JWT_SECRET || 'mySecretKey',
-      jwtFromRequest: JwtExtractor.fromAuthHeaderWithScheme('Bearer'),
+    secretOrKey: process.env.JWT_SECRET || 'mySecretKey',
+    jwtFromRequest: JwtExtractor.fromAuthHeaderWithScheme('JWT')
   }, function(payload, done) {
       // check key in cache
       redis.hexists(payload.id, function(err, exist) {
