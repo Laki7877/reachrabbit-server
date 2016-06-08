@@ -17,9 +17,8 @@ global.errors = require('common-errors'); // express common-errors
 global.httpStatus = require('http-status'); // http status code by name
 global.CJSON = require('circular-json'); // handle circular json de/serialize
 
-require('./redis.js')(function(redis) {
-  global.redis = redis;
-});
+// make error logging pretty again
+require('pretty-error').start();
 
 var SwaggerExpress = require('swagger-express-mw'),
 	app = require('express')(),
