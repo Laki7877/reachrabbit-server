@@ -28,7 +28,7 @@ function exec(cmd, obj, done) {
   var task = _exec(cmd, obj, done);
   task.stderr.pipe(process.stderr);
   task.stdout.pipe(process.stdout);
-};
+}
 
 // exec with sequelize cli
 function seqExec(cmd, done) {
@@ -39,10 +39,10 @@ function seqExec(cmd, done) {
     return e;
   }).join(' ');
   exec('node ' + sequelizeCliPath + ' ' + cmd + ' ' + cli, {}, done);
-};
+}
 
 // pass gulp task directly to seqExec
-function seqExecTask(done) {
+var seqExecTask = function(done) {
   seqExec(this.seq.slice(-1)[0], done);
 };
 
@@ -72,7 +72,7 @@ function createMigrationFiles(done) {
     }
   });
   done(null);
-};
+}
 
 // lint
 gulp.task('lint', 'Lint all server side js', function() {
