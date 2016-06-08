@@ -4,6 +4,7 @@
  * @author     Poon Wu <poon.wuthi@gmail.com>
  * @since      (version_id)
  */
+'use strict';
 var Redis = require('ioredis');
 var redis = {};
 
@@ -14,30 +15,23 @@ function createLodis() {
   lodis._storage = {};
 
   // mimick redis fn
-  lodis.hmset = function(key, value) {
+  lodis.hset = function(key, value) {
     this._storage[key] = value;
   };
-  lodis.hmget = function(key, cb) {
+  lodis.hget = function(key, cb) {
     cb(null, this._storage[key]);
+  };
+  lodis.hexists = function(key, cb) {
+    cb(null, !_.isNil(this._storage[key]));
   };
   return lodis;
 }
 
-module.exports = function(cb) {
-  if(process.env.REDIS_URI) {
-    // connect to redis server
-    redis = new Redis(process.env.REDIS_URI, { lazyConnect: true });
-    redis.connect().then(function() {
-      //successfully connected
-      cb(redis);
-    }).catch(function() {
-      //lodis mode
-      redis = createLodis();
-      cb(redis);
-    });
-  } else {
-    //lodis mode
-    redis = createLodis();
-    cb(redis)
-  }
-};
+if(process.env.REDIS_URI) {
+  // connect to redis server
+  redis = new Redis(process.env.REDIS_URI, { lazyConnect: true });
+} else {
+  //lodis mode
+  redis = createLodis();
+}
+module.exports = redis;

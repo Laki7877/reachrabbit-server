@@ -15,6 +15,7 @@ global.logger = require('tracer').colorConsole(); // elegant version of console
 global.async = require('async'); // async library
 global.errors = require('common-errors'); // express common-errors
 global.httpStatus = require('http-status'); // http status code by name
+global.CJSON = require('circular-json'); // handle circular json de/serialize
 
 require('./redis.js')(function(redis) {
   global.redis = redis;
