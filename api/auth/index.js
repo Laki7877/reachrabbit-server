@@ -7,7 +7,8 @@
 'use strict';
 
 var passport = require('passport'),
-  jwt = require('jsonwebtoken');
+  jwt = require('jsonwebtoken'),
+  moment = require('moment');
 /**
  * Encode raw object to json web token
  *
@@ -38,8 +39,25 @@ function verify(token, done) {
   return jwt.verify(token, process.env.JWT_SECRET || 'mySecretKey', {}, done);
 }
 
+/**
+ * Encode JWT standard payload to token
+ *
+ * @param      {integer}    id      The identifier
+ * @param      {Function}  done    The done
+ */
+function encodePayload(id, done) {
+  var payload = {
+    sub: id,
+    iat: moment().unix(),
+    exp: moment().add(process.env.JWT_EXPIRATION_TIME || 24, 'hours').unix()
+  };
+
+  return encode(payload, done);
+}
+
 module.exports = {
   encode: encode,
   decode: decode,
-  verify: verify
+  verify: verify,
+  encodePayload: encodePayload
 };
