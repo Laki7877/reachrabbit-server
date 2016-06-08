@@ -36,7 +36,7 @@ function post(req, res, next) {
           }
           //match
           cb(null, user);
-        })
+        });
       }, cb);
     },
     // serialize json web token
@@ -51,7 +51,9 @@ function post(req, res, next) {
     }
   ], function(err, token) {
     if(err) return next(err);
-    res.json(token);
+    res.json({
+      token: token
+    });
   });
 }
 
