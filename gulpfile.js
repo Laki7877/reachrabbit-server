@@ -83,11 +83,8 @@ gulp.task('lint', 'Lint all server side js', function() {
 
 // test
 gulp.task('test', 'Run all test', ['test:api']);
-gulp.task('test:api', 'Run API test', function() {
-  return gulp.src([
-    paths.test + 'unit/**/*.js'
-  ])
-  .pipe(plugins.mocha({reporter: 'dot'}));
+gulp.task('test:api', 'Run API test', function(done) {
+  exec('swagger project test', {}, done);
 });
 
 // run express-swagger app
