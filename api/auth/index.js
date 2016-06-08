@@ -35,7 +35,7 @@ function decode(token) {
  * @return     {boolean}    If done is not specified, return sync
  */
 function verify(token, done) {
-  return jwt.verify(raw, process.env.JWT_SECRET || 'mySecretKey', {}, done);
+  return jwt.verify(token, process.env.JWT_SECRET || 'mySecretKey', {}, done);
 }
 
 module.exports = {
