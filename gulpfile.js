@@ -21,7 +21,8 @@ var _ = require('lodash'),
   }),
   args = process.argv.slice(3),
   argv    = require('yargs').argv,
-  sequelizeCliPath = './node_modules/sequelize-cli/bin/sequelize';
+  sequelizeCliPath = './node_modules/sequelize-cli/bin/sequelize',
+  swaggerCliPath = './node_modules/swagger/bin/swagger.js';
 
 // exec with piped output
 function exec(cmd, obj, done) {
@@ -39,6 +40,17 @@ function seqExec(cmd, done) {
     return e;
   }).join(' ');
   exec('node ' + sequelizeCliPath + ' ' + cmd + ' ' + cli, {}, done);
+}
+
+// exec with sequelize cli
+function swgExec(cmd, done) {
+  var cli = args.slice().map(function(e) {
+    if(_.indexOf(e, ' ') >= 0) {
+      return '"' + e + '"';
+    }
+    return e;
+  }).join(' ');
+  exec('node ' + swaggerCliPath + ' ' + cmd + ' ' + cli, {}, done);
 }
 
 // pass gulp task directly to seqExec
@@ -84,17 +96,17 @@ gulp.task('lint', 'Lint all server side js', function() {
 // test
 gulp.task('test', 'Run all test', ['test:api']);
 gulp.task('test:api', 'Run API test', function(done) {
-  exec('swagger project test', {}, done);
+  swgExec('project test', done);
 });
 
 // run express-swagger app
-gulp.task('start', 'Start express app', function(done) {
-  exec('swagger project start --debug', {}, done);
+gulp.task('start', 'Start API server', function(done) {
+  swgExec('project start', done);
 });
 
 // run swagger edit mode
-gulp.task('edit', 'Start swagger edit mode', function(done) {
-  exec('swagger project edit', {}, done);
+gulp.task('edit', 'Edit swagger yaml with swagger editor', function(done) {
+  swgExec('project edit', done);
 });
 
 // mimick sequelize cli

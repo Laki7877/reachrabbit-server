@@ -47,6 +47,7 @@
     "sequelize-cli": "^2.4.0",
     "should": "^7.1.0",
     "supertest": "^1.0.0",
+    "swagger": "^0.7.5",
     "yargs": "^4.7.1"
   },
   "scripts": {
