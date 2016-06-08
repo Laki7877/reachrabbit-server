@@ -59,6 +59,14 @@ function post(req, res, next) {
   });
 }
 
+/**
+ * List of OAuth server handled
+ */
+Authom.createServer({
+  service: 'facebook',
+  id: process.env.FACEBOOK_APP_ID,
+  secret: process.env.FACEBOOK_APP_SECRET
+});
 
 /**
  * Handle all OAuth service login event
