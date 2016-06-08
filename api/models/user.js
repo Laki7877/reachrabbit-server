@@ -8,50 +8,6 @@
 
 var bcrypt = require('bcryptjs');
 
-/**
- * Hash password with model generateHash
- *
- * @param      {object}    model    The model
- * @param      {object}    options  The options
- * @param      {Function}  done     The done
- */
-function hashPassword(model, options, done) {
-  if(!_.isNil(model.password)) {
-    model.generateHash(model.password, function(err, encryptedPassword) {
-      if(err) {
-        return done(err);
-      }
-      model.password = encryptedPassword;
-      return done(null, options);
-    });
-  } else {
-    return done(null, options);
-  }
-}
-
-/**
- * Hash password for array of models
- *
- * @param      {array}    models   The models
- * @param      {object}    options  The options
- * @param      {Function}  done     The done
- */
-function hashPasswords(models, options, done) {
-  var tasks = [];
-  // build hash password tasks for all models
-  _.forEach(models, function(model) {
-    tasks.push(function(cb) {
-      hashPassword(model, options, cb);
-    });
-  });
-  return async.parallel(tasks, function(err, results) {
-    if(err) {
-      return done(err);
-    }
-    return done(null, options);
-  });
-}
-
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
     id: {
@@ -101,3 +57,48 @@ module.exports = function(sequelize, DataTypes) {
 
   return User;
 };
+
+
+/**
+ * Hash password with model generateHash
+ *
+ * @param      {object}    model    The model
+ * @param      {object}    options  The options
+ * @param      {Function}  done     The done
+ */
+function hashPassword(model, options, done) {
+  if(!_.isNil(model.password)) {
+    model.generateHash(model.password, function(err, encryptedPassword) {
+      if(err) {
+        return done(err);
+      }
+      model.password = encryptedPassword;
+      return done(null, options);
+    });
+  } else {
+    return done(null, options);
+  }
+}
+
+/**
+ * Hash password for array of models
+ *
+ * @param      {array}    models   The models
+ * @param      {object}    options  The options
+ * @param      {Function}  done     The done
+ */
+function hashPasswords(models, options, done) {
+  var tasks = [];
+  // build hash password tasks for all models
+  _.forEach(models, function(model) {
+    tasks.push(function(cb) {
+      hashPassword(model, options, cb);
+    });
+  });
+  return async.parallel(tasks, function(err, results) {
+    if(err) {
+      return done(err);
+    }
+    return done(null, options);
+  });
+}
