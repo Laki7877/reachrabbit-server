@@ -18,11 +18,12 @@ function get(req, res, next) {
   var id = req.swagger.params.id.value;
   User.findOne({
     where: { id: id },
-    attributes: ['username', 'password']
+    attributes: ['username', 'facebook']
   }).then(function(user) {
     if(_.isNil(user)) {
       return next(new errors.NotFoundError('User with id ' + id));
     }
+    return res.json(user);
   })
   .catch(next);
 }
