@@ -17,7 +17,7 @@ paths:
     post:
       description: Login with username and password
       parameters:
-        - name: authentication
+        - name: Login
           in: body
           description: Login Form
           required: true
@@ -25,10 +25,9 @@ paths:
             $ref: "#/definitions/AuthRequest"
       responses:
         "200":
-          description: Successfully authenticated
+          description: JWT Authentication token
           schema:
-            title: JSON web token
-            type: string
+            $ref: "#/definitions/AuthResponse"
         default:
           description: Error
           schema:
@@ -85,6 +84,12 @@ definitions:
         type: string
       password:
         type: string
+  AuthResponse:
+    required:
+      - token
+    properties:
+      token:
+        type: string
   UserRequest:
     required:
       - username
@@ -108,12 +113,13 @@ definitions:
         type: string
 responses:
   Error:
-    description: Error Response
+    description: General Error Response
     schema:
       $ref: "#/definitions/ErrorResponse"
 securityDefinitions:
   JWT:
     type: apiKey
     name: Authorization
-    description: Json web token
+    description: 
+      JSON web token obtained from auth endpoint. This token should be attached to header with **Bearer** prefix
     in: header
