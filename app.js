@@ -1,0 +1,72 @@
+/**
+ * Express app entry point
+ *
+ * @author     Poon Wu <poon.wuthi@gmail.com>
+ * @since      0.0.1
+ */
+'use strict';
+
+// enable node-inspector debugger
+debugger;
+
+// set process.env from .env
+require('dotenv').config()
+
+// set default config folder
+process.env.NODE_CONFIG_DIR = './api/config';
+
+// global variables
+global._          = require('lodash'); // your best friend
+global.async      = require('async'); // async lib
+global.errors     = require('common-errors'); // handle error object
+global.httpStatus = require('http-status'); // access http status by name
+global.CJSON      = require('circular-json'); // handle circular json
+global.winston    = require('winston'); // console logging module
+
+// app modules
+var app         = require('express')(),
+    https       = require('https'),
+    http        = require('http'),
+    fs          = require('fs'),
+    path        = require('path'),
+    cors        = require('cors'),
+
+    bodyParser  = require('body-parser'), // parse request body
+    prettyError = require('pretty-error'), // make error log pretty
+    morgan      = require('morgan'), // express logging module
+    handler     = require('errorhandler'), //report error back to client (dev)
+
+    router      = require('./api/router.js') // api routing
+
+/********************************
+ * Middleware
+ ********************************/
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json()); // parse json
+app.use(Errors.middleware.crashProtector()); // prevent server failure on async crash
+
+// development mode
+if(process.env.NODE_ENV === 'development') {
+  app.use(handler()); // throw server error to client
+  app.use(morgan('dev')); // log express to stdout
+}
+// production mode
+if(process.env.NODE_ENV === 'production') {
+  var accessLog = fs.createWriteStream(path.join(__dirname, 'log/access.log'), {flags: 'a'});
+  app.use(morgan('combined', { stream: accessLog })); // log express to file
+}
+
+// api route
+app.use(router());
+app.use(Errors.middleware.errorHandler); // handle common-errors message
+
+/*******************************
+ * Start Server
+ *******************************/
+var server = http.createServer(app);
+
+server.listen(process.env.PORT || 3000);
+
+// for testing
+module.exports = app;

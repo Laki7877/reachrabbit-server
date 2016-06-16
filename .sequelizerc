@@ -1,0 +1,29 @@
+/**
+ * sequelize-cli configuration
+ *
+ * @author     Poon Wu <poon.wuthi@gmail.com>
+ * @since      0.0.1
+ */
+require('dotenv').config();
+var path = require('path');
+var basePath = 'api';
+
+module.exports = {
+  "migrations-path": path.join(__dirname, basePath, "migrations"),
+  "seeders-path": path.join(__dirname, basePath, "seeders"),
+  "models-path": path.join(__dirname, basePath, "models"),
+  "config": __filename,
+
+  "production": {
+    "use_env_variable": "DB_CONNECTION_URI",
+    "url": process.env.DB_CONNECTION_URI,
+  },
+  "development": {
+    "use_env_variable": "DB_CONNECTION_URI",
+    "url": process.env.DB_CONNECTION_URI,
+  },
+  "test": {
+    "use_env_variable": "DB_CONNECTION_URI",
+    "url": process.env.DB_CONNECTION_URI,
+  }
+}
