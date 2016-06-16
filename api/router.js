@@ -18,7 +18,7 @@ module.exports = function() {
   /************************************
    * Route
    ************************************/
-  router.get('/', ctrl.userController);
+  router.get('/auth/:service', ctrl.authController.oauth);
 
   return router;
 };

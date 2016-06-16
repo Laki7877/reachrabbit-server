@@ -65,7 +65,7 @@ function createMigrationFiles(done) {
       /* jshint quotmark:single */
 
       if(tableName !== undefined) {
-        var filename = _.lowerCase(key);
+        var filename = _.upperFirst(key);
         fs.writeFileSync('./api/migrations/' + filename + '.js', template);
       }
     }

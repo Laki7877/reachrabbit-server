@@ -3,10 +3,10 @@
  *
  * @author     Poon Wu <poon.wuthi@gmail.com>
  * @since      0.0.1
- */
+ */ 
 'use strict';
 
-var User = require('../models').User
+var User = require('../models').User;
 
 /**
  * Login with email and password
@@ -45,7 +45,22 @@ function login(email, password, done) {
   ], done);
 }
 
+/**
+ * find user by id
+ *
+ * @param      {String}    id      UUID
+ * @param      {Function}  done    The done
+ */
+function findById(id, done) {
+  User.findById(id).then(function(user) {
+    if(_.isNil(user)) {
+      return done(null, user);
+    }
+  }).catch(done);
+}
+
 // module export
 module.exports = {
-  login: login
+  login: login,
+  findByEmail: findByEmail
 };

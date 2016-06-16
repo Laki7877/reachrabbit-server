@@ -9,6 +9,7 @@
 var fs        = require('fs'),
     path      = require('path'),
     Sequelize = require('sequelize'),
+    _         = require('lodash'),
     basename  = path.basename(module.filename),
     db        = {},
     sequelize = new Sequelize(process.env.DB_CONNECTION_URI);
@@ -21,7 +22,7 @@ fs.readdirSync(__dirname)
   .forEach(function(file) {
     // import models
     var model = sequelize['import'](path.join(__dirname, file));
-    db[model.name] = model;
+    db[_.upperFirst(model.name)] = model;
   });
 
 // associate models (one-to-one, one-to-many, etc.)

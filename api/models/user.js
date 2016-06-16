@@ -11,16 +11,16 @@ var bcrypt = require('bcryptjs');
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
     id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement:true,
-      get: function() {
-        return _.parseInt(this.getDataValue('id'));
-      }
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
     },
     email: {
       type: DataTypes.STRING,
       unique: true
+    },
+    role: {
+      type: DataTypes.ENUM('admin', 'brand', 'influencer')
     },
     password: DataTypes.STRING,
     facebook: DataTypes.STRING,
@@ -42,7 +42,12 @@ module.exports = function(sequelize, DataTypes) {
     },
     classMethods: {
       associate: function(models) {
-        // associations can be defined here
+        User.belongsToMany(models.UserGroup, {
+          through: models.UserUserGroup,
+          as: 'users',
+          foreignKey: 'userId',
+          otherKey: 'groupId'
+        });
       }
     },
     instanceMethods: {

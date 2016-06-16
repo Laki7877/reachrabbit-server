@@ -44,7 +44,7 @@ var app         = require('express')(),
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); // parse json
-app.use(Errors.middleware.crashProtector()); // prevent server failure on async crash
+app.use(errors.middleware.crashProtector()); // prevent server failure on async crash
 
 // development mode
 if(process.env.NODE_ENV === 'development') {
@@ -59,7 +59,7 @@ if(process.env.NODE_ENV === 'production') {
 
 // api route
 app.use(router());
-app.use(Errors.middleware.errorHandler); // handle common-errors message
+app.use(errors.middleware.errorHandler); // handle common-errors message
 
 /*******************************
  * Start Server
