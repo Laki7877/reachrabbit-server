@@ -7,7 +7,8 @@
 'use strict';
 
 var config  = require('config'),
-    authService = require('../services/authService');
+    authService = require('../services/authService'),
+    userService = require('../services/userService');
 
 module.exports = function(roles) {
   /**
@@ -31,13 +32,18 @@ module.exports = function(roles) {
 
       // get auth token
       var token = splits[1];
-      req.auth = auth.decode(token, function(err, sub) {
-        // some jwt decoding error
+      async.waterfall([
+        function(cb) {
+          authService.decode(token, cb);
+        },
+        function(id, cb) {
+          user.findById(id, cb);
+        }
+      ], function(err, user) {
         if(err) {
           return next(new errors.AuthenticationRequiredError(err));
         }
-        // pass auth forward
-        //req.auth = sub.id;
+        req.user = user;
         next();
       });
     }

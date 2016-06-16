@@ -17,56 +17,41 @@ var Authom = require('authom'),
  * @param      {Function}  next    The next
  */
 function login(req, res, next) {
-  async.waterfall(
-  ], function(err, token) {
-    if(err) return next(err);
-    res.json({ token: token });
-  });
+  res.json({});
 }
+
+var oauthServer = {
+  facebook: {
+    id: process.env.FACEBOOK_APP_ID,
+    secret: process.env.FACEBOOK_APP_SECRET,
+    fields: ['email', 'name']
+  }
+}
+var oauthHandler = {
+  facebook: function(req, res, data, done) {
+    done(data.data);
+  }
+};
 
 /**
  * List of OAuth server handled
  */
-Authom.createServer({
-  service: 'facebook',
-  id: process.env.FACEBOOK_APP_ID,
-  secret: process.env.FACEBOOK_APP_SECRET
+_.forOwn(oauthServer, function(server, service) {
+  Authom.createServer(_.extend({ service: service }, server));
 });
 
 /**
  * Handle all OAuth service login event
  */
 Authom.on('auth', function(req, res, data) {
-  logger.debug('auth', data);
-  // build db query object
-  var query = {
-    where: {},
-    defaults: {}
-  };
-
-  // search or save service id to user database
-  query.where[data.service] = data.id;
-  query.defaults[data.service] = data.id;
-
-  // query for user, then return jwt token
-  async.waterfall([
-      //find or create user by service id
-      function(cb) {
-        User.findOrCreate(query)
-        .then(function(user, created) {
-          return cb(null, user);
-        }).catch(cb);
-      },
-      //encode jwt
-      function(user, cb) {
-        Auth.encodePayload(user.id, cb);
-      }
-    ], function(err, token) {
-      if(err) {
-        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err);
-      }
-      res.json({token: token});
-  });
+  if(_.has(oauthHandler, data.service)) {
+    oauthHandler[data.service](req, res, data, function(err, result) {
+      if(err) res.status(500).json({message: err});
+      res.json(result);
+    });
+  } else {
+    res.json(data.data);
+  }
 });
 
 /**
@@ -77,20 +62,6 @@ Authom.on('error', function(req, res, data) {
   res.status(httpStatus.INTERNAL_SERVER_ERROR).json(data.error);
 });
 
-/**
- * Pass oauth code to Authom server
- *
- * @param      {object}    req     The request
- * @param      {object}    res     The resource
- * @param      {Function}  next    The next
- */
-function oauth(req, res, next) {
-  req.params.service = req.swagger.params.service.value;
-  req.params.code = req.swagger.params.code.value;
-  Authom.app(req, res);
-}
-
 module.exports = {
-  post: post,
-  oauth: oauth
+  oauth: Authom.app
 };
