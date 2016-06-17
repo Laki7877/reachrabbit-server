@@ -181,7 +181,14 @@ gulp.task('model:create', 'Generate model', function(done) {
   }
 });
 
-gulp.task('migration:create', 'Autogenerate migration files from models', function(done) {
+gulp.task('migration:create', 'Create migration file', seqExecTask,{
+  options: {
+    name: 'Migration name'
+  }
+});
+
+// create default migration file
+gulp.task('migration:default', 'Autogenerate migration files from models', function(done) {
   createMigrationFiles(done);
 }, {
   options: {
