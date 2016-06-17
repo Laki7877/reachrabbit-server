@@ -12,7 +12,19 @@ var fs        = require('fs'),
     _         = require('lodash'),
     basename  = path.basename(module.filename),
     db        = {},
-    sequelize = new Sequelize(process.env.DB_CONNECTION_URI);
+    uri       = '',
+    opts      = {};
+
+// test environment
+if(process.env.NODE_ENV === 'test') {
+  uri = process.env.DB_CONNECTION_URI_TEST;
+  opts.logging = false;
+} else {
+  uri = process.env.DB_CONNECTION_URI;
+}
+
+// create sequelize object
+var sequelize = new Sequelize(uri, opts);
 
 // parse all models in this dir
 fs.readdirSync(__dirname)
