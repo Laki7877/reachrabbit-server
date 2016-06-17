@@ -11,6 +11,7 @@ require('dotenv').config();
 var _ = require('lodash'),
   async = require('async'),
   fs = require('fs'),
+  args = require('yargs').argv,
   gulp = require('gulp-help')(require('gulp')),
   guppy = require('git-guppy')(gulp),
   path = require('path'),
@@ -122,6 +123,21 @@ gulp.task('test', 'Run mocha test API', function() {
     .once('end', function() {
       process.exit();
     });
+});
+
+// bump versioning
+gulp.task('bump', 'Update repository semver version (X.X.X)', function() {
+  // should only be either of these values
+  // otherwise, default to "patch"
+  var version = _.includes(['patch', 'minor', 'major', 'prerelease'], args.version) ? args.version : 'patch';
+
+  return gulp.src('./package.json')
+    .pipe(plugins.bump({type: version}))
+    .pipe(gulp.dest('./'));
+}, {
+  options: {
+    version: 'One of bump version type (minor, major, patch, prerelease). default: patch'
+  }
 });
 
 // mimick sequelize cli
