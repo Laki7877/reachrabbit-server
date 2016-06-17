@@ -91,7 +91,13 @@ gulp.task('server', 'Run express server', function() {
   server.start();
 
   // notify server for livereload
-  gulp.watch([path.resolve(__dirname, 'api/**/*.js')], server.start.bind(server));
+  gulp.watch([path.resolve(__dirname, 'api/**/*.js')], function(file) {
+    server.start.bind(server)();
+  });
+}, {
+  aliases: ['start', 'run', 'serve']
+});
+
 // pre test
 gulp.task('pre-test', 'Setup pretest routine', function() {
   return gulp.src(['api/**/*.js'])
