@@ -6,8 +6,9 @@
  */
 'use strict';
 
-var express = require('express');
-var ctrl    = require('./controllers');
+var express = require('express'),
+    auth    = require('./middlewares/auth'),
+    $       = require('./controllers');
 
 module.exports = function() {
   // initiate express router object
@@ -15,10 +16,11 @@ module.exports = function() {
     caseSensitive: true
   });
 
-  /************************************
-   * Route
-   ************************************/
-  router.get('/auth/:service', ctrl.authController.oauth);
+  /*********************************
+   * Authentication
+   *********************************/
+  router.post('/auth', $.AuthController.login);
+  router.get ('/auth/:service', $.AuthController.oauth);
 
   return router;
 };
