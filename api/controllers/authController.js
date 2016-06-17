@@ -62,6 +62,7 @@ Authom.on('error', function(req, res, data) {
   res.status(httpStatus.INTERNAL_SERVER_ERROR).json(data.error);
 });
 
+// export module
 module.exports = {
   oauth: Authom.app
 };
