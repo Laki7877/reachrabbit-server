@@ -1,0 +1,4 @@
+--reporter mocha-better-spec-reporter
+--timeout 60000
+--require ./test/common/init.js
+--bail

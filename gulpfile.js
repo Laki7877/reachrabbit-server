@@ -92,6 +92,30 @@ gulp.task('server', 'Run express server', function() {
 
   // notify server for livereload
   gulp.watch([path.resolve(__dirname, 'api/**/*.js')], server.start.bind(server));
+// pre test
+gulp.task('pre-test', 'Setup pretest routine', function() {
+  return gulp.src(['api/**/*.js'])
+    .pipe(plugins.istanbul())
+    .pipe(plugins.istanbul.hookRequire());
+});
+
+// test
+gulp.task('test', 'Run mocha test API', function() {
+  var opts = {
+    reporter: 'mocha-better-spec-reporter',
+    timeout: 60000,
+    require: ['./test/common/init.js']
+  };
+  return gulp.src(['test/**/*.spec.js'])
+    .pipe(plugins.mocha(opts))
+    //.pipe(plugins.istanbul.writeReports())
+    //.pipe(plugins.istanbul.enforceThresholds({thresholds: {global: 90}}))
+    .once('error', function() {
+      process.exit(1);
+    })
+    .once('end', function() {
+      process.exit();
+    });
 });
 
 // mimick sequelize cli
