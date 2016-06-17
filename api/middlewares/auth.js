@@ -7,8 +7,8 @@
 'use strict';
 
 var config  = require('config'),
-    authService = require('../services/authService'),
-    userService = require('../services/userService');
+    AuthService = require('../services/AuthService'),
+    UserService = require('../services/UserService');
 
 module.exports = function(roles) {
   /**
@@ -34,18 +34,23 @@ module.exports = function(roles) {
       var token = splits[1];
       async.waterfall([
         function(cb) {
-          authService.decode(token, cb);
+          // decode jwt token to userid
+          AuthService.decode(token, cb);
         },
         function(id, cb) {
-          user.findById(id, cb);
+          // get user by id
+          UserService.read(id, cb);
         }
       ], function(err, user) {
         if(err) {
           return next(new errors.AuthenticationRequiredError(err));
         }
-        req.user = user;
-        next();
+        req.user = user; // pass user forward
+        return next();
       });
+    } else {
+      // no auth header
+      return next(new errors.AuthenticationRequiredError('Required authorization header'));
     }
   };
-}
+};

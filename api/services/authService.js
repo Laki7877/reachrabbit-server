@@ -6,7 +6,8 @@
  */
 'use strict';
 var moment = require('moment'),
-    jwt    = require('jsonwebtoken');
+    jwt    = require('jsonwebtoken'),
+    User = require('../models').User;
 
 /**
  * Encode json web token
@@ -30,7 +31,7 @@ function encode(subject, done) {
   };
 
   // encode jwt
-  jwt.sign(subject, process.env.JWT_SECRET, options, done);
+  jwt.sign(payload, process.env.JWT_SECRET, options, done);
 }
 
 /**
@@ -42,14 +43,57 @@ function encode(subject, done) {
 function decode(token, done) {
   var options = {};
   // decode jwt
-  jwt.verify(token, process.env.JWT_SECRET, optio\ns, function(err, decoded) {
+  jwt.verify(token, process.env.JWT_SECRET, options, function(err, decoded) {
     if(err) return done(err);
     done(null, decoded.sub);
   });
 }
 
+/**
+ * Login with email and password
+ *
+ * @param      {String}  email     The email
+ * @param      {String}  password  The password
+ * @returns    {String} JWT Token
+ */
+function login(email, password, done) {
+  async.waterfall([
+    // find user by email
+    function(cb) {
+      User.findOne({
+        where: {
+          email: email
+        }
+      }).then(function(user) {
+        // no user found
+        if(_.isNil(user)) {
+          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid username/password'));
+        }
+        return cb(null, user);
+      }).catch(cb);
+    },
+    // verify password
+    function(user, cb) {
+      user.verifyPassword(password, function(err, eq) {
+        if(err) return cb(err);
+
+        // not match
+        if(!eq) {
+          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid username/password'));
+        }
+        return cb(null, user.id);
+      });
+    },
+    // encode jwt
+    function(id, cb) {
+      encode(id, cb);
+    }
+  ], done);
+}
+
 // export modules
 module.exports = {
   encode: encode,
-  decode: decode
+  decode: decode,
+  login: login
 };

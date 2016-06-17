@@ -6,9 +6,53 @@
  */
 'use strict';
 
-var Authom = require('authom'),
-    moment = require('moment');
+var Authom      = require('authom'),
+    moment      = require('moment'),
+    AuthService = require('../services/AuthService'),
+    UserService = require('../services/UserService');
 
+/*************************************************
+ * OAuth Services
+ *************************************************/
+// list of auth servers
+var authServer = {
+  facebook: {
+    id: process.env.FACEBOOK_APP_ID,
+    secret: process.env.FACEBOOK_APP_SECRET,
+    fields: ['email', 'name']
+  }
+};
+// list of auth middleware
+var authHandler = {
+  facebook: function(req, res, data, done) {
+    done(data.data);
+  }
+};
+// initiate oauth servers
+_.forOwn(authServer, function(server, service) {
+  Authom.createServer(_.extend({ service: service }, server));
+});
+// on oauth success
+Authom.on('auth', function(req, res, data) {
+  if(_.has(authHandler, data.service)) {
+    // call middleware
+    authHandler[data.service](req, res, data, function(err, result) {
+      if(err) res.status(500).json({message: err});
+      res.json(result);
+    });
+  } else {
+    // just return the data
+    res.json(data.data);
+  }
+});
+// on oauth error
+Authom.on('error', function(req, res, data) {
+  res.status(httpStatus.INTERNAL_SERVER_ERROR).json(data.error);
+});
+
+/**************************************************
+ * API Login Service
+ *************************************************/
 /**
  * Login with site username/password
  *
@@ -17,52 +61,15 @@ var Authom = require('authom'),
  * @param      {Function}  next    The next
  */
 function login(req, res, next) {
-  res.json({});
+  var loginForm = _.pick(req.body, ['email', 'password']);
+  AuthService.login(req.body.email, req.body.password, function(err, token) {
+    if(err) return next(err);
+    return res.json({ token: token } );
+  });
 }
-
-var oauthServer = {
-  facebook: {
-    id: process.env.FACEBOOK_APP_ID,
-    secret: process.env.FACEBOOK_APP_SECRET,
-    fields: ['email', 'name']
-  }
-}
-var oauthHandler = {
-  facebook: function(req, res, data, done) {
-    done(data.data);
-  }
-};
-
-/**
- * List of OAuth server handled
- */
-_.forOwn(oauthServer, function(server, service) {
-  Authom.createServer(_.extend({ service: service }, server));
-});
-
-/**
- * Handle all OAuth service login event
- */
-Authom.on('auth', function(req, res, data) {
-  if(_.has(oauthHandler, data.service)) {
-    oauthHandler[data.service](req, res, data, function(err, result) {
-      if(err) res.status(500).json({message: err});
-      res.json(result);
-    });
-  } else {
-    res.json(data.data);
-  }
-});
-
-/**
- * Handle all OAuth service error login event
- */
-Authom.on('error', function(req, res, data) {
-  logger.debug('err', data.error);
-  res.status(httpStatus.INTERNAL_SERVER_ERROR).json(data.error);
-});
 
 // export module
 module.exports = {
+  login: login,
   oauth: Authom.app
 };
