@@ -83,7 +83,7 @@
     // popular JavaScript libraries and runtime environments—such as
     // browser or node.js.
 
-    "browser"       : true,     // Standard browser globals e.g. `window`, `document`.
+    "browser"       : false,     // Standard browser globals e.g. `window`, `document`.
     "couch"         : false,    // Enable globals exposed by CouchDB.
     "devel"         : false,    // Allow development statements e.g. `console.log();`.
     "dojo"          : false,    // Enable globals exposed by Dojo Toolkit.
@@ -120,16 +120,10 @@
     ],
     "globals": {
         "_": true,
-        "angular": false,
         "async": true,
         "CJSON": true,
         "errors": true,
-        "it": true,
-        "logger": true,
-        "should": true,
-        "describe": true,
         "httpStatus": true
-
     },
     "indent"        : 2         // Specify indentation spacing
 }
