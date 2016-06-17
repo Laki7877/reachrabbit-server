@@ -58,6 +58,10 @@ if(process.env.NODE_ENV === 'production') {
 app.use(router());
 app.use(errors.middleware.errorHandler); // handle common-errors message
 
+
+// make error pretty
+prettyError.start();
+
 /*******************************
  * Start Server
  *******************************/
