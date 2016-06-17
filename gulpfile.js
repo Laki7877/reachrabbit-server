@@ -12,6 +12,7 @@ var _ = require('lodash'),
   async = require('async'),
   fs = require('fs'),
   gulp = require('gulp-help')(require('gulp')),
+  guppy = require('git-guppy')(gulp),
   path = require('path'),
   _exec = require('child_process').exec,
   plugins = require('gulp-load-plugins')({
@@ -72,6 +73,9 @@ function createMigrationFiles(done) {
   });
   done(null);
 }
+
+// git precommit
+gulp.task('pre-commit', 'Git hook pre-commit', ['lint']);
 
 // lint
 gulp.task('lint', 'Lint all server side js', function() {
