@@ -22,5 +22,11 @@ module.exports = function() {
   router.post('/auth', $.AuthController.login);
   router.get ('/auth/:service', $.AuthController.oauth);
 
+  /*********************************
+   * User
+   *********************************/
+  router.get('/me', auth(), $.UserController.findMe);
+  router.post('/users', $.UserController.create);
+
   return router;
 };
