@@ -79,7 +79,7 @@ gulp.task('pre-commit', 'Git hook pre-commit', ['lint']);
 
 // lint
 gulp.task('lint', 'Lint all server side js', function() {
-  return gulp.src(['./**/*.js', '!./node_modules/**/*.js'])
+  return gulp.src(['./**/*.js', '!./node_modules/**/*.js', '!./coverage/**/*.js'])
     .pipe(plugins.jshint())
     .pipe(plugins.jshint.reporter(require('jshint-stylish')));
 });
