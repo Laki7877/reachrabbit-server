@@ -6,11 +6,8 @@
  */
 'use strict';
 
-// enable node-inspector debugger
-debugger;
-
 // set process.env from .env
-require('dotenv').config()
+require('dotenv').config();
 
 // set default config folder
 process.env.NODE_CONFIG_DIR = './api/config';
@@ -36,7 +33,7 @@ var app         = require('express')(),
     morgan      = require('morgan'), // express logging module
     handler     = require('errorhandler'), //report error back to client (dev)
 
-    router      = require('./api/router.js') // api routing
+    router      = require('./api/router.js'); // api routing
 
 /********************************
  * Middleware
