@@ -24,6 +24,11 @@ var _ = require('lodash'),
   argv    = require('yargs').argv,
   sequelizeCliPath = './node_modules/sequelize-cli/bin/sequelize';
 
+
+/***************************************************
+ * Helper functions
+ ***************************************************/
+
 // exec with piped output
 function exec(cmd, obj, done) {
   var task = _exec(cmd, obj, done);
@@ -75,29 +80,16 @@ function createMigrationFiles(done) {
   done(null);
 }
 
+/***************************************************
+ * Git hook
+ ***************************************************/
+
 // git precommit
 gulp.task('pre-commit', 'Git hook pre-commit', ['lint']);
 
-// lint
-gulp.task('lint', 'Lint all server side js', function() {
-  return gulp.src(['./**/*.js', '!./node_modules/**/*.js', '!./coverage/**/*.js'])
-    .pipe(plugins.jshint())
-    .pipe(plugins.jshint.reporter(require('jshint-stylish')));
-});
-
-// start express server
-gulp.task('server', 'Run express server', function() {
-  // start express server
-  var server = plugins.liveServer.new('app.js');
-  server.start();
-
-  // notify server for livereload
-  gulp.watch([path.resolve(__dirname, 'api/**/*.js')], function(file) {
-    server.start.bind(server)();
-  });
-}, {
-  aliases: ['start', 'run', 'serve']
-});
+/***************************************************
+ * Test
+ ***************************************************/
 
 // pre test
 gulp.task('pre-test', 'Setup pretest routine', function() {
@@ -125,20 +117,9 @@ gulp.task('test', 'Run mocha test API', function() {
     });
 });
 
-// bump versioning
-gulp.task('bump', 'Update repository semver version (X.X.X)', function() {
-  // should only be either of these values
-  // otherwise, default to "patch"
-  var version = _.includes(['patch', 'minor', 'major', 'prerelease'], args.version) ? args.version : 'patch';
-
-  return gulp.src('./package.json')
-    .pipe(plugins.bump({type: version}))
-    .pipe(gulp.dest('./'));
-}, {
-  options: {
-    version: 'One of bump version type (minor, major, patch, prerelease). default: patch'
-  }
-});
+/***************************************************
+ * Database
+ ***************************************************/
 
 // mimick sequelize cli
 gulp.task('db:migrate', 'Run pending migrations', seqExecTask);
@@ -209,5 +190,45 @@ gulp.task('migration:default', 'Autogenerate migration files from models', funct
 }, {
   options: {
     name: 'Model name'
+  }
+});
+
+/***************************************************
+ * Application
+ ***************************************************/
+
+// lint
+gulp.task('lint', 'Lint all server side js', function() {
+  return gulp.src(['./**/*.js', '!./node_modules/**/*.js', '!./coverage/**/*.js'])
+    .pipe(plugins.jshint())
+    .pipe(plugins.jshint.reporter(require('jshint-stylish')));
+});
+
+// start express server
+gulp.task('server', 'Run express server', function() {
+  // start express server
+  var server = plugins.liveServer.new('app.js');
+  server.start();
+
+  // notify server for livereload
+  gulp.watch([path.resolve(__dirname, 'api/**/*.js')], function(file) {
+    server.start.bind(server)();
+  });
+}, {
+  aliases: ['start', 'run', 'serve']
+});
+
+// bump version
+gulp.task('bump', 'Update repository semver version (X.X.X)', function() {
+  // should only be either of these values
+  // otherwise, default to "patch"
+  var version = _.includes(['patch', 'minor', 'major', 'prerelease'], args.version) ? args.version : 'patch';
+
+  return gulp.src('./package.json')
+    .pipe(plugins.bump({type: version}))
+    .pipe(gulp.dest('./'));
+}, {
+  options: {
+    version: 'One of bump version type (minor, major, patch, prerelease). default: patch'
   }
 });
