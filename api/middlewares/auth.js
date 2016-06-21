@@ -42,8 +42,26 @@ module.exports = function(roles) {
           UserService.read(id, cb);
         }
       ], function(err, user) {
+        // internal error
         if(err) {
           return next(new errors.AuthenticationRequiredError(err));
+        }
+        // no user
+        if(!user) {
+          return next(new errors.AuthenticationRequiredError(err));
+        }
+        // check roles
+        if(!_.isNil(roles)) {
+          if(_.isString(roles) && user.role !== roles) {
+            // wrong role
+            return next(new errors.AuthenticationRequiredError(err));
+          } else if(_.isArray(roles) && !_.includes(roles, user.role)) {
+            // wrong role
+            return next(new errors.AuthenticationRequiredError(err));
+          } else {
+            // no roles?
+            return next(new errors.HttpStatusError(httpStatus.INTERNAL_SERVER_ERROR, 'role not found'));
+          }
         }
         req.user = user; // pass user forward
         return next();
