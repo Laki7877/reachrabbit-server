@@ -38,7 +38,12 @@ var app         = require('express')(),
 /********************************
  * Middleware
  ********************************/
-app.use(cors());
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,HEAD,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'content-Type,x-requested-with, Authorization');
+  next();
+});
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); // parse json
 app.use(errors.middleware.crashProtector()); // prevent server failure on async crash
@@ -66,8 +71,11 @@ prettyError.start();
  * Start Server
  *******************************/
 var server = http.createServer(app);
+var port = process.env.PORT || 3000;
 
-server.listen(process.env.PORT || 3000);
+server.listen(port, function() {
+  console.log('Express API available at ' + port);
+});
 
 // for testing
 module.exports = app;

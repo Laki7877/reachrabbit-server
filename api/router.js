@@ -20,7 +20,8 @@ module.exports = function() {
    * Authentication
    *********************************/
   router.post('/auth', $.AuthController.login);
-  router.get ('/auth/:service', $.AuthController.oauth);
+  router.post('/auth/:service', $.AuthController.oauth);
+  router.get( '/auth/:service', $.AuthController.oauth);
 
   /*********************************
    * User

@@ -50,6 +50,10 @@ Authom.on('error', function(req, res, data) {
   res.status(httpStatus.INTERNAL_SERVER_ERROR).json(data.error);
 });
 
+function oauth(req, res, next) {
+  Authom.app(req, res, next);
+}
+
 /**************************************************
  * API Login Service
  *************************************************/
@@ -71,5 +75,5 @@ function login(req, res, next) {
 // export module
 module.exports = {
   login: login,
-  oauth: Authom.app
+  oauth: oauth
 };
