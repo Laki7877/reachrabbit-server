@@ -208,6 +208,7 @@ gulp.task('lint', 'Lint all server side js', function() {
 gulp.task('server', 'Run express server', function() {
   // start express server
   var server = plugins.liveServer.new('app.js');
+  server.config.livereload.port = 30000;
   server.start();
 
   // notify server for livereload
@@ -215,7 +216,7 @@ gulp.task('server', 'Run express server', function() {
     server.start.bind(server)();
   });
 }, {
-  aliases: ['start', 'run', 'serve']
+  aliases: ['start', 'run', 'serve', 'watch']
 });
 
 // bump version
