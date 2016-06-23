@@ -9,49 +9,28 @@
 var Authom      = require('authom'),
     moment      = require('moment'),
     AuthService = require('../services/AuthService'),
+    FacebookService = require('../services/FacebookService'),
     UserService = require('../services/UserService');
 
 /*************************************************
  * OAuth Services
  *************************************************/
-// list of auth servers
-var authServer = {
-  facebook: {
-    id: process.env.FACEBOOK_APP_ID,
-    secret: process.env.FACEBOOK_APP_SECRET,
-    fields: ['email', 'name']
-  }
-};
-// list of auth middleware
-var authHandler = {
-  facebook: function(req, res, data, done) {
-    done(data.data);
-  }
-};
-// initiate oauth servers
-_.forOwn(authServer, function(server, service) {
-  Authom.createServer(_.extend({ service: service }, server));
-});
-// on oauth success
-Authom.on('auth', function(req, res, data) {
-  if(_.has(authHandler, data.service)) {
-    // call middleware
-    authHandler[data.service](req, res, data, function(err, result) {
-      if(err) res.status(500).json({message: err});
-      res.json(result);
-    });
-  } else {
-    // just return the data
-    res.json(data.data);
-  }
-});
-// on oauth error
-Authom.on('error', function(req, res, data) {
-  res.status(httpStatus.INTERNAL_SERVER_ERROR).json(data.error);
-});
+// list of auth services
 
-function oauth(req, res, next) {
-  Authom.app(req, res, next);
+function facebook(req, res, next) {
+  async.waterfall([
+    function(cb) {
+      FacebookService.getToken(req.body, cb);
+    },
+    function(result, cb) {
+      FacebookService.getProfile(result.access_token, cb);
+    }
+  ], function(err, result) {
+    if(err) {
+      return next(err);
+    }
+    return res.json(result);
+  });
 }
 
 /**************************************************
@@ -75,5 +54,5 @@ function login(req, res, next) {
 // export module
 module.exports = {
   login: login,
-  oauth: oauth
+  facebook: facebook
 };

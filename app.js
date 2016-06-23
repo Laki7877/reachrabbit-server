@@ -33,17 +33,12 @@ var app         = require('express')(),
     morgan      = require('morgan'), // express logging module
     handler     = require('errorhandler'), //report error back to client (dev)
 
-    router      = require('./api/router.js'); // api routing
+    router      = require('./api/router.js');
 
 /********************************
  * Middleware
  ********************************/
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,HEAD,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'content-Type,x-requested-with, Authorization');
-  next();
-});
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); // parse json
 app.use(errors.middleware.crashProtector()); // prevent server failure on async crash
@@ -59,10 +54,8 @@ if(process.env.NODE_ENV === 'production') {
   app.use(morgan('combined', { stream: accessLog })); // log express to file
 }
 
-// api route
-app.use(router());
+app.use(router()); // api route
 app.use(errors.middleware.errorHandler); // handle common-errors message
-
 
 // make error pretty
 prettyError.start();

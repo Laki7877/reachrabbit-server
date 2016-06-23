@@ -6,9 +6,9 @@
  */
 'use strict';
 
-var express = require('express'),
-    auth    = require('./middlewares/auth'),
-    $       = require('./controllers');
+var express   = require('express'),
+    auth      = require('./middlewares/auth'),
+    $         = require('./controllers');
 
 module.exports = function() {
   // initiate express router object
@@ -19,9 +19,7 @@ module.exports = function() {
   /*********************************
    * Authentication
    *********************************/
-  router.post('/auth', $.AuthController.login);
-  router.post('/auth/:service', $.AuthController.oauth);
-  router.get( '/auth/:service', $.AuthController.oauth);
+  router.post('/auth/facebook', $.AuthController.facebook);
 
   /*********************************
    * User
