@@ -7,7 +7,6 @@
 'use strict';
 
 var bcrypt = require('bcryptjs');
-
 /**
  * Hash password with model generateHash
  *
@@ -52,7 +51,6 @@ function hashPasswords(models, options, done) {
   });
 }
 
-
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
     id: {
@@ -64,12 +62,17 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       unique: true
     },
+    contactNumber: DataTypes.STRING,
     role: {
-      type: DataTypes.ENUM('admin', 'brand', 'influencer')
+      type: DataTypes.ENUM('admin', 'brand', 'inf')
     },
     password: DataTypes.STRING,
-    facebook: DataTypes.STRING,
-    token: DataTypes.STRING
+    facebookId: DataTypes.STRING,
+    facebookToken: DataTypes.STRING,
+    confirm: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
   }, {
     hooks: {
       beforeBulkCreate: function(models, options, done) {
@@ -87,11 +90,57 @@ module.exports = function(sequelize, DataTypes) {
     },
     classMethods: {
       associate: function(models) {
+        // payment
+        User.belongsToMany(models.User, {
+          through: models.Payment,
+          as: 'source',
+          foreignKey: 'sourceId',
+          otherKey: 'targetId'
+        });
+
+        User.belongsToMany(models.User, {
+          through: models.Payment,
+          as: 'target',
+          foreignKey: 'targetId',
+          otherKey: 'sourceId'
+        });
+
+        // user has many permission groups
         User.belongsToMany(models.UserGroup, {
           through: models.UserUserGroup,
           as: 'users',
           foreignKey: 'userId',
           otherKey: 'groupId'
+        });
+
+        // brand has many campaigns
+        User.hasMany(models.Campaign, {
+          foreignKey: 'ownerId',
+          scope: {
+            role: 'brand'
+          }
+        });
+
+        // inf belongs to many campaigns through application
+        User.belongsToMany(models.Campaign, {
+          foreignKey: 'userId',
+          otherKey: 'campaignId',
+          as: 'influencers',
+          scope: {
+            role: 'inf'
+          },
+          through: models.CampaignApplication
+        });
+
+        // inf belongs to many campaigns through submission
+        User.belongsToMany(models.Campaign, {
+          foreignKey: 'userId',
+          otherKey: 'campaignId',
+          as: 'influencers',
+          scope: {
+            role: 'inf'
+          },
+          through: models.CampaignSubmission
         });
       }
     },

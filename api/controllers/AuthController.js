@@ -22,8 +22,13 @@ function facebook(req, res, next) {
     function(cb) {
       FacebookService.getToken(req.body, cb);
     },
-    function(result, cb) {
-      FacebookService.getProfile(result.access_token, cb);
+    function(data, cb) {
+      FacebookService.getProfile(data.token, function(err, profile) {
+        if(err) {
+          return next(err);
+        }
+        return cb(null, _.extend(profile, data));
+      });
     }
   ], function(err, result) {
     if(err) {
@@ -45,6 +50,7 @@ function facebook(req, res, next) {
  */
 function login(req, res, next) {
   var loginForm = _.pick(req.body, ['email', 'password']);
+
   AuthService.login(req.body.email, req.body.password, function(err, token) {
     if(err) return next(err);
     return res.json({ token: token } );

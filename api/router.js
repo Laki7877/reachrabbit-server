@@ -22,11 +22,15 @@ module.exports = function() {
    *********************************/
   router.post('/auth/facebook', $.AuthController.facebook);
 
+  /********************************
+   * Register
+   ********************************/
+  router.post('/register/influencer', $.UserController.registerInfluencer);
+
   /*********************************
    * User
    *********************************/
-  router.get('/me', auth(), $.UserController.findMe);
-  router.post('/users', $.UserController.create);
+  router.get('/me', auth(), $.UserController.profile);
 
   /*********************************
    * File Demo

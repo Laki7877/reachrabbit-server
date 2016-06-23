@@ -9,19 +9,18 @@
 var UserService = require('../services/UserService');
 
 /**
- * Create new user
+ * Create new influencer
  *
  * @param      {Object}    req     The request
  * @param      {Object}    res     The resource
  * @param      {Function}  next    The next
  */
-function create(req, res, next) {
-  // filter user
-  var user = _.pick(req.body, ['email', 'password']);
-
-  // create new
-  UserService.create(user, function(err, result) {
-    if(err) return next(err);
+function registerInfluencer(req, res, next) {
+  // create new user
+  UserService.create(req.body, function(err, result) {
+    if(err) {
+      return next(err);
+    }
     return res.json(result);
   });
 }
@@ -33,7 +32,7 @@ function create(req, res, next) {
  * @param      {Object}    res     The resource
  * @param      {Function}  next    The next
  */
-function findMe(req, res, next) {
+function profile(req, res, next) {
   if(req.user) {
     return res.json(req.user);
   } else {
@@ -42,6 +41,9 @@ function findMe(req, res, next) {
 }
 
 module.exports = {
-  create: create,
-  findMe: findMe
+  registerInfluencer: registerInfluencer,
+  //registerBrand: registerBrand,
+  //login: login,
+  //confirmEmail: confirmEmail,
+  profile: profile
 };
