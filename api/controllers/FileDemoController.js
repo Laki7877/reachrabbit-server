@@ -1,9 +1,5 @@
 'use strict';
-var AWS = require('aws-sdk');
-var s3 = new AWS.S3({
-  accessKeyId: 'AKIAJSFCEJVD7YJ2BPZA',
-  secretAccessKey: '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'
-});
+var s3 = require('../services/S3Service.js');
 
 function listAll(req, res, next) {
   var params = {Bucket: 'projectxtest'};
@@ -13,11 +9,22 @@ function listAll(req, res, next) {
   });
 }
 
-function upload(req, res, next) {
-   res.send('Successfully uploaded ' + req.files.length + ' files!')
+function uploadSingle(req, res, next) {
+  var params = {Bucket: 'projectxtest', Key: 'fileName', Body: new Buffer(req.file)};
+  s3.putObject(params, function(err, data) {
+    res.send(data);
+  });
+}
+
+function getOne(req, res, next) {
+  var params = {Bucket: 'projectxtest', Key: req.params.id};
+  s3.getObject(params, function(err, data) {
+    res.send(data);
+  });
 }
 
 module.exports = {
   listAll: listAll,
-  upload: upload
+  uploadSingle: uploadSingle,
+  getOne: getOne
 }
