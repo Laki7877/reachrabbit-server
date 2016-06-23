@@ -7,7 +7,6 @@
 'use strict';
 
 var bcrypt = require('bcryptjs');
-
 /**
  * Hash password with model generateHash
  *
@@ -52,7 +51,6 @@ function hashPasswords(models, options, done) {
   });
 }
 
-
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
     id: {
@@ -92,7 +90,6 @@ module.exports = function(sequelize, DataTypes) {
     },
     classMethods: {
       associate: function(models) {
-
         // payment
         User.belongsToMany(models.User, {
           through: models.Payment,

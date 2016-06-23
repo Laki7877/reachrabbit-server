@@ -20,31 +20,19 @@ var accessTokenUrl = 'https://graph.facebook.com/v2.6/oauth/access_token';
 graph.setVersion(authConfig.version);
 
 function getToken(data, done) {
-  // waterfall tasks
-  async.waterfall([
-    // get access token with code
-    function(cb) {
-      // params
-      var params = {
-        code: data.code,
-        redirect_uri: data.redirectUri
-      };
-      // make request to facebook gettoken
-      graph.authorize(_.extend(params, authConfig), cb);
-    }
-    /*,
-    // extend access token for 60 days
-    function(token, cb) {
-      var params = {
-        access_token: token.access_token
-      };
-      graph.extendAccessToken(_.extend(params, authConfig), cb);
-    }*/
-  ], function(err, result) {
+  // params
+  var params = {
+    code: data.code,
+    redirect_uri: data.redirectUri
+  };
+  // make request to facebook gettoken
+  graph.authorize(_.extend(params, authConfig), function(err, token) {
     if(err) {
       return done(err);
     }
-    return done(null, result);
+    return done(null, {
+      token: token.access_token
+    });
   });
 }
 
@@ -57,7 +45,7 @@ function getToken(data, done) {
 function getProfile(token, done) {
   var params = {
     access_token: token,
-    fields: 'email,id'
+    fields: 'email,id,name,picture.width(300)'
   };
   graph.get('me', params, done);
 }

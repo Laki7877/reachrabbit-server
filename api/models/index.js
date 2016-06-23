@@ -34,7 +34,7 @@ fs.readdirSync(__dirname)
   .forEach(function(file) {
     // import models
     var model = sequelize['import'](path.join(__dirname, file));
-    db[_.upperFirst(model.name)] = model;
+    db[model.name] = model;
   });
 
 // associate models (one-to-one, one-to-many, etc.)
