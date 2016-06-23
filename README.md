@@ -4,9 +4,14 @@
 
 1. copy and rename .env-sample to .env
 2. fill in environment variable
-3. run `npm install`
-4. run `gulp db:migrate`
-5. 
 ```
+  npm install
+  gulp db:sync
   gulp server
+```
+
+## Regenerate Database from model files
+```
+  gulp db:drop
+  gulp db:sync
 ```
