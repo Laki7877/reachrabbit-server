@@ -6,6 +6,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.6",
     "authom": "^0.4.36",
+    "aws-sdk": "^2.4.1",
     "bcryptjs": "^2.3.0",
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.1",
@@ -27,6 +28,8 @@
     "mailgun-js": "^0.7.11",
     "moment": "^2.13.0",
     "morgan": "^1.7.0",
+    "multer": "^1.1.0",
+    "multer-s3": "^2.3.2",
     "passport": "^0.3.2",
     "passport-jwt": "^2.0.0",
     "pg": "^5.1.0",

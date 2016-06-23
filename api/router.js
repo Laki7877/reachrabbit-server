@@ -10,6 +10,7 @@ var express   = require('express'),
     auth      = require('./middlewares/auth'),
     $         = require('./controllers');
 
+
 module.exports = function() {
   // initiate express router object
   var router = express.Router({
@@ -26,6 +27,13 @@ module.exports = function() {
    *********************************/
   router.get('/me', auth(), $.UserController.findMe);
   router.post('/users', $.UserController.create);
+
+  /*********************************
+   * File Demo
+   *********************************/
+
+  router.get('/file_demo', $.FileDemoController.listAll);
+  router.post('/file_demo', $.FileDemoController.upload);
 
   return router;
 };
