@@ -15,7 +15,7 @@ var User    = require('../models').User,
  * @param      {Object}    user    The user
  * @param      {Function}  done    The done
  */
-function createInfluencer(user, done) {
+service.createInfluencer = function(user, done) {
   var user = _.pick(user, ['email', 'contactNumber', 'facebook', 'name']);
   user.role = 'influencer';
   user.confirm = false;
@@ -24,11 +24,28 @@ function createInfluencer(user, done) {
     if(err) {
       return done(err);
     }
-    return done(_.omit(user, ['password']));
+    return done(null, _.omit(user, ['password']));
   });
-}
+};
 
-service.createInfluencer = createInfluencer;
+/**
+ * Creates an brand.
+ *
+ * @param      {Object}    user    The user
+ * @param      {Function}  done    The done
+ */
+service.createBrand = function(user, done) {
+  var user = _.pick(user, ['email', 'brandName', 'contactNumber', 'facebook', 'name', 'password']);
+  user.role = 'brand';
+  user.confirm = false;
+
+  service.create(user, function(err, user) {
+    if(err) {
+      return done(err);
+    }
+    return done(null, _.omit(user, ['password']));
+  });
+};
 
 // export service
 module.exports = service;

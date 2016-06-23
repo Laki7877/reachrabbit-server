@@ -37,7 +37,7 @@ function Service(modelName) {
 Service.prototype.create = function(entity, done) {
   // create entity
   this.model.create(entity).then(function(created) {
-    done(null, created);
+    done(null, created.get({plain:true}));
   }).catch(done);
 };
 

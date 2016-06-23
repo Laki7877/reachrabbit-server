@@ -20,11 +20,14 @@ module.exports = function() {
    * Authentication
    *********************************/
   router.post('/auth/facebook', $.AuthController.facebook);
+  router.post('/login', $.AuthController.login);
 
   /********************************
    * Register
    ********************************/
   router.post('/register/influencer', $.UserController.registerInfluencer);
+  router.post('/register/brand', $.UserController.registerBrand);
+  router.post('/confirm', $.UserController.confirmEmail);
 
   /*********************************
    * User

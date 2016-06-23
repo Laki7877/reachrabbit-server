@@ -6,7 +6,10 @@
  */
 'use strict';
 
-var UserService = require('../services/UserService');
+var UserService = require('../services/UserService'),
+    MailService = require('../services/MailService'),
+    AuthService = require('../services/AuthService'),
+    config = require('config');
 
 /**
  * Create new influencer
@@ -17,11 +20,98 @@ var UserService = require('../services/UserService');
  */
 function registerInfluencer(req, res, next) {
   // create new user
-  UserService.create(req.body, function(err, result) {
+  async.waterfall([
+    // create unconfirmed inf
+    function(cb) {
+      UserService.createInfluencer(req.body, cb);
+    },
+    // generate Jwt hash
+    function(user, cb) {
+      AuthService.encode(user.email, function(err, hash) {
+        if(err) {
+          return cb(err);
+        }
+        return cb(null, user, hash);
+      });
+    },
+    // send mail
+    function(user, hash, cb) {
+      MailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
+        confirmUrl: config.EMAIL_CONFIRMATION_INF_URL + '?q=' + hash
+      }).then(function() {
+        cb(null, user);
+      }).catch(cb);
+    }
+  ], function(err, result) {
     if(err) {
       return next(err);
     }
     return res.json(result);
+  });
+}
+
+function registerBrand(req, res, next) {
+  // create new user
+  async.waterfall([
+    // create unconfirmed brand
+    function(cb) {
+      UserService.createBrand(req.body, cb);
+    },
+    // generate Jwt hash
+    function(user, cb) {
+      AuthService.encode(user.id, function(err, hash) {
+        if(err) {
+          return cb(err);
+        }
+        return cb(null, user, hash);
+      });
+    },
+    // send mail
+    function(user, hash, cb) {
+      MailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
+        confirmUrl: config.EMAIL_CONFIRMATION_BRAND_URL + '?q=' + hash
+      }).then(function() {
+        cb(null, user);
+      }).catch(cb);
+    }
+  ], function(err, result) {
+    if(err) {
+      return next(err);
+    }
+    return res.json(result);
+  });
+}
+
+/**
+ * Confirm user account with email
+ *
+ * @param      {Object}    req     The request
+ * @param      {Object}    res     The resource
+ * @param      {Function}  next    The next
+ */
+function confirmEmail(req, res, next) {
+  // email token
+  var token = req.body.token;
+
+  async.waterfall([
+    function(cb) {
+      AuthService.decode(token, cb);
+    },
+    function(id, cb) {
+      UserService.update(id, {
+        confirm: true
+      }, cb);
+    },
+    function(user, cb) {
+      AuthService.encode(user.id, cb);
+    }
+  ], function(err, result) {
+      if(err) {
+        return next(err);
+      }
+      return res.json({
+        token: result
+      });
   });
 }
 
@@ -42,8 +132,7 @@ function profile(req, res, next) {
 
 module.exports = {
   registerInfluencer: registerInfluencer,
-  //registerBrand: registerBrand,
-  //login: login,
-  //confirmEmail: confirmEmail,
+  registerBrand: registerBrand,
+  confirmEmail: confirmEmail,
   profile: profile
 };

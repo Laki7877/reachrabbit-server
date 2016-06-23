@@ -160,7 +160,7 @@ gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
   return db.sequelize.sync();
 });
 
-gulp task('db:drop', 'Drop all tables', function() {
+gulp.task('db:drop', 'Drop all tables', function() {
   return db.sequelize.drop({cascade: true});
 });
 

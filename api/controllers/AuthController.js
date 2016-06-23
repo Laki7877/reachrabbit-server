@@ -19,9 +19,11 @@ var Authom      = require('authom'),
 
 function facebook(req, res, next) {
   async.waterfall([
+    // get access token
     function(cb) {
       FacebookService.getToken(req.body, cb);
     },
+    // get profile
     function(data, cb) {
       FacebookService.getProfile(data.token, function(err, profile) {
         if(err) {
@@ -29,12 +31,31 @@ function facebook(req, res, next) {
         }
         return cb(null, _.extend(profile, data));
       });
+    },
+    // try login with facebook
+    function(data, cb) {
+      AuthService.loginWithFB(data.id, function(err, token) {
+        if(err) {
+          return cb(null, data, false);
+        }
+        return cb(null, token, true);
+      });
     }
-  ], function(err, result) {
+  ], function(err, result, isLogin) {
     if(err) {
       return next(err);
     }
-    return res.json(result);
+    // login mode
+    if(isLogin) {
+      return res.json({
+        token: result,
+        isLogin: isLogin
+      })
+    }
+    // create new mode
+    return res.json(_.extend(result, {
+      isLogin: isLogin
+    }));
   });
 }
 
@@ -51,7 +72,7 @@ function facebook(req, res, next) {
 function login(req, res, next) {
   var loginForm = _.pick(req.body, ['email', 'password']);
 
-  AuthService.login(req.body.email, req.body.password, function(err, token) {
+  AuthService.login(loginForm.email, loginForm.password, function(err, token) {
     if(err) return next(err);
     return res.json({ token: token } );
   });

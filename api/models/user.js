@@ -7,49 +7,6 @@
 'use strict';
 
 var bcrypt = require('bcryptjs');
-/**
- * Hash password with model generateHash
- *
- * @param      {object}    model    The model
- * @param      {object}    options  The options
- * @param      {Function}  done     The done
- */
-function hashPassword(model, options, done) {
-  if(!_.isNil(model.password)) {
-    model.generateHash(model.password, function(err, encryptedPassword) {
-      if(err) {
-        return done(err);
-      }
-      model.password = encryptedPassword;
-      return done(null, options);
-    });
-  } else {
-    return done(null, options);
-  }
-}
-
-/**
- * Hash password for array of models
- *
- * @param      {array}    models   The models
- * @param      {object}    options  The options
- * @param      {Function}  done     The done
- */
-function hashPasswords(models, options, done) {
-  var tasks = [];
-  // build hash password tasks for all models
-  _.forEach(models, function(model) {
-    tasks.push(function(cb) {
-      hashPassword(model, options, cb);
-    });
-  });
-  return async.parallel(tasks, function(err, results) {
-    if(err) {
-      return done(err);
-    }
-    return done(null, options);
-  });
-}
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
@@ -62,30 +19,36 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       unique: true
     },
-    contactNumber: DataTypes.STRING,
     role: {
-      type: DataTypes.ENUM('admin', 'brand', 'inf')
+      type: DataTypes.ENUM('admin', 'brand', 'influencer')
     },
+    name: DataTypes.STRING,
+    brandName: DataTypes.STRING,
+    contactNumber: DataTypes.STRING,
     password: DataTypes.STRING,
     facebookId: DataTypes.STRING,
     facebookToken: DataTypes.STRING,
     confirm: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
-    }
+    },
+    picture: DataTypes.STRING
   }, {
     hooks: {
       beforeBulkCreate: function(models, options, done) {
         hashPasswords(models, options, done);
       },
       beforeBulkUpdate: function(models, options, done) {
-        hashPasswords(models, options, done);
+        //hashPasswords(models, options, done);
+        done(null, options);
       },
       beforeCreate: function(model, options, done) {
         hashPassword(model, options, done);
       },
       beforeUpdate: function(model, options, done) {
-        hashPassword(model, options, done);
+        console.log(options);
+        done(null, options);
+        //hashPassword(model, options, done);
       }
     },
     classMethods: {
@@ -156,3 +119,47 @@ module.exports = function(sequelize, DataTypes) {
 
   return User;
 };
+
+/**
+ * Hash password with model generateHash
+ *
+ * @param      {object}    model    The model
+ * @param      {object}    options  The options
+ * @param      {Function}  done     The done
+ */
+function hashPassword(model, options, done) {
+  if(!_.isNil(model.password)) {
+    model.generateHash(model.password, function(err, encryptedPassword) {
+      if(err) {
+        return done(err);
+      }
+      model.password = encryptedPassword;
+      return done(null, options);
+    });
+  } else {
+    return done(null, options);
+  }
+}
+
+/**
+ * Hash password for array of models
+ *
+ * @param      {array}    models   The models
+ * @param      {object}    options  The options
+ * @param      {Function}  done     The done
+ */
+function hashPasswords(models, options, done) {
+  var tasks = [];
+  // build hash password tasks for all models
+  _.forEach(models, function(model) {
+    tasks.push(function(cb) {
+      hashPassword(model, options, cb);
+    });
+  });
+  return async.parallel(tasks, function(err, results) {
+    if(err) {
+      return done(err);
+    }
+    return done(null, options);
+  });
+}

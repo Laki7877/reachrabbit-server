@@ -67,7 +67,11 @@ function login(email, password, done) {
       }).then(function(user) {
         // no user found
         if(_.isNil(user)) {
-          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid username/password'));
+          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
+        }
+        // not confirm yet
+        if(!user.confirm) {
+          return cb(new errors.HttpStatusError(httpStatus.NOT_ACCEPTABLE, 'user is not confirmed yet'));
         }
         return cb(null, user);
       }).catch(cb);
@@ -79,7 +83,7 @@ function login(email, password, done) {
 
         // not match
         if(!eq) {
-          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid username/password'));
+          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
         }
         return cb(null, user.id);
       });
@@ -91,9 +95,41 @@ function login(email, password, done) {
   ], done);
 }
 
+/**
+ * Login with facebook id
+ *
+ * @param      {String}    id      The identifier
+ * @param      {Function}  done    The done
+ */
+function loginWithFB(id, done) {
+  async.waterfall([
+    function(cb) {
+      User.findOne({
+        where: {
+          facebookId: id
+        }
+      }).then(function(user) {
+        // no user found
+        if(_.isNil(user)) {
+          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
+        }
+        // not confirm yet
+        /*if(!user.confirm) {
+            return cb(new errors.HttpStatusError(httpStatus.NOT_ACCEPTABLE, 'user is not confirmed yet'));
+        }*/
+        return cb(null, user.id);
+      }).catch(cb);
+    },
+    function(id, cb) {
+      encode(id, cb);
+    }
+  ], done);
+}
+
 // export modules
 module.exports = {
   encode: encode,
   decode: decode,
-  login: login
+  login: login,
+  loginWithFB: loginWithFB
 };
