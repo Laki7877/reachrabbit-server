@@ -43,7 +43,7 @@ module.exports = function() {
    *********************************/
 
   router.get('/file_demo', $.FileDemoController.listAll);
-  router.post('/file_demo', upload.single('slip'), $.FileDemoController.uploadSingle);
+  router.post('/file_demo', upload.single('file'), $.FileDemoController.uploadSingle);
   router.get('/file_demo/:id', $.FileDemoController.getOne);
 
   return router;
