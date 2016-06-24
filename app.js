@@ -32,15 +32,14 @@ var app         = require('express')(),
     prettyError = require('pretty-error'), // make error log pretty
     morgan      = require('morgan'), // express logging module
     handler     = require('errorhandler'), //report error back to client (dev)
-
     router      = require('./api/router.js');
 
 /********************************
  * Middleware
  ********************************/
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json()); // parse json
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
+app.use(bodyParser.json({limit: '50mb'})); // parse json
 app.use(errors.middleware.crashProtector()); // prevent server failure on async crash
 
 // development mode

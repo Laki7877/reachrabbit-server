@@ -10,6 +10,10 @@ var express   = require('express'),
     auth      = require('./middlewares/auth'),
     $         = require('./controllers');
 
+var multer = require('multer');
+var upload = multer({ dest: '.tmp' });
+
+
 module.exports = function() {
   // initiate express router object
   var router = express.Router({
@@ -33,6 +37,14 @@ module.exports = function() {
    * User
    *********************************/
   router.get('/me', auth(), $.UserController.profile);
+
+  /*********************************
+   * File Demo
+   *********************************/
+
+  router.get('/file_demo', $.FileDemoController.listAll);
+  router.post('/file_demo', upload.single('slip'), $.FileDemoController.uploadSingle);
+  router.get('/file_demo/:id', $.FileDemoController.getOne);
 
   return router;
 };
