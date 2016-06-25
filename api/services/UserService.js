@@ -7,7 +7,7 @@
 'use strict';
 
 var User    = require('../models').User,
-    service = require('./CrudService')(User); // inherit from crudService
+    service = require('./crudService')(User); // inherit from crudService
 
 /**
  * Creates an influencer.
