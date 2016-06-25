@@ -7,7 +7,7 @@
 'use strict';
 
 var config  = require('config'),
-    AuthService = require('../services/AuthService'),
+    AuthService = require('../services/authService'),
     UserService = require('../services/UserService');
 
 module.exports = function(roles) {

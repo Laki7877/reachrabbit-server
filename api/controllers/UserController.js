@@ -8,7 +8,7 @@
 
 var UserService = require('../services/UserService'),
     MailService = require('../services/MailService'),
-    AuthService = require('../services/AuthService'),
+    AuthService = require('../services/authService'),
     config = require('config');
 
 /**
