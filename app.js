@@ -7,7 +7,11 @@
 'use strict';
 
 // set process.env from .env
-require('dotenv').config();
+try{
+  require('dotenv').config();
+}catch(e){
+  //dont care will grab from environment directly
+}
 
 // set default config folder
 process.env.NODE_CONFIG_DIR = './api/config';
