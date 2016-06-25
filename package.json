@@ -16,6 +16,7 @@
     "config": "^1.21.0",
     "cors": "^2.7.1",
     "dotenv": "^2.0.0",
+    "dotenv-extended": "^1.0.1",
     "errorhandler": "^1.4.3",
     "express": "^4.13.4",
     "fbgraph": "^1.2.0",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
+    "git": "^0.1.5",
     "git-guppy": "^1.2.1",
     "gulp": "^3.9.1",
     "gulp-bump": "^2.1.0",

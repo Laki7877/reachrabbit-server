@@ -7,8 +7,8 @@
 'use strict';
 
 var config  = require('config'),
-    AuthService = require('../services/authService'),
-    UserService = require('../services/UserService');
+    authService = require('../services/authService'),
+    userService = require('../services/userService');
 
 module.exports = function(roles) {
   /**
@@ -35,11 +35,11 @@ module.exports = function(roles) {
       async.waterfall([
         function(cb) {
           // decode jwt token to userid
-          AuthService.decode(token, cb);
+          authService.decode(token, cb);
         },
         function(id, cb) {
           // get user by id
-          UserService.read(id, cb);
+          userService.read(id, cb);
         }
       ], function(err, user) {
         // internal error

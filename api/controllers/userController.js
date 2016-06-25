@@ -6,9 +6,9 @@
  */
 'use strict';
 
-var UserService = require('../services/UserService'),
-    MailService = require('../services/MailService'),
-    AuthService = require('../services/authService'),
+var userService = require('../services/userService'),
+    mailService = require('../services/mailService'),
+    authService = require('../services/authService'),
     config = require('config');
 
 /**
@@ -23,11 +23,11 @@ function registerInfluencer(req, res, next) {
   async.waterfall([
     // create unconfirmed inf
     function(cb) {
-      UserService.createInfluencer(req.body, cb);
+      userService.createInfluencer(req.body, cb);
     },
     // generate Jwt hash
     function(user, cb) {
-      AuthService.encode(user.email, function(err, hash) {
+      authService.encode(user.email, function(err, hash) {
         if(err) {
           return cb(err);
         }
@@ -36,7 +36,7 @@ function registerInfluencer(req, res, next) {
     },
     // send mail
     function(user, hash, cb) {
-      MailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
+      mailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
         confirmUrl: config.EMAIL_CONFIRMATION_INF_URL + '?q=' + hash
       }).then(function() {
         cb(null, user);
@@ -55,11 +55,11 @@ function registerBrand(req, res, next) {
   async.waterfall([
     // create unconfirmed brand
     function(cb) {
-      UserService.createBrand(req.body, cb);
+      userService.createBrand(req.body, cb);
     },
     // generate Jwt hash
     function(user, cb) {
-      AuthService.encode(user.id, function(err, hash) {
+      authService.encode(user.id, function(err, hash) {
         if(err) {
           return cb(err);
         }
@@ -68,7 +68,7 @@ function registerBrand(req, res, next) {
     },
     // send mail
     function(user, hash, cb) {
-      MailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
+      mailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
         confirmUrl: config.EMAIL_CONFIRMATION_BRAND_URL + '?q=' + hash
       }).then(function() {
         cb(null, user);
@@ -95,15 +95,15 @@ function confirmEmail(req, res, next) {
 
   async.waterfall([
     function(cb) {
-      AuthService.decode(token, cb);
+      authService.decode(token, cb);
     },
     function(id, cb) {
-      UserService.update(id, {
+      userService.update(id, {
         confirm: true
       }, cb);
     },
     function(user, cb) {
-      AuthService.encode(user.id, cb);
+      authService.encode(user.id, cb);
     }
   ], function(err, result) {
       if(err) {

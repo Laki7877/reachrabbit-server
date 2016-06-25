@@ -110,51 +110,7 @@ gulp.task('db:seed:undo', 'Delete data from the database', seqExecTask);
 gulp.task('db:seed:undo:all', 'Delete data from the database', seqExecTask);
 
 // create model using our own migration file
-gulp.task('model:create', 'Generate model', function(done) {
-  var migrationPath = './api/migrations';
-  async.waterfall([
-    // call to sequelize model creation
-    function(cb) {
-      seqExec('model:create', cb);
-    },
-    // remove sequelize migration file (we don't need theirs)
-    function(stdout, stderr, cb) {
-      // delete native migration file
-      var toBeDeleted = null;
-      fs.readdir('./api/migrations', function(err, list) {
-        if(err) {
-          return cb(err);
-        }
-
-        // get latest created file
-        _.forEach(list, function(f) {
-          if(_.isNil(toBeDeleted)) {
-            toBeDeleted = f;
-          } else if(fs.statSync(path.resolve(migrationPath, toBeDeleted)).ctime.getTime() > fs.statSync(path.resolve(migrationPath, f)).ctime.getTime()) {
-            toBeDeleted = f;
-          }
-        });
-
-        if(toBeDeleted === null) {
-          return cb(null);
-        }
-
-        // delete it
-        fs.unlink(path.resolve(migrationPath, toBeDeleted), cb);
-      });
-    },
-    // add our own version of migration file
-    function(cb) {
-      createMigrationFiles(cb);
-    }
-  ], done);
-}, {
-  aliases: ['model:generate'],
-  options: {
-    attributes: 'Model attributes in string form i.e, "username:string, phone:integer"',
-    name: 'Model name'
-  }
-});
+gulp.task('model:create', 'Generate model', seqExecTask);
 
 gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
   return db.sequelize.sync();
@@ -162,15 +118,6 @@ gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
 
 gulp.task('db:drop', 'Drop all tables', function() {
   return db.sequelize.drop({cascade: true});
-});
-
-// depreciated
-gulp.task('migration:default', false, function(done) {
-  createMigrationFiles(done);
-}, {
-  options: {
-    name: 'Model name'
-  }
 });
 
 /***************************************************

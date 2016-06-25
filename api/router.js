@@ -23,28 +23,28 @@ module.exports = function() {
   /*********************************
    * Authentication
    *********************************/
-  router.post('/auth/facebook', $.AuthController.facebook);
-  router.post('/login', $.AuthController.login);
+  router.post('/auth/facebook', $.authController.facebook);
+  router.post('/login', $.authController.login);
 
   /********************************
    * Register
    ********************************/
-  router.post('/register/influencer', $.UserController.registerInfluencer);
-  router.post('/register/brand', $.UserController.registerBrand);
-  router.post('/confirm', $.UserController.confirmEmail);
+  router.post('/register/influencer', $.userController.registerInfluencer);
+  router.post('/register/brand', $.userController.registerBrand);
+  router.post('/confirm', $.userController.confirmEmail);
 
   /*********************************
    * User
    *********************************/
-  router.get('/me', auth(), $.UserController.profile);
+  router.get('/me', auth(), $.userController.profile);
 
   /*********************************
    * File Demo
    *********************************/
 
-  router.get('/file_demo', $.FileDemoController.listAll);
-  router.post('/file_demo', upload.single('file'), $.FileDemoController.uploadSingle);
-  router.get('/file_demo/:id', $.FileDemoController.getOne);
+  router.get('/file_demo', $.fileDemoController.listAll);
+  router.post('/file_demo', upload.single('file'), $.fileDemoController.uploadSingle);
+  router.get('/file_demo/:id', $.fileDemoController.getOne);
 
   return router;
 };
