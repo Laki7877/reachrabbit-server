@@ -6,7 +6,7 @@
  */
 'use strict';
 
-require('dotenv').config();
+require('dotenv-extended').load();
 process.env.NODE_ENV = 'test';
 
 global.chai   = require('chai');

@@ -4,7 +4,7 @@
  * @author     Poon Wu <poon.wuthi@gmail.com>
  * @since      0.0.1
  */
-require('dotenv').config();
+require('dotenv-extended').load();
 var path = require('path');
 var basePath = 'api';
 

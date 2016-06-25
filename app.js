@@ -8,7 +8,7 @@
 'use strict';
 
 // set process.env from .env
-// require('dotenv').config();
+// require('dotenv-extended').load();
 
 
 // set default config folder
