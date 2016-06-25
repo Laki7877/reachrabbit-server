@@ -2,13 +2,14 @@
  * Handle all authentication endpoints
  *
  * @author     Poon Wu <poon.wuthi@gmail.com>
+ * @fixer      Pat Sabpisa <ssabpisa@me.com>
  * @since      0.0.1
  */
 'use strict';
 
 var Authom      = require('authom'),
     moment      = require('moment'),
-    AuthService = require('../services/AuthService'),
+    AuthService = require('../services/authService'),
     FacebookService = require('../services/FacebookService'),
     UserService = require('../services/UserService');
 
