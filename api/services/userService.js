@@ -7,7 +7,7 @@
 'use strict';
 
 var User    = require('../models').User,
-    service = require('./CrudService')(User); // inherit from crudService
+    service = require('./crudService')(User); // inherit from crudService
 
 /**
  * Creates an influencer.
@@ -16,7 +16,7 @@ var User    = require('../models').User,
  * @param      {Function}  done    The done
  */
 service.createInfluencer = function(user, done) {
-  var user = _.pick(user, ['email', 'contactNumber', 'facebook', 'name']);
+  user = _.pick(user, ['email', 'contactNumber', 'facebook', 'name']);
   user.role = 'influencer';
   user.confirm = false;
 
@@ -35,7 +35,7 @@ service.createInfluencer = function(user, done) {
  * @param      {Function}  done    The done
  */
 service.createBrand = function(user, done) {
-  var user = _.pick(user, ['email', 'brandName', 'contactNumber', 'facebook', 'name', 'password']);
+  user = _.pick(user, ['email', 'brandName', 'contactNumber', 'facebook', 'name', 'password']);
   user.role = 'brand';
   user.confirm = false;
 
