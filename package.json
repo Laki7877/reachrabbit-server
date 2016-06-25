@@ -65,7 +65,8 @@
     "start": "node app.js",
     "test": "istanbul test node_modules/mocha/bin/_mocha --opts test/mocha.opts || true",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha --opts test/mocha.opts || true",
-    "jshint": "gulp lint"
+    "jshint": "gulp lint",
+    "postinstall": "node node_modules/gulp/bin/gulp.js db:drop && node node_modules/gulp/bin/gulp.js db:sync"
   },
   "repository": {
     "type": "git",
