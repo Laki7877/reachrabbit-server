@@ -2,12 +2,14 @@
  * Express app entry point
  *
  * @author     Poon Wu <poon.wuthi@gmail.com>
+ * @fixer      Pat Sabpisa <ssabpisa@me.com>
  * @since      0.0.1
  */
 'use strict';
 
 // set process.env from .env
-require('dotenv').config();
+// require('dotenv').config();
+
 
 // set default config folder
 process.env.NODE_CONFIG_DIR = './api/config';
@@ -49,8 +51,10 @@ if(process.env.NODE_ENV === 'development') {
 }
 // production mode
 if(process.env.NODE_ENV === 'production') {
-  var accessLog = fs.createWriteStream(path.join(__dirname, 'log/access.log'), {flags: 'a'});
-  app.use(morgan('combined', { stream: accessLog })); // log express to file
+  // don't log express to file in production because its messy
+  // var accessLog = fs.createWriteStream(path.join(__dirname, 'log/access.log'), {flags: 'a'});
+  // log to stdout
+  app.use(morgan('common'));
 }
 
 app.use(router()); // api route
