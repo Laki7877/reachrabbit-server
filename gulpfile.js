@@ -9,7 +9,6 @@
 require('dotenv-extended').load();
 
 var _       = require('lodash'),
-  async     = require('async'),
   fs        = require('fs'),
   args      = require('yargs').argv,
   gulp      = require('gulp-help')(require('gulp')),

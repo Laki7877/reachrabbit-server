@@ -46,7 +46,7 @@ module.exports = function(sequelize, DataTypes) {
         hashPassword(model, options, done);
       },
       beforeUpdate: function(model, options, done) {
-        console.log(options);
+        //TODO: implement hash password
         done(null, options);
         //hashPassword(model, options, done);
       }
@@ -90,7 +90,7 @@ module.exports = function(sequelize, DataTypes) {
           otherKey: 'campaignId',
           as: 'influencers',
           scope: {
-            role: 'inf'
+            role: 'influencer'
           },
           through: models.CampaignApplication
         });
@@ -101,7 +101,7 @@ module.exports = function(sequelize, DataTypes) {
           otherKey: 'campaignId',
           as: 'influencers',
           scope: {
-            role: 'inf'
+            role: 'influencer'
           },
           through: models.CampaignSubmission
         });
@@ -109,10 +109,12 @@ module.exports = function(sequelize, DataTypes) {
     },
     instanceMethods: {
       generateHash: function(password, done) {
-        return bcrypt.hash(password, 10, done);
+        var hash = Promise.promisify(bcrypt.hash, { context: bcrypt });
+        return hash(password, 10);
       },
       verifyPassword: function(password, done) {
-        return bcrypt.compare(password, this.password, done);
+        var compare = Promise.promisify(bcrypt.compare, { context: compare });
+        return compare(password, this.password);
       }
     }
   });

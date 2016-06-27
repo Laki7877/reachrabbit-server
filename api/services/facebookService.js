@@ -32,28 +32,50 @@ module.exports = {
       code: data.code,
       redirect_uri: data.redirectUri
     };
-    // make request to facebook gettoken
-    graph.authorize(_.extend(params, authConfig), function(err, token) {
-      if(err) {
-        return done(err);
-      }
-      return done(null, {
-        token: token.access_token
+
+    var authorize = Promise.promisify(graph.authorize, { context: graph });
+    return authorize(_.extend(params, authConfig))
+      .then(function(result) {
+        return {
+          token: result.access_token
+        };
       });
-    });
   },
   /**
    * Gets fb profile
    *
-   * @param      {String}    token   The access token
-   * @param      {Function}  done    The done
+   * @param      {String}    accessToken   The access token
+   * @return     {Object} Promise
    */
-  getProfile: function (token, done) {
+  getProfile: function (accessToken) {
     var params = {
-      access_token: token,
+      access_token: accessToken,
       fields: 'email,id,name,picture.width(300)'
     };
-    graph.get('me', params, done);
+    return new Promise(function(resolve, reject) {
+      graph.get('me', params, function(err, profile) {
+        if(err) {
+          return reject(err);
+        }
+        return resolve(profile);
+      });
+    });
+  },
+
+
+  getId: function (accessToken) {
+    var params = {
+      access_token: accessToken,
+      fields: 'id'
+    };
+    return new Promise(function(resolve, reject) {
+      graph.get('me', params, function(err, profile) {
+        if(err) {
+          return reject(err);
+        }
+        return resolve(profile.id);
+      });
+    });
   }
 
 };

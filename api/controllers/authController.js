@@ -11,7 +11,8 @@ var Authom      = require('authom'),
     moment      = require('moment'),
     authService = require('../services/authService'),
     facebookService = require('../services/facebookService'),
-    userService = require('../services/userService');
+    userService = require('../services/userService'),
+    userCrud    = require('../services/crudService')('User');
 
 /*************************************************
  * OAuth Services
@@ -21,43 +22,19 @@ var Authom      = require('authom'),
 function facebook(req, res, next) {
   async.waterfall([
     // get access token
-    function(cb) {
-      facebookService.getToken(req.body, cb);
+    function() {
+      return facebookService.getToken(req.body);
     },
     // get profile
-    function(data, cb) {
-      facebookService.getProfile(data.token, function(err, profile) {
-        if(err) {
-          return next(err);
-        }
-        return cb(null, _.extend(profile, data));
-      });
-    },
-    // try login with facebook
-    function(data, cb) {
-      authService.loginWithFB(data.id, function(err, token) {
-        if(err) {
-          return cb(null, data, false);
-        }
-        return cb(null, token, true);
-      });
+    function(data) {
+      return facebookService.getProfile(data.token)
+        .then(function(profile) {
+          return _.extend(profile, data);
+        });
     }
-  ], function(err, result, isLogin) {
-    if(err) {
-      return next(err);
-    }
-    // login mode
-    if(isLogin) {
-      return res.json({
-        token: result,
-        isLogin: isLogin
-      })
-    }
-    // create new mode
-    return res.json(_.extend(result, {
-      isLogin: isLogin
-    }));
-  });
+  ]).then(function(result) {
+    return res.json(result);
+  }).catch(next);
 }
 
 /**************************************************
@@ -73,14 +50,36 @@ function facebook(req, res, next) {
 function login(req, res, next) {
   var loginForm = _.pick(req.body, ['email', 'password']);
 
-  authService.login(loginForm.email, loginForm.password, function(err, token) {
-    if(err) return next(err);
-    return res.json({ token: token } );
-  });
+  // find user with email
+  userCrud.findOne({ email: loginForm.email })
+    .then(function(user) {
+      if(!user) {
+        throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
+      }
+      if(!user.confirm) {
+        throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Unconfirmed account');
+      }
+      return user.verifyPassword(loginForm.password)
+        .then(function(eq) {
+          return [user, eq];
+        });
+    })
+    .then(function(result) {
+      var user = result[0];
+      var eq = result[1];
+      if(!eq) {
+        throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
+      }
+      return authService.encode(user.id);
+    })
+    .then(function(jwt) {
+      return res.json({ token: jwt });
+    })
+    .catch(next);
 }
-
 // export module
 module.exports = {
   login: login,
+  loginWithFacebook: login,
   facebook: facebook
 };

@@ -7,8 +7,10 @@
 'use strict';
 
 var userService = require('../services/userService'),
+    crudService = require('../services/crudService')('User'),
     mailService = require('../services/mailService'),
     authService = require('../services/authService'),
+    facebookService = require('../services/facebookService'),
     config = require('config');
 
 /**
@@ -19,69 +21,72 @@ var userService = require('../services/userService'),
  * @param      {Function}  next    The next
  */
 function registerInfluencer(req, res, next) {
+  if(!req.body.token) {
+    return next(new errors.NotFoundError('Facebook Access Token'));
+  }
   // create new user
   async.waterfall([
-    // create unconfirmed inf
-    function(cb) {
-      userService.createInfluencer(req.body, cb);
+    // get facebook id by token
+    facebookService.getId(req.body.token),
+    function(id) {
+      return crudService.findOne({
+
+      })
     },
-    // generate Jwt hash
-    function(user, cb) {
-      authService.encode(user.email, function(err, hash) {
-        if(err) {
-          return cb(err);
-        }
-        return cb(null, user, hash);
-      });
+    // generate hash for email
+    function(user) {
+      return authService.encode(user.id)
+        .then(function(hash) {
+          return [user, hash];
+        })
     },
     // send mail
-    function(user, hash, cb) {
-      mailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
-        confirmUrl: config.EMAIL_CONFIRMATION_INF_URL + '?q=' + hash
+    function(result) {
+      var user = result[0];
+      var hash = result[1];
+      return mailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
+        confirmUrl: config.EMAIL_CONFIRMATION_INFLUENCER_URL + '?q=' + hash
       }).then(function() {
-        cb(null, user);
-      }).catch(cb);
+        return user;
+      });
     }
-  ], function(err, result) {
-    if(err) {
-      return next(err);
-    }
+  ]).then(function(result) {
     return res.json(result);
-  });
+  }).catch(next);
 }
-
+/**
+ * Create new brand
+ *
+ * @param      {Object}    req     The request
+ * @param      {Object}    res     The resource
+ * @param      {Function}  next    The next
+ */
 function registerBrand(req, res, next) {
   // create new user
   async.waterfall([
     // create unconfirmed brand
-    function(cb) {
-      userService.createBrand(req.body, cb);
-    },
-    // generate Jwt hash
-    function(user, cb) {
-      authService.encode(user.id, function(err, hash) {
-        if(err) {
-          return cb(err);
-        }
-        return cb(null, user, hash);
-      });
+    userService.createBrand(req.body, cb),
+    // generate hash for email
+    function(user) {
+      return authService.encode(user.id)
+        .then(function(hash) {
+          return [user, hash];
+        });
     },
     // send mail
-    function(user, hash, cb) {
-      mailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
-        confirmUrl: config.EMAIL_CONFIRMATION_BRAND_URL + '?q=' + hash
+    function(result) {
+      var user = result[0];
+      var hash = result[1];
+      return mailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
+        confirmUrl: config.EMAIL_CONFIRMATION_INFLUENCER_URL + '?q=' + hash
       }).then(function() {
-        cb(null, user);
-      }).catch(cb);
+        return user;
+      });
     }
-  ], function(err, result) {
-    if(err) {
-      return next(err);
-    }
+  ]).then(function(result) {
     return res.json(result);
-  });
+  }).catch(next);
 }
-
 /**
  * Confirm user account with email
  *
@@ -92,29 +97,25 @@ function registerBrand(req, res, next) {
 function confirmEmail(req, res, next) {
   // email token
   var token = req.body.token;
-
+  if(!token) {
+    return next(new errors.NotFoundError('Email token'));
+  }
   async.waterfall([
-    function(cb) {
-      authService.decode(token, cb);
-    },
-    function(id, cb) {
-      userService.update(id, {
+    authService.decode(token),
+    function(id) {
+      return userService.update(id, {
         confirm: true
-      }, cb);
+      });
     },
-    function(user, cb) {
-      authService.encode(user.id, cb);
+    function(user) {
+      return authService.encode(user.id);
     }
-  ], function(err, result) {
-      if(err) {
-        return next(err);
-      }
+  ]).then(function(result) {
       return res.json({
         token: result
       });
-  });
+  }).catch(next);
 }
-
 /**
  * Find current user's information
  *

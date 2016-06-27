@@ -1,6 +1,7 @@
 'use strict';
 var s3 = require('../services/S3Service.js'),
     fs = require('fs');
+
 function listAll(req, res, next) {
   var params = {Bucket: 'projectxtest'};
   s3.listObjectsV2(params, function(err, data) {

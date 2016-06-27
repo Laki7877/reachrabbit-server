@@ -1,5 +1,5 @@
 {
   "AUTHORIZATION_TYPE": "JWT",
   "EMAIL_CONFIRMATION_BRAND_URL": "http://localhost:8080/brand#/confirm",
-  "EMAIL_CONFIRMATION_INF_URL": "http://localhost:8080/inf#/confirm"
+  "EMAIL_CONFIRMATION_INFLUENCER_URL": "http://localhost:8080/influencer#/confirm"
 }

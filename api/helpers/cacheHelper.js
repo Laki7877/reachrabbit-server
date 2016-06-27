@@ -9,37 +9,31 @@
 
 var cache = {};
 
-/**
- * Get content from cache by key
- *
- * @param      {String}  key     The key
- * @return     {Object|String|Number}  stored object
- */
-function get(key) {
-  return cache[key];
-}
-
-/**
- * Put content to cache by key
- *
- * @param      {String}  key     The key
- * @param      {Object|String|Number}  object  The object
- */
-function put(key, object) {
-  cache[key] = object;
-}
-
-/**
- * Remove content from cache at key
- *
- * @param      {String}  key     The key
- */
-function remove(key) {
-  _.unset(cache, key);
-}
-
 module.exports = {
-  get: get,
-  put: put,
-  remove: remove
+  /**
+   * Get content from cache by key
+   *
+   * @param      {String}  key     The key
+   * @return     {Object|String|Number}  stored object
+   */
+  get: function(key) {
+    return cache[key];
+  },
+  /**
+   * Put content to cache by key
+   *
+   * @param      {String}  key     The key
+   * @param      {Object|String|Number}  object  The object
+   */
+  put: function(key, object) {
+    cache[key] = object;
+  }
+  /**
+   * Remove content from cache at key
+   *
+   * @param      {String}  key     The key
+   */
+  remove: function(key) {
+    _.unset(cache, key);
+  }
 };

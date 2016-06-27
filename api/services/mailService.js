@@ -58,15 +58,12 @@ var mailshooter = {
 
         mailgun.messages().send(data, function(err,body){
           if(err){
-            console.log('error', err)
             reject(err);
           }
           resolve(body);
         });
 
     });
-
-
     return promise;
   }
 };

@@ -7,7 +7,6 @@
  */
 'use strict';
 var models = require('../models');
-
 /**
  * Constructor
  *
@@ -27,81 +26,98 @@ function Service(modelName) {
     throw new Error('Invalid model');
   }
 }
-
 /**
  * Create an entity
  *
  * @param      {Object}    entity  entity to create
- * @param      {Function}  done    The done
  */
-Service.prototype.create = function(entity, done) {
+Service.prototype.create = function(entity) {
   // create entity
-  this.model.create(entity).then(function(created) {
-    done(null, created.get({plain:true}));
-  }).catch(done);
+  var self = this;
+  return new Promise(function(resolve, reject) {
+    self.model.create(entity)
+      .then(function(created) {
+        resolve(created.get({plain:true}));
+      }, reject);
+  });
 };
-
 /**
  * Read an entity by id
  *
  * @param      {String}    id      The identifier
- * @param      {Function}  done    The done
  */
-Service.prototype.read = function(id, done) {
+Service.prototype.read = function(id) {
   var self = this;
-  this.model.findById(id).then(function(entity) {
-    if(!entity) {
-      return done(new errors.NotFoundError(self.modelName + ' not found with the given id'));
-    }
-    done(null, entity);
-  }).catch(done);
+  return new Promise(function(resolve, reject) {
+    self.model.findById(id)
+      .then(function(entity) {
+        if(!entity) {
+          reject();
+        } else {
+          resolve(entity);
+        }
+      }, reject);
+  });
 };
-
 /**
  * Update an entity
  *
  * @param      {String}    id      The identifier
  * @param      {Object}    entity  The entity
- * @param      {Function}  done    The done
  */
-Service.prototype.update = function(id, entity, done) {
+Service.prototype.update = function(id, entity) {
   var self = this;
-  async.waterfall([
-    // find current entity
-    function(cb) {
-      self.read(id, cb);
-    },
-    // update with new values
-    function(existingEntity, cb) {
+  return async.waterfall([
+    self.read(id),
+    function(existingEntity) {
+      // override fields
       _.extend(existingEntity, entity);
-      existingEntity.save().then(function(updatedEntity) {
-        cb(null, updatedEntity);
-      }).catch(cb);
-    }
-  ], done);
-};
 
+      // save to entity
+      return existingEntity.save();
+    }
+  ]);
+};
 /**
  * Delete an entity
  *
  * @param      {String}    id      The identifier
  * @param      {Object}    entity  The entity
- * @param      {Function}  done    The done
  */
-Service.prototype.delete = function(id, done) {
+Service.prototype.delete = function(id) {
   var self = this;
-  async.waterfall([
+  return async.waterfall([
     // find current entity
-    function(cb) {
-      self.read(id, cb);
+    function() {
+      return self.read(id);
     },
     // delete the entity
-    function(existingEntity, cb) {
-      existingEntity.destroy().then(function() {
-        cb();
-      }).catch(cb);
+    function(existingEntity) {
+      return existingEntity.destroy();
     }
-  ], done);
+  ]);
+};
+/**
+ * Search for matches
+ *
+ * @param      {Object}  criteria  Where criteria
+ * @param      {Object}  options   Sequelize options
+ * @return     {Promise}  found object
+ */
+Service.prototype.find = function(criteria, options) {
+  var self = this;
+  return self.model.find(_.merge({}, options, { where: criteria}));
+};
+/**
+ * Search for first match
+ *
+ * @param      {Object}  criteria  Where criteria
+ * @param      {Object}  options   Sequelize options
+ * @return     {Promise}  found object
+ */
+Service.prototype.findOne = function(criteria, options) {
+  var self = this;
+  return self.model.findOne(_.merge({}, options, { where: criteria }));
 };
 
 // module export

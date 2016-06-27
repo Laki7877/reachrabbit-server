@@ -38,7 +38,7 @@ module.exports = function(sequelize, DataTypes) {
           foreignKey: 'campaignId',
           otherKey: 'userId',
           scope: {
-            role: 'inf'
+            role: 'influencer'
           },
           through: models.CampaignApplication
         });
@@ -48,7 +48,7 @@ module.exports = function(sequelize, DataTypes) {
           foreignKey: 'campaignId',
           otherKey: 'userId',
           scope: {
-            role: 'inf'
+            role: 'influencer'
           },
           through: models.CampaignSubmission
         });

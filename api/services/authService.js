@@ -5,131 +5,143 @@
  * @since      0.0.1
  */
 'use strict';
-var moment = require('moment'),
-    jwt    = require('jsonwebtoken'),
-    User = require('../models').User;
+var moment          = require('moment'),
+    jwt             = require('jsonwebtoken'),
+    User            = require('../models').User,
+    facebookService = require('./facebookService');
 
-/**
- * Encode json web token
- *
- * @param      {Object}    subject  Encoding subject
- * @param      {Function}  done     The done
- */
-function encode(subject, done) {
-  var options = {};
+var secret          = process.env.JWT_SECRET;
+var expirationTime  = process.env.JWT_EXPIRATION_TIME;
 
-  /**
-   * JWT standard payload form
-   *
-   * @type       {Object}
-   * @see        https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.4
-   */
-  var payload = {
-    sub: subject,
-    iat: moment().unix(),
-    exp: moment().add(process.env.JWT_EXPIRATION_TIME || 24, 'hours').unix()
-  };
-
-  // encode jwt
-  jwt.sign(payload, process.env.JWT_SECRET, options, done);
-}
-
-/**
- * Decode json web token
- *
- * @param      {String}    token   Json web token
- * @param      {Function}  done    The done
- */
-function decode(token, done) {
-  var options = {};
-  // decode jwt
-  jwt.verify(token, process.env.JWT_SECRET, options, function(err, decoded) {
-    if(err) return done(err);
-    done(null, decoded.sub);
-  });
-}
-
-/**
- * Login with email and password
- *
- * @param      {String}  email     The email
- * @param      {String}  password  The password
- * @returns    {String} JWT Token
- */
-function login(email, password, done) {
-  async.waterfall([
-    // find user by email
-    function(cb) {
-      User.findOne({
-        where: {
-          email: email
-        }
-      }).then(function(user) {
-        // no user found
-        if(_.isNil(user)) {
-          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
-        }
-        // not confirm yet
-        if(!user.confirm) {
-          return cb(new errors.HttpStatusError(httpStatus.NOT_ACCEPTABLE, 'user is not confirmed yet'));
-        }
-        return cb(null, user);
-      }).catch(cb);
-    },
-    // verify password
-    function(user, cb) {
-      user.verifyPassword(password, function(err, eq) {
-        if(err) return cb(err);
-
-        // not match
-        if(!eq) {
-          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
-        }
-        return cb(null, user.id);
-      });
-    },
-    // encode jwt
-    function(id, cb) {
-      encode(id, cb);
-    }
-  ], done);
-}
-
-/**
- * Login with facebook id
- *
- * @param      {String}    id      The identifier
- * @param      {Function}  done    The done
- */
-function loginWithFB(id, done) {
-  async.waterfall([
-    function(cb) {
-      User.findOne({
-        where: {
-          facebookId: id
-        }
-      }).then(function(user) {
-        // no user found
-        if(_.isNil(user)) {
-          return cb(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
-        }
-        // not confirm yet
-        /*if(!user.confirm) {
-            return cb(new errors.HttpStatusError(httpStatus.NOT_ACCEPTABLE, 'user is not confirmed yet'));
-        }*/
-        return cb(null, user.id);
-      }).catch(cb);
-    },
-    function(id, cb) {
-      encode(id, cb);
-    }
-  ], done);
-}
-
-// export modules
 module.exports = {
-  encode: encode,
-  decode: decode,
-  login: login,
-  loginWithFB: loginWithFB
+  /**
+   * Encode json web token
+   *
+   * @param      {Object}    subject  Encoding subject
+   * @returns    {Promise} (encodedJWTString)
+   */
+  encode: function(subject) {
+    var options = {};
+    /**
+     * JWT standard payload form
+     *
+     * @type       {Object}
+     * @see        https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.4
+     */
+    var payload = {
+      sub: subject,
+      iat: moment().unix(),
+      exp: moment().add(expirationTime, 'hours').unix()
+    };
+
+    // turn callback to promise
+    var sign = Promise.promisify(jwt.sign, { context: jwt });
+    return sign(payload, secret, options);
+  },
+  /**
+   * Decode json web token
+   *
+   * @param      {String}    token   Json web token
+   * @return     {Promise} (decodedSubject)
+   */
+  decode: function(token) {
+    var options = {};
+
+    // turn callback to promise
+    var verify = Promise.promisify(jwt.verify, { context: jwt });
+
+    return verify(token, secret, options).then(function(decoded) {
+      return decoded.sub;
+    });
+  },
+  /**
+   * Login with email and password
+   *
+   * @param      {String}  email     The email
+   * @param      {String}  password  The password
+   * @return     {Promise} (jwtToken)
+   */
+  login: function(email, password) {
+    var self = this;
+    return async.waterfall([
+      // find user by email
+      function() {
+        return new Promise(function(resolve, reject) {
+          User.findOne({
+            where: {
+              email: email
+            }
+          }).then(function(user) {
+            // no user found
+            if(_.isNil(user)) {
+              return reject(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
+            }
+            // not confirm yet
+            if(!user.confirm) {
+               return reject(new errors.HttpStatusError(httpStatus.NOT_ACCEPTABLE, 'account is unconfirmed'));
+            }
+            return resolve(user);
+          }, reject);
+        });
+      },
+      // verify password
+      function(user) {
+        return new Promise(function(resolve, reject) {
+          user.verifyPassword(password)
+            .then(function(eq) {
+              if(!eq) {
+                return reject(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
+              }
+              return resolve(user.id);
+            }, reject);
+        });
+      },
+      // encode jwt
+      function(id) {
+        return self.encode(id);
+      }
+    ]);
+  },
+  /**
+   * Login with facebook access token
+   *
+   * @param      {String}    accessToken      Facebook access_token
+   * @param      {Function}  done    The done
+   */
+  loginWithFacebook: function(accessToken) {
+    var self = this;
+    async.waterfall([
+      function() {
+        return facebookService.getProfile(accessToken)
+          .then(function(profile) {
+            return profile.id;
+          });
+      },
+      // fbid to userid
+      function(id) {
+        return new Promise(function(resolve, reject) {
+          User.findOne({
+            where: {
+              facebookId: id
+            }
+          })
+          .then(function(user) {
+            // no user found
+            if(_.isNil(user)) {
+              return reject(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
+            }
+            // not confirm yet
+            /*if(!user.confirm) {
+                return cb(new errors.HttpStatusError(httpStatus.NOT_ACCEPTABLE, 'user is not confirmed yet'));
+            }*/
+            return resolve(user.id);
+          });
+        });
+      },
+      // userid to jwt
+      function(id) {
+        return self.encode(id);
+      }
+    ]);
+  }
 };

@@ -6,46 +6,43 @@
  */
 'use strict';
 
-var User    = require('../models').User,
-    service = require('./crudService')(User); // inherit from crudService
+var User        = require('../models').User,
+    userCrud = require('./crudService')(User);
 
-/**
- * Creates an influencer.
- *
- * @param      {Object}    user    The user
- * @param      {Function}  done    The done
- */
-service.createInfluencer = function(user, done) {
-  user = _.pick(user, ['email', 'contactNumber', 'facebook', 'name']);
-  user.role = 'influencer';
-  user.confirm = false;
+module.exports = {
+  /**
+   * Creates an influencer.
+   *
+   * @param      {Object}    user    The user
+   * @param      {Function}  done    The done
+   */
+  createInfluencer: function(user) {
+    user = _.pick(user, ['email', 'contactNumber', 'facebook', 'name', 'password']);
+    user.role = 'influencer';
+    user.confirm = false;
 
-  service.create(user, function(err, user) {
-    if(err) {
-      return done(err);
-    }
-    return done(null, _.omit(user, ['password']));
-  });
+    // create influencer
+    return userCrud.create(user)
+      .then(function(user) {
+        // omit password
+        return _.omit(user, ['password']);
+      });
+  },
+  /**
+   * Creates an brand.
+   *
+   * @param      {Object}    user    The user
+   * @param      {Function}  done    The done
+   */
+  createBrand: function(user) {
+    user = _.pick(user, ['email', 'brandName', 'contactNumber', 'name', 'password']);
+    user.role = 'brand';
+    user.confirm = false;
+
+    return userCrud.create(user)
+      .then(function(user) {
+        // omit password
+        return _.omit(user, ['password']);
+      });
+  }
 };
-
-/**
- * Creates an brand.
- *
- * @param      {Object}    user    The user
- * @param      {Function}  done    The done
- */
-service.createBrand = function(user, done) {
-  user = _.pick(user, ['email', 'brandName', 'contactNumber', 'facebook', 'name', 'password']);
-  user.role = 'brand';
-  user.confirm = false;
-
-  service.create(user, function(err, user) {
-    if(err) {
-      return done(err);
-    }
-    return done(null, _.omit(user, ['password']));
-  });
-};
-
-// export service
-module.exports = service;
