@@ -76,10 +76,6 @@ module.exports = {
             if(_.isNil(user)) {
               return reject(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
             }
-            // not confirm yet
-            if(!user.confirm) {
-               return reject(new errors.HttpStatusError(httpStatus.NOT_ACCEPTABLE, 'account is unconfirmed'));
-            }
             return resolve(user);
           }, reject);
         });
@@ -130,10 +126,6 @@ module.exports = {
             if(_.isNil(user)) {
               return reject(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
             }
-            // not confirm yet
-            /*if(!user.confirm) {
-                return cb(new errors.HttpStatusError(httpStatus.NOT_ACCEPTABLE, 'user is not confirmed yet'));
-            }*/
             return resolve(user.id);
           });
         });
