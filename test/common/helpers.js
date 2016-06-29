@@ -6,11 +6,11 @@
  */
 'use strict';
 
-var models    = require('../../api/models'),
-    sequelize = models.sequelize,
-    request   = require('supertest'),
+var request   = require('supertest'),
     server    = require('../../app'),
-    fixtures  = require('sequelize-fixtures');
+    fixtures  = require('sequelize-fixtures'),
+    models    = require('../../api/models'),
+    sequelize = models.sequelize;
 
 // create api base
 var api = request(server);
@@ -25,9 +25,7 @@ function resetDB() {
     .then(function() {
       return sequelize.sync({logging: false});
     }).then(function() {
-      return fixtures.loadFile('test/common/fixtures/**/*.json', models, {
-        log: function() {}
-      });
+      return fixtures.loadFile('test/common/fixtures/**/*.json', models);
     });
 }
 

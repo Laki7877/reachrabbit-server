@@ -20,6 +20,7 @@
     "dotenv-extended": "^1.0.1",
     "errorhandler": "^1.4.3",
     "express": "^4.13.4",
+    "express-jsonschema": "^1.1.0",
     "fbgraph": "^1.2.0",
     "handlebars": "^4.0.5",
     "http-status": "^0.2.3",

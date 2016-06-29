@@ -27,7 +27,7 @@ module.exports = {
    */
   put: function(key, object) {
     cache[key] = object;
-  }
+  },
   /**
    * Remove content from cache at key
    *

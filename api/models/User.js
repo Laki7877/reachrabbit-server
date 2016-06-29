@@ -26,29 +26,25 @@ module.exports = function(sequelize, DataTypes) {
     brandName: DataTypes.STRING,
     contactNumber: DataTypes.STRING,
     password: DataTypes.STRING,
-    facebookId: DataTypes.STRING,
-    facebookToken: DataTypes.STRING,
     confirm: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
-    },
-    picture: DataTypes.STRING
+    }
   }, {
     hooks: {
-      beforeBulkCreate: function(models, options, done) {
-        hashPasswords(models, options, done);
+      beforeCreate: function(instance, options) {
+        return instance.generateHash(instance.password).then(function(hashedPassword) {
+          instance.password = hashedPassword;
+          return options;
+        })
       },
-      beforeBulkUpdate: function(models, options, done) {
-        //hashPasswords(models, options, done);
-        done(null, options);
-      },
-      beforeCreate: function(model, options, done) {
-        hashPassword(model, options, done);
-      },
-      beforeUpdate: function(model, options, done) {
-        //TODO: implement hash password
-        done(null, options);
-        //hashPassword(model, options, done);
+      beforeUpdate: function(instance, options) {
+        if(instance.change('password')) {
+          return instance.generateHash(instance.dataValues.password).then(function(hashedPassword) {
+            instance.password = hashedPassword;
+            return options;
+          });
+        }
       }
     },
     classMethods: {
@@ -108,11 +104,11 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     instanceMethods: {
-      generateHash: function(password, done) {
+      generateHash: function(password) {
         var hash = Promise.promisify(bcrypt.hash, { context: bcrypt });
         return hash(password, 10);
       },
-      verifyPassword: function(password, done) {
+      verifyPassword: function(password) {
         var compare = Promise.promisify(bcrypt.compare, { context: compare });
         return compare(password, this.password);
       }
@@ -121,47 +117,3 @@ module.exports = function(sequelize, DataTypes) {
 
   return User;
 };
-
-/**
- * Hash password with model generateHash
- *
- * @param      {object}    model    The model
- * @param      {object}    options  The options
- * @param      {Function}  done     The done
- */
-function hashPassword(model, options, done) {
-  if(!_.isNil(model.password)) {
-    model.generateHash(model.password, function(err, encryptedPassword) {
-      if(err) {
-        return done(err);
-      }
-      model.password = encryptedPassword;
-      return done(null, options);
-    });
-  } else {
-    return done(null, options);
-  }
-}
-
-/**
- * Hash password for array of models
- *
- * @param      {array}    models   The models
- * @param      {object}    options  The options
- * @param      {Function}  done     The done
- */
-function hashPasswords(models, options, done) {
-  var tasks = [];
-  // build hash password tasks for all models
-  _.forEach(models, function(model) {
-    tasks.push(function(cb) {
-      hashPassword(model, options, cb);
-    });
-  });
-  return async.parallel(tasks, function(err, results) {
-    if(err) {
-      return done(err);
-    }
-    return done(null, options);
-  });
-}

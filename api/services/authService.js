@@ -7,7 +7,7 @@
 'use strict';
 var moment          = require('moment'),
     jwt             = require('jsonwebtoken'),
-    User            = require('../models').User,
+    userCrud        = require('./crudService')('User'),
     facebookService = require('./facebookService');
 
 var secret          = process.env.JWT_SECRET;
@@ -59,81 +59,46 @@ module.exports = {
    *
    * @param      {String}  email     The email
    * @param      {String}  password  The password
-   * @return     {Promise} (jwtToken)
+   * @return     {Promise} (token)
    */
   login: function(email, password) {
     var self = this;
-    return async.waterfall([
-      // find user by email
-      function() {
-        return new Promise(function(resolve, reject) {
-          User.findOne({
-            where: {
-              email: email
+    return userCrud.findOne({ email: email })
+      .then(function(user) {
+        // no user found
+        if(!user) {
+          throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email or password');
+        }
+        return user;
+      })
+      .then(function(user) {
+        return user.verifyPassword(password)
+          .then(function(eq) {
+            //not equal
+            if(!eq) {
+              throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
             }
-          }).then(function(user) {
-            // no user found
-            if(_.isNil(user)) {
-              return reject(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
-            }
-            return resolve(user);
-          }, reject);
-        });
-      },
-      // verify password
-      function(user) {
-        return new Promise(function(resolve, reject) {
-          user.verifyPassword(password)
-            .then(function(eq) {
-              if(!eq) {
-                return reject(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
-              }
-              return resolve(user.id);
-            }, reject);
-        });
-      },
-      // encode jwt
-      function(id) {
+            return user.id;
+          })
+      })
+      .then(function(id) {
         return self.encode(id);
-      }
-    ]);
+      });
   },
   /**
-   * Login with facebook access token
+   * Login with oauth
    *
    * @param      {String}    accessToken      Facebook access_token
    * @param      {Function}  done    The done
    */
   loginWithFacebook: function(accessToken) {
     var self = this;
-    async.waterfall([
-      function() {
-        return facebookService.getProfile(accessToken)
-          .then(function(profile) {
-            return profile.id;
-          });
-      },
-      // fbid to userid
-      function(id) {
-        return new Promise(function(resolve, reject) {
-          User.findOne({
-            where: {
-              facebookId: id
-            }
-          })
-          .then(function(user) {
-            // no user found
-            if(_.isNil(user)) {
-              return reject(new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password'));
-            }
-            return resolve(user.id);
-          });
-        });
-      },
-      // userid to jwt
-      function(id) {
-        return self.encode(id);
-      }
-    ]);
+    //TODO: implement this as generic function
+  },
+
+  _loginWithOauth: function(type, accessToken) {
+    var self = this;
+    var opts = {};
+    //TODO: implement this
   }
 };

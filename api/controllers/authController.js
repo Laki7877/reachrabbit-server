@@ -56,9 +56,6 @@ function login(req, res, next) {
       if(!user) {
         throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
       }
-      if(!user.confirm) {
-        throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Unconfirmed account');
-      }
       return user.verifyPassword(loginForm.password)
         .then(function(eq) {
           return [user, eq];
@@ -80,6 +77,5 @@ function login(req, res, next) {
 // export module
 module.exports = {
   login: login,
-  loginWithFacebook: login,
   facebook: facebook
 };

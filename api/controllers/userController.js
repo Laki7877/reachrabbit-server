@@ -20,7 +20,7 @@ var userService = require('../services/userService'),
  * @param      {Object}    res     The resource
  * @param      {Function}  next    The next
  */
-function registerInfluencer(req, res, next) {
+function signupInfluencer(req, res, next) {
   if(!req.body.token) {
     return next(new errors.NotFoundError('Facebook Access Token'));
   }
@@ -39,16 +39,6 @@ function registerInfluencer(req, res, next) {
         .then(function(hash) {
           return [user, hash];
         })
-    },
-    // send mail
-    function(result) {
-      var user = result[0];
-      var hash = result[1];
-      return mailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
-        confirmUrl: config.EMAIL_CONFIRMATION_INFLUENCER_URL + '?q=' + hash
-      }).then(function() {
-        return user;
-      });
     }
   ]).then(function(result) {
     return res.json(result);
@@ -61,59 +51,13 @@ function registerInfluencer(req, res, next) {
  * @param      {Object}    res     The resource
  * @param      {Function}  next    The next
  */
-function registerBrand(req, res, next) {
+function signupBrand(req, res, next) {
+  var form = _.pick(req.body);
   // create new user
   async.waterfall([
-    // create unconfirmed brand
-    userService.createBrand(req.body, cb),
-    // generate hash for email
-    function(user) {
-      return authService.encode(user.id)
-        .then(function(hash) {
-          return [user, hash];
-        });
-    },
-    // send mail
-    function(result) {
-      var user = result[0];
-      var hash = result[1];
-      return mailService.send(user.email, 'ProjectX - Confirm ME', 'email_confirmation', {
-        confirmUrl: config.EMAIL_CONFIRMATION_INFLUENCER_URL + '?q=' + hash
-      }).then(function() {
-        return user;
-      });
-    }
+    userService.create(req.body)
   ]).then(function(result) {
     return res.json(result);
-  }).catch(next);
-}
-/**
- * Confirm user account with email
- *
- * @param      {Object}    req     The request
- * @param      {Object}    res     The resource
- * @param      {Function}  next    The next
- */
-function confirmEmail(req, res, next) {
-  // email token
-  var token = req.body.token;
-  if(!token) {
-    return next(new errors.NotFoundError('Email token'));
-  }
-  async.waterfall([
-    authService.decode(token),
-    function(id) {
-      return userService.update(id, {
-        confirm: true
-      });
-    },
-    function(user) {
-      return authService.encode(user.id);
-    }
-  ]).then(function(result) {
-      return res.json({
-        token: result
-      });
   }).catch(next);
 }
 /**
@@ -132,8 +76,7 @@ function profile(req, res, next) {
 }
 
 module.exports = {
-  registerInfluencer: registerInfluencer,
-  registerBrand: registerBrand,
-  confirmEmail: confirmEmail,
+  signupInfluencer: signupInfluencer,
+  signupBrand: signupBrand,
   profile: profile
 };

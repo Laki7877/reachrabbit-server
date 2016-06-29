@@ -29,9 +29,8 @@ module.exports = function() {
   /********************************
    * Register
    ********************************/
-  router.post('/register/influencer', $.userController.registerInfluencer);
-  router.post('/register/brand', $.userController.registerBrand);
-  router.post('/confirm', $.userController.confirmEmail);
+  router.post('/signup/influencer', $.userController.signupInfluencer);
+  router.post('/signup/brand', $.userController.signupBrand);
 
   /*********************************
    * User

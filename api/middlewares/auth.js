@@ -21,54 +21,47 @@ module.exports = function(roles) {
   return function(req, res, next) {
     var authHeader = req.get('Authorization');
 
-    // auth exist
-    if(!_.isNil(authHeader)) {
-      var splits = authHeader.split(' ');
-
-      // invalid authentication
-      if(splits.length !== 2 || splits[0] !== config.AUTHORIZATION_TYPE) {
-        return next(new errors.AuthenticationRequiredError('Invalid authorization header'));
-      }
-
-      // get auth token
-      var token = splits[1];
-      async.waterfall([
-        function(cb) {
-          // decode jwt token to userid
-          authService.decode(token, cb);
-        },
-        function(id, cb) {
-          // get user by id
-          userService.read(id, cb);
-        }
-      ], function(err, user) {
-        // internal error
-        if(err) {
-          return next(new errors.AuthenticationRequiredError(err));
-        }
-        // no user
-        if(!user) {
-          return next(new errors.AuthenticationRequiredError(err));
-        }
-        // check roles
-        if(!_.isNil(roles)) {
-          if(_.isString(roles) && user.role !== roles) {
-            // wrong role
-            return next(new errors.AuthenticationRequiredError(err));
-          } else if(_.isArray(roles) && !_.includes(roles, user.role)) {
-            // wrong role
-            return next(new errors.AuthenticationRequiredError(err));
-          } else {
-            // no roles?
-            return next(new errors.HttpStatusError(httpStatus.INTERNAL_SERVER_ERROR, 'role not found'));
-          }
-        }
-        req.user = user; // pass user forward
-        return next();
-      });
-    } else {
-      // no auth header
-      return next(new errors.AuthenticationRequiredError('Required authorization header'));
+    if(_.isNil(authHeader)) {
+      return next(new errors.AuthenticationRequiredError('No authorization header'));
     }
+
+    // auth exist
+    var splits = authHeader.split(' ');
+
+    // invalid authentication
+    if(splits.length !== 2 || splits[0] !== config.AUTHORIZATION_TYPE) {
+      return next(new errors.AuthenticationRequiredError('Token'));
+    }
+
+    // get auth token
+    var token = splits[1];
+
+    return authService.decode(token)
+      .then(function(id) {
+        return authService.read(id);
+      }, function(err) {
+        throw new errors.AuthenticationRequiredError('Token');
+      })
+      .then(function(user) {
+        if(!_.isNil(roles)) {
+          // single arg
+          if(_.isString(roles) && user.role !== roles) {
+            //not role
+            throw new errors.NotPermittedError('operation is forbidden');
+          }
+          // array args
+          if(_.isArray(roles) && !_.includes(roles, user.role)){
+            // not role
+            throw new errors.NotPermittedError('operation is forbidden');
+          }
+
+          throw new errors.NotImplementedError('invalid auth middleware args type');
+        }
+
+        // assign to req
+        req.user = user;
+        return next();
+      })
+      .catch(next);
   };
 };
