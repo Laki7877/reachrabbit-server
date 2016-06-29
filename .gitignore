@@ -38,3 +38,6 @@ node_modules
 # istanbul coverage
 coverage
 .tmp
+
+# eclipse project file
+.project
