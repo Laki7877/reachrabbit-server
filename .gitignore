@@ -41,3 +41,6 @@ coverage
 
 # eclipse project file
 .project
+
+# visual studio code
+.vscode
