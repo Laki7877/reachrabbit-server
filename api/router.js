@@ -2,6 +2,7 @@
  * Handle global API routing
  *
  * @author     Poon Wu <poon.wuthi@gmail.com>
+ * @author     Pat Sabpisal <ecegrid@gmail.com>
  * @since      0.0.1
  */
 'use strict';
@@ -24,6 +25,7 @@ module.exports = function() {
    * Authentication
    *********************************/
   router.post('/auth/facebook', $.authController.facebook);
+  router.get('/auth/google', $.authController.google);
   router.post('/login', $.authController.login);
 
   /********************************
@@ -43,7 +45,6 @@ module.exports = function() {
 
   router.get('/file_demo', $.fileDemoController.listAll);
   router.post('/file_demo', upload.single('file'), $.fileDemoController.uploadSingle);
-  router.get('/file_demo/:id', $.fileDemoController.getOne);
 
   return router;
 };

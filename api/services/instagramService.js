@@ -1,5 +1,8 @@
 /**
  * Wraps around instagram node driver
+ * Provide seamless pathway to get instagram data
+ * NOTE: this is not for getting data on user's behalf
+ * but uses our own authorization token
  *
  * @author     Pat Sabpisal <ecegrid@gmail.com>
  * @since      0.0.1
@@ -14,14 +17,5 @@ ig.use({ client_id: process.env.INSTAGRAM_CLIENT_ID,
 
 
 module.exports = {
-  /**
-   * Gets access token via explicit flow oauth.
-   *
-   * @param      {Object}    data    The data
-   * @param      {Function}  done    The done
-   */
-  getToken: function (data, done) {
-
-  }
 
 };

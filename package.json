@@ -22,6 +22,7 @@
     "express": "^4.13.4",
     "express-jsonschema": "^1.1.0",
     "fbgraph": "^1.2.0",
+    "googleapis": "^9.0.0",
     "handlebars": "^4.0.5",
     "http-status": "^0.2.3",
     "instagram-node": "^0.5.8",
