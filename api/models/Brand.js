@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     createdBy: {
       type: DataTypes.STRING
-    }
+    },
     updatedBy: {
       type: DataTypes.STRING
     }

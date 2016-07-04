@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING
     },
     picture: {
-      type: DataTypes.UUIDV4
+      type: DataTypes.UUIDV4,
       references: {
         model: 'Resource',
         key: 'resourceId'
