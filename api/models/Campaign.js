@@ -1,22 +1,18 @@
-/**
- * Campaign model
- *
- * @author     Poon Wu <poon.wuthi@gmail.com>
- * @since      0.0.2
- */
-'use strict';
+/* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
   var Campaign = sequelize.define('Campaign', {
-    id: {
-      type: DataTypes.UUID,
+    campaignId: {
+      type: DataTypes.UUIDV4,
+      allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    title: DataTypes.STRING,
+    title: {
+      type: DataTypes.STRING
+    },
     description: {
-      type: DataTypes.TEXT,
-      length: 'long'
+      type: DataTypes.TEXT
     },
     proposalDeadline: {
       type: DataTypes.DATE
@@ -24,36 +20,33 @@ module.exports = function(sequelize, DataTypes) {
     submissionDeadline: {
       type: DataTypes.DATE
     },
-    status: DataTypes.ENUM('draft', 'open', 'production', 'complete')
+    status: {
+      type: DataTypes.ENUM('draft','open','production','complete','delete')
+    },
+    createdBy: {
+      type: DataTypes.STRING
+    },
+    updatedBy: {
+      type: DataTypes.STRING
+    }
   }, {
+    tableName: 'Campaign',
+    paranoid: true,
     classMethods: {
       associate: function(models) {
-        // brand owner
-        Campaign.belongsTo(models.User, {
-          foreignKey: 'ownerId'
+        Campaign.belongsTo(models.Brand, {
+          foreignKey: 'brandId'
         });
-
-        // application
-        Campaign.belongsToMany(models.User, {
-          foreignKey: 'campaignId',
-          otherKey: 'userId',
-          scope: {
-            role: 'influencer'
-          },
-          through: models.CampaignApplication
+        Campaign.belongsTo(models.Category, {
+          foreignKey: 'categoryId'
         });
-
-        // submission
-        Campaign.belongsToMany(models.User, {
-          foreignKey: 'campaignId',
-          otherKey: 'userId',
-          scope: {
-            role: 'influencer'
-          },
-          through: models.CampaignSubmission
+        Campaign.belongsToMany(models.Media, {
+          through: models.CampaignMedia,
+          foreighKey: 'campaignId'
         });
       }
     }
   });
+
   return Campaign;
 };

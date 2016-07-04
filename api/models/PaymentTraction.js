@@ -1,8 +1,8 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('CampaignSubmission', {
-    submissionId: {
+  var PaymentTraction = sequelize.define('PaymentTraction', {
+    tractionId: {
       type: DataTypes.UUIDV4,
       allowNull: false,
       defaultValue: 'uuid_generate_v4()',
@@ -16,32 +16,42 @@ module.exports = function(sequelize, DataTypes) {
         key: 'campaignId'
       }
     },
-    influncerId: {
+    userId: {
       type: DataTypes.UUIDV4,
       allowNull: false,
       references: {
-        model: 'Influencer',
-        key: 'influencerId'
+        model: 'User',
+        key: 'userId'
       }
     },
-    title: {
-      type: DataTypes.STRING,
+    paymentType: {
+      type: DataTypes.ENUM('receive','pay','cancel'),
       allowNull: true
     },
-    description: {
-      type: DataTypes.TEXT,
+    paymentMethod: {
+      type: DataTypes.ENUM('bank transfer','cash'),
       allowNull: true
     },
     createdBy: {
       type: DataTypes.STRING,
       allowNull: true
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     updatedBy: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
-    tableName: 'CampaignSubmission',
+    tableName: 'PaymentTraction',
     paranoid: true
   });
+
+  return PaymentTraction;
 };
