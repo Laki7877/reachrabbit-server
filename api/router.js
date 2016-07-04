@@ -25,7 +25,7 @@ module.exports = function() {
    * Authentication
    *********************************/
   router.post('/auth/facebook', $.authController.facebook);
-  router.get('/auth/google', $.authController.google);
+  router.post('/auth/google', $.authController.google);
   router.post('/login', $.authController.login);
 
   /********************************

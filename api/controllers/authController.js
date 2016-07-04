@@ -21,7 +21,7 @@ var Authom      = require('authom'),
 // list of auth services
 
 function google(req,res,next){
-  googleService.getToken(req.query.code)
+  googleService.getToken(req.body.code)
   .then(function(gClient){
     res.send(gClient);
   },next);
