@@ -1,6 +1,7 @@
 'use strict';
 var s3 = require('../services/staticFileService'),
-    fs = require('fs');
+    fs = require('fs'),
+    Resource = require('../models').Resource;
 
 function listAll(req, res, next) {
   s3.list().then(function(data){
@@ -14,9 +15,20 @@ function uploadSingle(req, res, next) {
   var filename = s3.generateResourceId(req.file.originalname);
   console.log("uploading", filename)
   s3.uploadPublic(buffer, filename, req.file.mimetype).then(function(d){
-    res.send({
-      url : process.env.S3_PUBLIC_URL + filename
+    Resource.create({
+      resourcePath: filename,
+      resourceType: 'image',
+      createdBy: _.get(req.user, 'email')
+    }).then(function(resourceins){
+        // var resource = resourceins.get({
+        //   plain: true
+        // });
+
+        res.send({
+          url : process.env.S3_PUBLIC_URL + filename
+        });
     });
+
   }, function(err){
     console.log(err);
     next(err);

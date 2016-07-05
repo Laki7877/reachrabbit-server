@@ -11,11 +11,19 @@
 
 var ig = require('instagram-node').instagram();
 var redirect_uri = process.env.INSTAGRAM_REDIRECT_URI;
+var Promise = require('bluebird');
 
 ig.use({ client_id: process.env.INSTAGRAM_CLIENT_ID,
          client_secret: process.env.INSTAGRAM_CLIENT_SECRET });
 
 
 module.exports = {
-
+  authorize_user : function(code){
+    return new Promise(function(resolve, reject) {
+      ig.authorize_user(code, redirect_uri, function(err, result){
+          if(err) return reject(err);
+          resolve(result);
+      });
+    });
+  }
 };

@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING
     },
     resourceType: {
-      type: DataTypes.ENUM('pic','vdo')
+      type: DataTypes.ENUM('image','video', 'binary')
     },
     createdBy: {
       type: DataTypes.STRING

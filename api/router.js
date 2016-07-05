@@ -27,7 +27,9 @@ module.exports = function() {
    *********************************/
   router.post('/auth/facebook', $.authController.facebook);
   router.post('/auth/google', $.authController.google);
-  router.post('/login', $.authController.login);
+  router.post('/auth/instagram', $.authController.instagram);
+
+  router.post('/login/brand', $.authController.brandLogin);
 
   /********************************
    * Register
