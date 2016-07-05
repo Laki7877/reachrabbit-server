@@ -6,7 +6,8 @@ var helpers = require('../common/helpers'),
 
 var path = '/login';
 
-describe('POST ' + path, function() {
+describe('POST /login', function() {
+  var brand = require('../common/fixtures/brand.json');
   before(helpers.before);
   after(helpers.after);
 
@@ -16,7 +17,7 @@ describe('POST ' + path, function() {
         email: 'wrong@email.com',
         password: 'wrong'
       };
-      api.post(path)
+      api.post('/login')
         .send(user)
         .expect(400, done);
     });
@@ -24,18 +25,18 @@ describe('POST ' + path, function() {
 
   describe('Correct email/password', function() {
     var user = {
-        email: 'tester@gmail.com',
-        password: 'test1234'
+        email: 'lazada@gmail.com',
+        password: 'hackme'
     };
 
     it('should return 200', function(done) {
-      api.post(path)
+      api.post('/login')
         .send(user)
         .expect(200, done);
     });
 
     it('should return with correct token', function(done) {
-      api.post(path)
+      api.post('/login')
         .send(user)
         .expect(200)
         .end(function(err, res) {

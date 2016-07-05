@@ -1,0 +1,23 @@
+[
+  {
+    "model": "Media",
+    "data": {
+      "mediaName": "facebook",
+      "isActive": true
+    }
+  },
+  {
+    "model": "Media",
+    "data": {
+      "mediaName": "youtube",
+      "isActive": true
+    }
+  },
+  {
+    "model": "Media",
+    "data": {
+      "mediaName": "instagram",
+      "isActive": true
+    }
+  }
+]

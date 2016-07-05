@@ -1,0 +1,33 @@
+[
+  {
+    "model": "User",
+    "data": {
+      "email": "google@gmail.com",
+      "password": "hackme",
+    }
+  },
+  {
+    "model": "Influencer",
+    "data": {
+      "gender": "male",
+      "aboutYourself": "This is about me",
+      "User": {
+        "email": "google@gmail.com"
+      },
+      "Medias": [
+        {
+          "name": "facebook",
+          "_through": {
+            "socialId": "128000600963755"
+          }
+        },
+        {
+          "name": "youtube",
+          "_through": {
+            "socialId": "foo"
+          }
+        }
+      ]
+    }
+  }
+]
