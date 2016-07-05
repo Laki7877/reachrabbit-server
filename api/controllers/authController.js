@@ -138,6 +138,7 @@ function facebook(req, res, next) {
       console.log('id', profile.id)
       return facebookService.getAssociatedAccounts(profile.token, "me")
       .then(function(accounts){
+        if(!accounts) return _.extend({accounts: []},profile);
         return _.extend({
           accounts: accounts.data.map(function(ac){
             //confrom to same format as other endpoints
