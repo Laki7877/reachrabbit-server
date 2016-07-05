@@ -139,7 +139,11 @@ function facebook(req, res, next) {
       return facebookService.getAssociatedAccounts(profile.token, "me")
       .then(function(accounts){
         return _.extend({
-          accounts: accounts.data
+          accounts: accounts.data.map(function(ac){
+            //confrom to same format as other endpoints
+            ac.picture = ac.picture.data.url;
+            return ac;
+          })
         }, profile);
       });
     }

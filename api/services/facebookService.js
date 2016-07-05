@@ -70,7 +70,7 @@ module.exports = {
   getAssociatedAccounts: function (accessToken, userId) {
     var params = {
       access_token: accessToken,
-      fields: 'email,id,name,picture.width(300)'
+      fields: 'fan_count,name,id,picture.type(large)'
     };
     return new Promise(function(resolve, reject) {
       graph.get(userId+ "/accounts", params, function(err, accounts) {
