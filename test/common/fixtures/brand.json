@@ -1,0 +1,18 @@
+[
+  {
+    "model": "User",
+    "data": {
+      "email": "lazada@gmail.com",
+      "password": "hackme",
+    }
+  },
+  {
+    "model": "Brand",
+    "data": {
+      "brandName": "Lazada",
+      "User": {
+        "email": "lazada@gmail.com"
+      }
+    }
+  }
+]
