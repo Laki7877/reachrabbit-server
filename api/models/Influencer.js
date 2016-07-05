@@ -11,24 +11,6 @@ module.exports = function(sequelize, DataTypes) {
     gender: {
       type: DataTypes.ENUM('male','female','not specified')
     },
-    facebookId: {
-      type: DataTypes.STRING
-    },
-    facebookToken: {
-      type: DataTypes.STRING
-    },
-    youtubeId: {
-      type: DataTypes.STRING
-    },
-    youtubeToken: {
-      type: DataTypes.STRING
-    },
-    instagramId: {
-      type: DataTypes.STRING
-    },
-    instagramToken: {
-      type: DataTypes.STRING
-    },
     web: {
       type: DataTypes.STRING
     },
