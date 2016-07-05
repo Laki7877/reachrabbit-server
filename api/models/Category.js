@@ -3,9 +3,9 @@
 module.exports = function(sequelize, DataTypes) {
   var Category = sequelize.define('Category', {
     categoryId: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       allowNull: false,
-      defaultValue: 'uuid_generate_v4()',
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     categoryName: {
@@ -17,7 +17,14 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'Category',
-    paranoid: true
+    paranoid: true,
+    classMethods: {
+      associate: function(models) {
+        Category.hasMany(models.Resource, {
+          foreignKey: 'categoryId'
+        });
+      }
+    }
   });
 
   return Category;

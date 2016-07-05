@@ -3,32 +3,16 @@
 module.exports = function(sequelize, DataTypes) {
   var CampaignProposal = sequelize.define('CampaignProposal', {
     proposalId: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
-    },
-    campaignId: {
-      type: DataTypes.UUIDV4,
-      allowNull: false,
-      references: {
-        model: 'Campaign',
-        key: 'campaignId'
-      }
-    },
-    influencerId: {
-      type: DataTypes.UUIDV4,
-      allowNull: false,
-      references: {
-        model: 'Influencer',
-        key: 'influencerId'
-      }
     },
     description: {
       type: DataTypes.TEXT
     },
     proposePrice: {
-      type: 'NUMERIC'
+      type: DataTypes.DECIMAL(12,2)
     },
     status: {
       type: DataTypes.ENUM('propose','reject','needrevision')
@@ -41,7 +25,22 @@ module.exports = function(sequelize, DataTypes) {
     },
   }, {
     tableName: 'CampaignProposal',
-    paranoid: true
+    paranoid: true,
+    classMethods: {
+      associate: function(models) {
+        CampaignProposal.belongsTo(models.Campaign, {
+          foreignKey: 'campaignId'
+        });
+        CampaignProposal.belongsTo(models.Influencer, {
+          foreignKey: 'influencerId'
+        });
+        CampaignProposal.belongsToMany(models.Resource, {
+          through: models.CampaignProposalResource,
+          foreignKey: 'proposalId',
+          otherKey: 'resourceId'
+        });
+      }
+    }
   });
 
   return CampaignProposal;

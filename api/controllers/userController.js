@@ -31,14 +31,14 @@ function signupInfluencer(req, res, next) {
     function(id) {
       return crudService.findOne({
 
-      })
+      });
     },
     // generate hash for email
     function(user) {
       return authService.encode(user.id)
         .then(function(hash) {
           return [user, hash];
-        })
+        });
     }
   ]).then(function(result) {
     return res.json(result);

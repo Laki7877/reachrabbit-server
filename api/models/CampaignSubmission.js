@@ -1,47 +1,44 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('CampaignSubmission', {
+  var CampaignSubmission = sequelize.define('CampaignSubmission', {
     submissionId: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       allowNull: false,
-      defaultValue: 'uuid_generate_v4()',
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    campaignId: {
-      type: DataTypes.UUIDV4,
-      allowNull: false,
-      references: {
-        model: 'Campaign',
-        key: 'campaignId'
-      }
-    },
-    influncerId: {
-      type: DataTypes.UUIDV4,
-      allowNull: false,
-      references: {
-        model: 'Influencer',
-        key: 'influencerId'
-      }
-    },
     title: {
-      type: DataTypes.STRING,
-      allowNull: true
+      type: DataTypes.STRING
     },
     description: {
-      type: DataTypes.TEXT,
-      allowNull: true
+      type: DataTypes.TEXT
     },
     createdBy: {
-      type: DataTypes.STRING,
-      allowNull: true
+      type: DataTypes.STRING
     },
     updatedBy: {
-      type: DataTypes.STRING,
-      allowNull: true
+      type: DataTypes.STRING
     }
   }, {
     tableName: 'CampaignSubmission',
-    paranoid: true
+    paranoid: true,
+    classMethods: {
+      associate: function(models) {
+        CampaignSubmission.belongsTo(models.Campaign, {
+          foreignKey: 'campaignId'
+        });
+        CampaignSubmission.belongsTo(models.Influencer, {
+          foreignKey: 'influencerId'
+        });
+        CampaignSubmission.belongsToMany(models.Resource, {
+          through: models.CampaignSubmissionResource,
+          foreignKey: 'submissionId',
+          otherKey: 'resourceId'
+        });
+      }
+    }
   });
+
+  return CampaignSubmission;
 };
