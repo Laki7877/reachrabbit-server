@@ -2,7 +2,8 @@
  * Provide facebook method
  *
  * @author     Poon Wu <poon.wuthi@gmail.com>
- * @since      0.0.1
+ * @author     Pat Sabpisal <ecegrid@gmail.com>
+ * @since      0.0.2
  */
 'use strict';
 
@@ -58,6 +59,25 @@ module.exports = {
           return reject(err);
         }
         return resolve(profile);
+      });
+    });
+  },
+
+  /**
+   * Gets fb associated accounts
+   *
+   */
+  getAssociatedAccounts: function (accessToken, userId) {
+    var params = {
+      access_token: accessToken,
+      fields: 'email,id,name,picture.width(300)'
+    };
+    return new Promise(function(resolve, reject) {
+      graph.get(userId+ "/accounts", params, function(err, accounts) {
+        if(err) {
+          return reject(err);
+        }
+        return resolve(accounts);
       });
     });
   },

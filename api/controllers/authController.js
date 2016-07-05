@@ -37,17 +37,31 @@ function google(req, res, next) {
       });
       console.log(oAuthCli.credentials.access_token)
       var profileRq = youtube.channels.list({
-        'part': 'snippet',
+        'part': 'snippet,statistics',
         'mine': true
       }, function(err, response) {
+        console.log(response);
         var me = response.items[0];
         //TO POON : Just for "registration flow" ,
         //change provider to 'ahancer' or something
+
+        if(me.statistics.subscriberCount < process.env.YOUTUBE_SUBSCRIBER_THRESHOLD){
+          //TODO: May need to discuss error flow
+          return res.status(500).send({
+            "display": {
+              "title": "From server",
+              "message": "Sorry, " + me.snippet.title + ". You need at least " + process.env.YOUTUBE_SUBSCRIBER_THRESHOLD +
+               " subscribers on YouTube to signup. GTFO. Just kidding.."
+            },
+            "exception_code": "AC83-01"
+          });
+        }
 
         res.send({
           'provider': 'google',
           'name': me.snippet.title,
           'id': me.id,
+          'followers_count': me.statistics.subscriberCount,
           'picture': me.snippet.thumbnails.high.url,
           'token': oAuthCli.credentials.access_token
         });
@@ -64,16 +78,37 @@ function google(req, res, next) {
  *
  */
 function instagram(req, res, next) {
+  var token;
   igService.authorize_user(req.body.code)
     .then(function(result) {
+      token = result.access_token;
+      igService.applyToken(token);
+      return igService.user(result.user.id);
+    })
+    .then(function(user){
+      console.log(user);
+
+      if(user.counts.followed_by < process.env.INSTAGRAM_FOLLOWER_THRESHOLD){
+        //TODO: May need to discuss error flow
+        return res.status(500).send({
+          "display": {
+            "title": "From server",
+            "message": "Sorry, @" + user.username + ". You need at least " + process.env.INSTAGRAM_FOLLOWER_THRESHOLD +
+             " followers on Instagram to signup. GTFO. Just kidding.."
+          },
+          "exception_code": "AC83-01"
+        });
+      }
+
       //TO POON : Just for "registration flow" ,
       //change provider to 'ahancer' or something
-      return res.send({
+      return res.json({
         'provider': 'instagram',
-        'name': result.user.username,
-        'id': result.user.id,
-        'picture': result.user.profile_picture,
-        'token': result.access_token
+        'name': user.full_name,
+        'id': user.id,
+        'followers_count': user.counts.followed_by,
+        'picture': user.profile_picture,
+        'token': token
       });
     })
     .catch(next);
@@ -97,14 +132,26 @@ function facebook(req, res, next) {
         .then(function(profile) {
           return _.extend(profile, data);
         });
+    },
+    //get associated accounts
+    function(profile){
+      console.log('id', profile.id)
+      return facebookService.getAssociatedAccounts(profile.token, "me")
+      .then(function(accounts){
+        return _.extend({
+          accounts: accounts.data
+        }, profile);
+      });
     }
   ]).then(function(result) {
     //TO POON : Just for "registration flow" ,
     //change provider to 'ahancer' or something
-
-    return res.send({
+    console.log("done fb login")
+    console.log(result, 'fb');
+    return res.json({
       'provider': 'facebook',
       'name': result.name,
+      'accounts': result.accounts,
       'id': result.id,
       'email': result.email,
       'picture': result.picture.data.url,
