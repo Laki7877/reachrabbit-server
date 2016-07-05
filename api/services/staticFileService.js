@@ -8,6 +8,7 @@
 
 var AWS = require('aws-sdk');
 var Promise = require('bluebird');
+var md5 = require('md5');
 
 var s3 = new AWS.S3({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,
@@ -17,6 +18,14 @@ var s3 = new AWS.S3({
 var bucketName = process.env.S3_BUCKET_NAME;
 
 module.exports = {
+  /*
+  * generate preferably unique filename
+  */
+  generateResourceId: function(originalFileName){
+    var exts = originalFileName.split(".");
+    var ext = exts[exts.length - 1];
+    return md5(originalFileName, Date.now()) + "." + ext;
+  },
   /*
   * List file at path
   * {path} [String] - Path to list [NOT IMPLEMENTED]
@@ -49,9 +58,6 @@ module.exports = {
     };
 
     var promise = new Promise(function(resolve, reject) {
-      var params = {
-        Bucket: 'projectxtest'
-      };
       s3.putObject(params, function(err, data) {
         if (err) return reject(err);
         resolve(data);

@@ -15,6 +15,8 @@ var moment          = require('moment'),
     userService     = require('../services/userService'),
     cacheHelper     = require('../helpers/cacheHelper');
 
+var googleApi = require('googleapis');
+
 /*************************************************
  * OAuth Services
  *************************************************/
@@ -22,9 +24,25 @@ var moment          = require('moment'),
 
 function google(req, res, next){
   googleService.getToken(req.body.code)
-  .then(function(gClient){
-    res.send(gClient);
-  },next);
+  .then(function(oAuthCli){
+    var youtube = googleApi.youtube({ version: 'v3', auth: oAuthCli});
+    console.log(oAuthCli.credentials.access_token)
+    var profileRq = youtube.channels.list({
+      'part': 'snippet',
+      'mine': true
+    }, function(err, response){
+        var me = response.items[0];
+        res.send({
+          'name': me.snippet.title,
+          'id': me.id,
+          'picture': me.snippet.thumbnails.high.url,
+          'token': oAuthCli.credentials.access_token
+        });
+    });
+
+
+  })
+  .catch(next);
 }
 
 function facebook(req, res, next) {
@@ -41,7 +59,14 @@ function facebook(req, res, next) {
         });
     }
   ]).then(function(result) {
-    return res.json(result);
+    console.log('facebook', result);
+
+    return res.json({
+      'name': result.name,
+      'id': result.id,
+      'picture': result.picture.data.url,
+      'token': result.token
+    });
   }).catch(next);
 }
 
