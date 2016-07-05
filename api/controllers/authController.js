@@ -37,16 +37,31 @@ function google(req, res, next) {
       });
       console.log(oAuthCli.credentials.access_token)
       var profileRq = youtube.channels.list({
-        'part': 'snippet',
+        'part': 'snippet,statistics',
         'mine': true
       }, function(err, response) {
+        console.log(response);
         var me = response.items[0];
         //TO POON : Just for "registration flow" ,
         //change provider to 'ahancer' or something
+
+        if(me.statistics.subscriberCount < process.env.YOUTUBE_SUBSCRIBER_THRESHOLD){
+          //TODO: May need to discuss error flow
+          return res.status(500).send({
+            "display": {
+              "title": "From server",
+              "message": "Sorry, " + me.snippet.title + ". You need at least " + process.env.YOUTUBE_SUBSCRIBER_THRESHOLD +
+               " subscribers on YouTube to signup. GTFO. Just kidding.."
+            },
+            "exception_code": "AC83-01"
+          });
+        }
+
         res.send({
           'provider': 'google',
           'name': me.snippet.title,
           'id': me.id,
+          'followers_count': me.statistics.subscriberCount,
           'picture': me.snippet.thumbnails.high.url,
           'token': oAuthCli.credentials.access_token
         });
@@ -72,17 +87,19 @@ function instagram(req, res, next) {
     })
     .then(function(user){
       console.log(user);
+
       if(user.counts.followed_by < process.env.INSTAGRAM_FOLLOWER_THRESHOLD){
         //TODO: May need to discuss error flow
         return res.status(500).send({
           "display": {
             "title": "From server",
             "message": "Sorry, @" + user.username + ". You need at least " + process.env.INSTAGRAM_FOLLOWER_THRESHOLD +
-             " followers on instagram to signup. Fuck you. Just kidding.."
+             " followers on Instagram to signup. GTFO. Just kidding.."
           },
           "exception_code": "AC83-01"
         });
       }
+
       //TO POON : Just for "registration flow" ,
       //change provider to 'ahancer' or something
       return res.json({

@@ -13,8 +13,6 @@ var ig = require('instagram-node').instagram();
 var redirect_uri = process.env.INSTAGRAM_REDIRECT_URI;
 var Promise = require('bluebird');
 
-
-
 module.exports = {
   applyToken: function(token){
     ig.use({ client_id: process.env.INSTAGRAM_CLIENT_ID,
