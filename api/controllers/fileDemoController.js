@@ -1,15 +1,26 @@
 'use strict';
-var s3 = require('../services/S3Service.js'),
+var s3 = require('../services/staticFileService'),
     fs = require('fs');
 
 function listAll(req, res, next) {
-  s3.list().then(res.send, next);
+  s3.list().then(function(data){
+    res.send(data);
+  }, next);
 }
 
 function uploadSingle(req, res, next) {
+  console.log(req.file)
   var buffer = fs.readFileSync(req.file.path);
-  var filename = req.file.originalname;
-  s3.uploadPublic(buffer, filename, req.file.mimetype).then(res.send, next);
+  var filename = s3.generateResourceId(req.file.originalname);
+  console.log("uploading", filename)
+  s3.uploadPublic(buffer, filename, req.file.mimetype).then(function(d){
+    res.send({
+      url : process.env.S3_PUBLIC_URL + filename
+    });
+  }, function(err){
+    console.log(err);
+    next(err);
+  });
 }
 
 module.exports = {
