@@ -132,14 +132,26 @@ function facebook(req, res, next) {
         .then(function(profile) {
           return _.extend(profile, data);
         });
+    },
+    //get associated accounts
+    function(profile){
+      console.log('id', profile.id)
+      return facebookService.getAssociatedAccounts(profile.token, "me")
+      .then(function(accounts){
+        return _.extend({
+          accounts: accounts.data
+        }, profile);
+      });
     }
   ]).then(function(result) {
     //TO POON : Just for "registration flow" ,
     //change provider to 'ahancer' or something
-
+    console.log("done fb login")
+    console.log(result, 'fb');
     return res.json({
       'provider': 'facebook',
       'name': result.name,
+      'accounts': result.accounts,
       'id': result.id,
       'email': result.email,
       'picture': result.picture.data.url,
