@@ -3,9 +3,9 @@
 module.exports = function(sequelize, DataTypes) {
   var Resource = sequelize.define('Resource', {
     resourceId: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       allowNull: false,
-      defaultValue: 'uuid_generate_v4()',
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     resourcePath: {
@@ -17,18 +17,36 @@ module.exports = function(sequelize, DataTypes) {
     createdBy: {
       type: DataTypes.STRING
     },
-    createdAt: {
-      type: DataTypes.DATE
-    },
     updatedBy: {
       type: DataTypes.STRING
-    },
-    updatedAt: {
-      type: DataTypes.DATE
     }
   }, {
     tableName: 'Resource',
-    paranoid: true
+    paranoid: true,
+    classMethods: {
+      associate: function(models) {
+        Resource.belongsToMany(models.Campaign, {
+          through: models.CampaignResource,
+          foreighKey: 'resourceId',
+          otherKey: 'campaignId'
+        });
+        Resource.belongsToMany(models.CampaignProposal, {
+          through: models.CampaignProposalResource,
+          foreighKey: 'resourceId',
+          otherKey: 'proposalId'
+        });
+        Resource.belongsToMany(models.CampaignSubmission, {
+          through: models.CampaignSubmissionResource,
+          foreighKey: 'resourceId',
+          otherKey: 'submissionId'
+        });
+        Resource.belongsToMany(models.PaymentTransaction, {
+          through: models.PaymentResource,
+          foreighKey: 'resourceId',
+          otherKey: 'transactionId'
+        });
+      }
+    }
   });
 
   return Resource;

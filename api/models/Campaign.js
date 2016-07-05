@@ -3,7 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Campaign = sequelize.define('Campaign', {
     campaignId: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
@@ -42,7 +42,16 @@ module.exports = function(sequelize, DataTypes) {
         });
         Campaign.belongsToMany(models.Media, {
           through: models.CampaignMedia,
-          foreighKey: 'campaignId'
+          foreignKey: 'campaignId',
+          otherKey: 'mediaId'
+        });
+        Campaign.belongsToMany(models.Resource, {
+          through: models.CampaignResource,
+          foreignKey: 'campaignId',
+          otherKey: 'resourceId'
+        });
+        Campaign.hasMany(models.PaymentTransaction, {
+          foreignKey: 'campaignId'
         });
       }
     }

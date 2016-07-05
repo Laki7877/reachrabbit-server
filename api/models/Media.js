@@ -3,9 +3,9 @@
 module.exports = function(sequelize, DataTypes) {
   var Media = sequelize.define('Media', {
     mediaId: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       allowNull: false,
-      defaultValue: 'uuid_generate_v4()',
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     mediaName: {
@@ -17,7 +17,16 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'Media',
-    paranoid: true
+    paranoid: true,
+    classMethods: {
+      associate: function(models) {
+        Media.belongsToMany(models.Campaign, {
+          through: models.CampaignMedia,
+          foreighKey: 'mediaId',
+          otherKey: 'campaignId'
+        });
+      }
+    }
   });
 
   return Media;

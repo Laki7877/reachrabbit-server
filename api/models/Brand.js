@@ -3,7 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Brand = sequelize.define('Brand', {
     brandId: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
@@ -24,6 +24,9 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Brand.belongsTo(models.User, {
           foreignKey: 'userId'
+        });
+        Brand.hasMany(models.Campaign, {
+          foreignKey: 'brandId'
         });
       }
     }
