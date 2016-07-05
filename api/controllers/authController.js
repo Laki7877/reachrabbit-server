@@ -203,7 +203,7 @@ function brandLogin(req, res, next) {
     })
     // send
     .then(function(token) {
-      return res.json({
+      return res.send({
         token: token
       });
     })

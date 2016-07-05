@@ -1,3 +1,8 @@
+/**
+ * Handle file upstream and downstream with S3
+ *
+ * @since      0.0.1
+ */
 'use strict';
 var s3 = require('../services/staticFileService'),
     fs = require('fs'),
@@ -10,27 +15,23 @@ function listAll(req, res, next) {
 }
 
 function uploadSingle(req, res, next) {
-  console.log(req.file)
   var buffer = fs.readFileSync(req.file.path);
   var filename = s3.generateResourceId(req.file.originalname);
-  console.log("uploading", filename)
   s3.uploadPublic(buffer, filename, req.file.mimetype).then(function(d){
     Resource.create({
       resourcePath: filename,
       resourceType: 'image',
       createdBy: _.get(req.user, 'email')
-    }).then(function(resourceins){
-        // var resource = resourceins.get({
-        //   plain: true
-        // });
+    }).then(function(resourceInstance){
+        var resource = resourceInstance.get({ plain: true });
 
-        res.send({
+        // send resource
+        res.send(_.merge({
           url : process.env.S3_PUBLIC_URL + filename
-        });
+        }, resource ));
     });
 
   }, function(err){
-    console.log(err);
     next(err);
   });
 }
