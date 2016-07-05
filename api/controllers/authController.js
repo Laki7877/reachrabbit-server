@@ -66,12 +66,9 @@ function google(req, res, next) {
 function instagram(req, res, next) {
   igService.authorize_user(req.body.code)
     .then(function(result) {
-      console.log('ig', result);
-
       //TO POON : Just for "registration flow" ,
       //change provider to 'ahancer' or something
-
-      return res.json({
+      return res.send({
         'provider': 'instagram',
         'name': result.user.username,
         'id': result.user.id,
@@ -105,7 +102,7 @@ function facebook(req, res, next) {
     //TO POON : Just for "registration flow" ,
     //change provider to 'ahancer' or something
 
-    return res.json({
+    return res.send({
       'provider': 'facebook',
       'name': result.name,
       'id': result.id,
@@ -155,7 +152,7 @@ function brandLogin(req, res, next) {
     })
     // send
     .then(function(token) {
-      return res.json({
+      return res.send({
         token: token
       });
     })

@@ -22,7 +22,7 @@ module.exports = function(sequelize, DataTypes) {
     password: {
       type: DataTypes.STRING
     },
-    picture: {
+    profilePicture: {
       type: DataTypes.UUID,
       references: {
         model: 'Resource',

@@ -20,21 +20,38 @@ var brandService = require('../services/brandService'),
  * @param      {Function}  next    The next
  */
 function signupInfluencer(req, res, next) {
-
+  //TODO: implement this by 7/6/2016
 }
 /**
- * Create new brand
+ * Create new brand and automatically login to it (return token)
  *
  * @param      {Object}    req     The request
  * @param      {Object}    res     The resource
  * @param      {Function}  next    The next
  */
 function signupBrand(req, res, next) {
-  // create new user
-  brandService.create(req.body)
-    .then(function(brand) {
-      return res.json(brand);
-    });
+  // save profilePicture as resourceId
+  var form = _.omit(req.body, ['profilePicture']);
+  form.profilePicture = req.body.profilePicture.resourceId;
+
+  // create new brand
+  brandService.create(form)
+    .then(function(user) {
+      // cache user
+      cacheHelper.set(user.userId, {
+        user: user,
+        role: config.ROLE.BRAND
+      });
+      return authService.encode({
+        userId: user.userId
+      });
+    })
+    .then(function(token) {
+      return res.send({
+        token: token
+      });
+    })
+    .catch(next);
 }
 /**
  * Find current user's information
