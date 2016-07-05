@@ -47,7 +47,7 @@ function google(req, res, next) {
 
         if(me.statistics.subscriberCount < process.env.YOUTUBE_SUBSCRIBER_THRESHOLD){
           //TODO: May need to discuss error flow
-          return res.status(500).send({
+          return res.status(403).send({
             "display": {
               "title": "From server",
               "message": "Sorry, " + me.snippet.title + ". You need at least " + process.env.YOUTUBE_SUBSCRIBER_THRESHOLD +
@@ -90,7 +90,7 @@ function instagram(req, res, next) {
 
       if(user.counts.followed_by < process.env.INSTAGRAM_FOLLOWER_THRESHOLD){
         //TODO: May need to discuss error flow
-        return res.status(500).send({
+        return res.status(403).send({
           "display": {
             "title": "From server",
             "message": "Sorry, @" + user.username + ". You need at least " + process.env.INSTAGRAM_FOLLOWER_THRESHOLD +
