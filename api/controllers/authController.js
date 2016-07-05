@@ -43,7 +43,6 @@ function google(req, res, next) {
         var me = response.items[0];
         //TO POON : Just for "registration flow" ,
         //change provider to 'ahancer' or something
-
         res.send({
           'provider': 'google',
           'name': me.snippet.title,
@@ -64,19 +63,35 @@ function google(req, res, next) {
  *
  */
 function instagram(req, res, next) {
+  var token;
   igService.authorize_user(req.body.code)
     .then(function(result) {
-      console.log('ig', result);
-
+      token = result.access_token;
+      igService.applyToken(token);
+      return igService.user(result.user.id);
+    })
+    .then(function(user){
+      console.log(user);
+      if(user.counts.followed_by < process.env.INSTAGRAM_FOLLOWER_THRESHOLD){
+        //TODO: May need to discuss error flow
+        return res.status(500).send({
+          "display": {
+            "title": "From server",
+            "message": "Sorry, @" + user.username + ". You need at least " + process.env.INSTAGRAM_FOLLOWER_THRESHOLD +
+             " followers on instagram to signup. Fuck you. Just kidding.."
+          },
+          "exception_code": "AC83-01"
+        });
+      }
       //TO POON : Just for "registration flow" ,
       //change provider to 'ahancer' or something
-
       return res.json({
         'provider': 'instagram',
-        'name': result.user.username,
-        'id': result.user.id,
-        'picture': result.user.profile_picture,
-        'token': result.access_token
+        'name': user.full_name,
+        'id': user.id,
+        'followers_count': user.counts.followed_by,
+        'picture': user.profile_picture,
+        'token': token
       });
     })
     .catch(next);
