@@ -11,6 +11,7 @@ var Authom      = require('authom'),
     moment      = require('moment'),
     authService = require('../services/authService'),
     facebookService = require('../services/facebookService'),
+    googleService = require('../services/googleService'),
     userService = require('../services/userService'),
     userCrud    = require('../services/crudService')('User');
 
@@ -18,6 +19,13 @@ var Authom      = require('authom'),
  * OAuth Services
  *************************************************/
 // list of auth services
+
+function google(req,res,next){
+  googleService.getToken(req.body.code)
+  .then(function(gClient){
+    res.send(gClient);
+  },next);
+}
 
 function facebook(req, res, next) {
   async.waterfall([
@@ -56,9 +64,6 @@ function login(req, res, next) {
       if(!user) {
         throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
       }
-      if(!user.confirm) {
-        throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Unconfirmed account');
-      }
       return user.verifyPassword(loginForm.password)
         .then(function(eq) {
           return [user, eq];
@@ -80,6 +85,6 @@ function login(req, res, next) {
 // export module
 module.exports = {
   login: login,
-  loginWithFacebook: login,
-  facebook: facebook
+  facebook: facebook,
+  google: google
 };

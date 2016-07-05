@@ -1,11 +1,11 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('CampaignSubmission', {
-    submissionId: {
+  var CampaignProposal = sequelize.define('CampaignProposal', {
+    proposalId: {
       type: DataTypes.UUIDV4,
       allowNull: false,
-      defaultValue: 'uuid_generate_v4()',
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     campaignId: {
@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'campaignId'
       }
     },
-    influncerId: {
+    influencerId: {
       type: DataTypes.UUIDV4,
       allowNull: false,
       references: {
@@ -24,24 +24,25 @@ module.exports = function(sequelize, DataTypes) {
         key: 'influencerId'
       }
     },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
     description: {
-      type: DataTypes.TEXT,
-      allowNull: true
+      type: DataTypes.TEXT
+    },
+    proposePrice: {
+      type: 'NUMERIC'
+    },
+    status: {
+      type: DataTypes.ENUM('propose','reject','needrevision')
     },
     createdBy: {
-      type: DataTypes.STRING,
-      allowNull: true
+      type: DataTypes.STRING
     },
     updatedBy: {
-      type: DataTypes.STRING,
-      allowNull: true
-    }
+      type: DataTypes.STRING
+    },
   }, {
-    tableName: 'CampaignSubmission',
+    tableName: 'CampaignProposal',
     paranoid: true
   });
+
+  return CampaignProposal;
 };

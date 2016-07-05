@@ -71,17 +71,18 @@ gulp.task('pre-test', 'Setup pretest routine', function() {
 });
 
 // test
-gulp.task('test', 'Run mocha test API', function() {
+gulp.task('test', 'Run mocha test API', ['pre-test'], function() {
   var opts = {
     reporter: 'mocha-better-spec-reporter',
     timeout: 60000,
     require: ['./test/common/init.js']
   };
+
   return gulp.src(['test/**/*.spec.js'])
     .pipe(plugins.mocha(opts))
-    //.pipe(plugins.istanbul.writeReports())
-    //.pipe(plugins.istanbul.enforceThresholds({thresholds: {global: 90}}))
-    .once('error', function() {
+    .pipe(plugins.istanbul.writeReports())
+    .pipe(plugins.istanbul.enforceThresholds({thresholds: {global: 90}}))
+    .once('error', function(err) {
       process.exit(1);
     })
     .once('end', function() {

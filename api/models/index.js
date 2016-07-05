@@ -9,19 +9,10 @@
 var fs        = require('fs'),
     path      = require('path'),
     Sequelize = require('sequelize'),
-    _         = require('lodash'),
     basename  = path.basename(module.filename),
     db        = {},
-    uri       = '',
-    opts      = {};
-
-// test environment
-if(process.env.NODE_ENV === 'test') {
-  uri = process.env.DB_CONNECTION_URI_TEST;
-  opts.logging = false;
-} else {
-  uri = process.env.DB_CONNECTION_URI;
-}
+    uri       = process.env.DB_CONNECTION_URI,
+    opts      = { logging: false };
 
 // create sequelize object
 var sequelize = new Sequelize(uri, opts);

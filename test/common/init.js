@@ -6,9 +6,6 @@
  */
 'use strict';
 
-require('dotenv-extended').load();
-process.env.NODE_ENV = 'test';
-
 global.chai   = require('chai');
 global.should = chai.should();
 global.expect = chai.expect;
