@@ -7,8 +7,7 @@
  */
 'use strict';
 
-var Authom      = require('authom'),
-    moment      = require('moment'),
+var moment      = require('moment'),
     authService = require('../services/authService'),
     facebookService = require('../services/facebookService'),
     googleService = require('../services/googleService'),
@@ -66,16 +65,14 @@ function login(req, res, next) {
       }
       return user.verifyPassword(loginForm.password)
         .then(function(eq) {
-          return [user, eq];
+          if(!eq) {
+            throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
+          }
+          return user.getBrand();
         });
     })
-    .then(function(result) {
-      var user = result[0];
-      var eq = result[1];
-      if(!eq) {
-        throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
-      }
-      return authService.encode(user.id);
+    .then(function(influencer) {
+      return authService.encode({});
     })
     .then(function(jwt) {
       return res.json({ token: jwt });
