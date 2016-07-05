@@ -14,6 +14,7 @@ var _       = require('lodash'),
   gulp      = require('gulp-help')(require('gulp')),
   guppy     = require('git-guppy')(gulp),
   path      = require('path'),
+  fixtures  = require('sequelize-fixtures'),
   _exec     = require('child_process').exec,
   plugins   = require('gulp-load-plugins')({
       pattern: ['gulp-*', 'gulp.*'],
@@ -118,6 +119,10 @@ gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
 
 gulp.task('db:drop', 'Drop all tables', function() {
   return db.sequelize.drop({cascade: true});
+});
+
+gulp.task('db:seed', 'Seed all table', function() {
+  return fixtures.loadFile('api/seeders/**/*.json', db);
 });
 
 /***************************************************
