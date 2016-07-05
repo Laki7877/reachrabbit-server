@@ -6,11 +6,33 @@
  */
 'use strict';
 
-var User = require('../models').User;
+var User 	= require('../models').User,
+		Brand = require('../models').Brand;
 
 module.exports = {
-    
-    create: function(brand) {
-        
-    }
+  create: function(brand) {
+		var user = _.omit(brand, ['brandName']);
+		var brand = _.pick(brand, ['brandName']);
+
+		// create user with brand associated
+  	return User.create(_.extend({}, user, {
+			Brand: brand
+		}), { include: [Brand] }).then(function(user) {
+			return user.get({plain: true});
+		});
+  },
+  findByEmail: function(email) {
+    return User.findOne({
+      where: {
+        email: email
+      },
+      include: Brand
+    })
+    .then(function(user) {
+      if(!user.Brand) {
+        throw new errors.NotFoundError('User');
+      }
+      return user;
+    });
+  }
 };

@@ -54,10 +54,8 @@ module.exports = function(roles) {
             // not role
             throw new errors.NotPermittedError('operation is forbidden');
           }
-
           throw new errors.NotImplementedError('invalid auth middleware args type');
         }
-
         // assign to req
         req.user = user;
         return next();

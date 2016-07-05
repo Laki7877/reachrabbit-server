@@ -6,8 +6,7 @@
  */
 'use strict';
 
-var userService = require('../services/userService'),
-    crudService = require('../services/crudService')('User'),
+var brandService = require('../services/brandService'),
     mailService = require('../services/mailService'),
     authService = require('../services/authService'),
     facebookService = require('../services/facebookService'),
@@ -21,28 +20,7 @@ var userService = require('../services/userService'),
  * @param      {Function}  next    The next
  */
 function signupInfluencer(req, res, next) {
-  if(!req.body.token) {
-    return next(new errors.NotFoundError('Facebook Access Token'));
-  }
-  // create new user
-  async.waterfall([
-    // get facebook id by token
-    facebookService.getId(req.body.token),
-    function(id) {
-      return crudService.findOne({
 
-      });
-    },
-    // generate hash for email
-    function(user) {
-      return authService.encode(user.id)
-        .then(function(hash) {
-          return [user, hash];
-        });
-    }
-  ]).then(function(result) {
-    return res.json(result);
-  }).catch(next);
 }
 /**
  * Create new brand
@@ -52,13 +30,11 @@ function signupInfluencer(req, res, next) {
  * @param      {Function}  next    The next
  */
 function signupBrand(req, res, next) {
-  var form = _.pick(req.body);
   // create new user
-  async.waterfall([
-    userService.create(req.body)
-  ]).then(function(result) {
-    return res.json(result);
-  }).catch(next);
+  brandService.create(req.body)
+    .then(function(brand) {
+      return res.json(brand);
+    });
 }
 /**
  * Find current user's information

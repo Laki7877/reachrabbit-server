@@ -1,5 +1,10 @@
 {
   "AUTHORIZATION_TYPE": "JWT",
   "EMAIL_CONFIRMATION_BRAND_URL": "http://localhost:8080/brand#/confirm",
-  "EMAIL_CONFIRMATION_INFLUENCER_URL": "http://localhost:8080/influencer#/confirm"
+  "EMAIL_CONFIRMATION_INFLUENCER_URL": "http://localhost:8080/influencer#/confirm",
+  "ROLE": {
+    "BRAND": "brand",
+    "INFLUENCER": "influencer",
+    "ADMIN": "admin"
+  }
 }

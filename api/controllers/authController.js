@@ -7,19 +7,20 @@
  */
 'use strict';
 
-var moment      = require('moment'),
-    authService = require('../services/authService'),
+var moment          = require('moment'),
+    config          = require('config'),
+    authService     = require('../services/authService'),
     facebookService = require('../services/facebookService'),
-    googleService = require('../services/googleService'),
-    userService = require('../services/userService'),
-    userCrud    = require('../services/crudService')('User');
+    googleService   = require('../services/googleService'),
+    userService     = require('../services/userService'),
+    cacheHelper     = require('../helpers/cacheHelper');
 
 /*************************************************
  * OAuth Services
  *************************************************/
 // list of auth services
 
-function google(req,res,next){
+function google(req, res, next){
   googleService.getToken(req.body.code)
   .then(function(gClient){
     res.send(gClient);
@@ -48,40 +49,48 @@ function facebook(req, res, next) {
  * API Login Service
  *************************************************/
 /**
- * Login with site username/password
+ * Brand login with casual email/password
  *
  * @param      {object}    req     The request
  * @param      {object}    res     The resource
  * @param      {Function}  next    The next
  */
-function login(req, res, next) {
-  var loginForm = _.pick(req.body, ['email', 'password']);
+function brandLogin(req, res, next) {
+  var email = req.body.email;
+  var password = req.body.password;
 
-  // find user with email
-  userCrud.findOne({ email: loginForm.email })
+  // find brand by email
+  brandService.findByEmail(email)
+    // verify password
     .then(function(user) {
-      if(!user) {
-        throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
-      }
-      return user.verifyPassword(loginForm.password)
+      return user.verifyPassword()
         .then(function(eq) {
           if(!eq) {
             throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
           }
-          return user.getBrand();
+          return user;
         });
     })
-    .then(function(influencer) {
-      return authService.encode({});
+    // encode user
+    .then(function(user) {
+      // cache user
+      cacheHelper.set(user.userId, {
+        user: user,
+        role: config.ROLE.BRAND
+      });
+      return authService.encode({
+        userId: user.userId
+      });
     })
-    .then(function(jwt) {
-      return res.json({ token: jwt });
+    // send
+    .then(function(token) {
+      return res.json({ token: token });
     })
     .catch(next);
 }
 // export module
 module.exports = {
-  login: login,
+  brandLogin: brandLogin,
   facebook: facebook,
   google: google
 };

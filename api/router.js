@@ -8,6 +8,7 @@
 'use strict';
 
 var express   = require('express'),
+    validate  = require('express-jsonschema').validate,
     auth      = require('./middlewares/auth'),
     $         = require('./controllers');
 

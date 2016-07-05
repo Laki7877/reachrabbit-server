@@ -53,52 +53,5 @@ module.exports = {
     return verify(token, secret, options).then(function(decoded) {
       return decoded.sub;
     });
-  },
-  /**
-   * Login with email and password
-   *
-   * @param      {String}  email     The email
-   * @param      {String}  password  The password
-   * @return     {Promise} (token)
-   */
-  login: function(email, password) {
-    var self = this;
-    return userCrud.findOne({ email: email })
-      .then(function(user) {
-        // no user found
-        if(!user) {
-          throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email or password');
-        }
-        return user;
-      })
-      .then(function(user) {
-        return user.verifyPassword(password)
-          .then(function(eq) {
-            //not equal
-            if(!eq) {
-              throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
-            }
-            return user.id;
-          })
-      })
-      .then(function(id) {
-        return self.encode(id);
-      });
-  },
-  /**
-   * Login with oauth
-   *
-   * @param      {String}    accessToken      Facebook access_token
-   * @param      {Function}  done    The done
-   */
-  loginWithFacebook: function(accessToken) {
-    var self = this;
-    //TODO: implement this as generic function
-  },
-
-  _loginWithOauth: function(type, accessToken) {
-    var self = this;
-    var opts = {};
-    //TODO: implement this
   }
 };
