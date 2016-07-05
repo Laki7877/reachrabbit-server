@@ -19,10 +19,16 @@ function uploadSingle(req, res, next) {
       resourcePath: filename,
       resourceType: 'image',
       createdBy: _.get(req.user, 'email')
-    })
-    res.send({
-      url : process.env.S3_PUBLIC_URL + filename
+    }).then(function(resourceins){
+        // var resource = resourceins.get({
+        //   plain: true
+        // });
+
+        res.send({
+          url : process.env.S3_PUBLIC_URL + filename
+        });
     });
+
   }, function(err){
     console.log(err);
     next(err);

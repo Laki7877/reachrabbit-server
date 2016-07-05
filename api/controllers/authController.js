@@ -7,43 +7,86 @@
  */
 'use strict';
 
-var moment          = require('moment'),
-    config          = require('config'),
-    authService     = require('../services/authService'),
-    facebookService = require('../services/facebookService'),
-    googleService   = require('../services/googleService'),
-    userService     = require('../services/userService'),
-    cacheHelper     = require('../helpers/cacheHelper');
+var moment = require('moment'),
+  config = require('config'),
+  authService = require('../services/authService'),
+  facebookService = require('../services/facebookService'),
+  googleService = require('../services/googleService'),
+  igService = require('../services/instagramService'),
+  userService = require('../services/userService'),
+  cacheHelper = require('../helpers/cacheHelper');
 
 var googleApi = require('googleapis');
+var ig = require('instagram-node').instagram();
 
 /*************************************************
  * OAuth Services
  *************************************************/
-// list of auth services
 
-function google(req, res, next){
+/*
+ *  google OAuth flow
+ *
+ *
+ */
+function google(req, res, next) {
   googleService.getToken(req.body.code)
-  .then(function(oAuthCli){
-    var youtube = googleApi.youtube({ version: 'v3', auth: oAuthCli});
-    console.log(oAuthCli.credentials.access_token)
-    var profileRq = youtube.channels.list({
-      'part': 'snippet',
-      'mine': true
-    }, function(err, response){
+    .then(function(oAuthCli) {
+      var youtube = googleApi.youtube({
+        version: 'v3',
+        auth: oAuthCli
+      });
+      console.log(oAuthCli.credentials.access_token)
+      var profileRq = youtube.channels.list({
+        'part': 'snippet',
+        'mine': true
+      }, function(err, response) {
         var me = response.items[0];
+        //TO POON : Just for "registration flow" ,
+        //change provider to 'ahancer' or something
+
         res.send({
+          'provider': 'google',
           'name': me.snippet.title,
           'id': me.id,
           'picture': me.snippet.thumbnails.high.url,
           'token': oAuthCli.credentials.access_token
         });
-    });
+      });
 
 
-  })
-  .catch(next);
+    })
+    .catch(next);
 }
+
+/*
+ *  instagram OAuth flow
+ *
+ *
+ */
+function instagram(req, res, next) {
+  igService.authorize_user(req.body.code)
+    .then(function(result) {
+      console.log('ig', result);
+
+      //TO POON : Just for "registration flow" ,
+      //change provider to 'ahancer' or something
+
+      return res.json({
+        'provider': 'instagram',
+        'name': result.user.username,
+        'id': result.user.id,
+        'picture': result.user.profile_picture,
+        'token': result.access_token
+      });
+    })
+    .catch(next);
+}
+
+/*
+ *  facebook OAuth flow
+ *
+ *
+ */
 
 function facebook(req, res, next) {
   async.waterfall([
@@ -59,11 +102,14 @@ function facebook(req, res, next) {
         });
     }
   ]).then(function(result) {
-    console.log('facebook', result);
+    //TO POON : Just for "registration flow" ,
+    //change provider to 'ahancer' or something
 
     return res.json({
+      'provider': 'facebook',
       'name': result.name,
       'id': result.id,
+      'email': result.email,
       'picture': result.picture.data.url,
       'token': result.token
     });
@@ -90,7 +136,7 @@ function brandLogin(req, res, next) {
     .then(function(user) {
       return user.verifyPassword()
         .then(function(eq) {
-          if(!eq) {
+          if (!eq) {
             throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');
           }
           return user;
@@ -109,7 +155,9 @@ function brandLogin(req, res, next) {
     })
     // send
     .then(function(token) {
-      return res.json({ token: token });
+      return res.json({
+        token: token
+      });
     })
     .catch(next);
 }
@@ -117,5 +165,6 @@ function brandLogin(req, res, next) {
 module.exports = {
   brandLogin: brandLogin,
   facebook: facebook,
-  google: google
+  google: google,
+  instagram: instagram
 };
