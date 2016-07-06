@@ -10,14 +10,14 @@ var User 	= require('../models').User,
 		Brand = require('../models').Brand;
 
 module.exports = {
-  create: function(brand) {
+  create: function(brand, transaction) {
 		var user = _.omit(brand, ['brandName']);
 		var brand = _.pick(brand, ['brandName']);
 
 		// create user with brand associated
   	return User.create(_.extend({}, user, {
 			Brand: brand
-		}), { include: [Brand] }).then(function(user) {
+		}), { include: [Brand], transaction: transaction }).then(function(user) {
 			return user.get({plain: true});
 		});
   },
@@ -26,9 +26,12 @@ module.exports = {
       where: {
         email: email
       },
-      include: Brand
+      include: [Brand]
     })
     .then(function(user) {
+      if(!user) {
+        throw new errors.NotFoundError('User');
+      }
       if(!user.Brand) {
         throw new errors.NotFoundError('User');
       }

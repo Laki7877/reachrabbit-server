@@ -9,7 +9,10 @@
 
 var Redis = require('ioredis');
 var redis = new Redis(process.env.REDIS_URI, {
-  lazyConnect: true
+  lazyConnect: true,
+  retryStrategy: function(times) {
+    return false;
+  }
 });
 var lodis = {};
 
@@ -21,18 +24,27 @@ module.exports = {
    * @return     {Object|String|Number}  stored object
    */
   get: function(key) {
-    return redis.get(key)
-      .then(function(value) {
-        try {
-          return CJSON.parse(value);
-        }
-        catch(e) {
-          return value;
-        }
-      })
-      .catch(function(err) {
-        console.error(err);
-        return lodis[key];
+    return new Promise(function(resolve, reject) {
+      redis.get(key)
+        .then(function(value) {
+          try {
+            // try parse as object
+            var parsed = CJSON.parse(value);
+            resolve(parsed);
+          }
+          catch(e) {
+            // not object value
+            resolve(value);
+          }
+        })
+        .catch(function(err) {
+          // use lodis instead
+          if(_.has(lodis, key)) {
+            resolve(lodis[key]);
+          } else {
+            reject(err);
+          }
+        });
       });
   },
   /**

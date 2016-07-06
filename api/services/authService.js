@@ -7,8 +7,7 @@
 'use strict';
 var moment          = require('moment'),
     jwt             = require('jsonwebtoken'),
-    userCrud        = require('./crudService')('User'),
-    facebookService = require('./facebookService');
+    crypto          = require('crypto');
 
 var secret          = process.env.JWT_SECRET;
 var expirationTime  = process.env.JWT_EXPIRATION_TIME;
@@ -31,7 +30,8 @@ module.exports = {
     var payload = {
       sub: subject,
       iat: moment().unix(),
-      exp: moment().add(expirationTime, 'hours').unix()
+      exp: moment().add(expirationTime, 'hours').unix(),
+      hash: crypto.randomBytes(20).toString('hex') //make sure it is randomed
     };
 
     // turn callback to promise

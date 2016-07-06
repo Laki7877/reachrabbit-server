@@ -105,14 +105,6 @@ gulp.task('db:migrate:create', 'Create migration file', seqExecTask, {
   }
 });
 
-gulp.task('db:seed', 'Run specified seed', seqExecTask);
-gulp.task('db:seed:all', 'Run every seeder', seqExecTask);
-gulp.task('db:seed:undo', 'Delete data from the database', seqExecTask);
-gulp.task('db:seed:undo:all', 'Delete data from the database', seqExecTask);
-
-// create model using our own migration file
-gulp.task('model:create', 'Generate model', seqExecTask);
-
 gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
   return db.sequelize.sync();
 });
@@ -124,6 +116,8 @@ gulp.task('db:drop', 'Drop all tables', function() {
 gulp.task('db:seed', 'Seed all table', function() {
   return fixtures.loadFile('api/seeders/**/*.json', db);
 });
+
+gulp.task('db:drop:sync', 'Drop then sync database',['db:drop', 'db:sync']);
 
 /***************************************************
  * Application

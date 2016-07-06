@@ -14,6 +14,7 @@ var moment = require('moment'),
   googleService = require('../services/googleService'),
   igService = require('../services/instagramService'),
   userService = require('../services/userService'),
+  brandService = require('../services/brandService'),
   cacheHelper = require('../helpers/cacheHelper');
 
 var googleApi = require('googleapis');
@@ -35,7 +36,6 @@ function google(req, res, next) {
         version: 'v3',
         auth: oAuthCli
       });
-      console.log(oAuthCli.credentials.access_token)
       var profileRq = youtube.channels.list({
         'part': 'snippet,statistics',
         'mine': true
@@ -86,8 +86,6 @@ function instagram(req, res, next) {
       return igService.user(result.user.id);
     })
     .then(function(user){
-      console.log(user);
-
       if(user.counts.followed_by < process.env.INSTAGRAM_FOLLOWER_THRESHOLD){
         //TODO: May need to discuss error flow
         return res.status(403).send({
@@ -183,7 +181,7 @@ function brandLogin(req, res, next) {
   brandService.findByEmail(email)
     // verify password
     .then(function(user) {
-      return user.verifyPassword()
+      return user.verifyPassword(password)
         .then(function(eq) {
           if (!eq) {
             throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, 'Invalid email/password');

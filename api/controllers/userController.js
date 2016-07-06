@@ -10,6 +10,8 @@ var brandService = require('../services/brandService'),
     mailService = require('../services/mailService'),
     authService = require('../services/authService'),
     facebookService = require('../services/facebookService'),
+    cacheHelper = require('../helpers/cacheHelper'),
+    sequelize = require('../models').sequelize,
     config = require('config');
 
 /**
@@ -34,24 +36,28 @@ function signupBrand(req, res, next) {
   var form = _.omit(req.body, ['profilePicture']);
   form.profilePicture = req.body.profilePicture.resourceId;
 
-  // create new brand
-  brandService.create(form)
-    .then(function(user) {
-      // cache user
-      cacheHelper.set(user.userId, {
-        user: user,
-        role: config.ROLE.BRAND
+  // create transaction
+  sequelize.transaction(function(t) {
+    // create new brand
+    return brandService.create(form, t)
+      .then(function(user) {
+        // cache user
+        cacheHelper.set(user.userId, {
+          user: user,
+          role: config.ROLE.BRAND
+        });
+        return authService.encode({
+          userId: user.userId
+        });
+      })
+      .then(function(token) {
+        return { token: token };
       });
-      return authService.encode({
-        userId: user.userId
-      });
-    })
-    .then(function(token) {
-      return res.send({
-        token: token
-      });
-    })
-    .catch(next);
+  })
+  .then(function(result) {
+    return res.send(result);
+  })
+  .catch(next);
 }
 /**
  * Find current user's information
@@ -62,7 +68,7 @@ function signupBrand(req, res, next) {
  */
 function profile(req, res, next) {
   if(req.user) {
-    return res.json(req.user);
+    return res.send(req.user);
   } else {
     return next(new errors.NotFoundError('User not found'));
   }
