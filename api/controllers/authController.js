@@ -29,7 +29,6 @@ var ig = require('instagram-node').instagram();
 /*
  *  google OAuth flow
  *
- *
  */
 function google(req, res, next) {
   googleService.getToken(req.body.code)
