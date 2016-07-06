@@ -106,7 +106,7 @@ function instagram(req, res, next) {
       return igService.user(result.user.id);
     })
     .then(function(ig) {
-      return authService.findByMedia('instagram', ig.id)
+      return influencerService.findByMedia('instagram', ig.id)
         .then(function(user) {
           if(!user) {
             // not found

@@ -31,8 +31,15 @@ function signupInfluencer(req, res, next) {
     return influencerService.create(form)
       .then(function(user) {
         return authService.createTokenForInfluencer(user, true);
+      })
+      .then(function(token) {
+        return { token: token };
       });
-  });
+  })
+  .then(function(result) {
+    return res.send(result);
+  })
+  .catch(next);
 }
 /**
  * Create new brand and automatically login to it (return token)
