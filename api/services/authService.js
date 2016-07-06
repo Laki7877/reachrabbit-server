@@ -9,7 +9,7 @@ var moment          = require('moment'),
     jwt             = require('jsonwebtoken'),
     crypto          = require('crypto'),
     config          = require('config'),
-    Promise         = require('Promise'),
+    Promise         = require('bluebird'),
     cacheHelper     = require('../helpers/cacheHelper');
 
 var secret          = process.env.JWT_SECRET;
