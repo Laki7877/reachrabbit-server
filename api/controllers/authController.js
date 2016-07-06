@@ -85,7 +85,7 @@ function google(req, res, next) {
           'name': me.snippet.title,
           'id': me.id,
           'followers_count': me.statistics.subscriberCount,
-          'picture': me.snippet.thumbnails.high.url,
+          'picture': me.snippet.thumbnails.high,
           'token': oAuthCli.credentials.access_token
         });
       });
@@ -106,7 +106,7 @@ function instagram(req, res, next) {
       return igService.user(result.user.id);
     })
     .then(function(ig) {
-      return authService.findByMedia('instagram', ig.id)
+      return influencerService.findByMedia('instagram', ig.id)
         .then(function(user) {
           if(!user) {
             // not found
@@ -186,7 +186,7 @@ function facebook(req, res, next) {
         return _.extend({
           accounts: accounts.data.map(function(ac){
             //confrom to same format as other endpoints
-            ac.picture = ac.picture.data.url;
+            ac.picture = ac.picture.data
             return ac;
           })
         }, profile);
@@ -200,7 +200,7 @@ function facebook(req, res, next) {
         'accounts': result.accounts,
         'id': result.id,
         'email': result.email,
-        'picture': result.picture.data.url,
+        'picture': result.picture.data,
         'token': result.token
       });
     }).catch(next);
