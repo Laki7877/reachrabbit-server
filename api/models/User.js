@@ -1,6 +1,7 @@
 /* jshint indent: 2 */
-
-var bcrypt = require('bcryptjs');
+'use strict';
+var bcrypt = require('bcryptjs'),
+  Promise = require('bluebird');
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
@@ -43,10 +44,14 @@ module.exports = function(sequelize, DataTypes) {
     paranoid: true,
     hooks: {
       beforeCreate: function(instance, options) {
-        return instance.generateHash(instance.password).then(function(hashedPassword) {
-          instance.password = hashedPassword;
+        if(instance.password) {
+          return instance.generateHash(instance.password).then(function(hashedPassword) {
+            instance.password = hashedPassword;
+            return options;
+          });
+        } else {
           return options;
-        })
+        }
       },
       beforeUpdate: function(instance, options) {
         if(instance.change('password')) {
@@ -55,6 +60,7 @@ module.exports = function(sequelize, DataTypes) {
             return options;
           });
         }
+        return options;
       }
     },
     classMethods: {

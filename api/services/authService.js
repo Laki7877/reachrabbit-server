@@ -7,7 +7,10 @@
 'use strict';
 var moment          = require('moment'),
     jwt             = require('jsonwebtoken'),
-    crypto          = require('crypto');
+    crypto          = require('crypto'),
+    config          = require('config'),
+    Promise         = require('Promise'),
+    cacheHelper     = require('../helpers/cacheHelper');
 
 var secret          = process.env.JWT_SECRET;
 var expirationTime  = process.env.JWT_EXPIRATION_TIME;
@@ -52,6 +55,44 @@ module.exports = {
 
     return verify(token, secret, options).then(function(decoded) {
       return decoded.sub;
+    });
+  },
+  /**
+   * Creates a token for brand.
+   *
+   * @param      {Object}  user    The user
+   * @param      {Boolean}  cache   The cache (default=false)
+   * @return     {Promise}  JWT token
+   */
+  createTokenForBrand: function(user, cache) {
+    // cache user
+    if(cache) {
+      cacheHelper.set(user.userId, {
+        user: user,
+        role: config.ROLE.BRAND
+      });
+    }
+    return this.encode({
+      userId: user.userId
+    });
+  },
+  /**
+   * Creates a token for influencer.
+   *
+   * @param      {Object}  user    The user
+   * @param      {Boolean}  cache   The cache (default=false)
+   * @return     {Promise}  JWT token
+   */
+  createTokenForInfluencer: function(user, cache) {
+    // cache user
+    if(cache) {
+      cacheHelper.set(user.userId, {
+        user: user,
+        role: config.ROLE.INFLUENCER
+      });
+    }
+    return this.encode({
+      userId: user.userId
     });
   }
 };

@@ -9,9 +9,9 @@
  */
 'use strict';
 
-var ig = require('instagram-node').instagram();
-var redirect_uri = process.env.INSTAGRAM_REDIRECT_URI;
-var Promise = require('bluebird');
+var ig = require('instagram-node').instagram(),
+  redirect_uri = process.env.INSTAGRAM_REDIRECT_URI,
+  Promise = require('bluebird');
 
 module.exports = {
   applyToken: function(token){

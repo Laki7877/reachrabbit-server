@@ -1,5 +1,5 @@
 /* jshint indent: 2 */
-
+'use strict';
 module.exports = function(sequelize, DataTypes) {
   var PaymentTransaction = sequelize.define('PaymentTransaction', {
     transactionId: {
@@ -31,8 +31,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         PaymentTransaction.belongsToMany(models.Resource, {
           through: models.PaymentResource,
-          foreignKey: 'transactionId',
-          otherKey: 'resourceId'
+          foreignKey: 'transactionId'
         });
         PaymentTransaction.belongsTo(models.User, {
           foreignKey: 'userId'

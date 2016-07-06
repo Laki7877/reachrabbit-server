@@ -1,5 +1,5 @@
 /* jshint indent: 2 */
-
+'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Influencer = sequelize.define('Influencer', {
     influencerId: {
@@ -14,10 +14,10 @@ module.exports = function(sequelize, DataTypes) {
     web: {
       type: DataTypes.STRING
     },
-    aboutYourself: {
+    about: {
       type: DataTypes.STRING
     },
-    accountNumber: {
+    bankAccount: {
       type: DataTypes.STRING
     },
     createdBy: {
@@ -33,6 +33,10 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Influencer.belongsTo(models.User, {
           foreignKey: 'userId'
+        });
+        Influencer.belongsToMany(models.Media, {
+          through: models.InfluencerMedia,
+          foreignKey: 'influencerId'
         });
       }
     }

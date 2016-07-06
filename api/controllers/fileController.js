@@ -39,4 +39,4 @@ function uploadSingle(req, res, next) {
 module.exports = {
   listAll: listAll,
   uploadSingle: uploadSingle
-}
+};

@@ -1,5 +1,5 @@
 /* jshint indent: 2 */
-
+'use strict';
 module.exports = function(sequelize, DataTypes) {
   var CampaignSubmission = sequelize.define('CampaignSubmission', {
     submissionId: {
@@ -33,8 +33,7 @@ module.exports = function(sequelize, DataTypes) {
         });
         CampaignSubmission.belongsToMany(models.Resource, {
           through: models.CampaignSubmissionResource,
-          foreignKey: 'submissionId',
-          otherKey: 'resourceId'
+          foreignKey: 'submissionId'
         });
       }
     }

@@ -21,7 +21,6 @@ global.async      = require('async-q'); // async lib
 global.errors     = require('common-errors'); // handle error object
 global.httpStatus = require('http-status'); // access http status by name
 global.CJSON      = require('circular-json'); // handle circular json
-global.Promise    = require('bluebird');
 
 // app modules
 var app         = require('express')(),

@@ -1,5 +1,5 @@
 /* jshint indent: 2 */
-
+'use strict';
 module.exports = function(sequelize, DataTypes) {
   var PaymentResource = sequelize.define('PaymentResource', {
     isFeature: {

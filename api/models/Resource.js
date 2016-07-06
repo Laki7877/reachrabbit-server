@@ -1,5 +1,5 @@
 /* jshint indent: 2 */
-
+'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Resource = sequelize.define('Resource', {
     resourceId: {
@@ -27,23 +27,19 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Resource.belongsToMany(models.Campaign, {
           through: models.CampaignResource,
-          foreighKey: 'resourceId',
-          otherKey: 'campaignId'
+          foreighKey: 'resourceId'
         });
         Resource.belongsToMany(models.CampaignProposal, {
           through: models.CampaignProposalResource,
-          foreighKey: 'resourceId',
-          otherKey: 'proposalId'
+          foreighKey: 'resourceId'
         });
         Resource.belongsToMany(models.CampaignSubmission, {
           through: models.CampaignSubmissionResource,
-          foreighKey: 'resourceId',
-          otherKey: 'submissionId'
+          foreighKey: 'resourceId'
         });
         Resource.belongsToMany(models.PaymentTransaction, {
           through: models.PaymentResource,
-          foreighKey: 'resourceId',
-          otherKey: 'transactionId'
+          foreighKey: 'resourceId'
         });
       }
     }

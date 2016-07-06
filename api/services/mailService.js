@@ -6,8 +6,8 @@
  */
 'use strict';
 
-var apiKey = process.env.MAILGUN_KEY || "key-16698456d07574ddd7e8c86b075e248c";
-var domain = process.env.MAILGUN_DOMAIN || "unishift.co";
+var apiKey = process.env.MAILGUN_KEY || 'key-16698456d07574ddd7e8c86b075e248c';
+var domain = process.env.MAILGUN_DOMAIN || 'unishift.co';
 var sendAs = 'sansa@' + domain;
 var Mailgun = require('mailgun-js');
 var Promise = require('bluebird');
@@ -21,7 +21,7 @@ var mailshooter = {
   * {listName} [String] - name of the mailing list
   */
   addToMailingList: function(listName, emails){
-    throw "Not implemented yet bitch"
+    throw 'Not implemented yet bitch';
   },
   /*
   * send using template in email_template folder
@@ -32,7 +32,7 @@ var mailshooter = {
   */
   send: function(to, subject, template_name, parameters){
     if(!$templates[template_name]){
-        throw "Unable to find template: " + template_name;
+        throw 'Unable to find template: ' + template_name;
     }
 
     var template = Handlebars.compile($templates[template_name]);
@@ -54,7 +54,7 @@ var mailshooter = {
           to: to,
           subject: subject,
           html: message
-        }
+        };
 
         mailgun.messages().send(data, function(err,body){
           if(err){

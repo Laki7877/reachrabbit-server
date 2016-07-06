@@ -7,6 +7,7 @@
 'use strict';
 
 var brandService = require('../services/brandService'),
+    influencerService = require('../services/influencerService'),
     mailService = require('../services/mailService'),
     authService = require('../services/authService'),
     facebookService = require('../services/facebookService'),
@@ -23,6 +24,15 @@ var brandService = require('../services/brandService'),
  */
 function signupInfluencer(req, res, next) {
   //TODO: implement this by 7/6/2016
+  var form = _.omit(req.body, ['profilePicture']);
+  form.profilePicture = req.body.profilePicture.resourceId;
+
+  sequelize.transaction(function(t) {
+    return influencerService.create(form)
+      .then(function(user) {
+        return authService.createTokenForInfluencer(user, true);
+      });
+  });
 }
 /**
  * Create new brand and automatically login to it (return token)
@@ -41,14 +51,7 @@ function signupBrand(req, res, next) {
     // create new brand
     return brandService.create(form, t)
       .then(function(user) {
-        // cache user
-        cacheHelper.set(user.userId, {
-          user: user,
-          role: config.ROLE.BRAND
-        });
-        return authService.encode({
-          userId: user.userId
-        });
+        return authService.createTokenForBrand(user, true);
       })
       .then(function(token) {
         return { token: token };

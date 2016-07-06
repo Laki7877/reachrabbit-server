@@ -22,9 +22,9 @@ module.exports = {
   * generate preferably unique filename
   */
   generateResourceId: function(originalFileName){
-    var exts = originalFileName.split(".");
+    var exts = originalFileName.split('.');
     var ext = exts[exts.length - 1];
-    return md5(originalFileName, Date.now()) + "." + ext;
+    return md5(originalFileName, Date.now()) + '.' + ext;
   },
   /*
   * List file at path
@@ -43,7 +43,7 @@ module.exports = {
     return promise;
   },
   getOne: function(filePath){
-    throw "Not IMPLEMENTED";
+    throw 'Not IMPLEMENTED';
   },
   /*
   * Upload to public. Anyone with link can view.

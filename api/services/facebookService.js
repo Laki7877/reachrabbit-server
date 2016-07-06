@@ -8,7 +8,8 @@
 'use strict';
 
 var request = require('request'),
-  graph = require('fbgraph');
+  graph = require('fbgraph'),
+  Promise = require('bluebird');
 
 var authConfig = {
   client_id: process.env.FACEBOOK_APP_ID,
@@ -73,7 +74,7 @@ module.exports = {
       fields: 'fan_count,name,id,picture.type(large)'
     };
     return new Promise(function(resolve, reject) {
-      graph.get(userId+ "/accounts", params, function(err, accounts) {
+      graph.get(userId+ '/accounts', params, function(err, accounts) {
         if(err) {
           return reject(err);
         }

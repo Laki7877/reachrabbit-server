@@ -6,7 +6,8 @@
  *
  */
 'use strict';
-var models = require('../models');
+var models = require('../models'),
+    Promise = require('bluebird');
 /**
  * Constructor
  *

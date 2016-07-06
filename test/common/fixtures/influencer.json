@@ -3,7 +3,7 @@
     "model": "User",
     "data": {
       "email": "google@gmail.com",
-      "password": "hackme",
+      "password": "hackme"
     }
   },
   {
@@ -14,17 +14,17 @@
       "User": {
         "email": "google@gmail.com"
       },
-      "Medias": [
+      "Media": [
         {
-          "name": "facebook",
+          "mediaName": "facebook",
           "_through": {
             "socialId": "128000600963755"
           }
         },
         {
-          "name": "youtube",
+          "mediaName": "youtube",
           "_through": {
-            "socialId": "foo"
+            "socialId": "mytube"
           }
         }
       ]

@@ -9,12 +9,14 @@
 
 var moment = require('moment'),
   config = require('config'),
+  Promise = require('bluebird'),
   authService = require('../services/authService'),
   facebookService = require('../services/facebookService'),
   googleService = require('../services/googleService'),
   igService = require('../services/instagramService'),
   userService = require('../services/userService'),
   brandService = require('../services/brandService'),
+  influencerService = require('../services/influencerService'),
   cacheHelper = require('../helpers/cacheHelper');
 
 var googleApi = require('googleapis');
@@ -36,28 +38,49 @@ function google(req, res, next) {
         version: 'v3',
         auth: oAuthCli
       });
-      var profileRq = youtube.channels.list({
+
+      // convert to promise
+      var list = Promise.promisify(youtube.channels.list, { context: youtube.channels });
+
+      // youtube listing
+      return list({
         'part': 'snippet,statistics',
         'mine': true
-      }, function(err, response) {
-        console.log(response);
+      })
+      .then(function(response) {
         var me = response.items[0];
-        //TO POON : Just for "registration flow" ,
-        //change provider to 'ahancer' or something
 
+        // find influencer in media table
+        return influencerService.findByMedia('youtube', me.id)
+          .then(function(user) {
+            if(!user) {
+              // not found
+              return me;
+            }
+            // found, create token and return
+            authService.createTokenForInfluencer(user, true)
+              .then(function(token) {
+                res.send({
+                  isLogin: true,
+                  token: token
+                });
+              })
+            .catch(next);
+          });
+      })
+      .then(function(me) {
         if(me.statistics.subscriberCount < process.env.YOUTUBE_SUBSCRIBER_THRESHOLD){
           //TODO: May need to discuss error flow
           return res.status(403).send({
-            "display": {
-              "title": "From server",
-              "message": "Sorry, " + me.snippet.title + ". You need at least " + process.env.YOUTUBE_SUBSCRIBER_THRESHOLD +
-               " subscribers on YouTube to signup. GTFO. Just kidding.."
+            'display': {
+              'title': 'From server',
+              'message': 'Sorry, ' + me.snippet.title + '. You need at least ' + process.env.YOUTUBE_SUBSCRIBER_THRESHOLD +
+               ' subscribers on YouTube to signup. GTFO. Just kidding..'
             },
-            "exception_code": "AC83-01"
+            'exception_code': 'AC83-01'
           });
         }
-
-        res.send({
+        return res.send({
           'provider': 'google',
           'name': me.snippet.title,
           'id': me.id,
@@ -66,10 +89,7 @@ function google(req, res, next) {
           'token': oAuthCli.credentials.access_token
         });
       });
-
-
-    })
-    .catch(next);
+    }).catch(next);
 }
 
 /*
@@ -85,22 +105,39 @@ function instagram(req, res, next) {
       igService.applyToken(token);
       return igService.user(result.user.id);
     })
+    .then(function(ig) {
+      return authService.findByMedia('instagram', ig.id)
+        .then(function(user) {
+          if(!user) {
+            // not found
+            return ig;
+          }
+          // found, create token and return
+          authService.createTokenForInfluencer(user, true)
+            .then(function(token) {
+              res.send({
+                isLogin: true,
+                token: token
+              });
+            })
+          .catch(next);
+        });
+    })
     .then(function(user){
       if(user.counts.followed_by < process.env.INSTAGRAM_FOLLOWER_THRESHOLD){
         //TODO: May need to discuss error flow
         return res.status(403).send({
-          "display": {
-            "title": "From server",
-            "message": "Sorry, @" + user.username + ". You need at least " + process.env.INSTAGRAM_FOLLOWER_THRESHOLD +
-             " followers on Instagram to signup. GTFO. Just kidding.."
+          'display': {
+            'title': 'From server',
+            'message': 'Sorry, @' + user.username + '. You need at least ' + process.env.INSTAGRAM_FOLLOWER_THRESHOLD +
+             ' followers on Instagram to signup. GTFO. Just kidding..'
           },
-          "exception_code": "AC83-01"
+          'exception_code': 'AC83-01'
         });
       }
 
-      //TO POON : Just for "registration flow" ,
-      //change provider to 'ahancer' or something
-      return res.json({
+      // get profile
+      return res.send({
         'provider': 'instagram',
         'name': user.full_name,
         'id': user.id,
@@ -119,22 +156,31 @@ function instagram(req, res, next) {
  */
 
 function facebook(req, res, next) {
-  async.waterfall([
-    // get access token
-    function() {
-      return facebookService.getToken(req.body);
-    },
-    // get profile
-    function(data) {
+  facebookService.getToken(req.body)
+    .then(function(data) {
       return facebookService.getProfile(data.token)
         .then(function(profile) {
           return _.extend(profile, data);
         });
-    },
-    //get associated accounts
-    function(profile){
-      console.log('id', profile.id)
-      return facebookService.getAssociatedAccounts(profile.token, "me")
+    })
+    .then(function(profile) {
+      return influencerService.findByMedia('facebook', profile.id)
+        .then(function(user) {
+          if(!user) {
+            return profile;
+          }
+          authService.createTokenForInfluencer(user, true)
+            .then(function(token) {
+              res.send({
+                token: token,
+                isLogin: true
+              });
+            })
+            .catch(next);
+        });
+    })
+    .then(function(profile) {
+      return facebookService.getAssociatedAccounts(profile.token, 'me')
       .then(function(accounts){
         if(!accounts) return _.extend({accounts: []},profile);
         return _.extend({
@@ -145,22 +191,19 @@ function facebook(req, res, next) {
           })
         }, profile);
       });
-    }
-  ]).then(function(result) {
-    //TO POON : Just for "registration flow" ,
-    //change provider to 'ahancer' or something
-    console.log("done fb login")
-    console.log(result, 'fb');
-    return res.json({
-      'provider': 'facebook',
-      'name': result.name,
-      'accounts': result.accounts,
-      'id': result.id,
-      'email': result.email,
-      'picture': result.picture.data.url,
-      'token': result.token
-    });
-  }).catch(next);
+    })
+    .then(function(result) {
+      // signup mode
+      return res.send({
+        'provider': 'facebook',
+        'name': result.name,
+        'accounts': result.accounts,
+        'id': result.id,
+        'email': result.email,
+        'picture': result.picture.data.url,
+        'token': result.token
+      });
+    }).catch(next);
 }
 
 /**************************************************
@@ -191,20 +234,12 @@ function brandLogin(req, res, next) {
     })
     // encode user
     .then(function(user) {
-      // cache user
-      cacheHelper.set(user.userId, {
-        user: user,
-        role: config.ROLE.BRAND
-      });
-      return authService.encode({
-        userId: user.userId
-      });
+      // cache user and return token
+      return authService.createTokenForBrand(user, true);
     })
     // send
     .then(function(token) {
-      return res.send({
-        token: token
-      });
+      return res.send({ token: token });
     })
     .catch(next);
 }

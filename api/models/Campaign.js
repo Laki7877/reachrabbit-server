@@ -1,5 +1,5 @@
 /* jshint indent: 2 */
-
+'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Campaign = sequelize.define('Campaign', {
     campaignId: {
@@ -41,14 +41,11 @@ module.exports = function(sequelize, DataTypes) {
           foreignKey: 'categoryId'
         });
         Campaign.belongsToMany(models.Media, {
-          through: models.CampaignMedia,
-          foreignKey: 'campaignId',
-          otherKey: 'mediaId'
+          through: models.CampaignMedia
         });
         Campaign.belongsToMany(models.Resource, {
           through: models.CampaignResource,
-          foreignKey: 'campaignId',
-          otherKey: 'resourceId'
+          foreignKey: 'campaignId'
         });
         Campaign.hasMany(models.PaymentTransaction, {
           foreignKey: 'campaignId'

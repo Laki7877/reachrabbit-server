@@ -122,7 +122,8 @@
         "it",
         "describe",
         "beforeEach",
-        "afterEach"
+        "afterEach",
+        "assert"
     ],
     "globals": {
         "_": true,

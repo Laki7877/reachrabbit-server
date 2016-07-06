@@ -10,15 +10,16 @@ var User 	= require('../models').User,
 		Brand = require('../models').Brand;
 
 module.exports = {
-  create: function(brand, transaction) {
-		var user = _.omit(brand, ['brandName']);
-		var brand = _.pick(brand, ['brandName']);
+  create: function(userObject, t) {
+    var brandSchema = ['brandName'];
+    var newUser = _.omit(userObject, brandSchema);
+    var newBrand = _.pick(userObject, brandSchema);
 
 		// create user with brand associated
-  	return User.create(_.extend({}, user, {
-			Brand: brand
-		}), { include: [Brand], transaction: transaction }).then(function(user) {
-			return user.get({plain: true});
+  	return User.create(_.extend({}, newUser, {
+			Brand: newBrand
+		}), { include: [Brand], transaction: t }).then(function(createdUser) {
+			return createdUser.get({plain: true});
 		});
   },
   findByEmail: function(email) {
@@ -26,7 +27,10 @@ module.exports = {
       where: {
         email: email
       },
-      include: [Brand]
+      include: [{
+        model: Brand,
+        required: true
+      }]
     })
     .then(function(user) {
       if(!user) {

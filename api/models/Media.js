@@ -1,5 +1,5 @@
 /* jshint indent: 2 */
-
+'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Media = sequelize.define('Media', {
     mediaId: {
@@ -21,9 +21,11 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Media.belongsToMany(models.Campaign, {
-          through: models.CampaignMedia,
-          foreighKey: 'mediaId',
-          otherKey: 'campaignId'
+          through: models.CampaignMedia
+        });
+        Media.belongsToMany(models.Influencer, {
+          through: models.InfluencerMedia,
+          foreignKey: 'mediaId'
         });
       }
     }

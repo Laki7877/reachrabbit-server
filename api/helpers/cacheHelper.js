@@ -7,7 +7,8 @@
  */
 'use strict';
 
-var Redis = require('ioredis');
+var Redis = require('ioredis'),
+    Promise = require('bluebird');
 var redis = new Redis(process.env.REDIS_URI, {
   lazyConnect: true,
   retryStrategy: function(times) {
