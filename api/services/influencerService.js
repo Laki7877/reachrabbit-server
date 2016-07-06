@@ -42,17 +42,17 @@ module.exports = {
           .then(function(results) {
             // add through-model
             _.forEach(results, function(media) {
-              _.extend(media, {
+              media = _.extend(media, {
                 through: {
                   model: InfluencerMedia,
-                  socialId: medias[media.name].id,
-                  token: medias[media.name].token
+                  socialId: medias[media.mediaName].id,
+                  token: medias[media.mediaName].token
                 }
               });
             });
 
             // execute query
-            return createdInfluencer.addMedias(results, { transaction: t })
+            return createdInfluencer.addMedium(results, { transaction: t })
               .then(function() {
                 // return user for final result
                 return createdUser.get({plain: true});
