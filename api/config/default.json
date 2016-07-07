@@ -6,5 +6,6 @@
     "BRAND": "brand",
     "INFLUENCER": "influencer",
     "ADMIN": "admin"
-  }
+  },
+  "FACEBOOK_APP_VERSION": "2.6"
 }
