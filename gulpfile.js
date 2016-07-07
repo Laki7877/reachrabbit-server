@@ -106,7 +106,13 @@ gulp.task('db:migrate:create', 'Create migration file', seqExecTask, {
 });
 
 gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
-  return db.sequelize.sync();
+  return db.sequelize.drop({cascade: true})
+    .then(function() {
+      return db.sequelize.sync();
+    })
+    .then(function() {
+      return fixtures.loadFile('api/seeders/**/*.json', db);
+    });
 });
 
 gulp.task('db:drop', 'Drop all tables', function() {
@@ -117,7 +123,6 @@ gulp.task('db:seed', 'Seed all table', function() {
   return fixtures.loadFile('api/seeders/**/*.json', db);
 });
 
-gulp.task('db:drop:sync', 'Drop then sync database',['db:drop', 'db:sync']);
 
 /***************************************************
  * Application
