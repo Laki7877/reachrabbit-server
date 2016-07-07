@@ -38,6 +38,11 @@ module.exports = {
         user.profilePicture = result;
         return user;
       })
+    })
+    .then(function(user) {
+      _.extend(user.dataValues, user.Brand.dataValues);
+      _.unset(user, ['Brand']);
+      return user;
     });
   },
   findByEmail: function(email) {
