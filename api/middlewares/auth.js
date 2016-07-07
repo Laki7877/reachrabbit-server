@@ -47,6 +47,7 @@ module.exports = function(roles) {
         throw new errors.AuthenticationRequiredError('token is invalid');
       })*/
       .then(function(data) {
+        console.log('decoded token', data);
         if(!_.isNil(roles)) {
           // single role arg
           if(_.isString(roles) && data.role !== roles) {

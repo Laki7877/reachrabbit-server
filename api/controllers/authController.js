@@ -144,12 +144,12 @@ function instagram(req, res, next) {
         .then(function(user) {
           if(!user) {
             // signup flow
-            if(user.counts.followed_by < process.env.INSTAGRAM_FOLLOWER_THRESHOLD){
+            if(ig.counts.followed_by < process.env.INSTAGRAM_FOLLOWER_THRESHOLD){
                 //TODO: May need to discuss error flow
                 return res.status(403).send({
                   'display': {
                     'title': 'From server',
-                    'message': 'Sorry, @' + user.username + '. You need at least ' + process.env.INSTAGRAM_FOLLOWER_THRESHOLD +
+                    'message': 'Sorry, @' + ig.username + '. You need at least ' + process.env.INSTAGRAM_FOLLOWER_THRESHOLD +
                      ' followers on Instagram to signup. GTFO. Just kidding..'
                   },
                   'exception_code': 'AC83-01'
@@ -159,10 +159,10 @@ function instagram(req, res, next) {
               // get profile
               return res.send({
                 'provider': 'instagram',
-                'name': user.full_name,
-                'id': user.id,
-                'followers_count': user.counts.followed_by,
-                'picture': user.profile_picture,
+                'name': ig.full_name,
+                'id': ig.id,
+                'followers_count': ig.counts.followed_by,
+                'picture': ig.profile_picture,
                 'token': token
               });
           } else {

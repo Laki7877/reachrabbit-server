@@ -24,7 +24,7 @@ function fromRemote(req, res, next){
     var newFn = s3.generateResourceId(urls[0]);
     request({
       url: req.body.url,
-      encoding: null 
+      encoding: null
     }, function (error, response, buffer) {
       console.log(buffer instanceof Buffer);
       s3.uploadPublic(buffer, newFn, req.body.mimetype).then(function(d){
@@ -35,12 +35,12 @@ function fromRemote(req, res, next){
         })
         .then(function(resourceInstance){
             var resource = resourceInstance.get({ plain: true });
-            // delete tmp file
-            fs.exists(req.file.path, function(exists) {
-              if(exists) {
-                fs.unlink(req.file.path);
-              }
-            });
+            // // delete tmp file
+            // fs.exists(req.file.path, function(exists) {
+            //   if(exists) {
+            //     fs.unlink(req.file.path);
+            //   }
+            // });
             // send resource
             res.send(_.merge({
               url : process.env.S3_PUBLIC_URL + newFn

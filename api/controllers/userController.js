@@ -70,13 +70,14 @@ function signupBrand(req, res, next) {
   .catch(next);
 }
 /**
- * Find current user's information
+ * Find current user's information (/me)
  *
  * @param      {Object}    req     The request
  * @param      {Object}    res     The resource
  * @param      {Function}  next    The next
  */
 function profile(req, res, next) {
+  console.log('req.user', req.user);
   brandService.findById(req.user.userId)
     .then(function(user) {
       if(!user) {
@@ -88,6 +89,7 @@ function profile(req, res, next) {
       return user;
     })
     .then(function(user) {
+      //Temporrary solution TODO: move to service
       return res.send(user);
     }).catch(next);
 }
