@@ -16,6 +16,9 @@ function listAll(req, res, next) {
   }, next);
 }
 
+/*
+* Upload from remote URL
+*/
 function fromRemote(req, res, next){
     var urls = req.body.url.split("?");
     var newFn = s3.generateResourceId(urls[0]);
@@ -32,6 +35,12 @@ function fromRemote(req, res, next){
         })
         .then(function(resourceInstance){
             var resource = resourceInstance.get({ plain: true });
+            // delete tmp file
+            fs.exists(req.file.path, function(exists) {
+              if(exists) {
+                fs.unlink(req.file.path);
+              }
+            });
             // send resource
             res.send(_.merge({
               url : process.env.S3_PUBLIC_URL + newFn
@@ -42,6 +51,9 @@ function fromRemote(req, res, next){
 
 }
 
+/*
+* Upload from local file
+*/
 function uploadSingle(req, res, next) {
   var buffer = fs.readFileSync(req.file.path);
   var filename = s3.generateResourceId(req.file.originalname);
