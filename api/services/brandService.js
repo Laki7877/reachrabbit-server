@@ -56,15 +56,6 @@ module.exports = {
         model: Brand,
         required: true
       }]
-    })
-    .then(function(user) {
-      if(!user) {
-        throw new errors.NotFoundError('User');
-      }
-      if(!user.Brand) {
-        throw new errors.NotFoundError('User');
-      }
-      return user;
     });
   }
 };

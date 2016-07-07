@@ -23,7 +23,7 @@ module.exports = function(roles) {
     var authHeader = req.get('Authorization');
 
     if(_.isNil(authHeader)) {
-      return next(new errors.AuthenticationRequiredError('no authorization header'));
+      return next(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN));
     }
 
     // auth exist
@@ -31,7 +31,7 @@ module.exports = function(roles) {
 
     // invalid authentication
     if(splits.length !== 2 || splits[0] !== config.AUTHORIZATION_TYPE) {
-      return next(new errors.AuthenticationRequiredError('token'));
+      return next(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN));
     }
 
     // get auth token
@@ -44,7 +44,7 @@ module.exports = function(roles) {
       })
       .catch(function(err) {
         // invalid token
-        throw new errors.AuthenticationRequiredError('token is invalid');
+        throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN);
       })*/
       .then(function(data) {
         console.log('decoded token', data);
@@ -52,14 +52,14 @@ module.exports = function(roles) {
           // single role arg
           if(_.isString(roles) && data.role !== roles) {
             //not role
-            throw new errors.NotPermittedError('operation is forbidden');
+            throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
           }
           // array of roles (OR condition)
           if(_.isArray(roles) && !_.includes(roles, data.role)){
             // not role
-            throw new errors.NotPermittedError('operation is forbidden');
+            throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
           }
-          throw new errors.NotImplementedError('invalid auth middleware args type');
+          throw new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED);
         }
         // put onto req for next usage
         req.user = data;

@@ -10,12 +10,14 @@ var s3 = require('../services/staticFileService'),
     Resource = require('../models').Resource;
 var md5 = require('md5');
 
-function listAll(req, res, next) {
-  s3.list().then(function(data){
-    res.send(data);
-  }, next);
-}
+module.exports = {
+  listAll: function(req, res, next) {
+    s3.list().then(function(data){
+      res.send(data);
+    }, next);
+  },
 
+<<<<<<< HEAD
 /*
 * Upload from remote URL
 */
@@ -45,44 +47,69 @@ function fromRemote(req, res, next){
             res.send(_.merge({
               url : process.env.S3_PUBLIC_URL + newFn
             }, resource ));
+=======
+  /*
+   * Upload from remote URL
+   */
+  fromRemote: function(req, res, next){
+      var urls = req.body.url.split("?");
+      var newFn = s3.generateResourceId(urls[0]);
+      request({
+        url: req.body.url,
+        encoding: null 
+      }, function (error, response, buffer) {
+        console.log(buffer instanceof Buffer);
+        s3.uploadPublic(buffer, newFn, req.body.mimetype).then(function(d){
+          Resource.create({
+            resourcePath: newFn,
+            resourceType: 'image',
+            createdBy: _.get(req.user, 'email')
+          })
+          .then(function(resourceInstance){
+              var resource = resourceInstance.get({ plain: true });
+              // delete tmp file
+              fs.exists(req.file.path, function(exists) {
+                if(exists) {
+                  fs.unlink(req.file.path);
+                }
+              });
+              // send resource
+              res.send(_.merge({
+                url : process.env.S3_PUBLIC_URL + newFn
+              }, resource ));
+          });
+>>>>>>> 6a39f2809f57e598d4a7e65394fefa5b4a7f2714
         });
       });
+  },
+
+  /*
+  * Upload from local file
+  */
+  uploadSingle: function(req, res, next) {
+    var buffer = fs.readFileSync(req.file.path);
+    var filename = s3.generateResourceId(req.file.originalname);
+    s3.uploadPublic(buffer, filename, req.file.mimetype).then(function(d){
+      Resource.create({
+        resourcePath: filename,
+        resourceType: 'image',
+        createdBy: _.get(req.user, 'email')
+      }).then(function(resourceInstance){
+          var resource = resourceInstance.get({ plain: true });
+          // delete tmp file
+          fs.exists(req.file.path, function(exists) {
+            if(exists) {
+              fs.unlink(req.file.path);
+            }
+          });
+          // send resource
+          res.send(_.merge({
+            url : process.env.S3_PUBLIC_URL + filename
+          }, resource ));
+      });
+
+    }, function(err){
+      next(err);
     });
-
-}
-
-/*
-* Upload from local file
-*/
-function uploadSingle(req, res, next) {
-  var buffer = fs.readFileSync(req.file.path);
-  var filename = s3.generateResourceId(req.file.originalname);
-  s3.uploadPublic(buffer, filename, req.file.mimetype).then(function(d){
-    Resource.create({
-      resourcePath: filename,
-      resourceType: 'image',
-      createdBy: _.get(req.user, 'email')
-    }).then(function(resourceInstance){
-        var resource = resourceInstance.get({ plain: true });
-        // delete tmp file
-        fs.exists(req.file.path, function(exists) {
-          if(exists) {
-            fs.unlink(req.file.path);
-          }
-        });
-        // send resource
-        res.send(_.merge({
-          url : process.env.S3_PUBLIC_URL + filename
-        }, resource ));
-    });
-
-  }, function(err){
-    next(err);
-  });
-}
-
-module.exports = {
-  listAll: listAll,
-  fromRemote: fromRemote,
-  uploadSingle: uploadSingle
+  }
 };
