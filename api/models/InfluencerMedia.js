@@ -5,6 +5,9 @@ module.exports = function(sequelize, DataTypes) {
     socialId: {
       type: DataTypes.STRING
     },
+    pageId: {
+      type: DataTypes.STRING
+    },
     token: {
       type: DataTypes.STRING
     }

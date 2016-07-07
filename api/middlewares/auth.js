@@ -38,14 +38,14 @@ module.exports = function(roles) {
     var token = splits[1];
 
     return authService.decode(token)
-      .then(function(decoded) {
+      /*.then(function(decoded) {
         // get cached object from cache
         return cacheHelper.get(decoded.userId);
       })
       .catch(function(err) {
         // invalid token
         throw new errors.AuthenticationRequiredError('token is invalid');
-      })
+      })*/
       .then(function(data) {
         if(!_.isNil(roles)) {
           // single role arg
@@ -61,7 +61,7 @@ module.exports = function(roles) {
           throw new errors.NotImplementedError('invalid auth middleware args type');
         }
         // put onto req for next usage
-        req.user = data.user;
+        req.user = data;
         return next();
       })
       .catch(next);

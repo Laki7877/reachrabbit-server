@@ -28,7 +28,7 @@ function signupInfluencer(req, res, next) {
   form.profilePicture = req.body.profilePicture.resourceId;
 
   sequelize.transaction(function(t) {
-    return influencerService.create(form)
+    return influencerService.create(form, t)
       .then(function(user) {
         return authService.createTokenForInfluencer(user, true);
       })
@@ -77,11 +77,19 @@ function signupBrand(req, res, next) {
  * @param      {Function}  next    The next
  */
 function profile(req, res, next) {
-  if(req.user) {
-    return res.send(req.user);
-  } else {
-    return next(new errors.NotFoundError('User not found'));
-  }
+  brandService.findById(req.user.userId)
+    .then(function(user) {
+      if(!user) {
+        return influencerService.findById(req.user.userId)
+          .then(function(user) {
+            return user;
+          });
+      }
+      return user;
+    })
+    .then(function(user) {
+      return res.send(user);
+    }).catch(next);
 }
 
 module.exports = {

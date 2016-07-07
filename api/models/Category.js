@@ -20,9 +20,6 @@ module.exports = function(sequelize, DataTypes) {
     paranoid: true,
     classMethods: {
       associate: function(models) {
-        Category.hasMany(models.Resource, {
-          foreignKey: 'categoryId'
-        });
       }
     }
   });

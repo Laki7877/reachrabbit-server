@@ -7,7 +7,8 @@
 'use strict';
 
 var User 	= require('../models').User,
-		Brand = require('../models').Brand;
+		Brand = require('../models').Brand,
+    Resource = require('../models').Resource;
 
 module.exports = {
   create: function(userObject, t) {
@@ -21,6 +22,23 @@ module.exports = {
 		}), { include: [Brand], transaction: t }).then(function(createdUser) {
 			return createdUser.get({plain: true});
 		});
+  },
+  findById: function(id) {
+    return User.findById(id, {
+      include: [{
+        model: Brand,
+        required: true
+      }]
+    })
+    .then(function(user) {
+      if(!user) {
+        return user;
+      }
+      return Resource.findById(user.profilePicture).then(function(result) {
+        user.profilePicture = result;
+        return user;
+      })
+    });
   },
   findByEmail: function(email) {
     return User.findOne({
