@@ -11,7 +11,7 @@ var dataService = require('../services/dataService');
 
 module.exports = {
     getActiveCategories: function (req, res, next) {
-        dataService.findAllCategory(true);
+        dataService.findAllCategory(true)
           .then(function(category) {
             res.send(category);
           }).catch(next);
@@ -24,8 +24,8 @@ module.exports = {
           }).catch(next);
     },
 
-    getBanks: function (req, res) {
-        dataService.findAllBank();
+    getBanks: function (req, res, next) {
+        dataService.findAllBank()
           .then(function(bank) {
             res.send(bank);
           }).catch(next);
