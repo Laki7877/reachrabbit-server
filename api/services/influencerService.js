@@ -98,7 +98,7 @@ module.exports = {
           };
         });
 
-        _.unset(user.dataValues, ['Influencer', 'Media']);
+        _.unset(user, ['Influencer', 'Media']);
       }
       return user;
     });
