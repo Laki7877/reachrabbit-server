@@ -40,7 +40,7 @@ module.exports = function() {
   /*********************************
    * User
    *********************************/
-  router.get('/me', $.userController.profile);
+  router.get('/me', auth(), $.userController.profile);
 
   /*********************************
    * Data

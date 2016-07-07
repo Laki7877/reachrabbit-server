@@ -88,6 +88,7 @@ function profile(req, res, next) {
       return user;
     })
     .then(function(user) {
+      user.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
       return res.send(user);
     }).catch(next);
 }
