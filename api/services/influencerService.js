@@ -85,20 +85,21 @@ module.exports = {
         });
     })
     .then(function(user) {
-      // flatten user
-      _.extend(user.dataValues, user.Influencer.dataValues);
+      if(user) {
+        // flatten user
+        _.extend(user.dataValues, user.Influencer.dataValues);
 
-      // media
-      user.dataValues.socialAccounts = {};
-      _.forEach(user.Influencer.Media, function(media) {
-        user.dataValues.socialAccounts[media.mediaName] = {
-          id: media.InfluencerMedia.socialId,
-          pageId: media.InfluencerMedia.pageId
-        };
-      });
+        // media
+        user.dataValues.socialAccounts = {};
+        _.forEach(user.Influencer.Media, function(media) {
+          user.dataValues.socialAccounts[media.mediaName] = {
+            id: media.InfluencerMedia.socialId,
+            pageId: media.InfluencerMedia.pageId
+          };
+        });
 
-      _.unset(user.dataValues, ['Influencer', 'Media']);
-            
+        _.unset(user.dataValues, ['Influencer', 'Media']);
+      }
       return user;
     });
   },

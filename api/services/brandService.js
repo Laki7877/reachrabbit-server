@@ -40,8 +40,10 @@ module.exports = {
       })
     })
     .then(function(user) {
-      _.extend(user.dataValues, user.Brand.dataValues);
-      _.unset(user, ['Brand']);
+      if(user) {
+        _.extend(user.dataValues, user.Brand.dataValues);
+        _.unset(user, ['Brand']);
+      }
       return user;
     });
   },
