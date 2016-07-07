@@ -3,7 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Bank = sequelize.define('Bank', {
     bankId: {
-      type: DataTypes.CHAR,
+      type: DataTypes.CHAR(3),
       allowNull: false,
       primaryKey: true
     },

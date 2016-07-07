@@ -40,8 +40,13 @@ module.exports = function() {
   /*********************************
    * User
    *********************************/
-  router.get('/me', auth(), $.userController.profile);
+  router.get('/me', $.userController.profile);
 
+  /*********************************
+   * Data
+   *********************************/
+  router.get('/data/Categories', $.dataController.getActiveCategories);
+  router.get('/data/Medium', $.dataController.getActiveMedium);
   /*********************************
    * File Demo
    *********************************/
