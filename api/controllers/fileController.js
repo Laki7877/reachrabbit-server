@@ -24,7 +24,12 @@ function uploadSingle(req, res, next) {
       createdBy: _.get(req.user, 'email')
     }).then(function(resourceInstance){
         var resource = resourceInstance.get({ plain: true });
-
+        // delete tmp file
+        fs.exists(req.file.path, function(exists) {
+          if(exists) {
+            fs.unlink(req.file.path);
+          }
+        });
         // send resource
         res.send(_.merge({
           url : process.env.S3_PUBLIC_URL + filename
