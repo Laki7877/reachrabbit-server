@@ -10,24 +10,24 @@
 var dataService = require('../services/dataService');
 
 module.exports = {
-    getActiveCategories: function (req, res) {
-        var promise = dataService.findAllCategory(true);
-        promise.then(function(category) {
+    getActiveCategories: function (req, res, next) {
+        dataService.findAllCategory(true);
+          .then(function(category) {
             res.send(category);
-        });
+          }).catch(next);
     },
 
-    getActiveMedium: function (req, res) {
-        var promise = dataService.findAllMedia(true);
-        promise.then(function(media) {
+    getActiveMedium: function (req, res, next) {
+        dataService.findAllMedia(true)
+          .then(function(media) {
             res.send(media);
-        });
+          }).catch(next);
     },
 
     getBanks: function (req, res) {
-        var promise = dataService.findAllBank();
-        promise.then(function(bank) {
+        dataService.findAllBank();
+          .then(function(bank) {
             res.send(bank);
-        });
+          }).catch(next);
     }
-}
+};
