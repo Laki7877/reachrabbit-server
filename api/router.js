@@ -40,14 +40,21 @@ module.exports = function() {
   /*********************************
    * User
    *********************************/
-  router.get('/me', auth(), $.userController.profile);
+  router.get('/me', $.userController.profile);
 
+  /*********************************
+   * Data
+   *********************************/
+  router.get('/data/Categories', $.dataController.getActiveCategories);
+  router.get('/data/Medium', $.dataController.getActiveMedium);
+  router.get('/data/Banks', $.dataController.getBanks);
   /*********************************
    * File Demo
    *********************************/
 
   router.get('/file', $.fileController.listAll);
   router.post('/file', upload.single('file'), $.fileController.uploadSingle);
+  router.post('/file/remote', $.fileController.fromRemote);
 
   return router;
 };

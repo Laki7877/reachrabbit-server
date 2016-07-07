@@ -9,14 +9,14 @@
 
 var request = require('request'),
   graph = require('fbgraph'),
-  Promise = require('bluebird');
+  Promise = require('bluebird'),
+  config = require('config');
 
 var authConfig = {
   client_id: process.env.FACEBOOK_APP_ID,
   client_secret: process.env.FACEBOOK_APP_SECRET,
-  version: '2.6'
+  version: config.FACEBOOK_APP_VERSION
 };
-var accessTokenUrl = 'https://graph.facebook.com/v2.6/oauth/access_token';
 
 // set graph version
 graph.setVersion(authConfig.version);
