@@ -22,5 +22,12 @@ module.exports = {
         promise.then(function(media) {
             res.send(media);
         });
+    },
+
+    getBanks: function (req, res) {
+        var promise = dataService.findAllBank();
+        promise.then(function(bank) {
+            res.send(bank);
+        });
     }
 }

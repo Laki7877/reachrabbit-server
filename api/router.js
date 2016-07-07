@@ -47,6 +47,7 @@ module.exports = function() {
    *********************************/
   router.get('/data/Categories', $.dataController.getActiveCategories);
   router.get('/data/Medium', $.dataController.getActiveMedium);
+  router.get('/data/Banks', $.dataController.getBanks);
   /*********************************
    * File Demo
    *********************************/

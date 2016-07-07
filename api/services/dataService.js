@@ -8,6 +8,7 @@
 
 var Category 	= require('../models').Category;
 var Media 	= require('../models').Media;
+var Bank 	= require('../models').Bank;
 
 module.exports = {
     findAllCategory: function(activeFlag) {
@@ -34,5 +35,14 @@ module.exports = {
                 'mediaName'
             ]
         });
-    }
+    },
+
+     findAllBank: function(){
+        return Bank.findAll({
+            attributes: [
+                'bankId',
+                'bankName'
+            ]
+        });
+    },
 };
