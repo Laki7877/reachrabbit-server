@@ -90,6 +90,7 @@ function profile(req, res, next) {
     })
     .then(function(user) {
       //Temporrary solution TODO: move to service
+      user.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
       return res.send(user);
     }).catch(next);
 }

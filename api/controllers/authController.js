@@ -162,7 +162,9 @@ function instagram(req, res, next) {
                 'name': ig.full_name,
                 'id': ig.id,
                 'followers_count': ig.counts.followed_by,
-                'picture': ig.profile_picture,
+                'picture': {
+                  url: ig.profile_picture
+                },
                 'token': token
               });
           } else {
