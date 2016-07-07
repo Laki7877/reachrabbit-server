@@ -77,10 +77,29 @@ module.exports = {
       if(!user) {
         return user;
       }
-      return Resource.findById(user.profilePicture).then(function(result) {
-        user.profilePicture = result;
-        return user;
-      })
+      return Resource.findById(user.profilePicture)
+        .then(function(result) {
+          // assign profile pic
+          user.profilePicture = result;
+          return user;
+        });
+    })
+    .then(function(user) {
+      // flatten user
+      _.extend(user.dataValues, user.Influencer.dataValues);
+
+      // media
+      user.dataValues.socialAccounts = {};
+      _.forEach(user.Influencer.Media, function(media) {
+        user.dataValues.socialAccounts[media.mediaName] = {
+          id: media.InfluencerMedia.socialId,
+          pageId: media.InfluencerMedia.pageId
+        };
+      });
+
+      _.unset(user.dataValues, ['Influencer', 'Media']);
+            
+      return user;
     });
   },
   findByMedia: function(providerName, socialId) {
