@@ -106,10 +106,7 @@ gulp.task('db:migrate:create', 'Create migration file', seqExecTask, {
 });
 
 gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
-  return db.sequelize.drop({cascade: true})
-    .then(function() {
-      return db.sequelize.sync();
-    })
+  return db.sequelize.sync({ force: true })
     .then(function() {
       return fixtures.loadFile('api/seeders/**/*.json', db);
     });

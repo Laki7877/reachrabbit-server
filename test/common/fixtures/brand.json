@@ -3,7 +3,7 @@
     "model": "User",
     "data": {
       "email": "lazada@gmail.com",
-      "password": "hackme",
+      "password": "hackme"
     }
   },
   {

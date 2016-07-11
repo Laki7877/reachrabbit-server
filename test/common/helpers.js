@@ -20,15 +20,14 @@ var api = request(server);
  *
  * @return     {Promise}  Q Promise
  */
-function resetDB() {
-  return sequelize.drop({logging: false, cascade: true})
+function resyncDB() {
+  return sequelize.sync({force: true, logging: false})
     .then(function() {
-      return sequelize.sync({logging: false});
-    }).then(function() {
-      return fixtures.loadFile('test/common/fixtures/**/*.json', models);
+      return fixtures.loadFile('test/common/fixtures/**/*.json', models, {
+        log: function(){}
+      });
     });
 }
-
 /**
  * Drop all tables on database
  *
@@ -40,6 +39,6 @@ function cleanDB() {
 // module export
 module.exports = {
   api: api,
-  before: resetDB,
+  before: resyncDB,
   after: cleanDB
 };

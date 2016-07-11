@@ -55,6 +55,8 @@ module.exports = {
 
     return verify(token, secret, options).then(function(decoded) {
       return decoded.sub;
+    }).catch(function() {
+      return null;
     });
   },
   /**

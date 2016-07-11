@@ -42,7 +42,7 @@ module.exports = {
       // verify password
       .then(function(user) {
         if(!user) {
-          throw new errors.HttpStatusError(httpStatus.NOT_FOUND, config.ERROR.USER_NOT_FOUND);
+          throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, config.ERROR.USER_NOT_FOUND);
         }
         return user.verifyPassword(password)
           .then(function(eq) {

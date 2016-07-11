@@ -10,7 +10,7 @@
     "model": "Influencer",
     "data": {
       "gender": "male",
-      "aboutYourself": "This is about me",
+      "about": "This is about me",
       "User": {
         "email": "google@gmail.com"
       },

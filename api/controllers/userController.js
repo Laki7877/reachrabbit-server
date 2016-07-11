@@ -8,6 +8,7 @@
 
 var brandService = require('../services/brandService'),
     influencerService = require('../services/influencerService'),
+    userService = require('../services/userService'),
     mailService = require('../services/mailService'),
     authService = require('../services/authService'),
     facebookService = require('../services/facebookService'),
@@ -78,20 +79,13 @@ module.exports = {
    * @param      {Function}  next    The next
    */
   profile: function(req, res, next) {
-    brandService.findById(req.user.userId)
+    userService.findById(req.user.userId)
       .then(function(user) {
         if(!user) {
-          return influencerService.findById(req.user.userId)
-            .then(function(user) {
-              return user;
-            });
+          // no user found
+          return new errors.HttpStatusError(httpStatus.NOT_FOUND, config.ERROR.USER_NOT_FOUND);
         }
-        return user;
-      })
-      .then(function(user) {
-        //Temporrary solution TODO: move to service
-        user.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
         return res.send(user);
-      }).catch(next);
-    }
+      })
+  }
 };

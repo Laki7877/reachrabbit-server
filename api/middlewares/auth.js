@@ -36,7 +36,7 @@ module.exports = function(roles) {
 
     // get auth token
     var token = splits[1];
-
+    console.log('token', token);
     return authService.decode(token)
       /*.then(function(decoded) {
         // get cached object from cache
@@ -47,7 +47,6 @@ module.exports = function(roles) {
         throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN);
       })*/
       .then(function(data) {
-        console.log('decoded token', data);
         if(!_.isNil(roles)) {
           // single role arg
           if(_.isString(roles) && data.role !== roles) {
@@ -60,6 +59,9 @@ module.exports = function(roles) {
             throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
           }
           throw new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED);
+        }
+        if(!data) {
+          throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN);
         }
         // put onto req for next usage
         req.user = data;
