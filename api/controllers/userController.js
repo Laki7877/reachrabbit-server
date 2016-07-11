@@ -41,7 +41,7 @@ module.exports = {
       return res.send(result);
     })
     .catch(next);
-  }
+  },
   /**
    * Create new brand and automatically login to it (return token)
    *
@@ -69,7 +69,7 @@ module.exports = {
       return res.send(result);
     })
     .catch(next);
-  }
+  },
   /**
    * Find current user's information
    *
@@ -88,52 +88,10 @@ module.exports = {
         }
         return user;
       })
-<<<<<<< HEAD
-      .then(function(token) {
-        return { token: token };
-      });
-  })
-  .then(function(result) {
-    return res.send(result);
-  })
-  .catch(next);
-}
-/**
- * Find current user's information (/me)
- *
- * @param      {Object}    req     The request
- * @param      {Object}    res     The resource
- * @param      {Function}  next    The next
- */
-function profile(req, res, next) {
-  console.log('req.user', req.user);
-  brandService.findById(req.user.userId)
-    .then(function(user) {
-      if(!user) {
-        return influencerService.findById(req.user.userId)
-          .then(function(user) {
-            return user;
-          });
-      }
-      return user;
-    })
-    .then(function(user) {
-      //Temporrary solution TODO: move to service
-      user.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
-      return res.send(user);
-    }).catch(next);
-}
-
-module.exports = {
-  signupInfluencer: signupInfluencer,
-  signupBrand: signupBrand,
-  profile: profile
-};
-=======
       .then(function(user) {
+        //Temporrary solution TODO: move to service
         user.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
         return res.send(user);
       }).catch(next);
-  }
+    }
 };
->>>>>>> 6a39f2809f57e598d4a7e65394fefa5b4a7f2714
