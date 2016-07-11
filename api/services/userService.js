@@ -6,7 +6,8 @@
  */
 'use strict';
 
-var db                = require('../models'),
+var Promise           = require('bluebird'),
+    db                = require('../models'),
     User              = require('../models').User,
     Brand             = require('../models').Brand,
     Influencer        = require('../models').Influencer,
@@ -19,10 +20,10 @@ module.exports = {
    * @param      {String}  id      The identifier
    */
   findById: function(id) {
-    return async.parallel(
+    return Promise.all([
       Brand.count({ where: { userId: id } }),
       Influencer.count({ where: { userId: id} })
-    )
+    ])
     .then(function(results) {
       if(results[0] > 0) {
         // has brand
@@ -34,12 +35,6 @@ module.exports = {
         // not found
         return null;
       }
-    })
-    .then(function(user) {
-      if(user) {
-        user.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
-      }
-      return user;
     });
   }
 };

@@ -36,6 +36,10 @@ module.exports = {
       }
       return Resource.findById(user.profilePicture).then(function(result) {
         user.profilePicture = result;
+
+        if(result) {
+          user.profilePicture.dataValues = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
+        }
         return user;
       })
     })

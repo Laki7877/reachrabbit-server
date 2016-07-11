@@ -8,6 +8,22 @@ var helpers = require('../common/helpers'),
  * endpoint /me
  */
 describe('GET /me', function() {
+  var token = '';
+  var user = {
+      email: 'lazada@gmail.com',
+      password: 'hackme'
+  };
+  beforeEach(function(done) {
+    api.post('/login')
+      .send(user)
+      .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
+        token = res.body.token;
+        done();
+    });
+  });
   before(helpers.before);
   after(helpers.after);
 
@@ -29,41 +45,25 @@ describe('GET /me', function() {
   });
 
   describe('I have correct Authorization Header', function(done) {
-    var token = '';
-    var user = {
-        email: 'lazada@gmail.com',
-        password: 'hackme'
-    };
+    it('should return 200', function(cb) {
+      // get me
+      api.get('/me')
+        .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
+        .expect(200, cb);
+    });
 
-    api.post('/login')
-      .send(user)
-      .end(function(err, res) {
-        if(err) {
-          return done(err);
-        }
-
-        token = res.body.token;
-
-        it('should return 200', function(cb) {
-          // get me
-          api.get('/me')
-            .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
-            .expect(200, cb);
+    it('should return user with email ' + user.email, function(cb) {
+      // get me
+      api.get('/me')
+        .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
+        .end(function(err, res) {
+          if(err) {
+            return cb(err);
+          }
+          expect(res.body.email).to.equal(user.email);
+          cb();
         });
-
-        it('should return user with email ' + user.email, function(cb) {
-          // get me
-          api.get('/me')
-            .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
-            .end(function(err, res) {
-              if(err) {
-                return cb(err);
-              }
-              res.email.should.equal(user.email);
-            });
-        });
-
-      });
+    });
   });
 
 });

@@ -36,7 +36,6 @@ module.exports = function(roles) {
 
     // get auth token
     var token = splits[1];
-    console.log('token', token);
     return authService.decode(token)
       /*.then(function(decoded) {
         // get cached object from cache

@@ -83,9 +83,10 @@ module.exports = {
       .then(function(user) {
         if(!user) {
           // no user found
-          return new errors.HttpStatusError(httpStatus.NOT_FOUND, config.ERROR.USER_NOT_FOUND);
+          return next(new errors.HttpStatusError(httpStatus.NOT_FOUND, config.ERROR.USER_NOT_FOUND));
         }
         return res.send(user);
       })
+      .catch(next);
   }
 };
