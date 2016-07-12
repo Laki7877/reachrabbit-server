@@ -52,7 +52,7 @@ describe('GET /me', function() {
         .expect(200, cb);
     });
 
-    it('should return user with email ' + user.email, function(cb) {
+    it('should return correct user', function(cb) {
       // get me
       api.get('/me')
         .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)

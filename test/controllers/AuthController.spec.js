@@ -4,9 +4,38 @@ var helpers = require('../common/helpers'),
     authService = require('../../api/services/authService'),
     api     = helpers.api;
 
-var path = '/login';
+var loginPath = '/login';
+var createBrandPath = '/users/brand';
 
-describe('POST /login', function() {
+describe('POST ' + createBrandPath, function() {
+  before(helpers.before);
+  after(helpers.after);
+
+  describe('Create new brand', function() {
+    var brand = {
+      email: 'new@gmail.com',
+      password: '1234'
+    };
+    it('should return 200', function(done) {
+      api.post(createBrandPath)
+        .send(brand)
+        .expect(200, done);
+    });
+    it('should return with token', function(done) {
+      api.post(createBrandPath)
+        .send(brand)
+        .expect(200)
+        .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
+          expect(res.body.token).to.be.a('string');
+          done();
+        });
+    });
+  });
+});
+describe('POST ' + loginPath, function() {
   var brand = require('../common/fixtures/brand.json');
   before(helpers.before);
   after(helpers.after);

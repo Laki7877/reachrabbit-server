@@ -68,6 +68,7 @@ Service.prototype.read = function(id) {
  */
 Service.prototype.update = function(id, entity) {
   var self = this;
+  
   return async.waterfall([
     self.read(id),
     function(existingEntity) {

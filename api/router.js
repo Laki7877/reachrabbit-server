@@ -8,12 +8,25 @@
 'use strict';
 
 var express   = require('express'),
-    validate  = require('express-jsonschema').validate,
+    expressValidate  = require('express-jsonschema').validate,
     auth      = require('./middlewares/auth'),
-    $         = require('./controllers');
+    paginate  = require('./middlewares/pagination'),
+    $         = require('./controllers'),
+    S         = require('./schemas');
 
 var multer = require('multer');
 var upload = multer({ dest: '.tmp' });
+
+// validators function
+function validate(body, query) {
+  return expressValidate({body: body, query: query});
+}
+function validatePost(body) {
+  return validate(body);
+}
+function validateQuery(query) {
+  return validate(undefined, query);
+}
 
 
 module.exports = function() {
@@ -32,15 +45,17 @@ module.exports = function() {
   router.post('/login', $.authController.brandLogin);
 
   /********************************
-   * Register
+   * User
    ********************************/
-  router.post('/signup/influencer', $.userController.signupInfluencer);
-  router.post('/signup/brand', $.userController.signupBrand);
+  router.post('/users/influencer', $.userController.createInfluencer);
+  router.post('/users/brand', $.userController.createBrand);
+  router.get('/me', auth(), $.userController.getProfile);
+  router.put('/me', auth(), $.userController.updateProfile);
 
   /*********************************
-   * User
+   * Campaign
    *********************************/
-  router.get('/me', auth(), $.userController.profile);
+  router.get('/campaigns', auth(), paginate(), $.campaignController.list);
 
   /*********************************
    * Data
@@ -48,11 +63,12 @@ module.exports = function() {
   router.get('/data/categories', $.dataController.getActiveCategories);
   router.get('/data/medium', $.dataController.getActiveMedium);
   router.get('/data/banks', $.dataController.getBanks);
+
   /*********************************
-   * File Demo
+   * File
    *********************************/
 
-  router.get('/file', $.fileController.listAll);
+  router.get ('/file', $.fileController.listAll);
   router.post('/file', upload.single('file'), $.fileController.uploadSingle);
   router.post('/file/remote', $.fileController.fromRemote);
 
