@@ -8,6 +8,22 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
+    brandId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'Brand',
+        key: 'brandId'
+      }
+    },
+    categoryId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'Category',
+        key: 'categoryId'
+      }
+    },
     title: {
       type: DataTypes.STRING
     },

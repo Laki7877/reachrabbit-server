@@ -30,6 +30,14 @@ module.exports = function(sequelize, DataTypes) {
         key: 'resourceId'
       }
     },
+     bankId: {
+      type: DataTypes.CHAR,
+      allowNull: true,
+      references: {
+        model: 'Bank',
+        key: 'bankId'
+      }
+    },
     contactNumber: {
       type: DataTypes.STRING
     },
