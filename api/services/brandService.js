@@ -20,6 +20,10 @@ module.exports = {
     var newUser = _.omit(user, brandSchema);
     var newBrand = _.pick(user, brandSchema);
 
+    if(userObject.profilePicture) {
+      userObject.profilePicture = userObject.profilePicture.resourceId;
+    }
+
 		// create user with brand associated
   	return User.create(_.extend({}, newUser, {
 			Brand: newBrand

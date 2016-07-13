@@ -8,6 +8,14 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'User',
+        key: 'userId'
+      }
+    },
     gender: {
       type: DataTypes.ENUM('male','female','not specified')
     },

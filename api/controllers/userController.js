@@ -52,10 +52,6 @@ module.exports = {
    */
   createBrand: function(req, res, next) {
     var form = req.body;
-    if(form.profilePicture) {
-      form.profilePicture = form.profilePicture.resourceId;
-    }
-
     // create transaction
     sequelize.transaction(function(t) {
       // create new brand

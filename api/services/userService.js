@@ -36,5 +36,19 @@ module.exports = {
         return null;
       }
     });
+  },
+  findByEmail: function(email,includes) {
+    if(!includes){
+      includes = [];
+    }
+    if(!Array.isArray(includes)){
+      includes = [includes];
+    }
+    return User.findOne({
+      where: {
+        email: email
+      },
+      include: includes
+    });
   }
 };
