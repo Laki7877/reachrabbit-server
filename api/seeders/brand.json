@@ -1,0 +1,25 @@
+[
+	{
+        "model": "User",
+        "data": {
+            "userId" : "10e330bf-df4a-4d5f-bdfc-f40a9a570895",
+			"name": "Test User",
+			"email": "test@ahancer.com",
+			"password": "test1234",
+			"role": "brand",
+			"contactNumber": "0874414008",
+			"type": "brand",
+			"createdBy": "admin@ahancer.com",
+			"updatedBy": "admin@ahancer.com"
+        }
+    },
+    {
+        "model": "Brand",
+        "data": {
+            "brandName" : "Nintendo",
+			"userId" : "10e330bf-df4a-4d5f-bdfc-f40a9a570895",
+			"createdBy": "admin@ahancer.com",
+			"updatedBy": "admin@ahancer.com"
+        }
+    }
+]

@@ -13,14 +13,12 @@ var config  = require('config'),
 
 module.exports = {
   create: function(userObject, t) {
-    var brandSchema = ['brandName'];
-    var newUser = _.omit(userObject, brandSchema);
-    var newBrand = _.pick(userObject, brandSchema);
-
+    
+    if(userObject.profilePicture) {
+      userObject.profilePicture = userObject.profilePicture.resourceId;
+    }
 		// create user with brand associated
-  	return User.create(_.extend({}, newUser, {
-			Brand: newBrand
-		}), { include: [Brand], transaction: t }).then(function(createdUser) {
+  	return User.create(userObject, { include: [Brand], transaction: t }).then(function(createdUser) {
 			return createdUser.get({plain: true});
 		});
   },
