@@ -49,8 +49,8 @@ module.exports = function() {
    ********************************/
   router.post('/users/influencer', $.userController.createInfluencer);
   router.post('/users/brand', $.userController.createBrand);
-  router.get('/me', auth(), $.userController.getProfile);
-  router.put('/me', auth(), $.userController.updateProfile);
+  router.get('/profiles', auth(), $.userController.getProfile);
+  router.put('/profiles', auth(), $.userController.updateProfile);
 
   /*********************************
    * Campaign
