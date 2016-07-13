@@ -6,7 +6,8 @@
  */
 'use strict';
 
-var User 	= require('../models').User,
+var config  = require('config'),
+    User 	= require('../models').User,
 		Brand = require('../models').Brand,
     Resource = require('../models').Resource;
 
@@ -22,6 +23,15 @@ module.exports = {
 		}), { include: [Brand], transaction: t }).then(function(createdUser) {
 			return createdUser.get({plain: true});
 		});
+  },
+  createToken: function(user, cache) {
+    // cache user
+    if(cache) {
+      cacheHelper.set(user.userId, _.extend(user, {role: config.ROLE.BRAND}));
+    }
+    return this.encode({
+      userId: user.userId
+    });
   },
   findById: function(id) {
     return User.findById(id, {

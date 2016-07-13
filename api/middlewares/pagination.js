@@ -6,23 +6,36 @@
  */
 'use strict';
 
-module.exports = function(defaultCount, maxCount) {
-  if(!_.isInteger(defaultCount) || !_.isInteger(maxCount)) {
-    throw new Error('pagination middleware args should be number');
-  }
+var criteriaHelper = require('../helpers/criteriaHelper');
 
+module.exports = function(defaultsize, maxsize) {
+  // 
+  if(!_.isInteger(defaultsize)) {
+    defaultsize = 10
+  }
+  // 
+  if(!_.isInteger(maxsize)) {
+    maxsize = 100
+  }
   return function(req, res, next) {
     // no query
     if(!req.query) {
       return next();
     }
-    req.query.page = _.isString(req.query.page) ? _.parseInt(req.query.page) || 1 : 1;
-    req.query.count = _.isString(req.query.count) ? _.parseInt(req.query.count) : maxCount;
 
-    if(req.query.count > maxCount) {
-      req.query.count = maxCount;
+    // convert query to int
+    req.query.page = _.isString(req.query.page) ? _.parseInt(req.query.page) || 1 : 1;
+    req.query.size = _.isString(req.query.size) ? _.parseInt(req.query.size) : defaultsize;
+
+    if(req.query.size > maxsize) {
+      req.query.size = maxsize;
     }
 
+    var criteria = criteriaHelper.createPaginatedQuery(req.query.page, req.query.size, req.query.order, req.query.direction);
+
+    // alias for sequelize
+    req.criteria = _.extend({}, req.criteria, criteria);
+    
     next();
   };
 };

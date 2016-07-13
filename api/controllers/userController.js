@@ -24,10 +24,11 @@ module.exports = {
    * @param      {Object}    res     The resource
    * @param      {Function}  next    The next
    */
-  signupInfluencer: function(req, res, next) {
-    //TODO: implement this by 7/6/2016
-    var form = _.omit(req.body, ['profilePicture']);
-    form.profilePicture = req.body.profilePicture.resourceId;
+  createInfluencer: function(req, res, next) {
+    var form = req.body;
+    if(form.profilePicture) {
+      form.profilePicture = form.profilePicture.resourceId;
+    }
 
     sequelize.transaction(function(t) {
       return influencerService.create(form, t)
@@ -50,10 +51,11 @@ module.exports = {
    * @param      {Object}    res     The resource
    * @param      {Function}  next    The next
    */
-  signupBrand: function(req, res, next) {
-    // save profilePicture as resourceId
-    var form = _.omit(req.body, ['profilePicture']);
-    form.profilePicture = req.body.profilePicture.resourceId;
+  createBrand: function(req, res, next) {
+    var form = req.body;
+    if(form.profilePicture) {
+      form.profilePicture = form.profilePicture.resourceId;
+    }
 
     // create transaction
     sequelize.transaction(function(t) {
@@ -78,15 +80,14 @@ module.exports = {
    * @param      {Object}    res     The resource
    * @param      {Function}  next    The next
    */
-  profile: function(req, res, next) {
-    userService.findById(req.user.userId)
-      .then(function(user) {
-        if(!user) {
-          // no user found
-          return next(new errors.HttpStatusError(httpStatus.NOT_FOUND, config.ERROR.USER_NOT_FOUND));
-        }
-        return res.send(user);
-      })
-      .catch(next);
+  getProfile: function(req, res, next) {
+    if(req.user) {
+      return res.send(req.user);
+    } else {
+      return next(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION));
+    }
+  },
+  updateProfile: function(req, res, next) {
+    next();
   }
 };

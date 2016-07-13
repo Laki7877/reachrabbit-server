@@ -130,10 +130,7 @@ module.exports = {
   createToken: function(user, cache) {
     // cache user
     if(cache) {
-      cacheHelper.set(user.userId, {
-        user: user,
-        role: config.ROLE.INFLUENCER
-      });
+      cacheHelper.set(user.userId, _.extend(user, {role: config.ROLE.INFLUENCER}));
     }
     // encode userid
     return authService.encode({

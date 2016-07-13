@@ -37,15 +37,43 @@ module.exports = function(roles) {
     // get auth token
     var token = splits[1];
     return authService.decode(token)
-      /*.then(function(decoded) {
+      .then(function(decoded) {
         // get cached object from cache
-        return cacheHelper.get(decoded.userId);
+        if(!decoded) {
+          throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
+        }
+        return cacheHelper.get(decoded.userId)
+          .then(function(data) {
+            if(!data) {
+              return [false, decoded];
+            }
+            return [true, data];
+          });
       })
-      .catch(function(err) {
-        // invalid token
-        throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN);
-      })*/
+      .spread(function(found, data) {
+        if(!found) {
+          return userService.findById(data.userId)
+            .then(function(user) {
+              // no user found
+              var role = null;
+              if(!user) {
+                throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
+              }
+
+              // assign arbitary role
+              if(user.Brand) {
+                role = config.ROLE.BRAND;
+              }
+              else if(user.Influencer) {
+                role = config.ROLE.INFLUENCER;
+              }
+              return {user: user, role: role};
+            }); 
+        }
+        return data;
+      })
       .then(function(data) {
+        // no roles
         if(!_.isNil(roles)) {
           // single role arg
           if(_.isString(roles) && data.role !== roles) {
@@ -59,11 +87,13 @@ module.exports = function(roles) {
           }
           throw new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED);
         }
-        if(!data) {
+        // cannot find user
+        if(!data.user) {
           throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN);
         }
         // put onto req for next usage
-        req.user = data;
+        req.user = data.user;
+        req.role = data.role;
         return next();
       })
       .catch(next);

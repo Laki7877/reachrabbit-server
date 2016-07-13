@@ -43,7 +43,7 @@ module.exports = {
           if(_.has(lodis, key)) {
             resolve(lodis[key]);
           } else {
-            reject(err);
+            resolve();
           }
         });
       });
@@ -62,7 +62,7 @@ module.exports = {
     catch(e) {
       value = object;
     }
-    redis.set(key, object)
+    redis.set(key, value)
       .catch(function() {
         lodis[key] = object;
       });
