@@ -56,5 +56,10 @@ module.exports = function() {
   router.post('/file', upload.single('file'), $.fileController.uploadSingle);
   router.post('/file/remote', $.fileController.fromRemote);
 
+
+  router.get('/default/create', $.defaultController.testCreate);
+  router.get('/default/delete', $.defaultController.testDelete);
+  router.get('/default/findAll', $.defaultController.testFind);
+  router.get('/default/update', $.defaultController.testUpdate);
   return router;
 };
