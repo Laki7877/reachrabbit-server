@@ -33,7 +33,7 @@ module.exports = {
   list: function(path) {
     var promise = new Promise(function(resolve, reject) {
       var params = {
-        Bucket: 'projectxtest'
+        Bucket: bucketName
       };
       s3.listObjectsV2(params, function(err, data) {
         if (err) return reject(err);
@@ -50,7 +50,7 @@ module.exports = {
   */
   uploadPublic: function(buffer, filename, mimetype){
     var params = {
-      Bucket: 'projectxtest',
+      Bucket: bucketName,
       Key: filename,
       Body: buffer,
       ACL: 'public-read',

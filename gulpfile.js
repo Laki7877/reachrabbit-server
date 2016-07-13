@@ -66,6 +66,9 @@ gulp.task('pre-commit', 'Git hook pre-commit', ['lint']);
 
 // pre test
 gulp.task('pre-test', 'Setup pretest routine', function() {
+  // test mode
+  process.env.NODE_ENV = 'test';
+
   return gulp.src(['api/**/*.js'])
     .pipe(plugins.istanbul())
     .pipe(plugins.istanbul.hookRequire());
@@ -76,6 +79,7 @@ gulp.task('test', 'Run mocha test API', ['pre-test'], function() {
   var opts = {
     reporter: 'mocha-better-spec-reporter',
     timeout: 60000,
+    bail: true,
     require: ['./test/common/init.js']
   };
 

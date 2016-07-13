@@ -9,27 +9,52 @@
 var config  = require('config'),
     User 	= require('../models').User,
 		Brand = require('../models').Brand,
-    Resource = require('../models').Resource;
+    Resource = require('../models').Resource,
+    cacheHelper = require('../helpers/cacheHelper'),
+    authHelper = require('../helpers/authHelper');
+
+var brandSchema = ['brandName'];
 
 module.exports = {
-  create: function(userObject, t) {
-    var brandSchema = ['brandName'];
-    var newUser = _.omit(userObject, brandSchema);
-    var newBrand = _.pick(userObject, brandSchema);
+  create: function(user, t) {
+    var newUser = _.omit(user, brandSchema);
+    var newBrand = _.pick(user, brandSchema);
 
 		// create user with brand associated
   	return User.create(_.extend({}, newUser, {
 			Brand: newBrand
 		}), { include: [Brand], transaction: t }).then(function(createdUser) {
-			return createdUser.get({plain: true});
+			return createdUser;
 		});
+  },
+  update: function(user, t) {
+    var updatedUser = _.omit(user, brandSchema);
+    var updatedBrand = _.pick(user, brandSchema);
+    return User.findById(user.userId, {
+      include: [Brand],
+      transaction: t
+    })
+      .then(function(existingUser) {
+        if(!existingUser) {
+          return existingUser;
+        }
+
+        // update user
+        _.extend(existingUser, updatedUser);
+        _.extend(existingUser.Brand, updatedBrand);
+
+        return existingUser.save({ transaction: t });
+      });
   },
   createToken: function(user, cache) {
     // cache user
     if(cache) {
-      cacheHelper.set(user.userId, _.extend(user, {role: config.ROLE.BRAND}));
+      cacheHelper.set(user.userId, {
+        user: user,
+        role: config.ROLE.BRAND
+      });
     }
-    return this.encode({
+    return authHelper.encode({
       userId: user.userId
     });
   },
@@ -51,12 +76,11 @@ module.exports = {
           user.profilePicture.dataValues = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
         }
         return user;
-      })
+      });
     })
     .then(function(user) {
       if(user) {
         _.extend(user.dataValues, user.Brand.dataValues);
-        _.unset(user, ['Brand']);
       }
       return user;
     });

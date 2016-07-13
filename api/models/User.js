@@ -14,9 +14,6 @@ module.exports = function(sequelize, DataTypes) {
     name: {
       type: DataTypes.STRING
     },
-    role: {
-      type: DataTypes.ENUM('admin','brand','influencer')
-    },
     email: {
       type: DataTypes.STRING
     },
@@ -65,12 +62,15 @@ module.exports = function(sequelize, DataTypes) {
     },
     classMethods: {
       associate: function(models) {
+        // roles
         User.hasOne(models.Brand, {
           foreignKey: 'userId'
         });
         User.hasOne(models.Influencer, {
           foreignKey: 'userId'
         });
+
+        // bank
         User.belongsTo(models.Bank, {
           foreignKey: 'bankId'
         });

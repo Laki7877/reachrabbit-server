@@ -10,7 +10,7 @@ var helpers = require('../common/helpers'),
 describe('GET /me', function() {
   var token = '';
   var user = {
-      email: 'lazada@gmail.com',
+      email: 'brand1@test.com',
       password: 'hackme'
   };
   beforeEach(function(done) {
@@ -27,24 +27,24 @@ describe('GET /me', function() {
   before(helpers.before);
   after(helpers.after);
 
-  describe('I have no Authorization Header', function() {
-    it('should response with 401 Error', function(done) {
+  describe('I have no token', function() {
+    it('should return 401', function(done) {
       api.get('/me')
       .expect(401, done);
     });
   });
 
-  describe('I have an incorrect Authorization Header', function() {
+  describe('I have an incorrect token', function() {
     var incorrectToken = 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ';
 
-    it('should response with 401 Error', function(done) {
+    it('should return 401', function(done) {
       api.get('/me')
         .set('Authorization', incorrectToken)
         .expect(401, done);
     });
   });
 
-  describe('I have correct Authorization Header', function(done) {
+  describe('I have correct token', function(done) {
     it('should return 200', function(cb) {
       // get me
       api.get('/me')
@@ -52,7 +52,7 @@ describe('GET /me', function() {
         .expect(200, cb);
     });
 
-    it('should return correct user', function(cb) {
+    it('should return profile', function(cb) {
       // get me
       api.get('/me')
         .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
@@ -65,5 +65,4 @@ describe('GET /me', function() {
         });
     });
   });
-
 });

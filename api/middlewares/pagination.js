@@ -9,11 +9,11 @@
 var criteriaHelper = require('../helpers/criteriaHelper');
 
 module.exports = function(defaultsize, maxsize) {
-  // 
+  //
   if(!_.isInteger(defaultsize)) {
     defaultsize = 10
   }
-  // 
+  //
   if(!_.isInteger(maxsize)) {
     maxsize = 100
   }
@@ -24,7 +24,7 @@ module.exports = function(defaultsize, maxsize) {
     }
 
     // convert query to int
-    req.query.page = _.isString(req.query.page) ? _.parseInt(req.query.page) || 1 : 1;
+    req.query.page = _.isString(req.query.page) ? _.parseInt(req.query.page): 1;
     req.query.size = _.isString(req.query.size) ? _.parseInt(req.query.size) : defaultsize;
 
     if(req.query.size > maxsize) {
@@ -35,7 +35,7 @@ module.exports = function(defaultsize, maxsize) {
 
     // alias for sequelize
     req.criteria = _.extend({}, req.criteria, criteria);
-    
+
     next();
   };
 };

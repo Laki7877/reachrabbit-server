@@ -8,6 +8,9 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
+    title: {
+      type: DataTypes.STRING
+    },
     description: {
       type: DataTypes.TEXT
     },
@@ -33,6 +36,11 @@ module.exports = function(sequelize, DataTypes) {
         });
         CampaignProposal.belongsTo(models.Influencer, {
           foreignKey: 'influencerId'
+        });
+
+        // proposal belongs to one of submission, if passed
+        CampaignProposal.belongsTo(models.CampaignSubmission, {
+          foreignKey: 'submissionId'
         });
         CampaignProposal.belongsToMany(models.Resource, {
           through: models.CampaignProposalResource,

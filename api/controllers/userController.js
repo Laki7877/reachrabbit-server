@@ -10,7 +10,6 @@ var brandService = require('../services/brandService'),
     influencerService = require('../services/influencerService'),
     userService = require('../services/userService'),
     mailService = require('../services/mailService'),
-    authService = require('../services/authService'),
     facebookService = require('../services/facebookService'),
     cacheHelper = require('../helpers/cacheHelper'),
     sequelize = require('../models').sequelize,
@@ -33,7 +32,7 @@ module.exports = {
     sequelize.transaction(function(t) {
       return influencerService.create(form, t)
         .then(function(user) {
-          return authService.createTokenForInfluencer(user, true);
+          return influencerService.createToken(user, true);
         })
         .then(function(token) {
           return { token: token };
@@ -62,7 +61,7 @@ module.exports = {
       // create new brand
       return brandService.create(form, t)
         .then(function(user) {
-          return authService.createTokenForBrand(user, true);
+          return brandService.createToken(user, true);
         })
         .then(function(token) {
           return { token: token };
@@ -88,6 +87,25 @@ module.exports = {
     }
   },
   updateProfile: function(req, res, next) {
-    next();
+    if(req.user) {
+      // assign to current user's userid
+      var user = req.body;
+      user.userId = req.user.userId;
+
+      // for brand
+      if(req.role === config.ROLE.BRAND) {
+        return sequelize.transaction(function(t) {
+          brandService.update(user, t);
+        })
+        .catch(next);
+      }
+
+      // for influencer
+      else if(req.role === config.ROLE.INFLUENCER) {
+
+      }
+
+      next(new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED));
+    }
   }
 };

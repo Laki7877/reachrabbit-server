@@ -10,50 +10,69 @@ var request   = require('supertest'),
     server    = require('../../app'),
     fixtures  = require('sequelize-fixtures'),
     models    = require('../../api/models'),
-    config    = require('confg'),
+    config    = require('config'),
     sequelize = models.sequelize;
 
 // create api base
 var api = request(server);
 
-module.exports = {
-  /**
-   * Reset database with fixture values
-   *
-   * @return     {Promise}  Q Promise
-   */
-  resyncDB: function() {
-    return sequelize.sync({force: true, logging: false})
-      .then(function() {
-        return fixtures.loadFile('test/common/fixtures/**/*.json', models, {
-          log: function(){}
-        });
-      });
-  },
-  /**
-   * Drop all tables on database
-   *
-   * @return     {Promise}  Q Promise
-   */
-  cleanDB: function() {
-    return sequelize.sync({force: true, logging: false});
-  },
+var helpers = {};
 
-  brandLogin: function(done) {
-    var self = this;
-    var brand = {
-      email: 'new@gmail.com',
-      password: '1234'
-    };
-    api.post('/login')
-      .send(brand)
-      .end(function(err, res) {
-        if(err) {
-          return done(err);
-        }
-        self.brandToken = config.AUTHORIZATION_TYPE + ' ' + res.token;
-        done();
+helpers.resyncDB = function() {
+  return sequelize.sync({force: true, logging: false})
+    .then(function() {
+      return fixtures.loadFile('test/common/fixtures/**/*.json', models, {
+        log: function() {}
       });
-  },
-  api: api
+    })
+    .then(function() {
+      return fixtures.loadFile('test/common/fixtures/**/*.js', models, {
+        log: function() {}
+      });
+    })
+    .catch(function(e) {
+      console.error(e);
+    });
 };
+
+helpers.cleanDB = function() {
+  return sequelize.sync({force: true, logging: false});
+};
+
+helpers.brandLogin = function(done) {
+  var self = this;
+  var brand = {
+    email: 'brand1@test.com',
+    password: 'hackme'
+  };
+  api.post('/login')
+    .send(brand)
+    .end(function(err, res) {
+      if(err) {
+        return done(err);
+      }
+      helpers.brandToken = config.AUTHORIZATION_TYPE + ' ' + res.body.token;
+      done();
+    });
+};
+helpers.influencerLogin = function(done) {
+  var inf = {
+    socialName: 'facebook',
+    socialId: '128000600963755'
+  };
+  api.post('/tests/influencerLogin')
+    .send(inf)
+    .end(function(err, res) {
+      if(err) {
+        return done(err);
+      }
+      helpers.influencerToken = config.AUTHORIZATION_TYPE + ' ' + res.body.token;
+      done();
+    });
+};
+
+helpers.before = helpers.resyncDB;
+helpers.after = helpers.cleanDB;
+helpers.api = api;
+
+module.exports = helpers;

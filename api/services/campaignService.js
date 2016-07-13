@@ -6,19 +6,68 @@
  */
 'use strict';
 
-var User = require('../models').User,
-	Campaign = require('../models').Campaign,
-	criteriaHelper = require('../helpers/criteriaHelper');
+var db = require('../models'),
+  sequelize = db.sequelize,
+  User = db.User,
+  Campaign = db.Campaign,
+  CampaignProposal = db.CampaignProposal,
+  CampaignSubmission = db.CampaignSubmission;
 
 module.exports = {
-	findAllByOwner: function(brandId, criteria) {
-		var opts = {
-			where: { ownerId: brandId }
-		};
+  findAll: function(criteria) {
+    // get everything
+    return Campaign.findAndCountAll(criteria);
+  },
+  findAllByOwner: function(brandId, criteria) {
+    // get only ones belong to this brand
+    var opts = {
+      where: { brandId: brandId }
+    };
 
-		// extend with pagination criteria
-		opts = _.extend(opts, criteria);
+    // extend with pagination criteria
+    opts = _.extend(opts, criteria);
 
-		return Campaign.findAndCountAll(opts);
-	}
+    return Campaign.findAndCountAll(opts);
+  },
+  findAllByInfluencer: function(influencerId, criteria) {
+    var opts = {
+      include: [{
+        model: CampaignProposal,
+        where: {
+          influencerId: influencerId
+        },
+        required: false
+      }, {
+        model: CampaignSubmission,
+        where: {
+          influencerId: influencerId
+        },
+        required: false
+      }]
+    };
+
+    // extend with pagination criteria
+    opts = _.extend(opts, criteria);
+
+    return Campaign.findAndCountAll(opts);
+  },
+  updateWithBrandById: function(id, brandId, campaign, t) {
+    var opts = {
+      where: {
+        campaignId: id,
+        brandId: brandId
+      },
+      transaction: t
+    };
+
+    return Campaign.findOne(opts)
+      .then(function(existingCampaign) {
+        if(!existingCampaign) {
+          return existingCampaign;
+        }
+        _.extend(existingCampaign, campaign);
+
+        return existingCampaign.save({transaction: t});
+      });
+  }
 };

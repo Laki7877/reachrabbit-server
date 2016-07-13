@@ -10,7 +10,6 @@
 var moment = require('moment'),
   config = require('config'),
   Promise = require('bluebird'),
-  authService = require('../services/authService'),
   facebookService = require('../services/facebookService'),
   googleService = require('../services/googleService'),
   igService = require('../services/instagramService'),
@@ -49,13 +48,13 @@ module.exports = {
             if (!eq) {
               throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, config.ERROR.WRONG_EMAIL_PASSWORD);
             }
-            return user;
+            return user.get({plain: true});
           });
       })
       // encode user
       .then(function(user) {
         // cache user and return token
-        return authService.createTokenForBrand(user, true);
+        return brandService.createToken(user, true);
       })
       // send
       .then(function(token) {
@@ -117,7 +116,7 @@ module.exports = {
                 });
               } else {
                 // found, create token and return
-                authService.createTokenForInfluencer(user, true)
+                return influencerService.createToken(user, true)
                   .then(function(token) {
                     res.send({
                       isLogin: true,
@@ -173,7 +172,7 @@ module.exports = {
                 });
             } else {
               // login flow
-              authService.createTokenForInfluencer(user, true)
+              return influencerService.createToken(user, true)
                 .then(function(token) {
                   res.send({
                     isLogin: true,
@@ -229,7 +228,7 @@ module.exports = {
               });
             } else {
               // login flow
-              return authService.createTokenForInfluencer(user, true)
+              return influencerService.createToken(user, true)
                 .then(function(token) {
                   return res.send({
                     token: token,

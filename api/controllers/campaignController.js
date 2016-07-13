@@ -7,17 +7,53 @@
  */
 'use strict';
 
-var config = require('config'), 
+var config = require('config'),
+  db = require('../models'),
+  sequelize = db.sequelize,
 	campaignService = require('../services/campaignService');
 
 module.exports = {
+  update: function(req, res, next) {
+    var brandId = req.user.Brand.brandId;
+    var campaignId = req.params.id;
+    var data = req.body;
+
+    return sequelize.transaction(function(t) {
+      return campaignService.update(campaignId, brandId, data, t)
+        .then(function(campaign) {
+          if(!campaign) {
+            throw new errors.HttpStatusError(httpStatus.NOT_FOUND);
+          }
+          return res.send(campaign);
+        })
+        .catch(next);
+    });
+  },
 	list: function(req, res, next) {
 		if(req.role === config.ROLE.BRAND) {
-			return campaignService.list()
+      // find by brand owner
+			return campaignService.findAllByOwner(req.user.Brand.brandId, req.criteria)
 				.then(function(campaigns) {
 					res.send(campaigns);
 				})
 				.catch(next);
-		}
+		} else if(req.role === config.ROLE.INFLUENCER) {
+      // find by influencers
+      return campaignService.findAllByInfluencer(req.user.Influencer.influencerId, req.criteria)
+        .then(function(campaigns) {
+          res.send(campaigns);
+        })
+        .catch(next);
+    } else if(req.role === config.ROLE.ADMIN) {
+      // find all for admin-only
+      return campaignService.findAll(req.criteria)
+        .then(function(campaigns){
+          res.send(campaigns);
+        })
+        .catch(next);
+    } else {
+      // no role?
+      next(new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED));
+    }
 	}
 };

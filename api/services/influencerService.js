@@ -6,12 +6,13 @@
  */
 'use strict';
 
-var User        = require('../models').User,
+var config = require('config'),
+    User        = require('../models').User,
     Influencer  = require('../models').Influencer,
     InfluencerMedia  = require('../models').InfluencerMedia,
     Media  = require('../models').Media,
     Resource = require('../models').Resource,
-    authService = require('../services/authService'),
+    authHelper = require('../helpers/authHelper'),
     cacheHelper = require('../helpers/cacheHelper');
 
 module.exports = {
@@ -55,7 +56,7 @@ module.exports = {
           // get created influencer
           return createdUser.Influencer.addMedia(results, { transaction: t })
             .then(function() {
-              return createdUser.get({plain: true});
+              return createdUser;
             });
         });
     });
@@ -77,17 +78,17 @@ module.exports = {
       if(!user) {
         return user;
       }
-      return Resource.findById(user.profilePicture)
+      return Resource.findById(user.get('profilePicture'))
         .then(function(result) {
           // assign profile pic
-          user.profilePicture = result;
+          user.dataValues.profilePicture = result;
           return user;
         });
     })
     .then(function(user) {
       if(user) {
         // flatten user
-        _.extend(user.dataValues, user.Influencer.dataValues);
+        _.extend(user.dataValues, user.dataValues.Influencer);
 
         // media
         user.dataValues.socialAccounts = {};
@@ -97,8 +98,6 @@ module.exports = {
             pageId: media.InfluencerMedia.pageId
           };
         });
-
-        _.unset(user, ['Influencer', 'Media']);
       }
       return user;
     });
@@ -123,17 +122,18 @@ module.exports = {
           }],
           required: true
       }]
-    }).then(function(user) {
-      return user;
     });
   },
   createToken: function(user, cache) {
     // cache user
     if(cache) {
-      cacheHelper.set(user.userId, _.extend(user, {role: config.ROLE.INFLUENCER}));
+      cacheHelper.set(user.userId, {
+        user: user,
+        role: config.ROLE.INFLUENCER
+      });
     }
     // encode userid
-    return authService.encode({
+    return authHelper.encode({
       userId: user.userId
     });
   },

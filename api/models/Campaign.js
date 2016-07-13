@@ -34,20 +34,39 @@ module.exports = function(sequelize, DataTypes) {
     paranoid: true,
     classMethods: {
       associate: function(models) {
+        // owner
         Campaign.belongsTo(models.Brand, {
           foreignKey: 'brandId'
         });
+
+        // category of campaign
         Campaign.belongsTo(models.Category, {
           foreignKey: 'categoryId'
         });
+
+        // social media channels
         Campaign.belongsToMany(models.Media, {
           through: models.CampaignMedia
         });
+
+        // resources related to this campaign
         Campaign.belongsToMany(models.Resource, {
           through: models.CampaignResource,
           foreignKey: 'campaignId'
         });
+
+        // payment referred to this campaign
         Campaign.hasMany(models.PaymentTransaction, {
+          foreignKey: 'campaignId'
+        });
+
+        // campaign proposal
+        Campaign.hasMany(models.CampaignProposal, {
+          foreignKey: 'campaignId'
+        });
+
+        // campaign submission
+        Campaign.hasMany(models.CampaignSubmission, {
           foreignKey: 'campaignId'
         });
       }

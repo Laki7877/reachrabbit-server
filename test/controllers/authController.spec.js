@@ -1,7 +1,7 @@
 'use strict';
 
 var helpers = require('../common/helpers'),
-    authService = require('../../api/services/authService'),
+    authHelper = require('../../api/helpers/authHelper'),
     api     = helpers.api;
 
 var loginPath = '/login';
@@ -36,7 +36,6 @@ describe('POST ' + createBrandPath, function() {
   });
 });
 describe('POST ' + loginPath, function() {
-  var brand = require('../common/fixtures/brand.json');
   before(helpers.before);
   after(helpers.after);
 
@@ -54,7 +53,7 @@ describe('POST ' + loginPath, function() {
 
   describe('Correct email/password', function() {
     var user = {
-        email: 'lazada@gmail.com',
+        email: 'brand1@test.com',
         password: 'hackme'
     };
 
@@ -72,11 +71,14 @@ describe('POST ' + loginPath, function() {
           if(err) {
             return done(err);
           }
+
+          // check returned token
           var data = res.body;
-          assert.typeOf(data, 'object');
-          assert.property(data, 'token');
-          assert.typeOf(data.token, 'string');
-          authService.decode(data.token)
+          expect(data).to.be.a('object');
+          expect(data).to.have.property('token');
+
+          // check validity of token
+          authHelper.decode(data.token)
             .then(function(id) {
               done();
             }).catch(done);

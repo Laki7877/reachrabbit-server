@@ -7,8 +7,8 @@
 'use strict';
 
 var config  = require('config'),
-    authService = require('../services/authService'),
     userService = require('../services/userService'),
+    authHelper = require('../helpers/authHelper'),
     cacheHelper = require('../helpers/cacheHelper');
 
 module.exports = function(roles) {
@@ -36,7 +36,7 @@ module.exports = function(roles) {
 
     // get auth token
     var token = splits[1];
-    return authService.decode(token)
+    return authHelper.decode(token)
       .then(function(decoded) {
         // get cached object from cache
         if(!decoded) {
@@ -68,7 +68,7 @@ module.exports = function(roles) {
                 role = config.ROLE.INFLUENCER;
               }
               return {user: user, role: role};
-            }); 
+            });
         }
         return data;
       })
