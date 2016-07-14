@@ -27,8 +27,10 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      var user = influencerService.build();
-      return brandService.setup(req.body, user)
+      return influencerService.create(t)
+        .then(function(user) {
+          return influencerService.process(req.body, user, t);
+        })
         .then(function(user) {
           return user.save({ transaction: t })
         });
@@ -52,13 +54,12 @@ module.exports = {
     var form = req.body;
     // create transaction
     sequelize.transaction(function(t) {
-      var user = brandService.build();
-
-      console.log(user);
-
-      return brandService.setup(req.body, user)
+      return brandService.create(t)
         .then(function(user) {
-          return user.save({transaction: t});
+          return brandService.process(req.body, user, t);
+        })
+        .then(function(user) {
+          return user.save({ transaction: t })
         });
     })
     .then(function(user) {
@@ -86,26 +87,27 @@ module.exports = {
   updateProfile: function(req, res, next) {
     sequelize.transaction(function(t) {
       if(req.role === config.ROLE.BRAND) {
+        // find this brand
         return brandService.findById(req.user.userId)
           .then(function(user) {
             if(!user) {
               throw new errors.HttpStatusError(httpStatus.NOT_FOUND);
             }
-            return brandService.setup(req.body, user);
+            return brandService.process(req.body, user, t);
           })
           .then(function(user) {
             return user.save({transaction: t});
           });
       } else if(req.role === config.ROLE.INFLUENCER) {
+        // find this influencer
         return influencerService.findById(req.user.userId)
           .then(function(user) {
-            return influencerService.setup(req.body, user);
+            return influencerService.process(req.body, user, t);
           })
           .then(function(user) {
             return user.save({transaction: t});
           });
       }
-
       throw new Error('role error');
     })
     .then(function(result) {
