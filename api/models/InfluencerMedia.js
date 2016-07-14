@@ -1,13 +1,13 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var InfluencerMedia = sequelize.define('InfluencerMedia', {
+  var InfluencerMedia = sequelize.define('influencerMedia', {
     influencerId: {
       type: DataTypes.UUIDV4,
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'Influencer',
+        model: 'influencer',
         key: 'influencerId'
       }
     },
@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'Media',
+        model: 'media',
         key: 'mediaId'
       }
     },

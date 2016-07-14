@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Category = sequelize.define('Category', {
+  var Category = sequelize.define('category', {
     categoryId: {
       type: DataTypes.UUID,
       allowNull: false,

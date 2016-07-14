@@ -13,21 +13,32 @@ var config = require('config'),
 	campaignService = require('../services/campaignService');
 
 module.exports = {
+  create: function(req, res, next) {
+    var form = req.body;
+
+    sequelize.transaction(function(t) {
+      var campaign = campaignService.build(form, null, t);
+
+      campaign.addBrand(req.user.Brand);
+      return campaign.save({transaction: t});
+    })
+    .catch(next);
+  },
   update: function(req, res, next) {
     var brandId = req.user.Brand.brandId;
     var campaignId = req.params.id;
     var data = req.body;
 
-    return sequelize.transaction(function(t) {
+    sequelize.transaction(function(t) {
       return campaignService.update(campaignId, brandId, data, t)
         .then(function(campaign) {
           if(!campaign) {
             throw new errors.HttpStatusError(httpStatus.NOT_FOUND);
           }
           return res.send(campaign);
-        })
-        .catch(next);
-    });
+        });
+    })
+    .catch(next);
   },
 	list: function(req, res, next) {
 		if(req.role === config.ROLE.BRAND) {

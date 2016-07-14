@@ -14,6 +14,12 @@ var db = require('../models'),
   CampaignSubmission = db.CampaignSubmission;
 
 module.exports = {
+  build: function(request, campaign, t) {
+    var newCampaign = Campaign.build(_.merge({}, campaign, request), {
+    });
+
+    return newCampaign;
+  },
   findAll: function(criteria) {
     // get everything
     return Campaign.findAndCountAll(criteria);

@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var PaymentTransaction = sequelize.define('PaymentTransaction', {
+  var PaymentTransaction = sequelize.define('paymentTransaction', {
     transactionId: {
       type: DataTypes.UUID,
       allowNull: false,

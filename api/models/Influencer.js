@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Influencer = sequelize.define('Influencer', {
+  var Influencer = sequelize.define('influencer', {
     influencerId: {
       type: DataTypes.UUID,
       allowNull: false,

@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Resource = sequelize.define('Resource', {
+  var Resource = sequelize.define('resource', {
     resourceId: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -23,23 +23,35 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'Resource',
     paranoid: true,
+    hooks: {
+      afterFind: function(instance, options) {
+        if(instance) {
+          instance.dataValues.url = process.env.S3_PUBLIC_URL + instance.get('resourcePath');
+        }
+        return instance;
+      }
+    },
     classMethods: {
       associate: function(models) {
         Resource.belongsToMany(models.Campaign, {
           through: models.CampaignResource,
-          foreighKey: 'resourceId'
+          foreighKey: 'resourceId',
+          as: 'resources'
         });
         Resource.belongsToMany(models.CampaignProposal, {
           through: models.CampaignProposalResource,
-          foreighKey: 'resourceId'
+          foreighKey: 'resourceId',
+          as: 'proposals'
         });
         Resource.belongsToMany(models.CampaignSubmission, {
           through: models.CampaignSubmissionResource,
-          foreighKey: 'resourceId'
+          foreighKey: 'resourceId',
+          as: 'submissions'
         });
         Resource.belongsToMany(models.PaymentTransaction, {
           through: models.PaymentResource,
-          foreighKey: 'resourceId'
+          foreighKey: 'resourceId',
+          as: 'transactions'
         });
       }
     }

@@ -4,7 +4,7 @@ var bcrypt = require('bcryptjs'),
   Promise = require('bluebird');
 
 module.exports = function(sequelize, DataTypes) {
-  var User = sequelize.define('User', {
+  var User = sequelize.define('user', {
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -20,14 +20,7 @@ module.exports = function(sequelize, DataTypes) {
     password: {
       type: DataTypes.STRING
     },
-    profilePicture: {
-      type: DataTypes.UUID,
-      references: {
-        model: 'Resource',
-        key: 'resourceId'
-      }
-    },
-     bankId: {
+    bankId: {
       type: DataTypes.CHAR,
       allowNull: true,
       references: {
@@ -66,6 +59,17 @@ module.exports = function(sequelize, DataTypes) {
           });
         }
         return options;
+      },
+      afterFind: function(instances, options) {
+        if(instances) {
+          if(_.isArray(instances)) {
+            _.forEach(instances, function(instance) {
+              instance.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + instance.profilePicture.get('resourcePath');
+            })
+          } else {
+            instances.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + instances.profilePicture.get('resourcePath');
+          }
+        }
       }
     },
     classMethods: {
@@ -84,6 +88,11 @@ module.exports = function(sequelize, DataTypes) {
         });
         User.hasMany(models.PaymentTransaction, {
           foreignKey: 'userId'
+        });
+
+        User.belongsTo(models.Resource, {
+          foreignKey: 'profilePictureId',
+          as: 'profilePicture'
         });
       }
     },

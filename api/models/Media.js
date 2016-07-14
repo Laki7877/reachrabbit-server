@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Media = sequelize.define('Media', {
+  var Media = sequelize.define('media', {
     mediaId: {
       type: DataTypes.UUID,
       allowNull: false,

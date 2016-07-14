@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Bank = sequelize.define('Bank', {
+  var Bank = sequelize.define('bank', {
     bankId: {
       type: DataTypes.CHAR(3),
       allowNull: false,
