@@ -5,6 +5,16 @@
  * @since      0.0.3
  */
 'use strict';
+var moment          = require('moment'),
+    jwt             = require('jsonwebtoken'),
+    crypto          = require('crypto'),
+    config          = require('config'),
+    Promise         = require('bluebird'),
+    cacheHelper     = require('../helpers/cacheHelper');
+
+var secret          = process.env.JWT_SECRET;
+var expirationTime  = process.env.JWT_EXPIRATION_TIME;
+
 
 module.exports = {
   /**

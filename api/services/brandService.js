@@ -7,40 +7,46 @@
 'use strict';
 
 var config  = require('config'),
+    Promise = require('bluebird'),
     User 	= require('../models').User,
 		Brand = require('../models').Brand,
     Resource = require('../models').Resource,
     cacheHelper = require('../helpers/cacheHelper'),
     authHelper = require('../helpers/authHelper');
 
-var brandSchema = ['brandName'];
+var include = [
+  {
+    model: Brand
+  },
+  {
+    model: Resource,
+    as: 'profilePicture'
+  }
+];
 
 module.exports = {
-  create: function(user, t) {
-    if(user.profilePicture) {
-      user.profilePicture = user.profilePicture.resourceId;
-    }
+  setup: function(request, user) {
+    _.extend(user, request);
 
-		// create user with brand associated
-  	return User.create(user, { include: [Brand], transaction: t }).then(function(createdUser) {
-			return createdUser;
-		});
+    return Promise.resolve(user);
   },
-  update: function(user, t) {
-    return User.findById(user.userId, {
-      include: [Brand],
-      transaction: t
-    })
-      .then(function(existingUser) {
-        if(!existingUser) {
-          return existingUser;
-        }
-
-        // update user
-        _.extend(existingUser, user);
-
-        return existingUser.save({ transaction: t });
-      });
+  build: function() {
+    return User.build({}, {
+      include: include
+    });
+  },
+  findById: function(id) {
+    return User.findById(id, {
+      include: include
+    });
+  },
+  findByEmail: function(email) {
+    return User.findOne({
+      where: {
+        email: email
+      },
+      include: include
+    });
   },
   createToken: function(user, cache) {
     // cache user
@@ -52,44 +58,6 @@ module.exports = {
     }
     return authHelper.encode({
       userId: user.userId
-    });
-  },
-  findById: function(id) {
-    return User.findById(id, {
-      include: [{
-        model: Brand,
-        required: true
-      }]
-    })
-    .then(function(user) {
-      if(!user) {
-        return user;
-      }
-      return Resource.findById(user.profilePicture).then(function(result) {
-        user.profilePicture = result;
-
-        if(result) {
-          user.profilePicture.dataValues = process.env.S3_PUBLIC_URL + user.profilePicture.resourcePath;
-        }
-        return user;
-      });
-    })
-    .then(function(user) {
-      if(user) {
-        _.extend(user.dataValues, user.Brand.dataValues);
-      }
-      return user;
-    });
-  },
-  findByEmail: function(email) {
-    return User.findOne({
-      where: {
-        email: email
-      },
-      include: [{
-        model: Brand,
-        required: true
-      }]
     });
   }
 };

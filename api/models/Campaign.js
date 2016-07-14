@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Campaign = sequelize.define('Campaign', {
+  var Campaign = sequelize.define('campaign', {
     campaignId: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -62,7 +62,8 @@ module.exports = function(sequelize, DataTypes) {
 
         // social media channels
         Campaign.belongsToMany(models.Media, {
-          through: models.CampaignMedia
+          through: models.CampaignMedia,
+          foreignKey: 'campaignId'
         });
 
         // resources related to this campaign

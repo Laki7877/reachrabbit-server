@@ -15,65 +15,59 @@ var config = require('config'),
     authHelper = require('../helpers/authHelper'),
     cacheHelper = require('../helpers/cacheHelper');
 
-// build => ?
-// create => ?
+var include = [{
+  model: Influencer,
+  include: [{
+    model: Media,
+    through: {
+      model: InfluencerMedia
+    }
+  }, {
+    model: Resource,
+    as: 'profilePicture'
+  }],
+  required: true
+}];
+
 module.exports = {
-  build: function(user, t) {
-
-  },
-  create: function(user, t) {
-    var influencerSchema = ['about', 'bankAccount'];
-    var mediaSchema = ['socialAccounts'];
-
+  setup: function(request, user) {
     // split objects
-    var medias = user[mediaSchema];
+    var medias = request.socialAccounts;
     var mediaKeys = _.keys(medias);
-    
+
+    _.extend(user, request);
+
     return Media.findAll({
       where: {
         mediaName: mediaKeys
-      },
-      transaction: t
-    })
-    .then(function(results) {
-      if(results.length <= 0) {
-        throw new Error('no media found');
       }
-
-      // add influencerMedia entry to each Media
-      _.forEach(results, function(media) {
-          media = _.extend(media, {
-            InfluencerMedia: {
-              socialId: medias[media.mediaName].id,
-              pageId: medias[media.mediaName].pageId,
-              token: medias[media.mediaName].token
-            }
-          });
+    })
+    .then(function(medium) {
+      // associate with media
+      _.forEach(medium, function(media) {
+        media = _.extend(media, {
+          InfluencerMedia: {
+            socialId: medias[media.mediaName].id,
+            pageId: medias[media.mediaName].pageId,
+            token: medias[media.mediaName].token
+          }
+        });
       });
 
-      // create user
-      return User.create(newUser, { include: [Influencer], transaction: t })
-        .then(function(createdUser) {
-          // get created influencer
-          return createdUser.Influencer.addMedia(results, { transaction: t })
-            .then(function() {
-              return createdUser;
-            });
-        });
+      // associate with media
+      user.addMedia(medium, { transaction: t });
+
+      return user;
+    });
+  },
+  build: function() {
+    return User.build({}, {
+      include: include
     });
   },
   findById: function(id) {
     return User.findById(id, {
-      include: [{
-        model: Influencer,
-        include: [{
-          model: Media,
-          through: {
-            model: InfluencerMedia
-          }
-        }],
-        required: true
-      }]
+      include: include
     })
     .then(function(user) {
       if(!user) {
@@ -120,6 +114,9 @@ module.exports = {
               }
             },
             required: true
+          }, {
+            model: Resource,
+            as: 'profilePicture'
           }],
           required: true
       }]

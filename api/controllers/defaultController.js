@@ -7,18 +7,33 @@
 'use strict';
 
 
-var User 	= require('../models').User;
+var User 	= require('../models').User,
+    db      = require('../models'),
+    brandService = require('../services/brandService');
 
 module.exports = {
-    testCreate : function (req, res) {
+    testCreate : function (req, res, next) {
         var tmpUser = {
             name : "Laki Sik",
             email : "laki7877@gmail.com",
-            password : "P@ssw0rd"
+            password : "P@ssw0rd",
+            brand :{
+              brandName: 'test'
+            }
         };
-        User.create(tmpUser).then(function(user) {
-            res.send(user);
-        });
+
+        db.sequelize.transaction(function(t) {
+          var user = brandService.build();
+          var brand = db.Brand.build(tmpUser.brand);
+            return user.setBrand(brand, { transaction: t })
+            .then(function() {
+                return user.save({transaction: t});
+            });
+        })
+        .then(function(result) {
+            res.send(result.get({plain: true}));
+        })
+        .catch(next);
     },
 
     testDelete : function (req, res) {
@@ -33,9 +48,12 @@ module.exports = {
 
     testFind : function (req, res) {
         User.findAll({
-            attributes : [
-                'email'
-            ]
+            include: [{
+                model: db.Resource,
+                as: 'profilePicture'
+            }, {
+                model: db.Brand
+            }]
         }).then(function(users){
             res.send(users);
         });

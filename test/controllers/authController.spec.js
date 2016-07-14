@@ -5,36 +5,7 @@ var helpers = require('../common/helpers'),
     api     = helpers.api;
 
 var loginPath = '/login';
-var createBrandPath = '/users/brand';
 
-describe('POST ' + createBrandPath, function() {
-  before(helpers.before);
-  after(helpers.after);
-
-  describe('Create new brand', function() {
-    var brand = {
-      email: 'new@gmail.com',
-      password: '1234'
-    };
-    it('should return 200', function(done) {
-      api.post(createBrandPath)
-        .send(brand)
-        .expect(200, done);
-    });
-    it('should return with token', function(done) {
-      api.post(createBrandPath)
-        .send(brand)
-        .expect(200)
-        .end(function(err, res) {
-          if(err) {
-            return done(err);
-          }
-          expect(res.body.token).to.be.a('string');
-          done();
-        });
-    });
-  });
-});
 describe('POST ' + loginPath, function() {
   before(helpers.before);
   after(helpers.after);

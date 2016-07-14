@@ -60,6 +60,8 @@ module.exports = function(roles) {
                 throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
               }
 
+              console.log(user);
+
               // assign arbitary role
               if(user.Brand) {
                 role = config.ROLE.BRAND;

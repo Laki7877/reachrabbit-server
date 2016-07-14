@@ -79,7 +79,6 @@ gulp.task('test', 'Run mocha test API', ['pre-test'], function() {
   var opts = {
     reporter: 'mocha-better-spec-reporter',
     timeout: 60000,
-    bail: true,
     require: ['./test/common/init.js']
   };
 

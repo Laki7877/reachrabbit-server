@@ -36,9 +36,9 @@ module.exports = function() {
   });
 
   // test-only
-  if(process.env.NODE_ENV === 'test') {
+  /*if(process.env.NODE_ENV === 'test') {
     router.post('/tests/influencerLogin', $.testController.influencerBypassLogin);
-  }
+  }*/
 
   /*********************************
    * Authentication
@@ -61,6 +61,7 @@ module.exports = function() {
    * Campaign
    *********************************/
   router.get('/campaigns', auth(), paginate(), $.campaignController.list);
+  router.post('/campaigns', auth('brand'), $.campaignController.create);
   router.put('/campaigns/:id', auth('brand'), $.campaignController.update);
 
   /*********************************

@@ -1,4 +1,10 @@
 [
+    {
+        "model": "Resource",
+        "data": {
+            "resourcePath": "foo"
+        }
+    },
 	{
         "model": "User",
         "data": {
@@ -6,11 +12,12 @@
 			"name": "Test User",
 			"email": "test@ahancer.com",
 			"password": "test1234",
-			"role": "brand",
 			"contactNumber": "0874414008",
-			"type": "brand",
 			"createdBy": "admin@ahancer.com",
-			"updatedBy": "admin@ahancer.com"
+			"updatedBy": "admin@ahancer.com",
+            "profilePicture": {
+                "resourcePath":"foo"
+            }
         }
     },
     {

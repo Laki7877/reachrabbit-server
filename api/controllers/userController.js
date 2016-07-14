@@ -25,21 +25,19 @@ module.exports = {
    */
   createInfluencer: function(req, res, next) {
     var form = req.body;
-    if(form.profilePicture) {
-      form.profilePicture = form.profilePicture.resourceId;
-    }
 
     sequelize.transaction(function(t) {
-      return influencerService.create(form, t)
+      var user = influencerService.build();
+      return brandService.setup(req.body, user)
         .then(function(user) {
-          return influencerService.createToken(user, true);
-        })
-        .then(function(token) {
-          return { token: token };
+          return user.save({ transaction: t })
         });
     })
+    .then(function(user) {
+      return influencerService.createToken(user, true);
+    })
     .then(function(result) {
-      return res.send(result);
+      return res.send({ token: result });
     })
     .catch(next);
   },
@@ -54,17 +52,20 @@ module.exports = {
     var form = req.body;
     // create transaction
     sequelize.transaction(function(t) {
-      // create new brand
-      return brandService.create(form, t)
+      var user = brandService.build();
+
+      console.log(user);
+
+      return brandService.setup(req.body, user)
         .then(function(user) {
-          return brandService.createToken(user, true);
-        })
-        .then(function(token) {
-          return { token: token };
+          return user.save({transaction: t});
         });
     })
+    .then(function(user) {
+      return brandService.createToken(user, true);
+    })
     .then(function(result) {
-      return res.send(result);
+      return res.send({ token: result });
     })
     .catch(next);
   },
@@ -83,25 +84,33 @@ module.exports = {
     }
   },
   updateProfile: function(req, res, next) {
-    if(req.user) {
-      // assign to current user's userid
-      var user = req.body;
-      user.userId = req.user.userId;
-
-      // for brand
+    sequelize.transaction(function(t) {
       if(req.role === config.ROLE.BRAND) {
-        return sequelize.transaction(function(t) {
-          brandService.update(user, t);
-        })
-        .catch(next);
+        return brandService.findById(req.user.userId)
+          .then(function(user) {
+            if(!user) {
+              throw new errors.HttpStatusError(httpStatus.NOT_FOUND);
+            }
+            return brandService.setup(req.body, user);
+          })
+          .then(function(user) {
+            return user.save({transaction: t});
+          });
+      } else if(req.role === config.ROLE.INFLUENCER) {
+        return influencerService.findById(req.user.userId)
+          .then(function(user) {
+            return influencerService.setup(req.body, user);
+          })
+          .then(function(user) {
+            return user.save({transaction: t});
+          });
       }
 
-      // for influencer
-      else if(req.role === config.ROLE.INFLUENCER) {
-
-      }
-
-      next(new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED));
-    }
+      throw new Error('role error');
+    })
+    .then(function(result) {
+      res.send(result);
+    })
+    .catch(next);
   }
 };

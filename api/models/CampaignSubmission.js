@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var CampaignSubmission = sequelize.define('CampaignSubmission', {
+  var CampaignSubmission = sequelize.define('campaignSubmission', {
     submissionId: {
       type: DataTypes.UUID,
       allowNull: false,
