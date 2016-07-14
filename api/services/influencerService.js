@@ -15,17 +15,20 @@ var config = require('config'),
     authHelper = require('../helpers/authHelper'),
     cacheHelper = require('../helpers/cacheHelper');
 
+// build => ?
+// create => ?
 module.exports = {
-  create: function(userObject, t) {
+  build: function(user, t) {
+
+  },
+  create: function(user, t) {
     var influencerSchema = ['about', 'bankAccount'];
     var mediaSchema = ['socialAccounts'];
 
     // split objects
-    var newUser = _.omit(userObject, _.concat(influencerSchema, mediaSchema));
-    var newInfluencer = _.pick(userObject, influencerSchema);
-    var medias = userObject[mediaSchema];
+    var medias = user[mediaSchema];
     var mediaKeys = _.keys(medias);
-
+    
     return Media.findAll({
       where: {
         mediaName: mediaKeys
@@ -36,8 +39,6 @@ module.exports = {
       if(results.length <= 0) {
         throw new Error('no media found');
       }
-      // add influencer to user
-      newUser.Influencer = newInfluencer || {};
 
       // add influencerMedia entry to each Media
       _.forEach(results, function(media) {

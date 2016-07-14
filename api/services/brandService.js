@@ -17,23 +17,16 @@ var brandSchema = ['brandName'];
 
 module.exports = {
   create: function(user, t) {
-    var newUser = _.omit(user, brandSchema);
-    var newBrand = _.pick(user, brandSchema);
-
-    if(userObject.profilePicture) {
-      userObject.profilePicture = userObject.profilePicture.resourceId;
+    if(user.profilePicture) {
+      user.profilePicture = user.profilePicture.resourceId;
     }
 
 		// create user with brand associated
-  	return User.create(_.extend({}, newUser, {
-			Brand: newBrand
-		}), { include: [Brand], transaction: t }).then(function(createdUser) {
+  	return User.create(user, { include: [Brand], transaction: t }).then(function(createdUser) {
 			return createdUser;
 		});
   },
   update: function(user, t) {
-    var updatedUser = _.omit(user, brandSchema);
-    var updatedBrand = _.pick(user, brandSchema);
     return User.findById(user.userId, {
       include: [Brand],
       transaction: t
@@ -44,8 +37,7 @@ module.exports = {
         }
 
         // update user
-        _.extend(existingUser, updatedUser);
-        _.extend(existingUser.Brand, updatedBrand);
+        _.extend(existingUser, user);
 
         return existingUser.save({ transaction: t });
       });
