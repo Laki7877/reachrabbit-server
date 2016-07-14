@@ -1,0 +1,76 @@
+[
+    {
+        "model": "Resource",
+        "data": {
+            "resourcePath": "foo"
+        }
+    },
+	{
+        "model": "User",
+        "data": {
+            "userId" : "10e330bf-df4a-4d5f-bdfc-f40a9a570895",
+			"name": "Test User",
+			"email": "test@ahancer.com",
+			"password": "test1234",
+			"contactNumber": "0874414008",
+			"createdBy": "admin@ahancer.com",
+			"updatedBy": "admin@ahancer.com",
+            "profilePicture": {
+                "resourcePath":"foo"
+            }
+        }
+    },
+    {
+        "model": "Brand",
+        "data": {
+            "brandName" : "Nintendo",
+			"userId" : "10e330bf-df4a-4d5f-bdfc-f40a9a570895",
+			"createdBy": "admin@ahancer.com",
+			"updatedBy": "admin@ahancer.com"
+        }
+    },
+  {
+    "model": "Resource",
+    "data": {
+      "resourceId": "07ec9a84-f137-4a7e-b27a-240e1701b6c4",
+      "resourcePath": "test-profile.png",
+      "resourceType": "image"
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "userId": "fd75cd48-f22c-49a1-9f73-2cfc246dcee3",
+      "contactNumber": "012333444",
+      "bank": {
+        "bankId": "002"
+      },
+      "profilePicture": "07ec9a84-f137-4a7e-b27a-240e1701b6c4"
+    }
+  },
+  {
+    "model": "Influencer",
+    "data": {
+      "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05",
+      "gender": "male",
+      "about": "This is about me",
+      "media": [
+        {
+          "mediaName": "facebook",
+          "_through": {
+            "socialId": "128000600963755"
+          }
+        },
+        {
+          "mediaName": "youtube",
+          "_through": {
+            "socialId": "mytube"
+          }
+        }
+      ],
+      "user": {
+        "userId": "fd75cd48-f22c-49a1-9f73-2cfc246dcee3"
+      }
+    }
+  }
+]

@@ -1,7 +1,8 @@
 /* jshint indent: 2 */
 'use strict';
 var bcrypt = require('bcryptjs'),
-  Promise = require('bluebird');
+  Promise = require('bluebird'),
+  _ = require('lodash');
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('user', {
@@ -64,12 +65,18 @@ module.exports = function(sequelize, DataTypes) {
         if(instances) {
           if(_.isArray(instances)) {
             _.forEach(instances, function(instance) {
+              if(!instance.profilePicture) {
+                return;
+              }
               instance.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + instance.profilePicture.get('resourcePath');
-            })
+            });
           } else {
-            instances.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + instances.profilePicture.get('resourcePath');
+            if(instances.profilePicture) {
+              instances.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + instances.profilePicture.get('resourcePath');
+            }
           }
         }
+        return instances;
       }
     },
     classMethods: {

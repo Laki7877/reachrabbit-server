@@ -22,25 +22,26 @@ var include = [{
     through: {
       model: InfluencerMedia
     }
-  }, {
-    model: Resource,
-    as: 'profilePicture'
   }],
   required: true
+}, {
+  model: Resource,
+  as: 'profilePicture'
 }];
 
 module.exports = {
-  setup: function(request, user) {
+  process: function(request, instance, t) {
     // split objects
     var medias = request.socialAccounts;
     var mediaKeys = _.keys(medias);
 
-    _.extend(user, request);
+    _.extend(instance, request);
 
     return Media.findAll({
       where: {
         mediaName: mediaKeys
-      }
+      },
+      transaction: t
     })
     .then(function(medium) {
       // associate with media
@@ -55,14 +56,14 @@ module.exports = {
       });
 
       // associate with media
-      user.addMedia(medium, { transaction: t });
-
-      return user;
+      instance.influencer.addMedia(medium, { transaction: t });
+      return instance;
     });
   },
-  build: function() {
-    return User.build({}, {
-      include: include
+  create: function(t) {
+    return User.create({}, {
+      include: include,
+      transaction: t
     });
   },
   findById: function(id) {

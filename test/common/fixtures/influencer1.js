@@ -16,10 +16,12 @@ module.exports = [
     "data": {
       "userId": "fd75cd48-f22c-49a1-9f73-2cfc246dcee3",
       "contactNumber": "012333444",
-      "Bank": {
+      "bank": {
         "bankId": "002"
       },
-      "profilePicture": "07ec9a84-f137-4a7e-b27a-240e1701b6c4"
+      "profilePicture": {
+        "resourceId": "07ec9a84-f137-4a7e-b27a-240e1701b6c4"
+      }
     }
   },
   {
@@ -28,7 +30,7 @@ module.exports = [
       "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05",
       "gender": "male",
       "about": "This is about me",
-      "Media": [
+      "media": [
         {
           "mediaName": "facebook",
           "_through": {
@@ -42,7 +44,7 @@ module.exports = [
           }
         }
       ],
-      "User": {
+      "user": {
         "userId": "fd75cd48-f22c-49a1-9f73-2cfc246dcee3"
       }
     }
@@ -54,10 +56,10 @@ module.exports = [
       "title": "Proposal #1",
       "description": "This is my proposal",
       "status": "propose",
-      "Campaign": {
+      "campaign": {
         "campaignId": "865b7f55-0316-47b0-9704-bc24eaba1dc5"
       },
-      "Influencer": {
+      "influencer": {
         "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05"
       }
     }
@@ -69,10 +71,10 @@ module.exports = [
       "title": "Proposal #2",
       "description": "This is my proposal",
       "status": "propose",
-      "Campaign": {
+      "campaign": {
         "campaignId": "2d50a293-aa82-4cff-bb8d-bdf826d7ca15"
       },
-      "Influencer": {
+      "influencer": {
         "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05"
       }
     }
@@ -83,10 +85,10 @@ module.exports = [
       "submissionId": "695194c4-05a0-4adc-9643-9d653d59bca3",
       "title": "Submission #1",
       "description": "This is my submission",
-      "Campaign": {
+      "campaign": {
         "campaignId": "2d50a293-aa82-4cff-bb8d-bdf826d7ca15"
       },
-      "Influencer": {
+      "influencer": {
         "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05"
       }
     }

@@ -18,10 +18,12 @@ module.exports = [
       "email": "brand1@test.com",
       "contactNumber": "012333444",
       "password": "hackme",
-      "Bank": {
+      "bank": {
         "bankId": "002"
       },
-      "profilePicture": "ed687098-7aeb-4b83-a931-1318d9141e2f"
+      "profilePicture": {
+        "resourceId": "ed687098-7aeb-4b83-a931-1318d9141e2f"
+      }
     }
   },
   {
@@ -29,7 +31,7 @@ module.exports = [
     "data": {
       "brandId": "86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6",
       "brandName": "The brand 1",
-      "User": {
+      "user": {
         "userId": "df44da10-7a27-41f6-abe8-5908e8c4d56a"
       }
     }
@@ -45,7 +47,7 @@ module.exports = [
       "status": "draft",
       "createdBy": "user1@test.com",
       "updatedBy": "user1@test.com",
-      "Brand" : {
+      "brand" : {
         "brandId": "86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6"
       }
     }
@@ -61,7 +63,7 @@ module.exports = [
       "status": "draft",
       "createdBy": "user1@test.com",
       "updatedBy": "user1@test.com",
-      "Brand" : {
+      "brand" : {
         "brandId": "86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6"
       }
     }

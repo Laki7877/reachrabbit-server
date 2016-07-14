@@ -13,12 +13,22 @@ var db = require('../models'),
   CampaignProposal = db.CampaignProposal,
   CampaignSubmission = db.CampaignSubmission;
 
-module.exports = {
-  build: function(request, campaign, t) {
-    var newCampaign = Campaign.build(_.merge({}, campaign, request), {
-    });
+var include = [{
+  model: CampaignSubmission
+}, {
+  model: CampaignProposal
+}, {
+  model: Brand
+}]
 
-    return newCampaign;
+module.exports = {
+  process: function(request, instance, t) {
+
+  },
+  create: function(t) {
+    return Campaign.create({}, {
+      include: include
+    });
   },
   findAll: function(criteria) {
     // get everything

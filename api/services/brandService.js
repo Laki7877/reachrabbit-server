@@ -16,7 +16,8 @@ var config  = require('config'),
 
 var include = [
   {
-    model: Brand
+    model: Brand,
+    required: true
   },
   {
     model: Resource,
@@ -25,14 +26,14 @@ var include = [
 ];
 
 module.exports = {
-  setup: function(request, user) {
-    _.extend(user, request);
-
-    return Promise.resolve(user);
+  process: function(request, instance, t) {
+    _.extend(instance, request);
+    return Promise.resolve(instance);
   },
-  build: function() {
-    return User.build({}, {
-      include: include
+  create: function(t) {
+    return User.create({}, {
+      include: include,
+      transaction: t
     });
   },
   findById: function(id) {

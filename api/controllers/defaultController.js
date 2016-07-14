@@ -9,26 +9,51 @@
 
 var User 	= require('../models').User,
     db      = require('../models'),
-    brandService = require('../services/brandService');
+    influencerService = require('../services/influencerService');
 
 module.exports = {
     testCreate : function (req, res, next) {
         var tmpUser = {
             name : "Laki Sik",
             email : "laki7877@gmail.com",
-            password : "P@ssw0rd",
-            brand :{
-              brandName: 'test'
-            }
+            password : "P@ssw0rd"
         };
 
+        // i give up, just create -> process
         db.sequelize.transaction(function(t) {
-          var user = brandService.build();
-          var brand = db.Brand.build(tmpUser.brand);
-            return user.setBrand(brand, { transaction: t })
-            .then(function() {
-                return user.save({transaction: t});
+          var user = db.User.build({}, {
+            include: [{
+              model: db.Influencer,
+              include: [{
+                model: db.Media,
+                through: {
+                  model: db.InfluencerMedia
+                }
+              }],
+              required: true
+            }, {
+              model: db.Resource,
+              as: 'profilePicture'
+            }]
+          });
+
+          _.extend(user, tmpUser);
+
+          var influencer = db.Influencer.build({
+            about: 'me'
+          });
+          return db.Media.findOne({
+            where: {
+              mediaName: 'facebook'
+            }
+          }).then(function(media) {
+            media.set('influencerMedia', {
+              socialId: 'test'
             });
+            influencer.set('media', media);
+            user.set('influencer', influencer);
+            return user.save({transaction: t});
+          });
         })
         .then(function(result) {
             res.send(result.get({plain: true}));
@@ -53,6 +78,14 @@ module.exports = {
                 as: 'profilePicture'
             }, {
                 model: db.Brand
+            }, {
+              model: db.Influencer,
+              include: [{
+                model: db.Media,
+                through: {
+                  model: db.InfluencerMedia
+                }
+              }]
             }]
         }).then(function(users){
             res.send(users);
