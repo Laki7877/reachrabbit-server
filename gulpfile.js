@@ -69,7 +69,9 @@ gulp.task('pre-test', 'Setup pretest routine', function() {
   // test mode
   process.env.NODE_ENV = 'test';
 
-  return gulp.src(['api/**/*.js'])
+  return gulp.src(['api/**/*.js',
+                  '!api/controllers/defaultController.js',
+                  '!api/controllers/testController.js'])
     .pipe(plugins.istanbul())
     .pipe(plugins.istanbul.hookRequire());
 });

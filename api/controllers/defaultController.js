@@ -5,7 +5,7 @@
  * @since      0.0.1
  */
 'use strict';
-
+/* istanbul ignore next */
 
 var User 	= require('../models').User,
     db      = require('../models'),

@@ -7,6 +7,7 @@
  * @since      0.0.3
  */
 'use strict';
+/* istanbul ignore next */
 
 var influencerService = require('../services/influencerService');
 

@@ -8,6 +8,7 @@
 'use strict';
 
 var config = require('config'),
+  Promise = require('bluebird'),
   db = require('../models'),
   sequelize = db.sequelize,
 	campaignService = require('../services/campaignService');
@@ -17,55 +18,55 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.create(t)
-      .then(function(campaign) {
-        return campaignService.process(_.extend(req.body, {user: req.user}), campaign, t);
-      })
-      .then(function(campaign) {
-        return campaign.save({transaction: t});
-      });
+      return campaignService.create(_.extend(form, {brand: req.user.brand}), t);
+    })
+    .then(function(result) {
+      return res.send(result);
     })
     .catch(next);
   },
   update: function(req, res, next) {
     var campaignId = req.params.id;
+    var form = req.body;
 
     sequelize.transaction(function(t) {
       return campaignService.findByIdWithBrand(campaignId, req.user.brand.brandId)
       .then(function(campaign) {
-        return campaignService.process(_.extend(req.body, {user: req.user}), campaign, t);
-      })
-      .then(function(campaign) {
-        return campaign.save({transaction: t});
+        return campaignService.update(campaign, form, t);
       });
+    })
+    .then(function(result) {
+      return res.send(result);
     })
     .catch(next);
   },
 	list: function(req, res, next) {
-		if(req.role === config.ROLE.BRAND) {
-      // find by brand owner
-			return campaignService.findAllByOwner(req.user.brand.brandId, req.criteria)
-				.then(function(campaigns) {
-					res.send(campaigns);
-				})
-				.catch(next);
-		} else if(req.role === config.ROLE.INFLUENCER) {
-      // find by influencers
-      return campaignService.findAllByInfluencer(req.user.influencer.influencerId, req.criteria)
-        .then(function(campaigns) {
-          res.send(campaigns);
-        })
-        .catch(next);
-    } else if(req.role === config.ROLE.ADMIN) {
-      // find all for admin-only
-      return campaignService.findAll(req.criteria)
-        .then(function(campaigns){
-          res.send(campaigns);
-        })
-        .catch(next);
-    } else {
-      // no role?
-      next(new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED));
-    }
-	}
+    Promise.attempt(function() {
+  		return campaignService.list(req.criteria);
+      if(req.role === config.ROLE.BRAND) {
+        // find by brand owner
+  			return campaignService.listByOwner(req.user.brand.brandId, req.criteria);
+  		} else if(req.role === config.ROLE.INFLUENCER) {
+        // find by influencers
+        return campaignService.listByInfluencer(req.user.influencer.influencerId, req.criteria);
+      } else if(req.role === config.ROLE.ADMIN) {
+        // find all for admin-only
+        return campaignService.list(req.criteria);
+      } else {
+        // no role?
+        throw new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED);
+      }
+    })
+    .then(function(result) {
+      return res.send(result);
+    })
+    .catch(next);
+	},
+  get: function(req, res, next) {
+    campaignService.findById(req.params.campaignId)
+      .then(function(result) {
+        return res.send(result);
+      })
+      .catch(next);
+  }
 };

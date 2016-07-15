@@ -53,7 +53,13 @@ module.exports = function() {
    * User
    ********************************/
   router.post('/users/influencer', $.userController.createInfluencer);
+  router.get('/users/influencer', $.userController.listInfluencer);
+  router.get('/users/influencer/:userId', $.userController.getInfluencer);
+
   router.post('/users/brand', $.userController.createBrand);
+  router.get('/users/brand', $.userController.listBrand);
+  router.get('/users/brand/:userId', $.userController.getBrand);
+
   router.get('/profiles', auth(), $.userController.getProfile);
   router.put('/profiles', auth(), $.userController.updateProfile);
 
@@ -61,8 +67,9 @@ module.exports = function() {
    * Campaign
    *********************************/
   router.get('/campaigns', auth(), paginate(), $.campaignController.list);
+  router.get('/campaigns/:campaignId', auth(), $.campaignController.get);
   router.post('/campaigns', auth('brand'), $.campaignController.create);
-  router.put('/campaigns/:id', auth('brand'), $.campaignController.update);
+  router.put('/campaigns/:campaignId', auth('brand'), $.campaignController.update);
 
   /*********************************
    * Data

@@ -7,9 +7,11 @@
 'use strict';
 
 var db = require('../models'),
+  Promise = require('bluebird'),
   validate = require('jsonschema').validate,
   sequelize = db.sequelize,
   User = db.User,
+  Category = db.Category,
   Campaign = db.Campaign,
   CampaignProposal = db.CampaignProposal,
   CampaignSubmission = db.CampaignSubmission,
@@ -22,6 +24,8 @@ var include = [{
   model: CampaignProposal
 }, {
   model: Brand
+}, {
+  model: Category
 }];
 
 // all campaign's status
@@ -82,31 +86,43 @@ module.exports = {
           where: {
             status: 'propose'
           }
-        })
-          .then(function(proposal) {
-
-          });
+        });
       }
     }
+
+    return Promise.reject(new Error('something is wrong'));
   },
   create: function(values, t) {
     // build data
     if(!values.brand) {
       return Promise.reject('no brand owner');
     }
-    var data = _.extend(values, {
+
+    var brand = values.brand;
+    var category = values.category;
+    var data = _.extend(_.omit(values, ['brand', 'category']), {
       status: 'draft' // default status
     });
 
-    return Campaign.create(data, {
-      include: include
+    // find category for this campaign
+    return Promise.all([
+      Brand.findById(brand.brandId),
+      Category.findOne({ where: category })
+    ]).spread(function(brandInstance, categoryInstance) {
+      if(!categoryInstance || !brandInstance) {
+        throw new Error('brand or category not found');
+      }
+      data.categoryId = categoryInstance.categoryId;
+      data.brandId = brandInstance.brandId;
+
+      return Campaign.create(data, { include: include, transaction: t});
     });
   },
-  findAll: function(criteria) {
+  list: function(criteria) {
     // get everything
     return Campaign.findAndCountAll(criteria);
   },
-  findAllByOwner: function(brandId, criteria) {
+  listByOwner: function(brandId, criteria) {
     // get only ones belong to this brand
     var opts = {
       where: { brandId: brandId }
@@ -117,7 +133,7 @@ module.exports = {
 
     return Campaign.findAndCountAll(opts);
   },
-  findAllByInfluencer: function(influencerId, criteria) {
+  listByInfluencer: function(influencerId, criteria) {
     var opts = {
       include: [{
         model: CampaignProposal,
@@ -133,11 +149,15 @@ module.exports = {
         required: false
       }]
     };
-
     // extend with pagination criteria
     opts = _.extend(opts, criteria);
 
     return Campaign.findAndCountAll(opts);
+  },
+  findById: function(id) {
+    return Campaign.findById(id, {
+      include: include
+    });
   },
   findByIdWithBrand: function(id, brandId) {
     return Campaign.findOne({

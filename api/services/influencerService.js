@@ -52,7 +52,7 @@ var assignMedias = function(values, instance, t) {
     });
 
     // associate with media
-    instance.influencer.addMedia(medium, { transaction: t });
+    instance.influencer.setMedia(medium, { transaction: t });
     return instance;
   });
 };
@@ -73,35 +73,29 @@ module.exports = {
       transaction: t
     })
     .then(function(instance) {
-      return assignMedias()
+      return assignMedias(values, instance, t);
     });
+  },
+  list: function(criteria) {
+    return User.findAndCountAll(_.extend({
+      include: [{
+        model: Influencer,
+        required: true
+      }]
+    }, criteria));
   },
   findByUserId: function(id) {
     return User.findById(id, {
       include: include
     })
     .then(function(user) {
-      if(!user) {
-        return user;
-      }
-      return Resource.findById(user.get('profilePicture'))
-        .then(function(result) {
-          // assign profile pic
-          user.dataValues.profilePicture = result;
-          return user;
-        });
-    })
-    .then(function(user) {
       if(user) {
-        // flatten user
-        _.extend(user.dataValues, user.dataValues.Influencer);
-
         // media
         user.dataValues.socialAccounts = {};
-        _.forEach(user.Influencer.Media, function(media) {
+        _.forEach(user.influencer.media, function(media) {
           user.dataValues.socialAccounts[media.mediaName] = {
-            id: media.InfluencerMedia.socialId,
-            pageId: media.InfluencerMedia.pageId
+            id: media.influencerMedia.socialId,
+            pageId: media.influencerMedia.pageId
           };
         });
       }

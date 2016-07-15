@@ -38,6 +38,14 @@ module.exports = {
       transaction: t
     });
   },
+  list: function(criteria) {
+    return User.findAndCountAll(_.extend({
+      include: [{
+        model: Brand,
+        required: true
+      }]
+    }, criteria));
+  },
   findByUserId: function(id) {
     return User.findById(id, {
       include: include

@@ -11,12 +11,20 @@ var request   = require('supertest'),
     fixtures  = require('sequelize-fixtures'),
     models    = require('../../api/models'),
     config    = require('config'),
-    sequelize = models.sequelize;
+    sequelize = models.sequelize,
+    expect    = require('chai').expect;
 
 // create api base
 var api = request(server);
 
 var helpers = {};
+
+helpers.checkPagination = function(data) {
+  expect(data).to.be.a('object');
+  expect(data.count).to.be.a('number');
+  expect(data.rows).to.be.a('array');
+  expect(data.rows[0]).to.be.a('object');
+};
 
 helpers.resyncDB = function() {
   return sequelize.sync({force: true, logging: false})

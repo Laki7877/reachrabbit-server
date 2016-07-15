@@ -6,10 +6,9 @@ var helpers = require('../common/helpers'),
 
 var profilePath = '/profiles';
 var userBrandPath = '/users/brand';
+var userInfluencerPath = '/users/influencer';
 
-/**
- * endpoint /me
- */
+// get profile
 describe('GET ' + profilePath, function() {
   var token = '';
   var user = {
@@ -47,34 +46,84 @@ describe('GET ' + profilePath, function() {
     });
   });
 
-  describe('I have correct token', function(done) {
-    it('should return 200', function(cb) {
+  describe('I have correct token', function() {
+    it('should return 200', function(done) {
       // get me
       api.get(profilePath)
         .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
-        .expect(200, cb);
+        .expect(200, done);
     });
 
-    it('should return profile', function(cb) {
+    it('should return profile', function(done) {
       // get me
       api.get(profilePath)
         .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
         .end(function(err, res) {
           if(err) {
-            return cb(err);
+            return done(err);
           }
           expect(res.body.email).to.equal(user.email);
-          cb();
+          done();
         });
     });
   });
 });
 
+// update profile
+describe('PUT ' + profilePath, function() {
+  before(helpers.before);
+  after(helpers.after);
+
+  describe('With brand', function() {
+    before(helpers.brandLogin);
+    var brand = {
+      email: 'new@gmail.com',
+      password: 'newPassword'
+    };
+
+    it('should return updated user', function(done) {
+      api.put(profilePath)
+        .set('Authorization', helpers.brandToken)
+        .send(brand)
+        .expect(200)
+        .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
+          var data = res.body;
+          expect(data).to.have.property('email', 'new@gmail.com');
+          done();
+        });
+    });
+  });
+  describe('With influencer', function() {
+    before(helpers.influencerLogin);
+    var influencer = {
+      email: 'new@gmail.com'
+    };
+
+    it('should return updated user', function(done) {
+      api.put(profilePath)
+        .set('Authorization', helpers.influencerToken)
+        .send(influencer)
+        .expect(200)
+        .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
+          var data = res.body;
+          expect(data).to.have.property('email', 'new@gmail.com');
+          done();
+        });
+    });
+  });
+});
+
+// create brand
 describe('POST ' + userBrandPath, function() {
   before(helpers.before);
   after(helpers.after);
 
-  // update brand
   describe('Create new brand', function() {
     var brand = {
       email: 'new@gmail.com',
@@ -95,20 +144,74 @@ describe('POST ' + userBrandPath, function() {
           done();
         });
     });
-    it('should update', function(done) {
-      api.put(profilePath)
-        .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
-        .send({
-        })
-        .expect(200)
-        .end(function(err, res) {
-          if(err) {
-            return done(err);
-          }
-          console.log(res.body);
-            done();
-        });
-    });
   });
+});
 
+// get brand(s)
+describe('GET ' + userBrandPath, function() {
+  before(helpers.before);
+  after(helpers.after);
+  var id = 'df44da10-7a27-41f6-abe8-5908e8c4d56a';
+
+  // get one brand
+  it('should get paged brands', function(done) {
+    api.get(userBrandPath)
+      .expect(200)
+      .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
+        var data = res.body;
+        helpers.checkPagination(data);
+        expect(data.rows[0]).to.have.property('brand');
+        done();
+      });
+  });
+  it('should get single brand', function(done) {
+    api.get(userBrandPath + '/' + id)
+      .expect(200)
+      .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
+        var data = res.body;
+        expect(data).to.have.property('userId', id);
+        done();
+      });
+  });
+});
+
+
+// get Influencer(s)
+describe('GET ' + userInfluencerPath, function() {
+  before(helpers.before);
+  after(helpers.after);
+  var id = 'fd75cd48-f22c-49a1-9f73-2cfc246dcee3';
+
+  // get one Influencer
+  it('should get paged influencers', function(done) {
+    api.get(userInfluencerPath)
+      .expect(200)
+      .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
+        var data = res.body;
+        helpers.checkPagination(data);
+        expect(data.rows[0]).to.have.property('influencer');
+        done();
+      });
+  });
+  it('should get single influencer', function(done) {
+    api.get(userInfluencerPath + '/' + id)
+      .expect(200)
+      .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
+        var data = res.body;
+        expect(data).to.have.property('userId', id);
+        done();
+      });
+  });
 });

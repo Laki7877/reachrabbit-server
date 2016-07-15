@@ -78,7 +78,7 @@ module.exports = function(roles) {
         // no roles
         if(!_.isNil(roles)) {
           // single role arg
-          if(_.isString(roles) && data.role !== roles) {
+          if(_.isString(roles) && data.role !== roles){
             //not role
             throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
           }
@@ -87,7 +87,6 @@ module.exports = function(roles) {
             // not role
             throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
           }
-          throw new errors.HttpStatusError(httpStatus.NOT_IMPLEMENTED);
         }
         // cannot find user
         if(!data.user) {

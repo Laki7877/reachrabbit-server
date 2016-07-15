@@ -72,6 +72,13 @@ module.exports = {
       return next(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION));
     }
   },
+  /**
+   * Update your profile
+   *
+   * @param      {Object}    req     The request
+   * @param      {Object}    res     The resource
+   * @param      {Function}  next    The next
+   */
   updateProfile: function(req, res, next) {
     sequelize.transaction(function(t) {
       if(req.role === config.ROLE.BRAND) {
@@ -95,6 +102,34 @@ module.exports = {
     .then(function(result) {
       res.send(result);
     })
+    .catch(next);
+  },
+  listInfluencer: function(req, res, next) {
+    influencerService.list(req.criteria)
+    .then(function(result) {
+      res.send(result);
+    })
+    .catch(next);
+  },
+  getInfluencer: function(req, res, next) {
+    influencerService.findByUserId(req.params.userId)
+      .then(function(user) {
+        res.send(user);
+      })
+    .catch(next);
+  },
+  listBrand: function(req, res, next) {
+    brandService.list(req.criteria)
+    .then(function(result) {
+      res.send(result);
+    })
+    .catch(next);
+  },
+  getBrand: function(req, res, next) {
+    brandService.findByUserId(req.params.userId)
+      .then(function(user) {
+        res.send(user);
+      })
     .catch(next);
   }
 };
