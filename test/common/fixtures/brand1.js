@@ -45,6 +45,9 @@ module.exports = [
       "proposalDeadline": moment().add(1, 'hours').format(),
       "submissionDeadline": moment().add(2, 'hours').format(),
       "status": "draft",
+      "category": {
+        "categoryName": "Lifestyle"
+      },
       "createdBy": "user1@test.com",
       "updatedBy": "user1@test.com",
       "brand" : {
@@ -61,6 +64,9 @@ module.exports = [
       "proposalDeadline": moment().add(1, 'hours').format(),
       "submissionDeadline": moment().add(2, 'hours').format(),
       "status": "draft",
+      "category": {
+        "categoryName": "Food"
+      },
       "createdBy": "user1@test.com",
       "updatedBy": "user1@test.com",
       "brand" : {

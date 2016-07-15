@@ -26,17 +26,19 @@ var include = [
 ];
 
 module.exports = {
-  process: function(request, instance, t) {
-    _.extend(instance, request);
-    return Promise.resolve(instance);
+  update: function(values, instance, t) {
+    _.extend(instance, values);
+    return instance.save({transaction: t});
   },
-  create: function(t) {
-    return User.create({}, {
+  create: function(values, t) {
+    return User.create(_.extend({
+      brand: {}
+    }, values), {
       include: include,
       transaction: t
     });
   },
-  findById: function(id) {
+  findByUserId: function(id) {
     return User.findById(id, {
       include: include
     });

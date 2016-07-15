@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE
     },
     status: {
-      type: DataTypes.ENUM('draft','open','production','complete','delete')
+      type: DataTypes.ENUM('draft','open', 'production','complete','delete')
     },
     createdBy: {
       type: DataTypes.STRING

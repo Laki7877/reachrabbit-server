@@ -99,7 +99,6 @@ describe('POST ' + userBrandPath, function() {
       api.put(profilePath)
         .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
         .send({
-          email: 'new2@gmail.com'
         })
         .expect(200)
         .end(function(err, res) {

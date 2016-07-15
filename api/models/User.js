@@ -53,7 +53,7 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
       beforeUpdate: function(instance, options) {
-        if(instance.change('password')) {
+        if(instance.changed('password')) {
           return instance.generateHash(instance.dataValues.password).then(function(hashedPassword) {
             instance.password = hashedPassword;
             return options;

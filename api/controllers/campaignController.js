@@ -17,40 +17,41 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      var campaign = campaignService.build(form, null, t);
-
-      campaign.addBrand(req.user.Brand);
-      return campaign.save({transaction: t});
+      return campaignService.create(t)
+      .then(function(campaign) {
+        return campaignService.process(_.extend(req.body, {user: req.user}), campaign, t);
+      })
+      .then(function(campaign) {
+        return campaign.save({transaction: t});
+      });
     })
     .catch(next);
   },
   update: function(req, res, next) {
-    var brandId = req.user.Brand.brandId;
     var campaignId = req.params.id;
-    var data = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.update(campaignId, brandId, data, t)
-        .then(function(campaign) {
-          if(!campaign) {
-            throw new errors.HttpStatusError(httpStatus.NOT_FOUND);
-          }
-          return res.send(campaign);
-        });
+      return campaignService.findByIdWithBrand(campaignId, req.user.brand.brandId)
+      .then(function(campaign) {
+        return campaignService.process(_.extend(req.body, {user: req.user}), campaign, t);
+      })
+      .then(function(campaign) {
+        return campaign.save({transaction: t});
+      });
     })
     .catch(next);
   },
 	list: function(req, res, next) {
 		if(req.role === config.ROLE.BRAND) {
       // find by brand owner
-			return campaignService.findAllByOwner(req.user.Brand.brandId, req.criteria)
+			return campaignService.findAllByOwner(req.user.brand.brandId, req.criteria)
 				.then(function(campaigns) {
 					res.send(campaigns);
 				})
 				.catch(next);
 		} else if(req.role === config.ROLE.INFLUENCER) {
       // find by influencers
-      return campaignService.findAllByInfluencer(req.user.Influencer.influencerId, req.criteria)
+      return campaignService.findAllByInfluencer(req.user.influencer.influencerId, req.criteria)
         .then(function(campaigns) {
           res.send(campaigns);
         })

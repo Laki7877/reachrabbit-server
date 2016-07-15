@@ -36,9 +36,9 @@ module.exports = function() {
   });
 
   // test-only
-  /*if(process.env.NODE_ENV === 'test') {
+  if(process.env.NODE_ENV === 'test') {
     router.post('/tests/influencerLogin', $.testController.influencerBypassLogin);
-  }*/
+  }
 
   /*********************************
    * Authentication

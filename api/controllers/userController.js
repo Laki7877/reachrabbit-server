@@ -27,13 +27,7 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return influencerService.create(t)
-        .then(function(user) {
-          return influencerService.process(req.body, user, t);
-        })
-        .then(function(user) {
-          return user.save({ transaction: t })
-        });
+      return influencerService.create(form, t);
     })
     .then(function(user) {
       return influencerService.createToken(user, true);
@@ -54,13 +48,7 @@ module.exports = {
     var form = req.body;
     // create transaction
     sequelize.transaction(function(t) {
-      return brandService.create(t)
-        .then(function(user) {
-          return brandService.process(req.body, user, t);
-        })
-        .then(function(user) {
-          return user.save({ transaction: t })
-        });
+      return brandService.create(form, t);
     })
     .then(function(user) {
       return brandService.createToken(user, true);
@@ -88,24 +76,18 @@ module.exports = {
     sequelize.transaction(function(t) {
       if(req.role === config.ROLE.BRAND) {
         // find this brand
-        return brandService.findById(req.user.userId)
+        return brandService.findByUserId(req.user.userId)
           .then(function(user) {
             if(!user) {
               throw new errors.HttpStatusError(httpStatus.NOT_FOUND);
             }
-            return brandService.process(req.body, user, t);
-          })
-          .then(function(user) {
-            return user.save({transaction: t});
+            return brandService.update(req.body, user, t);
           });
       } else if(req.role === config.ROLE.INFLUENCER) {
         // find this influencer
-        return influencerService.findById(req.user.userId)
+        return influencerService.findByUserId(req.user.userId)
           .then(function(user) {
-            return influencerService.process(req.body, user, t);
-          })
-          .then(function(user) {
-            return user.save({transaction: t});
+            return influencerService.update(req.body, user, t);
           });
       }
       throw new Error('role error');

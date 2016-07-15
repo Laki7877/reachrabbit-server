@@ -29,44 +29,54 @@ var include = [{
   as: 'profilePicture'
 }];
 
-module.exports = {
-  process: function(request, instance, t) {
-    // split objects
-    var medias = request.socialAccounts;
-    var mediaKeys = _.keys(medias);
+// assign media to influencer
+var assignMedias = function(values, instance, t) {
+  var medias = values.socialAccounts;
+  var mediaKeys = _.keys(medias);
 
-    _.extend(instance, request);
-
-    return Media.findAll({
-      where: {
-        mediaName: mediaKeys
-      },
-      transaction: t
-    })
-    .then(function(medium) {
-      // associate with media
-      _.forEach(medium, function(media) {
-        media = _.extend(media, {
-          InfluencerMedia: {
-            socialId: medias[media.mediaName].id,
-            pageId: medias[media.mediaName].pageId,
-            token: medias[media.mediaName].token
-          }
-        });
+  return Media.findAll({
+    where: {
+      mediaName: mediaKeys
+    }
+  })
+  .then(function(medium) {
+    // associate with media
+    _.forEach(medium, function(media) {
+      media = _.extend(media, {
+        InfluencerMedia: {
+          socialId: medias[media.mediaName].id,
+          pageId: medias[media.mediaName].pageId,
+          token: medias[media.mediaName].token
+        }
       });
-
-      // associate with media
-      instance.influencer.addMedia(medium, { transaction: t });
-      return instance;
     });
+
+    // associate with media
+    instance.influencer.addMedia(medium, { transaction: t });
+    return instance;
+  });
+};
+
+module.exports = {
+  update: function(values, instance, t) {
+    return assignMedias(values, instance, t)
+      .then(function(instance) {
+        _.extend(instance, values);
+        return instance.save({transaction: t});
+      });
   },
-  create: function(t) {
-    return User.create({}, {
+  create: function(values, t) {
+    return User.create(_.extend({
+      influencer: {}
+    }, values), {
       include: include,
       transaction: t
+    })
+    .then(function(instance) {
+      return assignMedias()
     });
   },
-  findById: function(id) {
+  findByUserId: function(id) {
     return User.findById(id, {
       include: include
     })
@@ -115,11 +125,11 @@ module.exports = {
               }
             },
             required: true
-          }, {
-            model: Resource,
-            as: 'profilePicture'
           }],
           required: true
+      }, {
+        model: Resource,
+        as: 'profilePicture'
       }]
     });
   },
