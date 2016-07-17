@@ -63,8 +63,13 @@ module.exports = {
     var nextStateIndex = _.indexOf(states, nextState);
     var deleteStateIndex = _.indexOf(states, 'deleted');
 
+    if(currentState === nextState || !nextState) {
+      if(currentState === 'draft') {
+        _.extend()
+      }
+    }
     // state exist
-    if(nextStateIndex >= 0) {
+    else if(nextStateIndex >= 0) {
       // draft to open
       if(currentState === 'draft' && nextState === 'open') {
         var data = _.extend({}, instance.dataValues, values);
@@ -78,15 +83,6 @@ module.exports = {
           // field not meet requirement
           return Promise.reject(new Error('field error'));
         }
-      }
-      // open to payment
-      else if(currentState === 'open' && nextState === 'wait brand pay') {
-        // check if there is at least one proposal
-        return instance.getCampaignProposals({
-          where: {
-            status: 'propose'
-          }
-        });
       }
     }
 

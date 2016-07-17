@@ -76,6 +76,8 @@ module.exports = function() {
   router.put('/campaigns/:campaignId/proposal', auth('influencer'), _.noop);
   router.put('/campaigns/:campaignId/submission', auth('influencer'), _.noop);
 
+  router.post('/campaigns/:campaignId/payment', auth('brand'), _.noop);
+
   /*********************************
    * Data
    *********************************/

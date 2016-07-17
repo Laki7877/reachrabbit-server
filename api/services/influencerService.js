@@ -10,6 +10,7 @@ var config = require('config'),
     User        = require('../models').User,
     Influencer  = require('../models').Influencer,
     InfluencerMedia  = require('../models').InfluencerMedia,
+    Bank  = require('../models').Bank,
     Media  = require('../models').Media,
     Resource = require('../models').Resource,
     authHelper = require('../helpers/authHelper'),
@@ -27,16 +28,18 @@ var include = [{
 }, {
   model: Resource,
   as: 'profilePicture'
+}, {
+  model: Bank
 }];
 
 // assign media to influencer
 var assignMedias = function(values, instance, t) {
-  var medias = values.socialAccounts;
+  var medias = values;
   var mediaKeys = _.keys(medias);
 
   return Media.findAll({
     where: {
-      mediaName: mediaKeys
+      mediaId: mediaKeys
     }
   })
   .then(function(medium) {
@@ -44,28 +47,40 @@ var assignMedias = function(values, instance, t) {
     _.forEach(medium, function(media) {
       media = _.extend(media, {
         InfluencerMedia: {
-          socialId: medias[media.mediaName].id,
-          pageId: medias[media.mediaName].pageId,
-          token: medias[media.mediaName].token
+          socialId: medias[media.mediaId].socialId,
+          pageId: medias[media.mediaId].pageId,
+          token: medias[media.mediaId].token
         }
       });
     });
 
     // associate with media
-    instance.influencer.setMedia(medium, { transaction: t });
-    return instance;
+    return instance.influencer.setMedia(medium, { transaction: t })
+    .then(function(media) {
+      return instance;
+    });
   });
 };
 
 module.exports = {
   update: function(values, instance, t) {
-    return assignMedias(values, instance, t)
+    var media = values.influencer.socialAccounts;
+    values.bankId = _.get(values, 'bank.bankId');
+    values.profilePictureId = _.get(values, 'profilePicture.resourceId');
+    values = _.omit(values, ['bank', 'profilePicture']);
+
+    return assignMedias(media, instance, t)
       .then(function(instance) {
         _.extend(instance, values);
         return instance.save({transaction: t});
       });
   },
   create: function(values, t) {
+    var media = values.influencer.socialAccounts;
+    values.bankId = _.get(values, 'bank.bankId');
+    values.profilePictureId = _.get(values, 'profilePicture.resourceId');
+    values = _.omit(values, ['bank', 'profilePicture']);
+
     return User.create(_.extend({
       influencer: {}
     }, values), {
@@ -73,7 +88,7 @@ module.exports = {
       transaction: t
     })
     .then(function(instance) {
-      return assignMedias(values, instance, t);
+      return assignMedias(media, instance, t);
     });
   },
   list: function(criteria) {
@@ -93,9 +108,11 @@ module.exports = {
         // media
         user.dataValues.socialAccounts = {};
         _.forEach(user.influencer.media, function(media) {
-          user.dataValues.socialAccounts[media.mediaName] = {
-            id: media.influencerMedia.socialId,
-            pageId: media.influencerMedia.pageId
+          user.dataValues.socialAccounts[media.mediaId] = {
+            mediaId: media.mediaId,
+            socialId: media.influencerMedia.socialId,
+            pageId: media.influencerMedia.pageId,
+            token: media.influencerMedia.token
           };
         });
       }

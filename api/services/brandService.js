@@ -10,6 +10,7 @@ var config  = require('config'),
     Promise = require('bluebird'),
     User 	= require('../models').User,
 		Brand = require('../models').Brand,
+		Bank = require('../models').Bank,
     Resource = require('../models').Resource,
     cacheHelper = require('../helpers/cacheHelper'),
     authHelper = require('../helpers/authHelper');
@@ -27,10 +28,16 @@ var include = [
 
 module.exports = {
   update: function(values, instance, t) {
+    values.bankId = _.get(values, 'bank.bankId');
+    values.profilePictureId = _.get(values, 'profilePicture.resourceId');
+    values = _.omit(values, ['bank', 'profilePicture']);
     _.extend(instance, values);
     return instance.save({transaction: t});
   },
   create: function(values, t) {
+    values.bankId = _.get(values, 'bank.bankId');
+    values.profilePictureId = _.get(values, 'profilePicture.resourceId');
+    values = _.omit(values, ['bank', 'profilePicture']);
     return User.create(_.extend({
       brand: {}
     }, values), {
