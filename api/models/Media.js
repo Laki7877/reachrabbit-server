@@ -3,13 +3,13 @@
 module.exports = function(sequelize, DataTypes) {
   var Media = sequelize.define('media', {
     mediaId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     mediaName: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: false
     },
     isActive: {
       type: DataTypes.BOOLEAN,
