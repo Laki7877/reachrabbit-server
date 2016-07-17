@@ -2,21 +2,24 @@
   {
     "model": "Media",
     "data": {
-      "mediaName": "facebook",
+      "mediaId": "facebook",
+      "mediaName": "Facebook",
       "isActive": true
     }
   },
   {
     "model": "Media",
     "data": {
-      "mediaName": "google",
+      "mediaId": "google",
+      "mediaName": "YouTube",
       "isActive": true
     }
   },
   {
     "model": "Media",
     "data": {
-      "mediaName": "instagram",
+      "mediaId": "instagram",
+      "mediaName": "Instagram",
       "isActive": true
     }
   }
