@@ -71,6 +71,11 @@ module.exports = function() {
   router.post('/campaigns', auth('brand'), $.campaignController.create);
   router.put('/campaigns/:campaignId', auth('brand'), $.campaignController.update);
 
+  router.post('/campaigns/:campaignId/proposal', auth('influencer'), _.noop);
+  router.post('/campaigns/:campaignId/submission', auth('influencer'), _.noop);
+  router.put('/campaigns/:campaignId/proposal', auth('influencer'), _.noop);
+  router.put('/campaigns/:campaignId/submission', auth('influencer'), _.noop);
+
   /*********************************
    * Data
    *********************************/
@@ -91,5 +96,6 @@ module.exports = function() {
   router.get('/default/delete', $.defaultController.testDelete);
   router.get('/default/findAll', $.defaultController.testFind);
   router.get('/default/update', $.defaultController.testUpdate);
+
   return router;
 };

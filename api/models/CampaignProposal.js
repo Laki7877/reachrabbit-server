@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(12,2)
     },
     status: {
-      type: DataTypes.ENUM('propose','reject','needrevision'),
+      type: DataTypes.ENUM('propose','reject','needrevision', 'accept'),
       defaultValue: 'propose',
       allowNull: false
     },
