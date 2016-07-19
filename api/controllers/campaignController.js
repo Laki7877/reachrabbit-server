@@ -18,7 +18,7 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.chooseAndPay(form.campaignProposal, form.resource, req.params.campaignId, req.user, t);
+      return campaignService.chooseProposalAndPay(form.campaignProposal, form.resource, req.params.campaignId, req.user, t);
     })
     .then(function(result) {
       return result.reload();

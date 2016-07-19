@@ -127,7 +127,7 @@ module.exports = {
           return CampaignSubmission.create(data, { include: [Resource], transaction: t })
             .then(function(instance) {
               if(resource) {
-                return instance.setResource(resource, {transaction: t})
+                return instance.setResource(_.map(resource, 'resourceId'), {transaction: t})
                   .then(function() {
                     return instance;
                   });
@@ -160,7 +160,7 @@ module.exports = {
           return CampaignProposal.create(data, { include: [Resource], transaction: t})
             .then(function(instance) {
               if(resource) {
-                return instance.setResource(resource, {transaction: t})
+                return instance.setResource(_.map(resource, 'resourceId'), {transaction: t})
                   .then(function() {
                     return instance;
                   });
@@ -187,8 +187,59 @@ module.exports = {
       return proposal.update(_.omit(values, ['influencerId', 'campaignId', 'proposalId', 'status']), { transaction: t});
     });
   },
-  reviseSubmission: function(values, campaignId, proposalId, brandId, t) {
+  approveSubmission: function(campaignId, submissionId, brandId, t) {
+    return CampaignSubmission.findOne({
+      where: {
+        campaignId: campaignId,
+        submissionId: submissionId
+      }
+    }, {
+      include: [{
+        model: Campaign,
+        where: {
+          brandId: brandId
+        }
+      }]
+    })
+    .then(function(submission) {
+      if(!submission) {
+        throw new Error('submission not found');
+      }
 
+      if(submission.status !== 'wait for post') {
+        throw new Error('not in approvable status');
+      }
+
+      return submission.update({}, {transaction: t});
+    });
+  },
+  reviseSubmission: function(values, campaignId, submissionId, brandId, t) {
+    if(!brandId) {
+      brandId = undefined;
+    }
+    return CampaignSubmission.findOne({
+      where: {
+        campaignId: campaignId,
+        submissionId: submissionId
+      }
+    }, {
+      include: [{
+        model: Campaign,
+        where: {
+          brandId: brandId
+        }
+      }]
+    })
+    .then(function(submission) {
+      if(!submission) {
+        throw new Error('submission not found');
+      }
+      if(submission.campaign.status !== 'production') {
+
+      }
+      var data = _.extend(_.pick(values, ['comment']), { status: 'need revision' });
+      return campaign.update(data, {transaction: t});
+    });
   },
   reviseProposal: function(values, campaignId, proposalId, brandId, t) {
     if(!brandId) {
@@ -211,11 +262,14 @@ module.exports = {
       if(!proposal) {
         throw new Error('proposal not found');
       }
-      var data = _.extend(_.pick(values, ['comment']), { status: 'needrevision' });
+      if(submission.campaign.status !== 'open') {
+        throw new Error('cannot update due to campaign status');
+      }
+      var data = _.extend(_.pick(values, ['comment']), { status: 'need revision' });
       return proposal.update(data, {transaction: t});
     });
   },
-  chooseAndPay: function(proposals, resource, campaignId, brandUser, t) {
+  chooseProposalAndPay: function(proposals, resource, campaignId, brandUser, t) {
     // should get campaign for this brand's
     return Campaign.findOne({
         where: {
@@ -326,7 +380,9 @@ module.exports = {
 
     var brand = values.brand;
     var category = values.category;
-    var data = _.extend(_.omit(values, ['brand', 'category']), {
+    var media = values.media;
+    var resource = values.resource;
+    var data = _.extend(_.omit(values, ['brand', 'category', 'media']), {
       status: 'draft' // default status
     });
 
@@ -341,7 +397,16 @@ module.exports = {
       data.categoryId = categoryInstance.categoryId;
       data.brandId = brandInstance.brandId;
 
-      return Campaign.create(data, { include: include, transaction: t});
+      return Campaign.create(data, { include: include, transaction: t})
+        .then(function(instance) {
+          return Promise.all([
+            instance.setResource(_.map(resource, 'resourceId'), { transaction: t }),
+            instance.setMedia(_.map(media, 'mediaId'), { transaction: t })
+          ])
+          .then(function() {
+            return instance;
+          });
+        });
     });
   },
   list: function(criteria) {
