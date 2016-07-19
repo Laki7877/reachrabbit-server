@@ -15,7 +15,7 @@ var db = require('../models'),
   Category = db.Category,
   Campaign = db.Campaign,
   Resource = db.Resource,
-  Media = db.Media,
+  Media = db.Media,.
   CampaignProposal = db.CampaignProposal,
   CampaignSubmission = db.CampaignSubmission,
   PaymentTransaction = db.PaymentTransaction,
@@ -119,7 +119,7 @@ module.exports = {
             campaign.submissionDeadline &&
             moment().isBefore(campaign.submissionDeadline)) {
           var data = _.pick(values, ['title', 'description']);
-          var resource = values.resource;
+          var resources = values.resources;
           data.campaignId = campaignId;
           data.influencerId = influencerId;
           data.proposalId = campaign.campaignProposal[0].proposalId;
@@ -127,7 +127,7 @@ module.exports = {
           return CampaignSubmission.create(data, { include: [Resource], transaction: t })
             .then(function(instance) {
               if(resource) {
-                return instance.setResource(_.map(resource, 'resourceId'), {transaction: t})
+                return instance.setResources(_.map(resources, 'resourceId'), {transaction: t})
                   .then(function() {
                     return instance;
                   });
@@ -153,14 +153,14 @@ module.exports = {
           moment().isBefore(campaign.proposalDeadline)) {
           // get on necessary data
           var data = _.pick(values, ['title', 'description', 'proposePrice']);
-          var resource = values.resource;
+          var resources = values.resources;
           data.campaignId = campaignId;
           data.influencerId = influencerId;
 
           return CampaignProposal.create(data, { include: [Resource], transaction: t})
             .then(function(instance) {
               if(resource) {
-                return instance.setResource(_.map(resource, 'resourceId'), {transaction: t})
+                return instance.setResources(_.map(resources, 'resourceId'), {transaction: t})
                   .then(function() {
                     return instance;
                   });
@@ -187,6 +187,9 @@ module.exports = {
       return proposal.update(_.omit(values, ['influencerId', 'campaignId', 'proposalId', 'status']), { transaction: t});
     });
   },
+  confirmSubmission: function() {
+
+  },
   approveSubmission: function(campaignId, submissionId, brandId, t) {
     return CampaignSubmission.findOne({
       where: {
@@ -210,7 +213,7 @@ module.exports = {
         throw new Error('not in approvable status');
       }
 
-      return submission.update({}, {transaction: t});
+      return submission.update({ status: 'wait for post' }, {transaction: t});
     });
   },
   reviseSubmission: function(values, campaignId, submissionId, brandId, t) {
@@ -381,7 +384,7 @@ module.exports = {
     var brand = values.brand;
     var category = values.category;
     var media = values.media;
-    var resource = values.resource;
+    var resources = values.resources;
     var data = _.extend(_.omit(values, ['brand', 'category', 'media']), {
       status: 'draft' // default status
     });
@@ -390,7 +393,8 @@ module.exports = {
     return Promise.all([
       Brand.findById(brand.brandId),
       Category.findOne({ where: category })
-    ]).spread(function(brandInstance, categoryInstance) {
+    ])
+    .spread(function(brandInstance, categoryInstance) {
       if(!categoryInstance || !brandInstance) {
         throw new Error('brand or category not found');
       }
@@ -400,7 +404,7 @@ module.exports = {
       return Campaign.create(data, { include: include, transaction: t})
         .then(function(instance) {
           return Promise.all([
-            instance.setResource(_.map(resource, 'resourceId'), { transaction: t }),
+            instance.setResources(_.map(resources, 'resourceId'), { transaction: t }),
             instance.setMedia(_.map(media, 'mediaId'), { transaction: t })
           ])
           .then(function() {

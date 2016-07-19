@@ -142,7 +142,13 @@ describe('POST ' + path, function() {
     updatedBy: 'someone',
     category: {
       categoryName: 'Travel'
-    }
+    },
+    resource: [{
+      resourceId: 'ed687098-7aeb-4b83-a931-1318d9141e2f'
+    }],
+    media: [{
+      mediaId: 'google'
+    }]
   };
 
   // with brand
@@ -158,6 +164,7 @@ describe('POST ' + path, function() {
             return done(err);
           }
           var data = res.body;
+          console.log(data);
           expect(data).to.have.property('title', campaign.title);
           expect(data).to.have.property('description', campaign.description);
           expect(data).to.have.property('proposalDeadline', moment(date).toISOString());
@@ -165,6 +172,8 @@ describe('POST ' + path, function() {
           expect(data).to.have.property('createdBy', campaign.createdBy);
           expect(data).to.have.property('updatedBy', campaign.updatedBy);
           expect(data).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
+          expect(data).to.have.property('resource').that.is.a('array');
+          expect(data).to.have.property('media').that.is.a('array');
           done();
         });
     });

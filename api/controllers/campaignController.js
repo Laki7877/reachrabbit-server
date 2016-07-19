@@ -35,6 +35,9 @@ module.exports = {
       return campaignService.createSubmission(form, req.params.campaignId, req.user, t);
     })
     .then(function(result) {
+      return result.reload();
+    })
+    .then(function(result) {
       return res.send(result);
     })
     .catch(next);
@@ -44,6 +47,9 @@ module.exports = {
 
     sequelize.transaction(function(t) {
       return campaignService.createProposal(form, req.params.campaignId, req.user.influencer.influencerId, t);
+    })
+    .then(function(result) {
+      return result.reload();
     })
     .then(function(result) {
       return res.send(result);
@@ -77,6 +83,9 @@ module.exports = {
       return campaignService.create(_.extend(form, {brand: req.user.brand}), t);
     })
     .then(function(result) {
+      return result.reload();
+    })
+    .then(function(result) {
       return res.send(result);
     })
     .catch(next);
@@ -90,6 +99,9 @@ module.exports = {
       .then(function(campaign) {
         return campaignService.update(campaign, form, t);
       });
+    })
+    .then(function(result) {
+      return result.reload();
     })
     .then(function(result) {
       return res.send(result);

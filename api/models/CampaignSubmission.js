@@ -43,7 +43,6 @@ module.exports = function(sequelize, DataTypes) {
           through: models.CampaignSubmissionResource,
           foreignKey: 'submissionId'
         });
-
         // submission belongs to one of the proposal
         CampaignSubmission.belongsTo(models.CampaignProposal, {
           foreignKey: 'proposalId'
