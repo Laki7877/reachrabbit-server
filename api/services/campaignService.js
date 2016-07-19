@@ -40,7 +40,7 @@ var include = [{
   model: Category
 }, {
   model: PaymentTransaction,
-  include: [PaymentResource]
+  include: [Resource]
 }];
 
 // all campaign's status
@@ -95,44 +95,82 @@ module.exports = {
         });
     });
   },
-  createProposal: function(values, campaignId, influencerId, t) {
+  createSubmission: function(values, campaignId, influencerId, t) {
     return Campaign.findById(campaignId, {
-      include: [{
-        model: CampaignProposal,
-        where: {
-          influencerId: influencerId
-        },
-        required: false
-      }]
-    })
-    .then(function(campaign) {
-      // no campaign found
-      if(!campaign) {
-        console.log('no campaign, found');
-        throw new Error('campaign not found');
-      }
+        include: [{
+          model: CampaignProposal,
+          where: {
+            influencerId: influencerId
+          },
+          order: 'createdDt DESC'
+        }]
+      })
+      .then(function(campaign) {
+        if(!campaign) {
+          throw new Error('campaign not found');
+        }
 
-      // proposal found
-      if(campaign.campaignProposal) {
-        console.log('already propose');
-        throw new Error('already proposed');
-      }
+        if(campaign.campaignProposal.length <= 0) {
+          throw new Error('you havent propose yet!');
+        }
 
-      // check for before proposal deadline
-      if(campaign.status === 'open' &&
-        campaign.proposalDeadline &&
-        moment(new Date()).isBefore(campaign.proposalDeadline)) {
-        // get on necessary data
-        var data = _.pick(values, ['title', 'description', 'proposePrice']);
-        data.campaignId = campaignId;
-        data.influencerId = influencerId;
+        // check for before submission deadline
+        if(campaign.status === 'production' &&
+            campaign.submissionDeadline &&
+            moment().isBefore(campaign.submissionDeadline)) {
+          var data = _.pick(values, ['title', 'description']);
+          var resource = values.resource;
+          data.campaignId = campaignId;
+          data.influencerId = influencerId;
+          data.proposalId = campaign.campaignProposal[0].proposalId;
 
-        return CampaignProposal.create(data, {transaction: t});
-      } else {
-        console.log('deadline');
-        throw new Error('deadline reached');
-      }
-    });
+          return CampaignSubmission.create(data, { include: [Resource], transaction: t })
+            .then(function(instance) {
+              if(resource) {
+                return instance.setResource(resource, {transaction: t})
+                  .then(function() {
+                    return instance;
+                  });
+              }
+            });
+        } else {
+          throw new Error('deadline reached');
+        }
+      });
+  },
+  createProposal: function(values, campaignId, influencerId, t) {
+    return Campaign.findById(campaignId)
+      .then(function(campaign) {
+        // no campaign found
+        if(!campaign) {
+          console.log('no campaign, found');
+          throw new Error('campaign not found');
+        }
+
+        // check for before proposal deadline
+        if(campaign.status === 'open' &&
+          campaign.proposalDeadline &&
+          moment().isBefore(campaign.proposalDeadline)) {
+          // get on necessary data
+          var data = _.pick(values, ['title', 'description', 'proposePrice']);
+          var resource = values.resource;
+          data.campaignId = campaignId;
+          data.influencerId = influencerId;
+
+          return CampaignProposal.create(data, { include: [Resource], transaction: t})
+            .then(function(instance) {
+              if(resource) {
+                return instance.setResource(resource, {transaction: t})
+                  .then(function() {
+                    return instance;
+                  });
+              }
+            });
+        } else {
+          console.log('deadline');
+          throw new Error('deadline reached');
+        }
+      });
   },
   updateProposalByInfluencer: function(values, campaignId, proposalId, influencerId, t) {
     return CampaignProposal.findOne({
@@ -148,6 +186,9 @@ module.exports = {
       }
       return proposal.update(_.omit(values, ['influencerId', 'campaignId', 'proposalId', 'status']), { transaction: t});
     });
+  },
+  reviseSubmission: function(values, campaignId, proposalId, brandId, t) {
+
   },
   reviseProposal: function(values, campaignId, proposalId, brandId, t) {
     if(!brandId) {
@@ -227,10 +268,7 @@ module.exports = {
             }, {
               transaction: t,
               include: [{
-                model: PaymentTransaction,
-                through: {
-                  model: PaymentResource
-                }
+                model: PaymentTransaction
               }]
             }));
           }
@@ -307,8 +345,21 @@ module.exports = {
     });
   },
   list: function(criteria) {
-    // get everything
-    return Campaign.findAndCountAll(criteria);
+    var opts = {
+      where: {},
+      include: [{
+        model: Brand,
+        include: [User]
+      }]
+    };
+
+    _.extend(opts, criteria);
+
+    // filter by status name
+    if(criteria.filter) {
+      opts.where.status = criteria.filter;
+    }
+    return Campaign.findAndCountAll(opts);
   },
   listByOwner: function(brandId, criteria) {
     // get only ones belong to this brand

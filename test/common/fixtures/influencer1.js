@@ -55,7 +55,7 @@ module.exports = [
       "proposalId": "ab8061ce-18cd-4a5d-9eea-b4563cffab47",
       "title": "Proposal #1",
       "description": "This is my proposal",
-      "status": "propose",
+      "status": "wait for review",
       "proposePrice": 1000,
       "campaign": {
         "campaignId": "865b7f55-0316-47b0-9704-bc24eaba1dc5"
@@ -71,7 +71,7 @@ module.exports = [
       "proposalId": "bcd7bc2a-61d3-431d-a0e5-2d681ca63db5",
       "title": "Proposal #2",
       "description": "This is my proposal",
-      "status": "propose",
+      "status": "wait for review",
       "proposePrice": 1000,
       "campaign": {
         "campaignId": "2d50a293-aa82-4cff-bb8d-bdf826d7ca15"

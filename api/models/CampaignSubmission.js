@@ -12,9 +12,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING
     },
     status: {
-      type: DataTypes.ENUM('propose','reject','needrevision'),
-      defaultValue: 'propose',
+      type: DataTypes.ENUM('wait for review', 'reject', 'need revision', 'wait for post', 'posted', 'paid'),
+      defaultValue: 'wait for review',
       allowNull: false
+    },
+    comment: {
+      type: DataTypes.TEXT
     },
     description: {
       type: DataTypes.TEXT

@@ -22,8 +22,8 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     status: {
-      type: DataTypes.ENUM('propose','reject','needrevision', 'accept'),
-      defaultValue: 'propose',
+      type: DataTypes.ENUM('wait for review','reject','need revision', 'accept'),
+      defaultValue: 'wait for review',
       allowNull: false
     },
     createdBy: {

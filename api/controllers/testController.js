@@ -9,7 +9,9 @@
 'use strict';
 /* istanbul ignore next */
 
-var influencerService = require('../services/influencerService');
+var config = require('config'),
+  influencerService = require('../services/influencerService'),
+  userService = require('../services/userService');
 
 module.exports = {
   /**
