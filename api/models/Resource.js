@@ -36,22 +36,14 @@ module.exports = function(sequelize, DataTypes) {
         Resource.belongsToMany(models.Campaign, {
           through: models.CampaignResource,
           foreighKey: 'resourceId',
-          as: 'resources'
         });
         Resource.belongsToMany(models.CampaignProposal, {
           through: models.CampaignProposalResource,
           foreighKey: 'resourceId',
-          as: 'proposals'
         });
         Resource.belongsToMany(models.CampaignSubmission, {
           through: models.CampaignSubmissionResource,
           foreighKey: 'resourceId',
-          as: 'submissions'
-        });
-        Resource.belongsToMany(models.PaymentTransaction, {
-          through: models.PaymentResource,
-          foreighKey: 'resourceId',
-          as: 'transactions'
         });
       }
     }

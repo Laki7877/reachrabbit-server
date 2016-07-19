@@ -32,13 +32,13 @@ module.exports = [
       "about": "This is about me",
       "media": [
         {
-          "mediaName": "facebook",
+          "mediaId": "facebook",
           "_through": {
             "socialId": "128000600963755"
           }
         },
         {
-          "mediaName": "youtube",
+          "mediaId": "google",
           "_through": {
             "socialId": "mytube"
           }
@@ -56,6 +56,7 @@ module.exports = [
       "title": "Proposal #1",
       "description": "This is my proposal",
       "status": "propose",
+      "proposePrice": 1000,
       "campaign": {
         "campaignId": "865b7f55-0316-47b0-9704-bc24eaba1dc5"
       },
@@ -71,6 +72,7 @@ module.exports = [
       "title": "Proposal #2",
       "description": "This is my proposal",
       "status": "propose",
+      "proposePrice": 1000,
       "campaign": {
         "campaignId": "2d50a293-aa82-4cff-bb8d-bdf826d7ca15"
       },

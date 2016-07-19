@@ -32,51 +32,66 @@ var include = [{
   model: Bank
 }];
 
+var processSocialAccounts = function(user) {
+  user.influencer.dataValues.socialAccounts = {};
+  _.forEach(user.influencer.media, function(media) {
+    user.influencer.dataValues.socialAccounts[media.mediaId] = {
+      mediaId: media.mediaId,
+      socialId: media.influencerMedia.socialId,
+      pageId: media.influencerMedia.pageId,
+      token: media.influencerMedia.token
+    };
+  });
+  return user;
+}
 // assign media to influencer
 var assignMedias = function(values, instance, t) {
+  if(!values) {
+    return Promise.resolve(instance);
+  }
   var medias = values;
   var mediaKeys = _.keys(medias);
+  var promises = [];
 
-  return Media.findAll({
-    where: {
-      mediaId: mediaKeys
-    }
-  })
-  .then(function(medium) {
-    // associate with media
-    _.forEach(medium, function(media) {
-      media = _.extend(media, {
-        InfluencerMedia: {
-          socialId: medias[media.mediaId].socialId,
-          pageId: medias[media.mediaId].pageId,
-          token: medias[media.mediaId].token
-        }
-      });
+  _.forOwn(medias, function(media, key) {
+    // upsert each m2m model
+    _.extend(media, {
+      mediaId: key,
+      influencerId: instance.influencer.influencerId
     });
+    promises.push(InfluencerMedia.upsert(media, {transaction: t}));
+  });
 
-    // associate with media
-    return instance.influencer.setMedia(medium, { transaction: t })
-    .then(function(media) {
+  // should finish all before sending back
+  return Promise.all(promises)
+    .then(function() {
       return instance;
     });
-  });
 };
 
 module.exports = {
+  populateSocialAccounts: function(user) {
+    return processSocialAccounts(user);
+  },
   update: function(values, instance, t) {
-    var media = values.influencer.socialAccounts;
+    var media = _.get(values, 'influencer.socialAccounts');
+    var influencer = _.get(values, 'influencer');
+
     values.bankId = _.get(values, 'bank.bankId');
     values.profilePictureId = _.get(values, 'profilePicture.resourceId');
-    values = _.omit(values, ['bank', 'profilePicture']);
 
-    return assignMedias(media, instance, t)
-      .then(function(instance) {
-        _.extend(instance, values);
-        return instance.save({transaction: t});
+    values = _.omit(values, ['bank', 'profilePicture', 'influencer']);
+
+    return instance.update(values, {transaction: t})
+      .then(function() {
+        return instance.influencer.update(influencer, {transaction: t});
+      })
+      .then(function() {
+        return assignMedias(media, instance, t);
       });
   },
   create: function(values, t) {
-    var media = values.influencer.socialAccounts;
+    var media = _.get(values, 'influencer.socialAccounts');
     values.bankId = _.get(values, 'bank.bankId');
     values.profilePictureId = _.get(values, 'profilePicture.resourceId');
     values = _.omit(values, ['bank', 'profilePicture']);
@@ -106,15 +121,7 @@ module.exports = {
     .then(function(user) {
       if(user) {
         // media
-        user.dataValues.socialAccounts = {};
-        _.forEach(user.influencer.media, function(media) {
-          user.dataValues.socialAccounts[media.mediaId] = {
-            mediaId: media.mediaId,
-            socialId: media.influencerMedia.socialId,
-            pageId: media.influencerMedia.pageId,
-            token: media.influencerMedia.token
-          };
-        });
+        processSocialAccounts(user);
       }
       return user;
     });
@@ -127,7 +134,7 @@ module.exports = {
           include: [{
             model: Media,
             where: {
-              mediaName: providerName,
+              mediaId: providerName,
               isActive: true
             },
             through: {

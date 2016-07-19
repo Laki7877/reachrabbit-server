@@ -14,6 +14,45 @@ var config = require('config'),
 	campaignService = require('../services/campaignService');
 
 module.exports = {
+  createPayment: function(req, res, next) {
+    var form = req.body;
+
+    sequelize.transaction(function(t) {
+      return campaignService.chooseAndPayWithCampaign(form.campaignProposal, form.resource, req.params.campaignId, req.user, t);
+    })
+    .then(function(result) {
+      return result.reload();
+    })
+    .then(function(result) {
+      return res.send(result);
+    })
+    .catch(next);
+  },
+  createProposal: function(req, res, next) {
+    var form = req.body;
+
+    sequelize.transaction(function(t) {
+      return campaignService.createProposalWithCampaign(form, req.params.campaignId, req.user, t);
+    })
+    .then(function(result) {
+      return res.send
+    })
+    .catch(next);
+  },
+  updateProposal: function(req, res, next) {
+    var form = req.body;
+
+    sequelize.transaction(function(t) {
+      return campaignService.updateProposalWithCampaign(form, req.params.campaignId, req.params.proposalId, req.user, t);
+    })
+    .then(function(result) {
+      return result.reload();
+    })
+    .then(function(result) {
+      return res.send(result);
+    })
+    .catch(next);
+  },
   create: function(req, res, next) {
     var form = req.body;
 
@@ -40,9 +79,15 @@ module.exports = {
     })
     .catch(next);
   },
-	list: function(req, res, next) {
+  list: function(req, res, next) {
+    campaignService.list(req.criteria)
+      .then(function(result) {
+        return res.send(result);
+      })
+      .catch(next);
+  },
+	listByRole: function(req, res, next) {
     Promise.attempt(function() {
-  		return campaignService.list(req.criteria);
       if(req.role === config.ROLE.BRAND) {
         // find by brand owner
   			return campaignService.listByOwner(req.user.brand.brandId, req.criteria);

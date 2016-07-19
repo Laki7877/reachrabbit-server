@@ -71,12 +71,20 @@ module.exports = function() {
   router.post('/campaigns', auth('brand'), $.campaignController.create);
   router.put('/campaigns/:campaignId', auth('brand'), $.campaignController.update);
 
-  router.post('/campaigns/:campaignId/proposal', auth('influencer'), _.noop);
-  router.post('/campaigns/:campaignId/submission', auth('influencer'), _.noop);
-  router.put('/campaigns/:campaignId/proposal', auth('influencer'), _.noop);
-  router.put('/campaigns/:campaignId/submission', auth('influencer'), _.noop);
+  router.get('/mycampaigns', auth(), paginate(), $.campaignController.listByRole);
 
-  router.post('/campaigns/:campaignId/payment', auth('brand'), _.noop);
+  // create proposal
+  router.post('/campaigns/:campaignId/proposals', auth('influencer'), $.campaignController.createProposal);
+  router.post('/campaigns/:campaignId/submissions', auth('influencer'), _.noop);
+  router.put('/campaigns/:campaignId/proposals/:proposalId', auth('influencer', 'brand'), $.campaignController.updateProposal);
+  router.put('/campaigns/:campaignId/submissions/:submissionId', auth('influencer', 'brand'), _.noop);
+
+  router.post('/campaigns/:campaignId/payments', auth('brand'), $.campaignController.createPayment);
+
+  /*********************************
+   * Payment
+   *********************************/
+  router.get('/payments', auth('admin', 'brand'), _.noop);
 
   /*********************************
    * Data

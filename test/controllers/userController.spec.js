@@ -62,7 +62,9 @@ describe('GET ' + profilePath, function() {
           if(err) {
             return done(err);
           }
-          expect(res.body.email).to.equal(user.email);
+          var data = res.body;
+          expect(data.email).to.equal(user.email);
+          expect(data).to.have.deep.property('profilePicture.resourceId', 'ed687098-7aeb-4b83-a931-1318d9141e2f');
           done();
         });
     });
@@ -99,7 +101,15 @@ describe('PUT ' + profilePath, function() {
   describe('With influencer', function() {
     before(helpers.influencerLogin);
     var influencer = {
-      email: 'new@gmail.com'
+      email: 'new@gmail.com',
+      influencer: {
+        web: 'test',
+        socialAccounts: {
+          'facebook' : {
+            socialId: '1234'
+          }
+        }
+      }
     };
 
     it('should return updated user', function(done) {
@@ -112,7 +122,9 @@ describe('PUT ' + profilePath, function() {
             return done(err);
           }
           var data = res.body;
-          expect(data).to.have.property('email', 'new@gmail.com');
+          expect(data).to.have.deep.property('influencer.influencerId', 'cb8cf696-ea59-4884-909e-0185ad36ca05');
+          expect(data).to.have.deep.property('influencer.web', 'test');
+          expect(data).to.have.deep.property('influencer.socialAccounts.facebook.socialId', '1234');
           done();
         });
     });

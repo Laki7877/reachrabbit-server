@@ -5,6 +5,54 @@ var moment = require('moment'),
     api     = helpers.api;
 
 var path = '/campaigns';
+var myPath = '/mycampaigns';
+
+describe('GET ' + myPath, function() {
+  before(helpers.before);
+  after(helpers.after);
+  var id = '865b7f55-0316-47b0-9704-bc24eaba1dc5';
+
+  // brand
+  describe('With Brand', function() {
+    before(helpers.brandLogin);
+    it('should return campaign pages', function(done) {
+      api.get(myPath)
+        .set('Authorization', helpers.brandToken)
+        .expect(200)
+        .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
+          var data = res.body;
+          helpers.checkPagination(data);
+
+          expect(data.rows[0]).to.have.property('campaignId');
+          expect(data.rows[0]).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
+          done();
+        });
+    });
+  });
+
+  // influencer
+  describe('With Influencer', function() {
+    before(helpers.influencerLogin);
+    it('should return campaign pages', function(done) {
+      api.get(myPath)
+        .set('Authorization', helpers.influencerToken)
+        .expect(200)
+        .end(function(err, res) {
+          if(err) {
+            return done(err);
+          }
+          var data = res.body;
+          helpers.checkPagination(data);
+          expect(data.rows[0]).to.have.property('campaignId');
+          expect(data.rows[0]).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
+          done();
+        });
+    });
+  });
+});
 
 describe('GET ' + path, function() {
 	before(helpers.before);
@@ -141,4 +189,9 @@ describe('POST ' + path, function() {
         .expect(401, done);
     });
   });
+});
+
+describe('PUT ' + path, function() {
+  before(helpers.before);
+  after(helpers.after);
 });

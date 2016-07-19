@@ -8,13 +8,25 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
+    status: {
+      type: DataTypes.ENUM('pending','complete'),
+      allowNull: false,
+      defaultValue: 'pending'
+    },
+    description: {
+      type: DataTypes.STRING
+    },
+    value: {
+      type: DataTypes.DECIMAL(12,2),
+      allowNull: false
+    },
     paymentType: {
       type: DataTypes.ENUM('receive','pay','cancel'),
-      allowNull: true
+      allowNull: false
     },
     paymentMethod: {
       type: DataTypes.ENUM('bank transfer','cash'),
-      allowNull: true
+      allowNull: false
     },
     createdBy: {
       type: DataTypes.STRING,
@@ -29,9 +41,8 @@ module.exports = function(sequelize, DataTypes) {
     paranoid: true,
     classMethods: {
       associate: function(models) {
-        PaymentTransaction.belongsToMany(models.Resource, {
-          through: models.PaymentResource,
-          foreignKey: 'transactionId'
+        PaymentTransaction.belongsTo(models.Resource, {
+          foreignKey: 'resourceId'
         });
         PaymentTransaction.belongsTo(models.User, {
           foreignKey: 'userId'

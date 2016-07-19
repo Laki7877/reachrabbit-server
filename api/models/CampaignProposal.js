@@ -15,7 +15,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TEXT
     },
     proposePrice: {
-      type: DataTypes.DECIMAL(12,2)
+      type: DataTypes.DECIMAL(12,2),
+      allowNull: false
     },
     status: {
       type: DataTypes.ENUM('propose','reject','needrevision', 'accept'),
@@ -41,8 +42,8 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         // proposal belongs to one of submission, if passed
-        CampaignProposal.belongsTo(models.CampaignSubmission, {
-          foreignKey: 'submissionId'
+        CampaignProposal.hasOne(models.CampaignSubmission, {
+          foreignKey: 'proposalId'
         });
         CampaignProposal.belongsToMany(models.Resource, {
           through: models.CampaignProposalResource,

@@ -42,8 +42,8 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         // submission belongs to one of the proposal
-        CampaignSubmission.hasOne(models.CampaignProposal, {
-          foreignKey: 'submissionId'
+        CampaignSubmission.belongsTo(models.CampaignProposal, {
+          foreignKey: 'proposalId'
         });
       }
     }

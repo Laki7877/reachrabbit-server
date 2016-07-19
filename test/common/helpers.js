@@ -80,7 +80,7 @@ helpers.influencerLogin = function(done) {
 };
 
 helpers.before = helpers.resyncDB;
-helpers.after = helpers.cleanDB;
+helpers.after = function() {};
 helpers.api = api;
 
 module.exports = helpers;

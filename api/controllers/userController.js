@@ -100,7 +100,16 @@ module.exports = {
       throw new Error('role error');
     })
     .then(function(result) {
-      res.send(result);
+      return result.reload();
+    })
+    .then(function(result) {
+      if(req.role === config.ROLE.INFLUENCER) {
+        return influencerService.populateSocialAccounts(result);
+      }
+      return result;
+    })
+    .then(function(result) {
+      return res.send(result);
     })
     .catch(next);
   },
