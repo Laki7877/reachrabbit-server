@@ -33,7 +33,7 @@ module.exports = {
       return user.reload();
     })
     .then(function(user) {
-      return influencerService.createToken(user, true);
+      return userService.createToken(user, config.ROLE.INFLUENCER, true);
     })
     .then(function(result) {
       return res.send({ token: result });
@@ -57,7 +57,7 @@ module.exports = {
       return user.reload();
     })
     .then(function(user) {
-      return brandService.createToken(user, true);
+      return userService.createToken(user, config.ROLE.BRAND, true);
     })
     .then(function(result) {
       return res.send({ token: result });
