@@ -14,7 +14,7 @@ var config = require('config'),
 	campaignService = require('../services/campaignService');
 
 module.exports = {
-  createPayment: function(req, res, next) {
+  payForCampaign: function(req, res, next) {
     var form = req.body;
 
     sequelize.transaction(function(t) {

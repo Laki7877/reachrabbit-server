@@ -7,13 +7,13 @@
 'use strict';
 
 var brandService = require('../services/brandService'),
-    influencerService = require('../services/influencerService'),
-    userService = require('../services/userService'),
-    mailService = require('../services/mailService'),
-    facebookService = require('../services/facebookService'),
-    cacheHelper = require('../helpers/cacheHelper'),
-    sequelize = require('../models').sequelize,
-    config = require('config');
+  influencerService = require('../services/influencerService'),
+  userService = require('../services/userService'),
+  mailService = require('../services/mailService'),
+  facebookService = require('../services/facebookService'),
+  cacheHelper = require('../helpers/cacheHelper'),
+  sequelize = require('../models').sequelize,
+  config = require('config');
 
 module.exports = {
   /**
@@ -28,6 +28,9 @@ module.exports = {
 
     sequelize.transaction(function(t) {
       return influencerService.create(form, t);
+    })
+    .then(function(user) {
+      return user.reload();
     })
     .then(function(user) {
       return influencerService.createToken(user, true);
@@ -49,6 +52,9 @@ module.exports = {
     // create transaction
     sequelize.transaction(function(t) {
       return brandService.create(form, t);
+    })
+    .then(function(user) {
+      return user.reload();
     })
     .then(function(user) {
       return brandService.createToken(user, true);

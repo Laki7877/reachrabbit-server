@@ -79,7 +79,7 @@ module.exports = function() {
   router.put('/campaigns/:campaignId/proposals/:proposalId', auth('influencer', 'brand'), $.campaignController.updateProposal);
   router.put('/campaigns/:campaignId/submissions/:submissionId', auth('influencer', 'brand'), _.noop);
 
-  router.post('/campaigns/:campaignId/payments', auth('brand'), $.campaignController.createPayment);
+  router.post('/campaigns/:campaignId/payments', auth('brand'), $.campaignController.payForCampaign);
 
   /*********************************
    * Payment

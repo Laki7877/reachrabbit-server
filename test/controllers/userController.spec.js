@@ -47,17 +47,11 @@ describe('GET ' + profilePath, function() {
   });
 
   describe('I have correct token', function() {
-    it('should return 200', function(done) {
-      // get me
-      api.get(profilePath)
-        .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
-        .expect(200, done);
-    });
-
     it('should return profile', function(done) {
       // get me
       api.get(profilePath)
         .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
+        .expect(200)
         .end(function(err, res) {
           if(err) {
             return done(err);
@@ -139,7 +133,10 @@ describe('POST ' + userBrandPath, function() {
   describe('Create new brand', function() {
     var brand = {
       email: 'new@gmail.com',
-      password: '1234'
+      password: '1234',
+      profilePicture: {
+        resourceId: 'ed687098-7aeb-4b83-a931-1318d9141e2f'
+      }
     };
     var token = '';
 
@@ -153,7 +150,20 @@ describe('POST ' + userBrandPath, function() {
           }
           expect(res.body.token).to.be.a('string');
           token = res.body.token;
-          done();
+
+          // check profile
+          api.get(profilePath)
+            .set('Authorization', config.AUTHORIZATION_TYPE + ' ' + token)
+            .expect(200)
+            .end(function(err2, res2) {
+              if(err2) {
+                return done(err2);
+              }
+              var data = res2.body;
+
+              expect(data).to.have.deep.property('profilePicture.resourceId');
+              done();
+            });
         });
     });
   });
