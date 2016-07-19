@@ -47,7 +47,7 @@ module.exports = function() {
   router.post('/auth/google', $.authController.google);
   router.post('/auth/instagram', $.authController.instagram);
 
-  router.post('/login', $.authController.brandLogin);
+  router.post('/login', $.authController.login);
 
   /********************************
    * User
@@ -66,25 +66,28 @@ module.exports = function() {
   /*********************************
    * Campaign
    *********************************/
-  router.get('/campaigns', auth(), paginate(), $.campaignController.list);
-  router.get('/campaigns/:campaignId', auth(), $.campaignController.get);
-  router.post('/campaigns', auth('brand'), $.campaignController.create);
-  router.put('/campaigns/:campaignId', auth('brand'), $.campaignController.update);
+  router.get('/campaigns', auth(), paginate(), $.campaignController.listCampaign);
+  router.get('/campaigns/:campaignId', auth(), $.campaignController.getCampaign);
+  router.post('/campaigns', auth('brand'), $.campaignController.createCampaign);
+  router.put('/campaigns/:campaignId', auth('brand'), $.campaignController.updateCampaign);
 
-  router.get('/mycampaigns', auth(), paginate(), $.campaignController.listByRole);
+  router.get('/mycampaigns', auth(), paginate(), $.campaignController.listCampaignByRole);
 
   // create proposal
   router.post('/campaigns/:campaignId/proposals', auth('influencer'), $.campaignController.createProposal);
-  router.post('/campaigns/:campaignId/submissions', auth('influencer'), _.noop);
+  router.post('/campaigns/:campaignId/submissions', auth('influencer'),$.campaignController.createSubmission);
   router.put('/campaigns/:campaignId/proposals/:proposalId', auth('influencer', 'brand'), $.campaignController.updateProposal);
   router.put('/campaigns/:campaignId/submissions/:submissionId', auth('influencer', 'brand'), _.noop);
 
+  router.post('/campaigns/:campaignId/payments/confirm', auth('admin'), $.campaignController.confirmCampaignPayment)
   router.post('/campaigns/:campaignId/payments', auth('brand'), $.campaignController.payForCampaign);
+
 
   /*********************************
    * Payment
    *********************************/
-  router.get('/payments', auth('admin', 'brand'), _.noop);
+  router.get('/payments', auth(), paginate(), $.paymentController.listPayment);
+  router.put('/payments', auth('admin'), $.paymentController.bulkUpdatePayment);
 
   /*********************************
    * Data

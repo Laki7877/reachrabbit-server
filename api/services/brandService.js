@@ -12,8 +12,7 @@ var config  = require('config'),
 		Brand = require('../models').Brand,
 		Bank = require('../models').Bank,
     Resource = require('../models').Resource,
-    cacheHelper = require('../helpers/cacheHelper'),
-    authHelper = require('../helpers/authHelper');
+    cacheHelper = require('../helpers/cacheHelper');
 
 var include = [
   {
@@ -64,18 +63,6 @@ module.exports = {
         email: email
       },
       include: include
-    });
-  },
-  createToken: function(user, cache) {
-    // cache user
-    if(cache) {
-      cacheHelper.set(user.userId, {
-        user: user,
-        role: config.ROLE.BRAND
-      });
-    }
-    return authHelper.encode({
-      userId: user.userId
     });
   }
 };

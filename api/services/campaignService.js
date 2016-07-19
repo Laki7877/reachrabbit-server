@@ -14,6 +14,8 @@ var db = require('../models'),
   User = db.User,
   Category = db.Category,
   Campaign = db.Campaign,
+  Resource = db.Resource,
+  Media = db.Media,
   CampaignProposal = db.CampaignProposal,
   CampaignSubmission = db.CampaignSubmission,
   PaymentTransaction = db.PaymentTransaction,
@@ -22,15 +24,23 @@ var db = require('../models'),
 
 // eagerload for campaign search
 var include = [{
-  model: CampaignSubmission
+  model: CampaignSubmission,
+  order: 'createdDt DESC'
 }, {
-  model: CampaignProposal
+  model: CampaignProposal,
+  order: 'createdDt DESC'
 }, {
-  model: Brand
+  model: Media
+}, {
+  model: Resource
+}, {
+  model: Brand,
+  include: [User]
 }, {
   model: Category
 }, {
-  model: PaymentTransaction
+  model: PaymentTransaction,
+  include: [PaymentResource]
 }];
 
 // all campaign's status
@@ -60,12 +70,37 @@ var campaignPublishSchema = {
 };
 
 module.exports = {
-  createProposalWithCampaign: function(values, campaignId, influencerUser, t) {
+  confirmPayment: function(campaignId, t) {
+    return Campaign.findById(campaignId, {
+      include: [{
+        model: PaymentTransaction
+      }]
+    })
+    .then(function(campaign) {
+      if(campaign.paymentTransaction.length <= 0) {
+        throw new Error('payment not found');
+      }
+
+      var promises = [];
+      _.forEach(campaign.paymentTransaction, function(payment) {
+        if(payment.status === 'complete') {
+          throw new Error('payment already confirmed?');
+        }
+        promises.push(payment.update({status: 'complete'}, {transaction: t}));
+      });
+
+      return Promise.all(promises)
+        .then(function() {
+          return campaign.update({status: 'production'}, {transaction: t});
+        });
+    });
+  },
+  createProposal: function(values, campaignId, influencerId, t) {
     return Campaign.findById(campaignId, {
       include: [{
         model: CampaignProposal,
         where: {
-          influencerId: influencerUser.influencer.influencerId
+          influencerId: influencerId
         },
         required: false
       }]
@@ -99,10 +134,10 @@ module.exports = {
       }
     });
   },
-  updateProposalWithCampaign: function(values, campaignId, proposalId, influencerUser, t) {
+  updateProposalByInfluencer: function(values, campaignId, proposalId, influencerId, t) {
     return CampaignProposal.findOne({
       where: {
-        influencerId: influencerUser.influencer.influencerId,
+        influencerId: influencerId,
         campaignId: campaignId,
         proposalId: proposalId
       }
@@ -114,7 +149,32 @@ module.exports = {
       return proposal.update(_.omit(values, ['influencerId', 'campaignId', 'proposalId', 'status']), { transaction: t});
     });
   },
-  chooseAndPayWithCampaign: function(proposals, resource, campaignId, brandUser, t) {
+  reviseProposal: function(values, campaignId, proposalId, brandId, t) {
+    if(!brandId) {
+      brandId = undefined;
+    }
+    return CampaignProposal.findOne({
+      where: {
+        campaignId: campaignId,
+        proposalId: proposalId
+      }
+    }, {
+      include: [{
+        model: Campaign,
+        where: {
+          brandId: brandId
+        }
+      }]
+    })
+    .then(function(proposal) {
+      if(!proposal) {
+        throw new Error('proposal not found');
+      }
+      var data = _.extend(_.pick(values, ['comment']), { status: 'needrevision' });
+      return proposal.update(data, {transaction: t});
+    });
+  },
+  chooseAndPay: function(proposals, resource, campaignId, brandUser, t) {
     // should get campaign for this brand's
     return Campaign.findOne({
         where: {
@@ -177,8 +237,8 @@ module.exports = {
         });
 
         return Promise.all([
-          proposalPromises, // update accepted proposal status
-          paymentPromises // create payment transaction
+          Promise.all(proposalPromises), // update accepted proposal status
+          Promise.all(paymentPromises) // create payment transaction
         ])
         .then(function() {
           return campaign;

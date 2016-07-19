@@ -23,7 +23,7 @@ module.exports = {
     return influencerService.findByMedia(req.body.socialName, req.body.socialId)
       .then(function(user) {
         if(user) {
-          return influencerService.createToken(user, true);
+          return userService.createToken(user, config.ROLE.INFLUENCER, true);
         }
         throw new errors.HttpStatusError(httpStatus.NOT_FOUND);
       })

@@ -14,6 +14,9 @@ module.exports = function(sequelize, DataTypes) {
     description: {
       type: DataTypes.TEXT
     },
+    comment: {
+      type: DataTypes.TEXT
+    },
     proposePrice: {
       type: DataTypes.DECIMAL(12,2),
       allowNull: false
@@ -42,7 +45,7 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         // proposal belongs to one of submission, if passed
-        CampaignProposal.hasOne(models.CampaignSubmission, {
+        CampaignProposal.hasMany(models.CampaignSubmission, {
           foreignKey: 'proposalId'
         });
         CampaignProposal.belongsToMany(models.Resource, {

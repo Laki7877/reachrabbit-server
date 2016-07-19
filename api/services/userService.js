@@ -7,12 +7,23 @@
 'use strict';
 
 var Promise           = require('bluebird'),
+    authHelper        = require('../helpers/authHelper'),
     db                = require('../models'),
     User              = require('../models').User,
     Brand             = require('../models').Brand,
     Influencer        = require('../models').Influencer,
+    Resource          = require('../models').Resource,
     influencerService = require('../services/influencerService'),
     brandService      = require('../services/brandService');
+
+var include = [{
+  model: Brand,
+  required: false
+},{
+  model: Resource,
+  as: 'profilePicture'
+}];
+
 module.exports = {
   /**
    * Find user by id, return specific form for each role (brand/influencer/admin)
@@ -27,28 +38,30 @@ module.exports = {
     .then(function(results) {
       if(results[0] > 0) {
         // has brand
-        return brandService.findById(id);
+        return brandService.findByUserId(id);
       } else if(results[1] > 0) {
         // has influencer
-        return influencerService.findById(id);
+        return influencerService.findByUserId(id);
       } else {
-        // not found
-        return null;
+        // not found, maybe admin
+        return User.findById(id)
+          .then(function(user) {
+            if(!user) {
+              return null;
+            }
+          });
       }
     });
   },
-  findByEmail: function(email,includes) {
-    if(!includes){
-      includes = [];
-    }
-    if(!Array.isArray(includes)){
-      includes = [includes];
-    }
+  findByEmail: function(email) {
     return User.findOne({
       where: {
         email: email
       },
-      include: includes
+      include: include
     });
+  },
+  createToken: function(user, role, cache) {
+    return authHelper.createToken(user, role, cache);
   }
 };

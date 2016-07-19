@@ -60,23 +60,6 @@ module.exports = function(sequelize, DataTypes) {
           });
         }
         return options;
-      },
-      afterFind: function(instances, options) {
-        if(instances) {
-          if(_.isArray(instances)) {
-            _.forEach(instances, function(instance) {
-              if(!instance.profilePicture) {
-                return;
-              }
-              instance.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + instance.profilePicture.get('resourcePath');
-            });
-          } else {
-            if(instances.profilePicture) {
-              instances.profilePicture.dataValues.url = process.env.S3_PUBLIC_URL + instances.profilePicture.get('resourcePath');
-            }
-          }
-        }
-        return instances;
       }
     },
     classMethods: {

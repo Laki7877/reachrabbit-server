@@ -58,5 +58,17 @@ module.exports = {
     }).catch(function() {
       return null;
     });
+  },
+  createToken: function(user, role, cache) {
+    // cache user
+    if(cache) {
+      cacheHelper.set(user.userId, {
+        user: user,
+        role: role
+      });
+    }
+    return this.encode({
+      userId: user.userId
+    });
   }
 };

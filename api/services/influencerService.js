@@ -151,19 +151,6 @@ module.exports = {
       }]
     });
   },
-  createToken: function(user, cache) {
-    // cache user
-    if(cache) {
-      cacheHelper.set(user.userId, {
-        user: user,
-        role: config.ROLE.INFLUENCER
-      });
-    }
-    // encode userid
-    return authHelper.encode({
-      userId: user.userId
-    });
-  },
   login: function(providerName, socialId) {
     return this.findByMedia(providerName, socialId)
       .then(function(user) {

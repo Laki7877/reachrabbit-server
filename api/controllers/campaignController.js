@@ -18,10 +18,21 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.chooseAndPayWithCampaign(form.campaignProposal, form.resource, req.params.campaignId, req.user, t);
+      return campaignService.chooseAndPay(form.campaignProposal, form.resource, req.params.campaignId, req.user, t);
     })
     .then(function(result) {
       return result.reload();
+    })
+    .then(function(result) {
+      return res.send(result);
+    })
+    .catch(next);
+  },
+  createSubmission: function(req, res, next) {
+    var form = req.body;
+
+    sequelize.transaction(function(t) {
+      return campaignService.createSubmission(form, req.params.campaignId, req.user, t);
     })
     .then(function(result) {
       return res.send(result);
@@ -32,10 +43,10 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.createProposalWithCampaign(form, req.params.campaignId, req.user, t);
+      return campaignService.createProposal(form, req.params.campaignId, req.user.influencer.influencerId, t);
     })
     .then(function(result) {
-      return res.send
+      return res.send(result);
     })
     .catch(next);
   },
@@ -43,7 +54,13 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.updateProposalWithCampaign(form, req.params.campaignId, req.params.proposalId, req.user, t);
+      if(req.role === config.ROLE.INFLUENCER) {
+        return campaignService.updateProposalByInfluencer(form, req.params.campaignId, req.params.proposalId, req.user.influencer.influencerId, t);
+      } else if(req.role === config.ROLE.BRAND){
+        return campaignService.updateProposal(form, req.params.campaignId, req.params.proposalId, req.user.brand.brandId, t);
+      } else {
+        return campaignService.updateProposal(form, req.params.campaignId, req.params.proposalId, null, t);
+      }
     })
     .then(function(result) {
       return result.reload();
@@ -53,7 +70,7 @@ module.exports = {
     })
     .catch(next);
   },
-  create: function(req, res, next) {
+  createCampaign: function(req, res, next) {
     var form = req.body;
 
     sequelize.transaction(function(t) {
@@ -64,7 +81,7 @@ module.exports = {
     })
     .catch(next);
   },
-  update: function(req, res, next) {
+  updateCampaign: function(req, res, next) {
     var campaignId = req.params.id;
     var form = req.body;
 
@@ -79,14 +96,14 @@ module.exports = {
     })
     .catch(next);
   },
-  list: function(req, res, next) {
+  listCampaign: function(req, res, next) {
     campaignService.list(req.criteria)
       .then(function(result) {
         return res.send(result);
       })
       .catch(next);
   },
-	listByRole: function(req, res, next) {
+	listCampaignByRole: function(req, res, next) {
     Promise.attempt(function() {
       if(req.role === config.ROLE.BRAND) {
         // find by brand owner
@@ -107,11 +124,23 @@ module.exports = {
     })
     .catch(next);
 	},
-  get: function(req, res, next) {
+  getCampaign: function(req, res, next) {
     campaignService.findById(req.params.campaignId)
       .then(function(result) {
         return res.send(result);
       })
       .catch(next);
+  },
+  confirmCampaignPayment: function(req, res, next) {
+    sequelize.transaction(function(t) {
+      return campaignService.confirmPayment(req.params.campaignId, t);
+    })
+    .then(function(campaign) {
+      return campaign.reload();
+    })
+    .then(function(campaign) {
+      return res.send(campaign);
+    })
+    .catch(next);
   }
 };

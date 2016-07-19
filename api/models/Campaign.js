@@ -39,6 +39,9 @@ module.exports = function(sequelize, DataTypes) {
     status: {
       type: DataTypes.ENUM('draft','open', 'production','complete','delete')
     },
+    budget: {
+      type: DataTypes.ENUM('500-1,000', '1,000-5,000', '5,000-10,000', '10,000+')
+    },
     createdBy: {
       type: DataTypes.STRING
     },

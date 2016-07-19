@@ -32,12 +32,12 @@ module.exports = {
    * @param      {object}    res     The resource
    * @param      {Function}  next    The next
    */
-  brandLogin: function(req, res, next) {
+  login: function(req, res, next) {
     var email = req.body.email;
     var password = req.body.password;
 
     // find brand by email
-    brandService.findByEmail(email)
+    userService.findByEmail(email)
       // verify password
       .then(function(user) {
         if(!user) {
@@ -48,13 +48,16 @@ module.exports = {
             if (!eq) {
               throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, config.ERROR.WRONG_EMAIL_PASSWORD);
             }
-            return user.get({plain: true});
+            return user;
           });
       })
       // encode user
       .then(function(user) {
-        // cache user and return token
-        return brandService.createToken(user, true);
+        if(user.brand) {
+          return userService.createToken(user, config.ROLE.BRAND, true);
+        } else {
+          return userService.createToken(user, config.ROLE.ADMIN, true);
+        }
       })
       // send
       .then(function(token) {
@@ -116,7 +119,7 @@ module.exports = {
                 });
               } else {
                 // found, create token and return
-                return influencerService.createToken(user, true)
+                return userService.createToken(user, config.ROLE.INFLUENCER, true)
                   .then(function(token) {
                     res.send({
                       isLogin: true,
@@ -172,7 +175,7 @@ module.exports = {
                 });
             } else {
               // login flow
-              return influencerService.createToken(user, true)
+              return userService.createToken(user, config.ROLE.INFLUENCER, true)
                 .then(function(token) {
                   res.send({
                     isLogin: true,
@@ -228,11 +231,11 @@ module.exports = {
               });
             } else {
               // login flow
-              return influencerService.createToken(user, true)
+              return userService.createToken(user, config.ROLE.INFLUENCER, true)
                 .then(function(token) {
                   return res.send({
-                    token: token,
-                    isLogin: true
+                    isLogin: true,
+                    token: token
                   });
               });
             }

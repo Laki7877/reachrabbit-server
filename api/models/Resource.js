@@ -19,18 +19,16 @@ module.exports = function(sequelize, DataTypes) {
     },
     updatedBy: {
       type: DataTypes.STRING
+    },
+    url: {
+      type: DataTypes.VIRTUAL,
+      get: function() {
+        return process.env.S3_PUBLIC_URL + this.get('resourcePath');
+      }
     }
   }, {
     tableName: 'Resource',
     paranoid: true,
-    hooks: {
-      afterFind: function(instance, options) {
-        if(instance) {
-          instance.dataValues.url = process.env.S3_PUBLIC_URL + instance.get('resourcePath');
-        }
-        return instance;
-      }
-    },
     classMethods: {
       associate: function(models) {
         Resource.belongsToMany(models.Campaign, {
