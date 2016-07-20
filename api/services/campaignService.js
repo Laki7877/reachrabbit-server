@@ -376,11 +376,25 @@ module.exports = {
       var nextStateIndex = _.indexOf(states, nextState);
       var deleteStateIndex = _.indexOf(states, 'delete');
 
-      if(currentState === nextState) {
+      if(currentState === nextState || !nextState) {
         // Save/Update as draft
         if(currentState === 'draft') {
           _.extend(instance, values);
-          return instance.save({transaction: t});
+          if(values.category) {
+            instance.categoryId = values.category.categoryId;
+          }
+          return instance.save({transaction: t})
+          .then(function(instance) {
+            var resources = instance.resources || values.resources;
+            var media = instance.media || values.media;
+            return Promise.all([
+              instance.setResources(_.map(resources, 'resourceId'), { transaction: t }),
+              instance.setMedia(_.map(media, 'mediaId'), { transaction: t })
+            ])
+            .then(function() {
+              return instance;
+            });
+          });
         }
       }
       // state exist
