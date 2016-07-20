@@ -15,7 +15,7 @@ var db = require('../models'),
   Category = db.Category,
   Campaign = db.Campaign,
   Resource = db.Resource,
-  Media = db.Media,.
+  Media = db.Media,
   CampaignProposal = db.CampaignProposal,
   CampaignSubmission = db.CampaignSubmission,
   PaymentTransaction = db.PaymentTransaction,
@@ -385,7 +385,7 @@ module.exports = {
     var category = values.category;
     var media = values.media;
     var resources = values.resources;
-    var data = _.extend(_.omit(values, ['brand', 'category', 'media']), {
+    var data = _.extend(_.omit(values, ['brand', 'category', 'media', 'resources']), {
       status: 'draft' // default status
     });
 

@@ -91,12 +91,14 @@ module.exports = {
     .catch(next);
   },
   updateCampaign: function(req, res, next) {
-    var campaignId = req.params.id;
+    var campaignId = req.params.campaignId;
     var form = req.body;
 
     sequelize.transaction(function(t) {
       return campaignService.findByIdWithBrand(campaignId, req.user.brand.brandId)
       .then(function(campaign) {
+        console.log(campaignId, req.user.brand.brandId)
+        console.log(campaign)
         return campaignService.update(campaign, form, t);
       });
     })
