@@ -46,6 +46,12 @@ module.exports = function(sequelize, DataTypes) {
           through: models.InfluencerMedia,
           foreignKey: 'influencerId'
         });
+        Influencer.hasMany(models.CampaignProposal, {
+          foreignKey: 'influencerId'
+        });
+        Influencer.hasMany(models.CampaignSubmission, {
+          foreignKey: 'influencerId'
+        });
       }
     }
   });

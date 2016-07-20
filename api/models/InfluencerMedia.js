@@ -28,6 +28,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     token: {
       type: DataTypes.STRING
+    },
+    follower: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
   }, {
     tableName: 'InfluencerMedia'

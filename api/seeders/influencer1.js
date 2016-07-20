@@ -15,6 +15,7 @@ module.exports = [
     "model": "User",
     "data": {
       "userId": "fd75cd48-f22c-49a1-9f73-2cfc246dcee3",
+      "name": "P'Laki, the protector of server",
       "contactNumber": "012333444",
       "bank": {
         "bankId": "002"
@@ -29,7 +30,7 @@ module.exports = [
     "data": {
       "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05",
       "gender": "male",
-      "about": "This is about me",
+      "about": "I am the best. I can give you 98.75 trillion followers. Hire me bitch.",
       "media": [
         {
           "mediaId": "facebook",
@@ -95,7 +96,10 @@ module.exports = [
       },
       "campaignProposal": {
         "proposalId": "bcd7bc2a-61d3-431d-a0e5-2d681ca63db5"
-      }
+      },
+      "resources": [{
+        "resourceId": "07ec9a84-f137-4a7e-b27a-240e1701b6c4"
+      }]
     }
   }
 ];

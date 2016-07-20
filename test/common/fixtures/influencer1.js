@@ -15,6 +15,7 @@ module.exports = [
     "model": "User",
     "data": {
       "userId": "fd75cd48-f22c-49a1-9f73-2cfc246dcee3",
+      "name": "P'Laki, the protector of server",
       "contactNumber": "012333444",
       "bank": {
         "bankId": "002"
@@ -29,18 +30,20 @@ module.exports = [
     "data": {
       "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05",
       "gender": "male",
-      "about": "This is about me",
+      "about": "I am the best. I can give you 98.75 trillion followers. Hire me bitch.",
       "media": [
         {
           "mediaId": "facebook",
           "_through": {
-            "socialId": "128000600963755"
+            "socialId": "128000600963755",
+            "follower": 1
           }
         },
         {
           "mediaId": "google",
           "_through": {
-            "socialId": "mytube"
+            "socialId": "mytube",
+            "follower": 1
           }
         }
       ],
@@ -95,7 +98,31 @@ module.exports = [
       },
       "campaignProposal": {
         "proposalId": "bcd7bc2a-61d3-431d-a0e5-2d681ca63db5"
-      }
+      },
+      "resources": [{
+        "resourceId": "07ec9a84-f137-4a7e-b27a-240e1701b6c4"
+      }]
+    }
+  },
+  {
+    "model": "CampaignSubmission",
+    "data": {
+      "submissionId": "1781530c-4836-4d97-84ef-2859cc3878bd",
+      "title": "Submission #0",
+      "description": "This is my submission",
+      "status": "paid",
+      "campaign": {
+        "campaignId": "2d50a293-aa82-4cff-bb8d-bdf826d7ca15"
+      },
+      "influencer": {
+        "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05"
+      },
+      "campaignProposal": {
+        "proposalId": "bcd7bc2a-61d3-431d-a0e5-2d681ca63db5"
+      },
+      "resources": [{
+        "resourceId": "07ec9a84-f137-4a7e-b27a-240e1701b6c4"
+      }]
     }
   }
 ];

@@ -13,6 +13,8 @@ var config = require('config'),
     Bank  = require('../models').Bank,
     Media  = require('../models').Media,
     Resource = require('../models').Resource,
+    CampaignProposal = require('../models').CampaignProposal,
+    CampaignSubmission = require('../models').CampaignSubmission,
     authHelper = require('../helpers/authHelper'),
     cacheHelper = require('../helpers/cacheHelper');
 
@@ -39,7 +41,8 @@ var processSocialAccounts = function(user) {
       mediaId: media.mediaId,
       socialId: media.influencerMedia.socialId,
       pageId: media.influencerMedia.pageId,
-      token: media.influencerMedia.token
+      token: media.influencerMedia.token,
+      follower: media.influencerMedia.follower
     };
   });
   return user;
@@ -110,13 +113,43 @@ module.exports = {
     return User.findAndCountAll(_.extend({
       include: [{
         model: Influencer,
+        include: [{
+          model: Media,
+          through: {
+            model: InfluencerMedia
+          }
+        }],
         required: true
       }]
-    }, criteria));
+    }, criteria))
+    .then(function(result) {
+      _.forEach(result.rows, function(row) {
+        processSocialAccounts(row);
+      });
+      return result;
+    });
   },
   findByUserId: function(id) {
-    return User.findById(id, {
-      include: include
+    return User.findOne({
+      where: {
+        userId: id
+      },
+      include: [{
+        model: Influencer,
+        include: [{
+          model: Media,
+          through: {
+            model: InfluencerMedia
+          }
+        }, {
+          model: CampaignSubmission,
+          where: {
+            $or: [{status: 'posted'}, {status: 'paid'}]
+          },
+          required: false
+        }],
+        required: true
+      }]
     })
     .then(function(user) {
       if(user) {
