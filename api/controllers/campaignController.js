@@ -135,6 +135,7 @@ module.exports = {
       .catch(next);
   },
 	listCampaignByRole: function(req, res, next) {
+    console.log(req.role)
     Promise.attempt(function() {
       if(req.role === config.ROLE.BRAND) {
         // find by brand owner
