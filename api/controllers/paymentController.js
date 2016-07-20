@@ -37,5 +37,19 @@ module.exports = {
       return res.send(results);
     })
     .catch(next);
+  },
+  getPayment: function(req, res, next) {
+    Promise.try(function() {
+      if(req.role !== config.ROLE.ADMIN) {
+        return paymentService.findByIdWithUserId(req.params.transactionId, req.user.userId);
+      }
+      else {
+        return paymentService.findById(req.params.transactionId);
+      }
+    })
+    .then(function(result) {
+      return res.send(result);
+    })
+    .catch(next);
   }
 };

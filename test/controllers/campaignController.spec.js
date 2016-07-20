@@ -131,13 +131,12 @@ describe('POST ' + path, function() {
   before(helpers.before);
   after(helpers.after);
 
-  var date = new Date();
-
   var campaign = {
+    status: 'draft',
     title: 'New campaign',
     description: 'some description',
-    proposalDeadline: date,
-    submissionDeadline: date,
+    proposalDeadline: '1999-10-09T17:00:00.000Z',
+    submissionDeadline: '2000-10-09T17:00:00.000Z',
     createdBy: 'someone',
     updatedBy: 'someone',
     category: {
@@ -147,7 +146,8 @@ describe('POST ' + path, function() {
       resourceId: 'ed687098-7aeb-4b83-a931-1318d9141e2f'
     }],
     media: [{
-      mediaId: 'google'
+      mediaId: 'instagram',
+      mediaName: 'Instagram'
     }]
   };
 
@@ -164,15 +164,15 @@ describe('POST ' + path, function() {
             return done(err);
           }
           var data = res.body;
-          console.log(data);
           expect(data).to.have.property('title', campaign.title);
           expect(data).to.have.property('description', campaign.description);
-          expect(data).to.have.property('proposalDeadline', moment(date).toISOString());
-          expect(data).to.have.property('submissionDeadline', moment(date).toISOString());
+          expect(data).to.have.property('proposalDeadline', campaign.proposalDeadline);
+          expect(data).to.have.property('submissionDeadline', campaign.submissionDeadline);
           expect(data).to.have.property('createdBy', campaign.createdBy);
           expect(data).to.have.property('updatedBy', campaign.updatedBy);
           expect(data).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
-          expect(data).to.have.property('resource').that.is.a('array');
+          expect(data).to.have.property('category');
+          expect(data).to.have.property('resources').that.is.a('array');
           expect(data).to.have.property('media').that.is.a('array');
           done();
         });

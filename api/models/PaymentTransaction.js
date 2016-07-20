@@ -9,19 +9,22 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     status: {
-      type: DataTypes.ENUM('pending','complete'),
+      type: DataTypes.ENUM('pending', 'complete', 'cancel'),
       allowNull: false,
       defaultValue: 'pending'
     },
-    description: {
+    comment: {
       type: DataTypes.STRING
     },
-    value: {
+    reference: {
+      type: DataTypes.STRING
+    },
+    amount: {
       type: DataTypes.DECIMAL(12,2),
       allowNull: false
     },
     paymentType: {
-      type: DataTypes.ENUM('receive','pay','cancel'),
+      type: DataTypes.ENUM('fee', 'transaction'),
       allowNull: false
     },
     paymentMethod: {
@@ -45,7 +48,12 @@ module.exports = function(sequelize, DataTypes) {
           foreignKey: 'resourceId'
         });
         PaymentTransaction.belongsTo(models.User, {
-          foreignKey: 'userId'
+          foreignKey: 'sourceId',
+          as: 'source'
+        });
+        PaymentTransaction.belongsTo(models.User, {
+          foreignKey: 'targetId',
+          as: 'target'
         });
         PaymentTransaction.belongsTo(models.Campaign, {
           foreignKey: 'campaignId'

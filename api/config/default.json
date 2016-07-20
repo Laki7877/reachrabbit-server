@@ -13,5 +13,11 @@
   	"WRONG_EMAIL_PASSWORD": "ล็อกอินไม่ผ่าน",
   	"NO_TOKEN": "",
   	"NO_PERMISSION": ""
+  },
+  "ADMIN": {
+    "USER_ID": "b23f49b3-7803-489e-931e-37a0ba1a90b6"
+  },
+  "PAYMENT": {
+    "FEE": 0.2
   }
 }
