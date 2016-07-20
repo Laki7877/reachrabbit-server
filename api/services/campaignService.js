@@ -446,6 +446,8 @@ module.exports = {
     var opts = {
       where: {},
       include: [{
+        model: Resource
+      },{
         model: Brand,
         include: [User]
       }, {
