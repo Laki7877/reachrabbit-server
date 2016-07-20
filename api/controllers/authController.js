@@ -32,7 +32,7 @@ module.exports = {
    * @param      {object}    res     The resource
    * @param      {Function}  next    The next
    */
-  login: function(req, res, next) {
+  brandLogin: function(req, res, next) {
     var email = req.body.email;
     var password = req.body.password;
 
@@ -56,7 +56,7 @@ module.exports = {
         if(user.brand) {
           return userService.createToken(user, config.ROLE.BRAND, true);
         } else {
-          return userService.createToken(user, config.ROLE.ADMIN, true);
+          throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, config.ERROR.WRONG_EMAIL_PASSWORD);
         }
       })
       // send
@@ -65,7 +65,46 @@ module.exports = {
       })
       .catch(next);
   },
+  /**
+   * Admin login with casual email/password
+   *
+   * @param      {object}    req     The request
+   * @param      {object}    res     The resource
+   * @param      {Function}  next    The next
+   */
+  adminLogin: function(req, res, next) {
+    var email = req.body.email;
+    var password = req.body.password;
 
+    // find brand by email
+    userService.findByEmail(email)
+      // verify password
+      .then(function(user) {
+        if(!user) {
+          throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, config.ERROR.USER_NOT_FOUND);
+        }
+        return user.verifyPassword(password)
+          .then(function(eq) {
+            if (!eq) {
+              throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, config.ERROR.WRONG_EMAIL_PASSWORD);
+            }
+            return user;
+          });
+      })
+      // encode user
+      .then(function(user) {
+        if(user.brand || user.influencer) {
+          throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, config.ERROR.WRONG_EMAIL_PASSWORD);
+        } else {
+          return userService.createToken(user, config.ROLE.BRAND, true);
+        }
+      })
+      // send
+      .then(function(token) {
+        return res.send({ token: token });
+      })
+      .catch(next);
+  },
   /*************************************************
    * OAuth Services
    *************************************************/

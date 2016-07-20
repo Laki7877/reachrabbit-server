@@ -92,6 +92,9 @@ module.exports = [
       },
       "influencer": {
         "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05"
+      },
+      "campaignProposal": {
+        "proposalId": "bcd7bc2a-61d3-431d-a0e5-2d681ca63db5"
       }
     }
   }

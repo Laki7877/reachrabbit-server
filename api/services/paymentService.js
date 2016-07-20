@@ -18,20 +18,48 @@ var db = require('../models'),
   CampaignSubmission = db.CampaignSubmission,
   PaymentTransaction = db.PaymentTransaction,
   PaymentResource = db.PaymentResource,
+  Resource = db.Resource,
   Brand   = db.Brand;
+
+var include = [{
+  model: User,
+  as: 'source'
+}, {
+  model: User,
+  as: 'target'
+}, {
+  model: Resource
+}, {
+  model: Campaign
+}];
 
 module.exports = {
   list: function(criteria) {
     var opts = {
-      include: [{
-        model: Campaign
-      }, {
-        model: User
-      }]
+      include: include
     };
 
     _.extend(opts, criteria);
     return PaymentTransaction.findAndCountAll(opts);
+  },
+  findById: function(transactionId) {
+    return PaymentTransaction.findById(transactionId, {
+      include: include
+    });
+  },
+  findByIdWithUserId: function(transactionId, userId) {
+    return PaymentTransaction.findOne({
+      where: {
+        $or: [{ sourceId: userId }, { targetId: userId }]
+      },
+      include: include
+    })
+    .then(function(result) {
+      if(!result) {
+        throw new errors.HttpStatusError(httpStatus.NOT_FOUND, 'Transaction not found');
+      }
+      return result;
+    });
   },
   updateAll: function(arrayOfPayments, t) {
     return PaymentTransaction.findAll({
@@ -56,13 +84,7 @@ module.exports = {
       where: {
         userId: userId
       },
-      include: [{
-        model: User
-      }, {
-        model: Resource
-      }, {
-        model: Campaign
-      }]
+      include: include
     };
 
     _.extend(opts, criteria);
@@ -73,11 +95,7 @@ module.exports = {
       where: {
         campaignId: campaignId
       },
-      include: [{
-        model: User
-      }, {
-        model: Resource
-      }]
+      include: include
     };
 
     _.extend(opts, criteria);

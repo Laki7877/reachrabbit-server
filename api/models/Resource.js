@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING
     },
     resourceType: {
-      type: DataTypes.ENUM('image','video', 'binary')
+      type: DataTypes.ENUM('image','video', 'binary', 'link')
     },
     createdBy: {
       type: DataTypes.STRING
@@ -43,6 +43,13 @@ module.exports = function(sequelize, DataTypes) {
           through: models.CampaignSubmissionResource,
           foreighKey: 'resourceId',
         });
+        /*
+        Resource.belongsToMany(models.CampaignSubmission, {
+          through: models.CampaignSubmissionProof,
+          foreighKey: 'resourceId',
+          otherKey: 'submissionId',
+          as: ''
+        });*/
       }
     }
   });

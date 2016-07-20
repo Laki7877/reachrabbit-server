@@ -16,6 +16,14 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: 'wait for review',
       allowNull: false
     },
+    proposalId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'CampaignProposal',
+        key: 'proposalId'
+      }
+    },
     comment: {
       type: DataTypes.TEXT
     },
@@ -42,6 +50,12 @@ module.exports = function(sequelize, DataTypes) {
         CampaignSubmission.belongsToMany(models.Resource, {
           through: models.CampaignSubmissionResource,
           foreignKey: 'submissionId'
+        });
+        CampaignSubmission.belongsToMany(models.Resource, {
+          through: models.CampaignSubmissionProof,
+          foreignKey: 'submissionId',
+          otherKey: 'resourceId',
+          as: 'proof'
         });
         // submission belongs to one of the proposal
         CampaignSubmission.belongsTo(models.CampaignProposal, {

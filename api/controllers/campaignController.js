@@ -60,13 +60,21 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      if(req.role === config.ROLE.INFLUENCER) {
-        return campaignService.updateProposalByInfluencer(form, req.params.campaignId, req.params.proposalId, req.user.influencer.influencerId, t);
-      } else if(req.role === config.ROLE.BRAND){
-        return campaignService.updateProposal(form, req.params.campaignId, req.params.proposalId, req.user.brand.brandId, t);
-      } else {
-        return campaignService.updateProposal(form, req.params.campaignId, req.params.proposalId, null, t);
-      }
+      return campaignService.updateProposal(form, req.params.campaignId, req.params.proposalId, req.user.brand.brandId, t);
+    })
+    .then(function(result) {
+      return result.reload();
+    })
+    .then(function(result) {
+      return res.send(result);
+    })
+    .catch(next);
+  },
+  updateSubmission: function(req, res, next) {
+    var form = req.body;
+
+    sequelize.transaction(function(t) {
+      return campaignService.updateSubmission(form, req.params.campaignId, req.params.submissionId, req.user.brand.brandId, t);
     })
     .then(function(result) {
       return result.reload();
@@ -110,6 +118,20 @@ module.exports = {
     })
     .catch(next);
   },
+  listProposal: function(req, res, next) {
+    campaignService.listProposal(req.params.campaignId, req.user.brand.brandId, req.criteria)
+      .then(function(result) {
+        return res.send(result);
+      })
+      .catch(next);
+  },
+  listSubmission: function(req, res, next) {
+    campaignService.listSubmission(req.params.campaignId, req.user.brand.brandId, req.criteria)
+      .then(function(result) {
+        return res.send(result);
+      })
+      .catch(next);
+  },
   listCampaign: function(req, res, next) {
     campaignService.list(req.criteria)
       .then(function(result) {
@@ -138,6 +160,13 @@ module.exports = {
     })
     .catch(next);
 	},
+  listTransaction: function(req, res, next) {
+    return campaignService.listTransaction(req.params.campaignId, req.user.brand.brandId, req.criteria)
+    .then(function(result) {
+      return res.send(result);
+    })
+    .catch(next);
+  },
   getCampaign: function(req, res, next) {
     campaignService.findById(req.params.campaignId)
       .then(function(result) {
@@ -147,7 +176,7 @@ module.exports = {
   },
   confirmCampaignPayment: function(req, res, next) {
     sequelize.transaction(function(t) {
-      return campaignService.confirmPayment(req.params.campaignId, t);
+      return campaignService.confirmCampaignPayment(req.params.campaignId, t);
     })
     .then(function(campaign) {
       return campaign.reload();

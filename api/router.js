@@ -47,7 +47,8 @@ module.exports = function() {
   router.post('/auth/google', $.authController.google);
   router.post('/auth/instagram', $.authController.instagram);
 
-  router.post('/login', $.authController.login);
+  router.post('/login', $.authController.brandLogin);
+  router.post('/login/admin', $.authController.adminLogin);
 
   /********************************
    * User
@@ -66,28 +67,39 @@ module.exports = function() {
   /*********************************
    * Campaign
    *********************************/
-  router.get('/campaigns', auth(), paginate(), $.campaignController.listCampaign);
-  router.get('/campaigns/:campaignId', auth(), $.campaignController.getCampaign);
-  router.post('/campaigns', auth('brand'), $.campaignController.createCampaign);
-  router.put('/campaigns/:campaignId', auth('brand'), $.campaignController.updateCampaign);
-
-  router.get('/mycampaigns', auth(), paginate(), $.campaignController.listCampaignByRole);
+  router.get('/mycampaigns', auth(), paginate(), $.campaignController.listCampaignByRole); //done
+  router.get('/campaigns', auth(), paginate(), $.campaignController.listCampaign); //done
+  router.get('/campaigns/:campaignId', auth(), $.campaignController.getCampaign); //done
+  router.post('/campaigns', auth('brand'), $.campaignController.createCampaign); //done
+  router.put('/campaigns/:campaignId', auth('brand'), $.campaignController.updateCampaign); //done
 
   // create proposal
-  router.post('/campaigns/:campaignId/proposals', auth('influencer'), $.campaignController.createProposal);
-  router.post('/campaigns/:campaignId/submissions', auth('influencer'),$.campaignController.createSubmission);
-  router.put('/campaigns/:campaignId/proposals/:proposalId', auth('influencer', 'brand'), $.campaignController.updateProposal);
-  router.put('/campaigns/:campaignId/submissions/:submissionId', auth('influencer', 'brand'), _.noop);
+  router.post('/campaigns/:campaignId/proposals', auth('influencer'), $.campaignController.createProposal);  //done
+  router.post('/campaigns/:campaignId/submissions', auth('influencer'),$.campaignController.createSubmission); //done
+  router.get('/campaigns/:campaignId/proposals', auth('brand'), $.campaignController.listProposal); //done
+  router.get('/campaigns/:campaignId/submissions', auth('brand'),$.campaignController.listSubmission); //done
+  router.put('/campaigns/:campaignId/proposals/:proposalId', auth('brand'), $.campaignController.updateProposal); //done
+  router.put('/campaigns/:campaignId/submissions/:submissionId', auth('brand'), $.campaignController.updateSubmission); //done
 
-  router.post('/campaigns/:campaignId/payments/confirm', auth('admin'), $.campaignController.confirmCampaignPayment)
-  router.post('/campaigns/:campaignId/payments', auth('brand'), $.campaignController.payForCampaign);
+  router.post('/campaigns/:campaignId/transactions/confirm', auth('admin'), $.campaignController.confirmCampaignPayment); //done
+  router.post('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.payForCampaign); //done
 
+  router.get('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.listTransaction); //done
+
+  /*********************************
+   * Submission
+   *********************************/
+  router.get('/submissions', auth('admin'), $.submissionController.listSubmission);
+  router.get('/submissions/:submissionId', auth('admin'), $.submissionController.getSubmission);
+  router.post('/submissions/:submissionId/proofs', auth('influencer'), $.submissionController.createSubmissionProof);
+  router.put('/submissions/:submissionId/proofs', auth('admin'), $.submissionController.confirmSubmissionProof);
 
   /*********************************
    * Payment
    *********************************/
-  router.get('/payments', auth(), paginate(), $.paymentController.listPayment);
-  router.put('/payments', auth('admin'), $.paymentController.bulkUpdatePayment);
+  router.get('/transactions', auth(), paginate(), $.paymentController.listPayment); //done
+  router.put('/transactions', auth('admin'), $.paymentController.bulkUpdatePayment); //done
+  router.get('/transactions/:transactionId', auth(), $.paymentController.getPayment); //done
 
   /*********************************
    * Data
