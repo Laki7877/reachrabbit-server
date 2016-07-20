@@ -13,6 +13,7 @@ var db = require('../models'),
   sequelize = db.sequelize,
   User = db.User,
   Category = db.Category,
+  Influencer = db.Influencer,
   Campaign = db.Campaign,
   Resource = db.Resource,
   Media = db.Media,
@@ -203,6 +204,19 @@ module.exports = {
         where: {
           brandId: brandId
         }
+      },{
+        model: Influencer,
+        include: [
+          {
+            model: User,
+            include: [
+              {
+                model: Resource,
+                as: 'profilePicture'
+              }
+            ]
+          }
+        ]
       }]
     };
 
@@ -460,6 +474,8 @@ module.exports = {
     var opts = {
       where: {},
       include: [{
+        model: Resource
+      },{
         model: Brand,
         include: [User]
       }, {
