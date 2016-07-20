@@ -18,7 +18,7 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.chooseProposalAndPay(form.campaignProposal, form.resource, req.params.campaignId, req.user, t);
+      return campaignService.chooseProposalAndPay(form.campaignProposals, form.resource, req.params.campaignId, req.user, t);
     })
     .then(function(result) {
       return result.reload();
@@ -103,12 +103,7 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.findByIdWithBrand(campaignId, req.user.brand.brandId)
-      .then(function(campaign) {
-        console.log(campaignId, req.user.brand.brandId)
-        console.log(campaign)
-        return campaignService.update(campaign, form, t);
-      });
+      return campaignService.update(form, req.params.campaignId, req.user.brand.brandId, t);
     })
     .then(function(result) {
       return result.reload();
