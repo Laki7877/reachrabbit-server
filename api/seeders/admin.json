@@ -1,0 +1,10 @@
+[
+  {
+    "model": "User",
+    "data": {
+      "userId": "b23f49b3-7803-489e-931e-37a0ba1a90b6",
+      "email": "reachrabbit@admin.com",
+      "password": "1234"
+    }
+  }
+]

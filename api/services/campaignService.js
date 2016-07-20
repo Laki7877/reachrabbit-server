@@ -357,40 +357,52 @@ module.exports = {
 
     return PaymentTransaction.findAndCountAll(opts);
   },
-  update: function(instance, values, t) {
-    var owner = values.user;
-    var form = _.omit(values, ['user', 'status']);
-    var currentState = instance.status;
-    var nextState = _.get(values, 'status', currentState);
-    var nextStateIndex = _.indexOf(states, nextState);
-    var deleteStateIndex = _.indexOf(states, 'delete');
-
-    if(currentState === nextState) {
-      // Save/Update as draft
-      if(currentState === 'draft') {
-        _.extend(instance, values);
-        return instance.save({transaction: t});
+  update: function(values, campaignId, brandId, t) {
+    return Campaign.findOne({
+      where: {
+        brandId: brandId,
+        campaignId: campaignId
       }
-    }
-    // state exist
-    else if(nextStateIndex >= 0) {
-      // draft to open
-      if(currentState === 'draft' && nextState === 'open') {
-        var data = _.extend({}, instance.dataValues, values);
+    }, {
+      include: include
+    })
+    .then(function(instance) {
+      if(!instance) {
+        throw new Error('campaign not found');
+      }
+      var form = _.omit(values, ['user', 'status']);
+      var currentState = instance.status;
+      var nextState = _.get(values, 'status', currentState);
+      var nextStateIndex = _.indexOf(states, nextState);
+      var deleteStateIndex = _.indexOf(states, 'delete');
 
-        // check required field for publish
-        if(validate(data, campaignPublishSchema)) {
-          // update and save
+      if(currentState === nextState) {
+        // Save/Update as draft
+        if(currentState === 'draft') {
           _.extend(instance, values);
           return instance.save({transaction: t});
-        } else {
-          // field not meet requirement
-          return Promise.reject(new Error('field error'));
         }
       }
-    }
+      // state exist
+      else if(nextStateIndex >= 0) {
+        // draft to open
+        if(currentState === 'draft' && nextState === 'open') {
+          var data = _.extend({}, instance.dataValues, values);
 
-    return Promise.reject(new Error('something is wrong'));
+          // check required field for publish
+          if(validate(data, campaignPublishSchema)) {
+            // update and save
+            _.extend(instance, values);
+            return instance.save({transaction: t});
+          } else {
+            // field not meet requirement
+            throw new Error('field error');
+          }
+        }
+      }
+
+      throw new Error('something is wrong');
+    });
   },
   create: function(values, t) {
     // build data

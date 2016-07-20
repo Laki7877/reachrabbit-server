@@ -200,7 +200,29 @@ describe('POST ' + path, function() {
   });
 });
 
-describe('PUT ' + path, function() {
+describe('PUT ' + path + '/:id', function() {
   before(helpers.before);
   after(helpers.after);
+
+  beforeEach(helpers.brandLogin);
+  var id = '865b7f55-0316-47b0-9704-bc24eaba1dc5';
+  var campaign = {
+    title: 'hi',
+    description: 'hi'
+  };
+  it('should update campaign', function(done) {
+    api.put(path + '/' + id)
+      .set('Authorization', helpers.brandToken)
+      .send(campaign)
+      .expect(200)
+      .end(function(err, res) {
+        if(err) {
+          return done(err);
+        }
+        var data = res.body;
+
+        expect(data).to.have.property('title', campaign.title);
+        done();
+      })
+  });
 });

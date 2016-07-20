@@ -43,13 +43,12 @@ module.exports = function(sequelize, DataTypes) {
           through: models.CampaignSubmissionResource,
           foreighKey: 'resourceId',
         });
-        /*
         Resource.belongsToMany(models.CampaignSubmission, {
           through: models.CampaignSubmissionProof,
           foreighKey: 'resourceId',
           otherKey: 'submissionId',
-          as: ''
-        });*/
+          as: 'campaignSubmissionEvident'
+        });
       }
     }
   });
