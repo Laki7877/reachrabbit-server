@@ -115,6 +115,9 @@ gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
   return db.sequelize.sync({ force: true })
     .then(function() {
       return fixtures.loadFile('api/seeders/**/*.json', db);
+    })
+    .then(function() {
+      return fixtures.loadFile('api/seeders/**/*.js', db);
     });
 });
 
