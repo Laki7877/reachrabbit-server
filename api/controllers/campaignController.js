@@ -152,11 +152,20 @@ module.exports = {
     .catch(next);
   },
   listCampaign: function(req, res, next) {
-    campaignService.list(_.extend(req.criteria, req.query))
+    if(req.role === config.ROLE.INFLUENCER) {
+      campaignService.listOpenInfluencer(_.extend(req.criteria, req.query), req.user.influencer.influencerId)
       .then(function(result) {
         return res.send(result);
       })
       .catch(next);
+    }
+    else {
+      campaignService.list(_.extend(req.criteria, req.query))
+      .then(function(result) {
+        return res.send(result);
+      })
+      .catch(next);
+    }
   },
 	listCampaignByRole: function(req, res, next) {
     Promise.attempt(function() {
@@ -183,7 +192,7 @@ module.exports = {
   listTransaction: function(req, res, next) {
     return campaignService.listTransaction(req.params.campaignId, req.user.brand.brandId, req.criteria)
     .then(function(result) {
-      return res.send(result);
+      return res.send(result);f
     })
     .catch(next);
   },

@@ -217,7 +217,7 @@ describe('PUT ' + path + '/:id', function() {
     description: 'hi'
   };
   it('should return proposals', function(done) {
-    api.get(path + '/' + id + '/proposals')
+    api.get('/campaigns')
       .set('Authorization', helpers.influencerToken)
       .expect(200)
       .end(function(err, res) {
@@ -225,7 +225,7 @@ describe('PUT ' + path + '/:id', function() {
           return done(err);
         }
         var data = res.body;
-        console.log(data.rows[0].influencer);
+        console.log(data);
         done();
       });
   });

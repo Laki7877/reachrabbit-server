@@ -511,9 +511,14 @@ module.exports = {
         });
     });
   },
-  list: function(criteria, extopts) {
+  listOpenInfluencer: function(criteria, influencerId) {
     var opts = {
-      where: {},
+      attributes: {
+        include: [sequelize.fn('COUNT', 'CampaignProposal.proposalId'), 'proposalCount']
+      },
+      where: {
+        proposalCount: 0
+      },
       include: [{
         model: Resource
       },{
@@ -525,14 +530,30 @@ module.exports = {
         required: false
       }, {
         model: CampaignProposal,
-        attributes: [[db.sequelize.fn('COUNT', 'proposalId'), 'items']],  
         where: {
-          items: 0
+          influencerId: influencerId
         }
       }]
     };
 
     opts.where.status = 'open';
+    _.merge(opts, criteria);
+
+    return Campaign.findAndCountAll(opts);
+  },
+  list: function(criteria, extopts) {
+    var opts = {
+      include: [{
+        model: Resource
+      },{
+        model: Brand,
+        include: [User]
+      }, {
+        model: Media,
+        where: {},
+        required: false
+      }]
+    };
     _.merge(opts, extopts, criteria);
 
     return Campaign.findAndCountAll(opts);
