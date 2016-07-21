@@ -76,15 +76,15 @@ module.exports = function() {
   // create proposal
   router.post('/campaigns/:campaignId/proposals', auth('influencer'), $.campaignController.createProposal);  //done
   router.post('/campaigns/:campaignId/submissions', auth('influencer'),$.campaignController.createSubmission); //done
-  router.get('/campaigns/:campaignId/proposals', auth('brand'), $.campaignController.listProposal); //done
-  router.get('/campaigns/:campaignId/submissions', auth('brand'),$.campaignController.listSubmission); //done
+  router.get('/campaigns/:campaignId/proposals', auth('brand', 'influencer'), paginate(), $.campaignController.listProposal); //done
+  router.get('/campaigns/:campaignId/submissions', auth('brand', 'influencer'), paginate(), $.campaignController.listSubmission); //done
   router.put('/campaigns/:campaignId/proposals/:proposalId', auth('brand'), $.campaignController.updateProposal); //done
   router.put('/campaigns/:campaignId/submissions/:submissionId', auth('brand'), $.campaignController.updateSubmission); //done
 
   router.post('/campaigns/:campaignId/transactions/confirm', auth('admin'), $.campaignController.confirmCampaignPayment); //done
   router.post('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.payForCampaign); //done
 
-  router.get('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.listTransaction); //done
+  router.get('/campaigns/:campaignId/transactions', auth('brand'), paginate(), $.campaignController.listTransaction); //done
 
   /*********************************
    * Submission

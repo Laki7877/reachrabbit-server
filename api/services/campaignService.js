@@ -190,7 +190,7 @@ module.exports = {
       }]
     };
 
-    _.extend(opts, criteria);
+    _.merge(opts, criteria);
 
     return CampaignSubmission.findAndCountAll(opts);
   },
@@ -220,7 +220,7 @@ module.exports = {
       }]
     };
 
-    _.extend(opts, criteria);
+    _.merge(opts, criteria);
 
     return CampaignProposal.findAndCountAll(opts);
   },
@@ -264,8 +264,7 @@ module.exports = {
       where: {
         campaignId: campaignId,
         proposalId: proposalId
-      }
-    }, {
+      },
       include: [{
         model: Campaign,
         where: {

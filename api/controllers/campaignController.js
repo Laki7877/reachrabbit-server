@@ -114,6 +114,11 @@ module.exports = {
     .catch(next);
   },
   listProposal: function(req, res, next) {
+    if(req.role === config.ROLE.BRAND) {
+      //req.criteria.group = ['campaignProposal.influencerId'];
+    } else if(req.role === config.ROLE.INFLUENCER){
+      req.criteria.where = { influencerId: req.user.influencer.influencerId };
+    }
     campaignService.listProposal(req.params.campaignId, req.user.brand.brandId, req.criteria)
       .then(function(result) {
         return res.send(result);
@@ -121,6 +126,11 @@ module.exports = {
       .catch(next);
   },
   listSubmission: function(req, res, next) {
+    if(req.role === config.ROLE.BRAND) {
+      //req.criteria.group = ['Influencer.influencerId'];
+    } else if(req.role === config.ROLE.INFLUENCER){
+      req.criteria.where = { influencerId: req.user.influencer.influencerId };
+    }
     campaignService.listSubmission(req.params.campaignId, req.user.brand.brandId, req.criteria)
       .then(function(result) {
         return res.send(result);

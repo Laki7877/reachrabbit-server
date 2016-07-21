@@ -210,19 +210,17 @@ describe('PUT ' + path + '/:id', function() {
     title: 'hi',
     description: 'hi'
   };
-  it('should update campaign', function(done) {
-    api.put(path + '/' + id)
+  it('should return proposals', function(done) {
+    api.get(path + '/' + id + '/proposals')
       .set('Authorization', helpers.brandToken)
-      .send(campaign)
       .expect(200)
       .end(function(err, res) {
         if(err) {
           return done(err);
         }
         var data = res.body;
-
-        expect(data).to.have.property('title', campaign.title);
+        console.log(data);
         done();
-      })
+      });
   });
 });
