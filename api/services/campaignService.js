@@ -516,9 +516,6 @@ module.exports = {
       attributes: {
         include: [sequelize.fn('COUNT', 'CampaignProposal.proposalId'), 'proposalCount']
       },
-      where: {
-        proposalCount: 0
-      },
       include: [{
         model: Resource
       },{
