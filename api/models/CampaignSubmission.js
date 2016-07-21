@@ -54,7 +54,6 @@ module.exports = function(sequelize, DataTypes) {
         CampaignSubmission.belongsToMany(models.Resource, {
           through: models.CampaignSubmissionProof,
           foreignKey: 'submissionId',
-          otherKey: 'resourceId',
           as: 'proof'
         });
         // submission belongs to one of the proposal

@@ -703,7 +703,10 @@ module.exports = {
     return Campaign.findAndCountAll(opts);
   },
   findById: function(id) {
-    return Campaign.findById(id, {
+    return Campaign.findOne({
+      where: {
+        campaignId: id
+      },
       include: include
     });
   },
@@ -738,7 +741,10 @@ module.exports = {
         include: [Resource]
       }];
 
-     return Campaign.findById(id, {
+     return Campaign.findOne({
+      where: {
+        campaignId: id
+      },
       include: include
     });
   },

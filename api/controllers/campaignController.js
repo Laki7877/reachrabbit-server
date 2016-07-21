@@ -183,18 +183,30 @@ module.exports = {
   },
   getCampaign: function(req, res, next) {
     if(req.role === "influencer"){
-      return campaignService.findByIdWithInfluencer(req.params.campaignId, req.user.influencer.influencerId)
+      campaignService.findByIdWithInfluencer(req.params.campaignId, req.user.influencer.influencerId)
+      .then(function(result) {
+        if(!result){
+            campaignService.findById(req.params.campaignId)
+            .then(function(result) {
+              return res.send(result);
+            })
+            .catch(next);
+        }else{
+          return res.send(result);
+        }
+
+
+      })
+      .catch(next);
+    }else{
+      campaignService.findById(req.params.campaignId)
       .then(function(result) {
         return res.send(result);
       })
       .catch(next);
     }
 
-    campaignService.findById(req.params.campaignId)
-      .then(function(result) {
-        return res.send(result);
-      })
-      .catch(next);
+
   },
   confirmCampaignPayment: function(req, res, next) {
     sequelize.transaction(function(t) {
