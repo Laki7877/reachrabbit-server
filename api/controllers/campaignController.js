@@ -154,6 +154,7 @@ module.exports = {
   },
 	listCampaignByRole: function(req, res, next) {
     Promise.attempt(function() {
+      _.extend(req.criteria, req.query);
       if(req.role === config.ROLE.BRAND) {
         // find by brand owner
   			return campaignService.listByOwner(req.user.brand.brandId, req.criteria);
