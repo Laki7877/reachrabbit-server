@@ -85,6 +85,22 @@ module.exports = [
     }
   },
   {
+    "model": "CampaignProposal",
+    "data": {
+      "proposalId": "8d879095-ae99-49c3-b38b-82ca11020a0d",
+      "title": "Proposal #3",
+      "description": "This is my proposal2",
+      "status": "wait for review",
+      "proposePrice": 1200,
+      "campaign": {
+        "campaignId": "2d50a293-aa82-4cff-bb8d-bdf826d7ca15"
+      },
+      "influencer": {
+        "influencerId": "cb8cf696-ea59-4884-909e-0185ad36ca05"
+      }
+    }
+  },
+  {
     "model": "CampaignSubmission",
     "data": {
       "submissionId": "695194c4-05a0-4adc-9643-9d653d59bca3",

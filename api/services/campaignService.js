@@ -131,7 +131,7 @@ module.exports = {
 
           return CampaignSubmission.create(data, { include: [Resource], transaction: t })
             .then(function(instance) {
-              if(resource) {
+              if(resources) {
                 return instance.setResources(_.map(resources, 'resourceId'), {transaction: t})
                   .then(function() {
                     return instance;
@@ -148,7 +148,6 @@ module.exports = {
       .then(function(campaign) {
         // no campaign found
         if(!campaign) {
-          console.log('no campaign, found');
           throw new Error('campaign not found');
         }
 
@@ -164,7 +163,7 @@ module.exports = {
 
           return CampaignProposal.create(data, { include: [Resource], transaction: t})
             .then(function(instance) {
-              if(resource) {
+              if(resources) {
                 return instance.setResources(_.map(resources, 'resourceId'), {transaction: t})
                   .then(function() {
                     return instance;
@@ -172,21 +171,47 @@ module.exports = {
               }
             });
         } else {
-          console.log('deadline');
           throw new Error('deadline reached');
         }
       });
   },
-  listSubmission: function(campaignId, brandId, criteria) {
+  listProposalByInfluencerId: function(campaignId, influencerId, criteria) {
     var opts = {
-      where: {
-        campaignId: campaignId
-      },
       include: [{
         model: Campaign,
         where: {
-          brandId: brandId
+          campaignId: campaignId
         }
+      }, {
+        model: Influencer,
+        where: {
+          influencerId: influencerId
+        },
+        include: [{
+          model: User
+        }]
+      }]
+    };
+
+    _.merge(opts, criteria);
+
+    return CampaignProposal.findAndCountAll(opts);
+  },
+  listSubmissionByInfluencerId: function(campaignId, influencerId, criteria) {
+    var opts = {
+      include: [{
+        model: Campaign,
+        where: {
+          campaignId: campaignId
+        }
+      }, {
+        model: Influencer,
+        where: {
+          influencerId: influencerId
+        },
+        include: [{
+          model: User
+        }]
       }]
     };
 
@@ -194,35 +219,63 @@ module.exports = {
 
     return CampaignSubmission.findAndCountAll(opts);
   },
-  listProposal: function(campaignId, brandId, criteria) {
+  listInfluencerWithSubmission: function(campaignId, brandId, criteria) {
     var opts = {
-      where: {
-        campaignId: campaignId
-      },
       include: [{
-        model: Campaign,
-        where: {
-          brandId: brandId
-        }
+        model: Resource,
+        as: "profilePicture"
       },{
         model: Influencer,
-        include: [
-          {
-            model: User,
-            include: [
-              {
-                model: Resource,
-                as: 'profilePicture'
-              }
-            ]
-          }
-        ]
+        include: [{
+          model: CampaignSubmission,
+          where: {
+            campaignId: campaignId
+          },
+          include: [{
+            model: Campaign,
+            where: {
+              brandId: brandId
+            },
+            required: true
+          }],
+          required: true
+        }],
+        required: true
       }]
     };
 
     _.merge(opts, criteria);
 
-    return CampaignProposal.findAndCountAll(opts);
+    return User.findAndCountAll(opts);
+  },
+  listInfluencerWithProposal: function(campaignId, brandId, influencerId, criteria) {
+    var opts = {
+      include: [{
+        model: Resource,
+        as: "profilePicture"
+      },{
+        model: Influencer,
+        include: [{
+          model: CampaignProposal,
+          where: {
+            campaignId: campaignId
+          },
+          include: [{
+            model: Campaign,
+            where: {
+              brandId: brandId
+            },
+            required: true
+          }],
+          required: true
+        }],
+        required: true
+      }]
+    };
+
+    _.merge(opts, criteria);
+
+    return User.findAndCountAll(opts);
   },
   updateSubmission: function(values, campaignId, submissionId, brandId, t) {
     // find submission by campaign with brand
@@ -276,14 +329,85 @@ module.exports = {
       if(!proposal) {
         throw new Error('proposal not found');
       }
-      if(submission.campaign.status !== 'open') {
+      if(proposal.campaign.status !== 'open') {
         throw new Error('cannot update due to campaign status');
       }
       var data = _.pick(values, ['comment', 'status']);
       return proposal.update(data, {transaction: t});
     });
   },
-  chooseProposalAndPay: function(proposals, resource, campaignId, brandUser, t) {
+  pay: function(values, campaignId, brandId, t) {
+    return PaymentTransaction.findAll({
+      where: {
+        campaignId: campaignId
+      },
+      include: [{
+        model: Campaign,
+        where: {
+          brandId: brandId
+        }
+      }]
+    })
+    .then(function(transactions) {
+      if(transactions.length <= 0) {
+        throw new Error('no transactions');
+      }
+      var promises = [];
+
+      _.forEach(transactions, function(transaction) {
+        promises.push(transaction.setResource(values.resourceId, { transaction: t }));
+      });
+
+      return Promise.all(promises)
+        .then(function(results) {
+          return results;
+        });
+    });
+  },
+  readyToPay: function(campaignId, brandId, t) {
+    return Campaign.findOne({
+      where: {
+        campaignId: campaignId,
+        brandId: brandId
+      },
+      include: [{
+        model: CampaignProposal,
+        where: {
+          isSelected: true
+        },
+        required: false
+      }]
+    })
+    .then(function(campaign) {
+      if(!campaign) {
+        throw new Error('no campaign');
+      }
+      if(campaign.status !== 'open') {
+        throw new Error('is not open');
+      }
+      if(campaign.campaignProposals.length >= 0) {
+        var paymentPromises = [];
+        _.forEach(campaign.campaignProposals, function(proposal) {
+          paymentPromises.push(PaymentTransaction.create({
+            sourceId: brandUser.sourceId,
+            targetId: config.ADMIN.USER_ID,
+            campaignId: campaign.campaignId,
+            paymentType: 'transaction',
+            paymentMethod: 'bank transfer',
+            amount: proposal.proposalPrice,
+            status: 'pending'
+          }, {
+            transaction: t
+          }));
+        });
+        return Promise.all(paymentPromises)
+          .then(function(instances) {
+            return instances;
+          })
+      } else {
+        throw new Error('no proposal selected!');
+      }
+    })
     // should get campaign for this brand's
     return Campaign.findOne({
         where: {
@@ -336,10 +460,7 @@ module.exports = {
               amount: proposal.proposalPrice,
               status: 'pending'
             }, {
-              transaction: t,
-              include: [{
-                model: PaymentTransaction
-              }]
+              transaction: t
             }));
           }
         });
@@ -520,6 +641,8 @@ module.exports = {
           influencerId: influencerId
         },
         required: false
+      }, {
+        model: Resource
       }]
     };
 

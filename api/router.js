@@ -82,7 +82,8 @@ module.exports = function() {
   router.put('/campaigns/:campaignId/submissions/:submissionId', auth('brand'), $.campaignController.updateSubmission); //done
 
   router.post('/campaigns/:campaignId/transactions/confirm', auth('admin'), $.campaignController.confirmCampaignPayment); //done
-  router.post('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.payForCampaign); //done
+  router.post('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.readyToPayForCampaign); //done
+  router.put('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.payForCampaign); //done
 
   router.get('/campaigns/:campaignId/transactions', auth('brand'), paginate(), $.campaignController.listTransaction); //done
 

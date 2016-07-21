@@ -18,10 +18,16 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.chooseProposalAndPay(form.campaignProposals, form.resource, req.params.campaignId, req.user, t);
+      return campaignService.pay(form, req.params.campaignId, req.user.brand.brandId, t);
     })
     .then(function(result) {
-      return result.reload();
+      return res.send(result);
+    })
+    .catch(next);
+  },
+  readyToPayForCampaign: function(req, res, next) {
+    sequelize.transaction(function(t) {
+      return campaignService.readyToPay(req.params.campaignId, req.user.brand.brandId, t);
     })
     .then(function(result) {
       return res.send(result);
@@ -113,32 +119,34 @@ module.exports = {
     })
     .catch(next);
   },
-  listProposal: function(req, res, next) {
-    if(req.role === config.ROLE.BRAND) {
-      //req.criteria.group = ['campaignProposal.influencerId'];
-    } else if(req.role === config.ROLE.INFLUENCER){
-      req.criteria.where = { influencerId: req.user.influencer.influencerId };
-    }
-    campaignService.listProposal(req.params.campaignId, req.user.brand.brandId, req.criteria)
-      .then(function(result) {
-        return res.send(result);
-      })
-      .catch(next);
-  },
   listSubmission: function(req, res, next) {
-    if(req.role === config.ROLE.BRAND) {
-      //req.criteria.group = ['Influencer.influencerId'];
-    } else if(req.role === config.ROLE.INFLUENCER){
-      req.criteria.where = { influencerId: req.user.influencer.influencerId };
-    }
-    campaignService.listSubmission(req.params.campaignId, req.user.brand.brandId, req.criteria)
-      .then(function(result) {
+    Promise.try(function() {
+      if(req.role === config.ROLE.BRAND) {
+        return campaignService.listInfluencerWithSubmission(req.params.campaignId, req.user.brand.brandId, req.criteria);
+      } else if(req.role === config.ROLE.INFLUENCER){
+        return campaignService.listSubmissionByInfluencerId(req.params.campaignId, req.user.influencer.influencerId, req.criteria);
+      }
+    })
+    .then(function(result) {
         return res.send(result);
       })
-      .catch(next);
+    .catch(next);
+  },
+  listProposal: function(req, res, next) {
+    Promise.try(function() {
+      if(req.role === config.ROLE.BRAND) {
+        return campaignService.listInfluencerWithProposal(req.params.campaignId, req.user.brand.brandId, req.criteria);
+      } else if(req.role === config.ROLE.INFLUENCER){
+        return campaignService.listProposalByInfluencerId(req.params.campaignId, req.user.influencer.influencerId, req.criteria);
+      }
+    })
+    .then(function(result) {
+        return res.send(result);
+      })
+    .catch(next);
   },
   listCampaign: function(req, res, next) {
-    campaignService.list(req.criteria)
+    campaignService.list(_.extend(req.criteria, req.query))
       .then(function(result) {
         return res.send(result);
       })
@@ -146,6 +154,7 @@ module.exports = {
   },
 	listCampaignByRole: function(req, res, next) {
     Promise.attempt(function() {
+      _.extend(req.criteria, req.query);
       if(req.role === config.ROLE.BRAND) {
         // find by brand owner
   			return campaignService.listByOwner(req.user.brand.brandId, req.criteria);
