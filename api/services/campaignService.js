@@ -635,6 +635,8 @@ module.exports = {
           influencerId: influencerId
         },
         required: false
+      }, {
+        model: Resource
       }]
     };
 

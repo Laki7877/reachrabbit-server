@@ -11,7 +11,9 @@ var config  = require('config'),
     authHelper = require('../helpers/authHelper'),
     cacheHelper = require('../helpers/cacheHelper');
 
-module.exports = function(roles) {
+module.exports = function() {
+  var roles = Array.from(arguments);
+  console.log(roles);
   /**
    * Auth middleware function
    *
@@ -75,13 +77,8 @@ module.exports = function(roles) {
       .then(function(data) {
         // no roles
         if(!_.isNil(roles)) {
-          // single role arg
-          if(_.isString(roles) && data.role !== roles){
-            //not role
-            throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
-          }
           // array of roles (OR condition)
-          if(_.isArray(roles) && !_.includes(roles, data.role)){
+          if(_.isArray(roles) && roles.length > 0 && !_.includes(roles, data.role)){
             // not role
             throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
           }
