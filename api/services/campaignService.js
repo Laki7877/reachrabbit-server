@@ -43,8 +43,10 @@ var include = [{
 }, {
   model: CampaignProposal,
   include: [{
+          model: Resource
+  },{
     model: Influencer,
-    include: {
+    include: [{
       model: User,
       include: [
         {
@@ -52,7 +54,7 @@ var include = [{
           as: 'profilePicture'
         }
       ]
-    }
+    }]
   }],
   order: 'createdAt DESC'
 }, {
@@ -644,6 +646,8 @@ module.exports = {
           include: {
             model: User
           }
+        },{
+          model: Resource
         }],
         order: 'createdAt DESC'
       }, {
@@ -664,7 +668,10 @@ module.exports = {
       where: {
         campaignId: id
       },
-      include: include
+      include: include,
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ]
+      ]
     });
   },
   findByIdWithBrand: function(id, brandId) {
