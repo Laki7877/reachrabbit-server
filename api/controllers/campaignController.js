@@ -21,6 +21,9 @@ module.exports = {
       return campaignService.pay(form, req.params.campaignId, req.user.brand.brandId, t);
     })
     .then(function(result) {
+      return result.reload();
+    })
+    .then(function(result) {
       return res.send(result);
     })
     .catch(next);
@@ -28,6 +31,9 @@ module.exports = {
   readyToPayForCampaign: function(req, res, next) {
     sequelize.transaction(function(t) {
       return campaignService.readyToPay(req.params.campaignId, req.user.brand.brandId, t);
+    })
+    .then(function(result) {
+      return result.reload();
     })
     .then(function(result) {
       return res.send(result);

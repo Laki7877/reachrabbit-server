@@ -336,31 +336,62 @@ module.exports = {
       return proposal.update(data, {transaction: t});
     });
   },
-  pay: function(values, campaignId, brandId, t) {
-    return PaymentTransaction.findAll({
+  readyToPay: function(campaignId, brandId, t) {
+    return Campaign.findOne({
       where: {
-        campaignId: campaignId
+        campaignId: campaignId,
+        brandId: brandId
       },
       include: [{
-        model: Campaign,
+        model: CampaignProposal,
         where: {
-          brandId: brandId
+          isSelected: true
         }
+      }, {
+        model: PaymentTransaction
       }]
     })
-    .then(function(transactions) {
-      if(transactions.length <= 0) {
-        throw new Error('no transactions');
+    .then(function(campaign) {
+      if(!campaign) {
+        throw new Error('no campaign');
       }
+      if(campaign.paymentTransactions.length > 0) {
+        throw new Error('payment already made');
+      }
+
+      var promises = [];
+      _.forEach()
+
+      return campaign.update({status: 'payment pending'}, {transaction: t});
+    });
+  },
+  pay: function(values, campaignId, brandId, t) {
+    return Campaign.findOne({
+      where: {
+        campaignId: campaignId,
+        brandId: brandId
+      },
+      include: [{
+        model: PaymentTransaction
+      }]
+    })
+    .then(function(campaign) {
+      if(campaign.paymentTransactions <= 0) {
+        throw new Error('no transaction');
+      }
+
       var promises = [];
 
-      _.forEach(transactions, function(transaction) {
-        promises.push(transaction.setResource(values.resourceId, { transaction: t }));
+      _.forEach(campaign.paymentTransactions, function(payment) {
+        promises.push(payment.setResource(values.resourceId, {transaction: t}));
       });
 
-      return Promise.all(promises)
+      return campaign.update({status: 'wait for confirm'}, {transaction: t})
+        .then(function() {
+          return Promise.all(promises);
+        })
         .then(function(results) {
-          return results;
+          return campaign;
         });
     });
   },
@@ -492,19 +523,17 @@ module.exports = {
         model: Media,
         where: {},
         required: false
+      }, {
+        model: CampaignProposal,
+        attributes: [[db.sequelize.fn('COUNT', 'proposalId'), 'items']],  
+        where: {
+          items: 0
+        }
       }]
     };
 
+    opts.where.status = 'open';
     _.merge(opts, extopts, criteria);
-
-    // filter by status name
-    if(criteria.status) {
-      opts.where.status = criteria.status;
-    }
-    // filter by media provider name
-    if(criteria.media) {
-      opts.include[1].where.mediaId = criteria.media;
-    }
 
     return Campaign.findAndCountAll(opts);
   },
@@ -523,19 +552,14 @@ module.exports = {
         model: CampaignProposal,
         where: {
           influencerId: influencerId
-        }
+        },
+        required: true
       }, {
-        model: CampaignSubmission,
-        where: {
-          influencerId: influencerId
-        }
+        model: CampaignSubmission
       }, {
         model: Resource
       }]
     };
-
-    // influencer status
-    var status = null;
 
     // extend with pagination criteria
     opts = _.extend(opts, criteria);
