@@ -566,12 +566,46 @@ module.exports = {
   },
   listOpenInfluencer: function(criteria, influencerId) {
     var opts = {
+      where: {
+        status: 'open'
+      },
+      include: [
+      {
+        model: CampaignProposal,
+        where: {
+          influencerId: influencerId
+        },
+        required: false
+      }, {
+        model: Resource,
+        required: false
+      },{
+        model: Brand,
+        include: [User],
+        required: false
+      }, {
+        model: Media,
+        required: false
+      }],
+      where: {
+        '$campaignProposals.proposalId$': null
+      }
     };
 
     //opts.where.status = 'open';
-    _.merge(opts, criteria);
+    //_.merge(opts, criteria);
 
-    return Campaign.findAndCountAll(opts);
+    return Campaign.count(opts)
+    .then(function(count) {
+      return Campaign.findAll(opts)
+        .then(function(rows) {
+          rows = _(rows).slice(criteria.offset).take(criteria.limit).value();
+          return {
+            count: count,
+            rows: rows
+          };
+        });
+    });
   },
   list: function(criteria, extopts) {
     var opts = {
