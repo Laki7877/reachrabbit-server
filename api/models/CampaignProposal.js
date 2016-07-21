@@ -21,8 +21,13 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(12,2),
       allowNull: false
     },
+    isSelected: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
     status: {
-      type: DataTypes.ENUM('wait for review','reject','need revision', 'accept'),
+      type: DataTypes.ENUM('wait for review','reject','need revision'),
       defaultValue: 'wait for review',
       allowNull: false
     },

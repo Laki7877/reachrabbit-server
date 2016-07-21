@@ -205,7 +205,8 @@ describe('PUT ' + path + '/:id', function() {
   after(helpers.after);
 
   beforeEach(helpers.brandLogin);
-  var id = '865b7f55-0316-47b0-9704-bc24eaba1dc5';
+  var id = '2d50a293-aa82-4cff-bb8d-bdf826d7ca15';
+  var id2 = '865b7f55-0316-47b0-9704-bc24eaba1dc5';
   var campaign = {
     title: 'hi',
     description: 'hi'
@@ -219,7 +220,7 @@ describe('PUT ' + path + '/:id', function() {
           return done(err);
         }
         var data = res.body;
-        console.log(data);
+        console.log(data.rows[0].influencer);
         done();
       });
   });

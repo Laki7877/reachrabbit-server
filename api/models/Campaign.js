@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE
     },
     status: {
-      type: DataTypes.ENUM('draft','open', 'production','complete','delete')
+      type: DataTypes.ENUM('draft', 'open', 'production','complete','delete')
     },
     budget: {
       type: DataTypes.ENUM('500-1,000', '1,000-5,000', '5,000-10,000', '10,000+')
