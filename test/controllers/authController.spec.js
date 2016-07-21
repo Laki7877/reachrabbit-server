@@ -20,6 +20,24 @@ describe('POST ' + loginPath, function() {
         .send(user)
         .expect(400, done);
     });
+    it('should return 400',function(done){
+      var user = {
+        email: 'brand1@test.com',
+        password: 'wrong'
+      };
+      api.post('/login')
+        .send(user)
+        .expect(400,done);
+    });
+    it('should return 400',function(done){
+      var user = {
+        email: 'test2@test.com',
+        password: 'test1234'
+      };
+      api.post('/login')
+        .send(user)
+        .expect(400,done);
+    });
   });
 
   describe('Correct email/password', function() {
