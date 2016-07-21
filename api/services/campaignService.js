@@ -27,7 +27,7 @@ var db = require('../models'),
 // eagerload for campaign search
 var include = [{
   model: CampaignSubmission,
-  order: 'createdDt DESC',
+  order: 'createdAt DESC',
   include: [{
     model: Influencer,
     include: {
@@ -54,7 +54,7 @@ var include = [{
       ]
     }
   }],
-  order: 'createdDt DESC'
+  order: 'createdAt DESC'
 }, {
   model: Media
 }, {
@@ -132,7 +132,7 @@ module.exports = {
           where: {
             influencerId: influencerId
           },
-          order: 'createdDt DESC'
+          order: 'createdAt DESC'
         }],
         where: {
           campaignId: campaignId
@@ -633,7 +633,7 @@ module.exports = {
 
       var include = [{
         model: CampaignSubmission,
-        order: 'createdDt DESC'
+        order: 'createdAt DESC'
       }, {
         model: CampaignProposal,
         where: {
@@ -645,7 +645,7 @@ module.exports = {
             model: User
           }
         }],
-        order: 'createdDt DESC'
+        order: 'createdAt DESC'
       }, {
         model: Media
       }, {
