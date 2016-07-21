@@ -76,7 +76,8 @@ describe('GET ' + path, function() {
 						return done(err);
 					}
           var data = res.body;
-          helpers.checkPagination(data)
+          helpers.checkPagination(data);
+          console.log(data);
 
           expect(data.rows[0]).to.have.property('campaignId');
           expect(data.rows[0]).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
@@ -110,6 +111,7 @@ describe('GET ' + path, function() {
             return done(err);
           }
           var data = res.body;
+          console.log(data);
           helpers.checkPagination(data);
           expect(data.rows[0]).to.have.property('campaignId');
           expect(data.rows[0]).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
@@ -217,7 +219,8 @@ describe('PUT ' + path + '/:id', function() {
     description: 'hi'
   };
   it('should return proposals', function(done) {
-    api.get('/campaigns')
+    api.put('/campaigns')
+      .send(campaign)
       .set('Authorization', helpers.influencerToken)
       .expect(200)
       .end(function(err, res) {
@@ -225,7 +228,6 @@ describe('PUT ' + path + '/:id', function() {
           return done(err);
         }
         var data = res.body;
-        console.log(data);
         done();
       });
   });

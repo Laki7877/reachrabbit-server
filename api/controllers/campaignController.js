@@ -44,7 +44,7 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.createSubmission(form, req.params.campaignId, req.user, t);
+      return campaignService.createSubmission(form, req.params.campaignId, req.user.influencer.influencerId, t);
     })
     .then(function(result) {
       return result.reload();
@@ -197,11 +197,31 @@ module.exports = {
     .catch(next);
   },
   getCampaign: function(req, res, next) {
-    campaignService.findById(req.params.campaignId)
+    if(req.role === "influencer"){
+      campaignService.findByIdWithInfluencer(req.params.campaignId, req.user.influencer.influencerId)
+      .then(function(result) {
+        if(!result){
+            campaignService.findById(req.params.campaignId)
+            .then(function(result) {
+              return res.send(result);
+            })
+            .catch(next);
+        }else{
+          return res.send(result);
+        }
+
+
+      })
+      .catch(next);
+    }else{
+      campaignService.findById(req.params.campaignId)
       .then(function(result) {
         return res.send(result);
       })
       .catch(next);
+    }
+
+
   },
   confirmCampaignPayment: function(req, res, next) {
     sequelize.transaction(function(t) {

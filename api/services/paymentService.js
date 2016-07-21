@@ -82,7 +82,11 @@ module.exports = {
   listByUserId: function(userId, criteria) {
     var opts = {
       where: {
-        userId: userId
+        $or:[{
+          targetId: userId
+        }, {
+          sourceId: userId
+        }]
       },
       include: include
     };

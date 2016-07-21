@@ -90,8 +90,8 @@ module.exports = function() {
   /*********************************
    * Submission
    *********************************/
-  router.get('/submissions', auth('admin'), $.submissionController.listSubmission);
-  router.get('/submissions/:submissionId', auth('admin'), $.submissionController.getSubmission);
+  router.get('/submissions', auth(), $.submissionController.listSubmission);
+  router.get('/submissions/:submissionId', auth(), $.submissionController.getSubmission);
   router.post('/submissions/:submissionId/proofs', auth('influencer'), $.submissionController.createSubmissionProof);
   router.put('/submissions/:submissionId/proofs', auth('admin'), $.submissionController.confirmSubmissionProof);
 

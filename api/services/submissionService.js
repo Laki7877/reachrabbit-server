@@ -40,6 +40,15 @@ module.exports = {
       }, {
         model: CampaignProposal
       }, {
+        model: Influencer,
+        include: [{
+          model: User,
+          include: [{
+            model: Resource,
+            as: 'profilePicture'
+          }]
+        }]
+      }, {
         model: Resource,
         as: 'proof'
       }]

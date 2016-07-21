@@ -46,7 +46,6 @@ module.exports = function(sequelize, DataTypes) {
         Resource.belongsToMany(models.CampaignSubmission, {
           through: models.CampaignSubmissionProof,
           foreighKey: 'resourceId',
-          otherKey: 'submissionId',
           as: 'campaignSubmissionEvident'
         });
       }
