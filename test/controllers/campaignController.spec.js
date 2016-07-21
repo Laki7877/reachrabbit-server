@@ -111,11 +111,10 @@ describe('GET ' + path, function() {
             return done(err);
           }
           var data = res.body;
-          console.log(data);
           helpers.checkPagination(data);
-          //expect(data.rows[0]).to.have.property('campaignId');
-          //expect(data.rows[0]).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
-          done('sth');
+          expect(data.rows[0]).to.have.property('campaignId');
+          expect(data.rows[0]).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
+          done();
         });
     });
     it('should return single campaign', function(done) {
