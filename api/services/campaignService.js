@@ -131,7 +131,7 @@ module.exports = {
 
           return CampaignSubmission.create(data, { include: [Resource], transaction: t })
             .then(function(instance) {
-              if(resource) {
+              if(resources) {
                 return instance.setResources(_.map(resources, 'resourceId'), {transaction: t})
                   .then(function() {
                     return instance;
@@ -163,7 +163,7 @@ module.exports = {
 
           return CampaignProposal.create(data, { include: [Resource], transaction: t})
             .then(function(instance) {
-              if(resource) {
+              if(resources) {
                 return instance.setResources(_.map(resources, 'resourceId'), {transaction: t})
                   .then(function() {
                     return instance;
