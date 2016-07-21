@@ -669,13 +669,15 @@ module.exports = {
         where: {
           influencerId: influencerId
         },
-        required: false
+        required: true
       }, {
         model: CampaignSubmission,
         where: {
           influencerId: influencerId
         },
         required: false
+      }, {
+        model: Resource
       }]
     };
 

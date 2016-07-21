@@ -204,7 +204,7 @@ describe('PUT ' + path + '/:id', function() {
   before(helpers.before);
   after(helpers.after);
 
-  beforeEach(helpers.brandLogin);
+  beforeEach(helpers.influencerLogin);
   var id = '2d50a293-aa82-4cff-bb8d-bdf826d7ca15';
   var id2 = '865b7f55-0316-47b0-9704-bc24eaba1dc5';
   var campaign = {
@@ -213,7 +213,7 @@ describe('PUT ' + path + '/:id', function() {
   };
   it('should return proposals', function(done) {
     api.get(path + '/' + id + '/proposals')
-      .set('Authorization', helpers.brandToken)
+      .set('Authorization', helpers.influencerToken)
       .expect(200)
       .end(function(err, res) {
         if(err) {
