@@ -37,6 +37,22 @@ module.exports = [
     }
   },
   {
+    "model": "Resource",
+    "data": {
+      "resourceId": "07ac9a84-f137-6b7e-b27a-240e1701b6c4",
+      "resourcePath": "test-profile.png",
+      "resourceType": "image"
+    }
+  },
+  {
+    "model": "Resource",
+    "data": {
+      "resourceId": "03ac9a84-f137-6b7e-b27b-240e1711bddd",
+      "resourcePath": "test-profile.png",
+      "resourceType": "image"
+    }
+  },
+  {
     "model": "Campaign",
     "data": {
       "campaignId": "865b7f55-0316-47b0-9704-bc24eaba1dc5",
@@ -48,6 +64,13 @@ module.exports = [
       "category": {
         "categoryName": "Lifestyle"
       },
+      "media": {
+        "mediaId": "facebook"
+      },
+      "resources":[
+      {
+        "resourceId": "07ac9a84-f137-6b7e-b27a-240e1701b6c4"
+      }],
       "createdBy": "user1@test.com",
       "updatedBy": "user1@test.com",
       "brand" : {
@@ -83,9 +106,16 @@ module.exports = [
       "proposalDeadline": moment().add(1, 'hours').format(),
       "submissionDeadline": moment().add(2, 'hours').format(),
       "status": "open",
+      "media": {
+        "mediaId": "instagram"
+      },
       "category": {
         "categoryName": "Food"
       },
+      "resources":[
+      {
+        "resourceId": "03ac9a84-f137-6b7e-b27b-240e1711bddd"
+      }],
       "createdBy": "user1@test.com",
       "updatedBy": "user1@test.com",
       "brand" : {
