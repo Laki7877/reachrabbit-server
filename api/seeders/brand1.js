@@ -44,7 +44,7 @@ module.exports = [
       "description": "I need your help to spread virus Reachrabbit to the world. It should be 1920x1600 advertisement with 8 ugly rabbits and 2 bananas.",
       "proposalDeadline": moment().add(1, 'hours').format(),
       "submissionDeadline": moment().add(2, 'hours').format(),
-      "status": "draft",
+      "status": "production",
       "category": {
         "categoryName": "Lifestyle"
       },
@@ -63,7 +63,26 @@ module.exports = [
       "description": "STOP IT PLZ",
       "proposalDeadline": moment().add(1, 'hours').format(),
       "submissionDeadline": moment().add(2, 'hours').format(),
-      "status": "draft",
+      "status": "open",
+      "category": {
+        "categoryName": "Food"
+      },
+      "createdBy": "user1@test.com",
+      "updatedBy": "user1@test.com",
+      "brand" : {
+        "brandId": "86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6"
+      }
+    }
+  },
+  {
+    "model": "Campaign",
+    "data": {
+      "campaignId": "e4e0283d-4cca-4909-8c47-d0d21808c101",
+      "title": "START DIGIMON GO!",
+      "description": "START IT PLZ",
+      "proposalDeadline": moment().add(1, 'hours').format(),
+      "submissionDeadline": moment().add(2, 'hours').format(),
+      "status": "open",
       "category": {
         "categoryName": "Food"
       },

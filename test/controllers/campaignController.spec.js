@@ -48,7 +48,7 @@ describe('GET ' + myPath, function() {
           }
           var data = res.body;
           helpers.checkPagination(data);
-          
+
           for(var i = 0; i < data.rows.length; i++) {
             expect(data.rows[i]).to.have.property('campaignId');
             expect(data.rows[i]).to.have.deep.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
@@ -102,7 +102,7 @@ describe('GET ' + path, function() {
   // influencer
   describe('With Influencer', function() {
     before(helpers.influencerLogin);
-    it('should return campaign pages', function(done) {
+    it('should return open campaign pages', function(done) {
       api.get(path)
         .set('Authorization', helpers.influencerToken)
         .expect(200)
@@ -113,9 +113,9 @@ describe('GET ' + path, function() {
           var data = res.body;
           console.log(data);
           helpers.checkPagination(data);
-          expect(data.rows[0]).to.have.property('campaignId');
-          expect(data.rows[0]).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
-          done();
+          //expect(data.rows[0]).to.have.property('campaignId');
+          //expect(data.rows[0]).to.have.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
+          done('sth');
         });
     });
     it('should return single campaign', function(done) {
@@ -211,17 +211,17 @@ describe('PUT ' + path + '/:id', function() {
   before(helpers.before);
   after(helpers.after);
 
-  beforeEach(helpers.influencerLogin);
+  beforeEach(helpers.brandLogin);
   var id = '2d50a293-aa82-4cff-bb8d-bdf826d7ca15';
   var id2 = '865b7f55-0316-47b0-9704-bc24eaba1dc5';
   var campaign = {
     title: 'hi',
     description: 'hi'
   };
-  it('should return proposals', function(done) {
+  it('should update campaign', function(done) {
     api.put('/campaigns')
       .send(campaign)
-      .set('Authorization', helpers.influencerToken)
+      .set('Authorization', helpers.brandToken)
       .expect(200)
       .end(function(err, res) {
         if(err) {

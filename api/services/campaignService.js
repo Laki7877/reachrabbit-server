@@ -164,6 +164,8 @@ module.exports = {
                   .then(function() {
                     return instance;
                   });
+              } else {
+                return instance;
               }
             });
         } else {
@@ -196,6 +198,8 @@ module.exports = {
                   .then(function() {
                     return instance;
                   });
+              } else {
+                return instance;
               }
             });
         } else {
@@ -388,7 +392,7 @@ module.exports = {
       }
 
       var paymentPromises = [];
-      
+
       if(campaign.campaignProposals.length >= 0) {
         _.forEach(campaign.campaignProposals, function(proposal) {
           paymentPromises.push(PaymentTransaction.create({
@@ -403,7 +407,7 @@ module.exports = {
             transaction: t
           }));
         });
-      } 
+      }
       else {
         throw new Error('no proposal selected!');
       }
@@ -562,23 +566,6 @@ module.exports = {
   },
   listOpenInfluencer: function(criteria, influencerId) {
     var opts = {
-      where: {
-      },
-      attributes: {
-        include: [[sequelize.fn('COUNT', sequelize.col('CampaignProposal.proposalId')), 'proposalCount']]
-      },
-      include: [{
-        model: Resource
-      },{
-        model: Brand,
-        include: [User]
-      }, {
-        model: Media,
-        required: false
-      }, {
-        model: CampaignProposal
-      }],
-      group: ['Campaign.campaignId']
     };
 
     //opts.where.status = 'open';
