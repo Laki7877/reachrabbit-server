@@ -629,6 +629,8 @@ module.exports = {
       include: [{
         model: Resource
       },{
+        model: CampaignProposal
+      },{
         model: Brand,
         include: [User]
       }, {
