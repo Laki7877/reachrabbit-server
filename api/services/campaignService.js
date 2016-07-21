@@ -9,6 +9,7 @@
 var db = require('../models'),
   Promise = require('bluebird'),
   moment = require('moment'),
+  config = require('config'),
   validate = require('jsonschema').validate,
   sequelize = db.sequelize,
   User = db.User,
@@ -26,9 +27,33 @@ var db = require('../models'),
 // eagerload for campaign search
 var include = [{
   model: CampaignSubmission,
-  order: 'createdDt DESC'
+  order: 'createdDt DESC',
+  include: [{
+    model: Influencer,
+    include: {
+      model: User,
+      include: [
+        {
+          model: Resource,
+          as: 'profilePicture'
+        }
+      ]
+    }
+  }]
 }, {
   model: CampaignProposal,
+  include: [{
+    model: Influencer,
+    include: {
+      model: User,
+      include: [
+        {
+          model: Resource,
+          as: 'profilePicture'
+        }
+      ]
+    }
+  }],
   order: 'createdDt DESC'
 }, {
   model: Media
@@ -101,21 +126,24 @@ module.exports = {
     });
   },
   createSubmission: function(values, campaignId, influencerId, t) {
-    return Campaign.findById(campaignId, {
+    return Campaign.findOne({
         include: [{
           model: CampaignProposal,
           where: {
             influencerId: influencerId
           },
           order: 'createdDt DESC'
-        }]
+        }],
+        where: {
+          campaignId: campaignId
+        }
       })
       .then(function(campaign) {
         if(!campaign) {
           throw new Error('campaign not found');
         }
 
-        if(campaign.campaignProposal.length <= 0) {
+        if(campaign.campaignProposals.length <= 0) {
           throw new Error('you havent propose yet!');
         }
 
@@ -127,9 +155,9 @@ module.exports = {
           var resources = values.resources;
           data.campaignId = campaignId;
           data.influencerId = influencerId;
-          data.proposalId = campaign.campaignProposal[0].proposalId;
+          data.proposalId = campaign.campaignProposals[0].proposalId;
 
-          return CampaignSubmission.create(data, { include: [Resource], transaction: t })
+          return CampaignSubmission.create(data, {transaction: t })
             .then(function(instance) {
               if(resources) {
                 return instance.setResources(_.map(resources, 'resourceId'), {transaction: t})
@@ -332,7 +360,7 @@ module.exports = {
       if(proposal.campaign.status !== 'open') {
         throw new Error('cannot update due to campaign status');
       }
-      var data = _.pick(values, ['comment', 'status']);
+      var data = _.pick(values, ['comment', 'isSelected', 'status']);
       return proposal.update(data, {transaction: t});
     });
   },
@@ -376,6 +404,11 @@ module.exports = {
           isSelected: true
         },
         required: false
+      }, {
+        model: Brand,
+        include: {
+          model: User
+        }
       }]
     })
     .then(function(campaign) {
@@ -389,12 +422,12 @@ module.exports = {
         var paymentPromises = [];
         _.forEach(campaign.campaignProposals, function(proposal) {
           paymentPromises.push(PaymentTransaction.create({
-            sourceId: brandUser.sourceId,
+            sourceId: campaign.brand.user.userId,
             targetId: config.ADMIN.USER_ID,
             campaignId: campaign.campaignId,
             paymentType: 'transaction',
             paymentMethod: 'bank transfer',
-            amount: proposal.proposalPrice,
+            amount: proposal.proposePrice,
             status: 'pending'
           }, {
             transaction: t
@@ -630,6 +663,8 @@ module.exports = {
     var opts = {
       where: {},
       include: [{
+        model: Resource
+      },{
         model: CampaignProposal,
         where: {
           influencerId: influencerId
@@ -669,6 +704,41 @@ module.exports = {
   },
   findById: function(id) {
     return Campaign.findById(id, {
+      include: include
+    });
+  },
+  findByIdWithInfluencer: function(id, influencerId){
+
+      var include = [{
+        model: CampaignSubmission,
+        order: 'createdDt DESC'
+      }, {
+        model: CampaignProposal,
+        where: {
+          influencerId: influencerId
+        },
+        include: [{
+          model: Influencer,
+          include: {
+            model: User
+          }
+        }],
+        order: 'createdDt DESC'
+      }, {
+        model: Media
+      }, {
+        model: Resource
+      }, {
+        model: Brand,
+        include: [User]
+      }, {
+        model: Category
+      }, {
+        model: PaymentTransaction,
+        include: [Resource]
+      }];
+
+     return Campaign.findById(id, {
       include: include
     });
   },

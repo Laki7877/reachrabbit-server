@@ -11,7 +11,8 @@ var brandService = require('../services/brandService'),
     userService = require('../services/userService'),
     paymentService = require('../services/paymentService'),
     sequelize = require('../models').sequelize,
-    config = require('config');
+    config = require('config'),
+    Promise = require('bluebird');
 
 
 module.exports = {

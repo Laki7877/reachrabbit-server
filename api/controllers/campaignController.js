@@ -38,7 +38,7 @@ module.exports = {
     var form = req.body;
 
     sequelize.transaction(function(t) {
-      return campaignService.createSubmission(form, req.params.campaignId, req.user, t);
+      return campaignService.createSubmission(form, req.params.campaignId, req.user.influencer.influencerId, t);
     })
     .then(function(result) {
       return result.reload();
@@ -182,6 +182,14 @@ module.exports = {
     .catch(next);
   },
   getCampaign: function(req, res, next) {
+    if(req.role === "influencer"){
+      return campaignService.findByIdWithInfluencer(req.params.campaignId, req.user.influencer.influencerId)
+      .then(function(result) {
+        return res.send(result);
+      })
+      .catch(next);
+    }
+
     campaignService.findById(req.params.campaignId)
       .then(function(result) {
         return res.send(result);
