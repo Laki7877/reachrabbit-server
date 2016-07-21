@@ -634,7 +634,7 @@ module.exports = {
         where: {
           influencerId: influencerId
         },
-        required: false
+        required: true
       }, {
         model: CampaignSubmission,
         where: {

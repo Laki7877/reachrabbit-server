@@ -13,7 +13,6 @@ var config  = require('config'),
 
 module.exports = function() {
   var roles = Array.from(arguments);
-  console.log(roles);
   /**
    * Auth middleware function
    *
