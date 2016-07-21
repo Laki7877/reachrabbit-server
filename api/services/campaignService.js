@@ -222,6 +222,9 @@ module.exports = {
   listInfluencerWithSubmission: function(campaignId, brandId, criteria) {
     var opts = {
       include: [{
+        model: Resource,
+        as: "profilePicture"
+      },{
         model: Influencer,
         include: [{
           model: CampaignSubmission,
@@ -248,6 +251,9 @@ module.exports = {
   listInfluencerWithProposal: function(campaignId, brandId, influencerId, criteria) {
     var opts = {
       include: [{
+        model: Resource,
+        as: "profilePicture"
+      },{
         model: Influencer,
         include: [{
           model: CampaignProposal,
@@ -323,7 +329,7 @@ module.exports = {
       if(!proposal) {
         throw new Error('proposal not found');
       }
-      if(submission.campaign.status !== 'open') {
+      if(proposal.campaign.status !== 'open') {
         throw new Error('cannot update due to campaign status');
       }
       var data = _.pick(values, ['comment', 'status']);
