@@ -364,34 +364,6 @@ module.exports = {
       return proposal.update(data, {transaction: t});
     });
   },
-  pay: function(values, campaignId, brandId, t) {
-    return PaymentTransaction.findAll({
-      where: {
-        campaignId: campaignId
-      },
-      include: [{
-        model: Campaign,
-        where: {
-          brandId: brandId
-        }
-      }]
-    })
-    .then(function(transactions) {
-      if(transactions.length <= 0) {
-        throw new Error('no transactions');
-      }
-      var promises = [];
-
-      _.forEach(transactions, function(transaction) {
-        promises.push(transaction.setResource(values.resourceId, { transaction: t }));
-      });
-
-      return Promise.all(promises)
-        .then(function(results) {
-          return results;
-        });
-    });
-  },
   readyToPay: function(campaignId, brandId, t) {
     return Campaign.findOne({
       where: {
@@ -402,24 +374,22 @@ module.exports = {
         model: CampaignProposal,
         where: {
           isSelected: true
-        },
-        required: false
-      }, {
-        model: Brand,
-        include: {
-          model: User
         }
+      }, {
+        model: PaymentTransaction
       }]
     })
     .then(function(campaign) {
       if(!campaign) {
         throw new Error('no campaign');
       }
-      if(campaign.status !== 'open') {
-        throw new Error('is not open');
+      if(campaign.paymentTransactions.length > 0) {
+        throw new Error('payment already made');
       }
+
+      var paymentPromises = [];
+      
       if(campaign.campaignProposals.length >= 0) {
-        var paymentPromises = [];
         _.forEach(campaign.campaignProposals, function(proposal) {
           paymentPromises.push(PaymentTransaction.create({
             sourceId: campaign.brand.user.userId,
@@ -433,79 +403,46 @@ module.exports = {
             transaction: t
           }));
         });
-        return Promise.all(paymentPromises)
-          .then(function(instances) {
-            return instances;
-          })
-      } else {
+      } 
+      else {
         throw new Error('no proposal selected!');
       }
-    })
-    // should get campaign for this brand's
-    return Campaign.findOne({
-        where: {
-          campaignId: campaignId,
-          brandId: brandUser.brand.brandId,
-          status: 'open'
-        },
-        include: [{
-          model: CampaignProposal,
-          required: false
-        }, {
-          model: PaymentTransaction,
-          required: false
-        }]
-      })
-      .then(function(campaign) {
-        if(!campaign) {
-          throw new Error('no campaign');
-        }
-        if(campaign.campaignProposal.length <= 0) {
-          throw new Error('no campaign proposal');
-        }
 
-        if(campaign.paymentTransaction.length > 0) {
-          throw new Error('payments have already been initiated');
-        }
-
-        var proposalPromises = [],
-          paymentPromises = [];
-
-        // create values for each campaign Proposal
-        _.forEach(campaign.campaignProposal, function(proposal) {
-          if(proposal.status === 'accept') {
-            throw new Error('proposal already accept but untransaction? something is wrong');
-          }
-          var acceptance = _.findIndex(proposals, function(e) { return e.proposalId === proposal.proposalId }) >= 0;
-
-          if(acceptance) {
-            // update proposal
-            proposalPromises.push(proposal.update({ status: 'accept' }, { transaction: t }));
-
-            // create brand paying payment
-            paymentPromises.push(PaymentTransaction.create({
-              sourceId: brandUser.sourceId,
-              targetId: config.ADMIN.USER_ID,
-              resourceId: resource.resourceId,
-              campaignId: campaign.campaignId,
-              paymentType: 'transaction',
-              paymentMethod: 'bank transfer',
-              amount: proposal.proposalPrice,
-              status: 'pending'
-            }, {
-              transaction: t
-            }));
-          }
-        });
-
-        return Promise.all([
-          Promise.all(proposalPromises), // update accepted proposal status
-          Promise.all(paymentPromises) // create payment transaction
-        ])
+      return campaign.update({status: 'payment pending'}, {transaction: t})
         .then(function() {
+          return Promise.all(paymentPromises);
+        });
+    });
+  },
+  pay: function(values, campaignId, brandId, t) {
+    return Campaign.findOne({
+      where: {
+        campaignId: campaignId,
+        brandId: brandId
+      },
+      include: [{
+        model: PaymentTransaction
+      }]
+    })
+    .then(function(campaign) {
+      if(campaign.paymentTransactions <= 0) {
+        throw new Error('no transaction');
+      }
+
+      var promises = [];
+
+      _.forEach(campaign.paymentTransactions, function(payment) {
+        promises.push(payment.setResource(values.resourceId, {transaction: t}));
+      });
+
+      return campaign.update({status: 'wait for confirm'}, {transaction: t})
+        .then(function() {
+          return Promise.all(promises);
+        })
+        .then(function(results) {
           return campaign;
         });
-      });
+    });
   },
   listTransaction: function(campaignId, brandId, criteria) {
     var opts = {
@@ -623,9 +560,34 @@ module.exports = {
         });
     });
   },
+  listOpenInfluencer: function(criteria, influencerId) {
+    var opts = {
+      where: {
+      },
+      attributes: {
+        include: [[sequelize.fn('COUNT', sequelize.col('CampaignProposal.proposalId')), 'proposalCount']]
+      },
+      include: [{
+        model: Resource
+      },{
+        model: Brand,
+        include: [User]
+      }, {
+        model: Media,
+        required: false
+      }, {
+        model: CampaignProposal
+      }],
+      group: ['Campaign.campaignId']
+    };
+
+    //opts.where.status = 'open';
+    _.merge(opts, criteria);
+
+    return Campaign.findAndCountAll(opts);
+  },
   list: function(criteria, extopts) {
     var opts = {
-      where: {},
       include: [{
         model: Resource
       },{
@@ -639,17 +601,7 @@ module.exports = {
         required: false
       }]
     };
-
     _.merge(opts, extopts, criteria);
-
-    // filter by status name
-    if(criteria.status) {
-      opts.where.status = criteria.status;
-    }
-    // filter by media provider name
-    if(criteria.media) {
-      opts.include[1].where.mediaId = criteria.media;
-    }
 
     return Campaign.findAndCountAll(opts);
   },
@@ -673,34 +625,10 @@ module.exports = {
         },
         required: true
       }, {
-        model: CampaignSubmission,
-        where: {
-          influencerId: influencerId
-        },
-        required: false
-      }, {
-        model: Resource
+        model: CampaignSubmission
       }]
     };
 
-    // influencer status
-    var status = null;
-
-    // get ones which u applied
-    if(criteria.status === 'applied') {
-      opts.where.status = 'open';
-      opts.include[0].required = true;
-    }
-    // get ones which ur producing
-    if(criteria.status === 'production') {
-      opts.where.status = 'production';
-      opts.include[1].required = true;
-    }
-    // get ones that are completed
-    if(criteria.status === 'complete') {
-      opts.where.status = 'complete';
-      opts.include[1].required = true;
-    }
     // extend with pagination criteria
     opts = _.extend(opts, criteria);
 

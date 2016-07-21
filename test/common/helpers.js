@@ -23,7 +23,6 @@ helpers.checkPagination = function(data) {
   expect(data).to.be.a('object');
   expect(data.count).to.be.a('number');
   expect(data.rows).to.be.a('array');
-  expect(data.rows[0]).to.be.a('object');
 };
 
 helpers.resyncDB = function() {
