@@ -112,6 +112,9 @@ module.exports = {
   list: function(criteria) {
     return User.findAndCountAll(_.extend({
       include: [{
+        model: Resource,
+        as: 'profilePicture'
+      },{
         model: Influencer,
         include: [{
           model: Media,
