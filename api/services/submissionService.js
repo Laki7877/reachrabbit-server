@@ -135,7 +135,7 @@ module.exports = {
             .then(function(campaign) {
               var i = true;
               _.forEach(campaign.campaignProposals, function(e) {
-                if(e.CampaignSubmissions.length > 0) {
+                if(e.campaignSubmissions.length > 0) {
 
                 } else {
                   i = false;
