@@ -8,8 +8,7 @@
 
 require('dotenv-extended').load();
 
-var _       = require('lodash'),
-  fs        = require('fs'),
+var fs        = require('fs'),
   args      = require('yargs').argv,
   gulp      = require('gulp-help')(require('gulp')),
   guppy     = require('git-guppy')(gulp),
@@ -37,7 +36,7 @@ function exec(cmd, obj, done) {
   task.stdout.pipe(process.stdout);
 }
 
-// exec with sequelize cli
+/*// exec with sequelize cli
 function seqExec(cmd, done) {
   var cli = args.slice().map(function(e) {
     if(_.indexOf(e, ' ') >= 0) {
@@ -52,7 +51,7 @@ function seqExec(cmd, done) {
 var seqExecTask = function(done) {
   seqExec(this.seq.slice(-1)[0], done);
 };
-
+*/
 /***************************************************
  * Git hook
  ***************************************************/
@@ -102,14 +101,14 @@ gulp.task('test', 'Run mocha test API', ['pre-test'], function() {
  ***************************************************/
 
 // mimick sequelize cli
-gulp.task('db:migrate', 'Run pending migrations', seqExecTask);
+/*gulp.task('db:migrate', 'Run pending migrations', seqExecTask);
 gulp.task('db:migrate:undo', 'Revert last migration ran', seqExecTask);
 gulp.task('db:migrate:undo:all', 'Revert all migration ran', seqExecTask);
 gulp.task('db:migrate:create', 'Create migration file', seqExecTask, {
   options: {
     name: 'Migration file name'
   }
-});
+});*/
 
 gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
   return db.sequelize.sync({ force: true })
@@ -157,7 +156,7 @@ gulp.task('server', 'Run express server', function() {
 });
 
 // bump version
-gulp.task('bump', 'Update repository semver version (X.X.X)', function() {
+/*gulp.task('bump', 'Update repository semver version (X.X.X)', function() {
   // should only be either of these values
   // otherwise, default to "patch"
   var version = _.includes(['patch', 'minor', 'major', 'prerelease'], args.version) ? args.version : 'patch';
@@ -170,3 +169,4 @@ gulp.task('bump', 'Update repository semver version (X.X.X)', function() {
     version: 'One of bump version type (minor, major, patch, prerelease). default: patch'
   }
 });
+*/
