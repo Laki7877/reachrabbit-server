@@ -284,6 +284,9 @@ module.exports = {
   },
   listInfluencerWithProposal: function(campaignId, brandId, influencerId, criteria) {
     var opts = {
+      order: [
+        [ Influencer, CampaignProposal, 'createdAt', 'DESC' ]
+      ],
       include: [{
         model: Resource,
         as: "profilePicture"
@@ -383,6 +386,11 @@ module.exports = {
         }
       }, {
         model: PaymentTransaction
+      },{
+        model: Brand,
+        include: [
+        {model: User}
+        ]
       }]
     })
     .then(function(campaign) {

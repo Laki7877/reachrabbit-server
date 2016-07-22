@@ -112,8 +112,7 @@ module.exports = [
       "category": {
         "categoryName": "Food"
       },
-      "resources":[
-      {
+      "resources":[{
         "resourceId": "03ac9a84-f137-6b7e-b27b-240e1711bddd"
       }],
       "createdBy": "user1@test.com",
