@@ -282,9 +282,6 @@ module.exports = {
   },
   listInfluencerWithProposal: function(campaignId, brandId, influencerId, criteria) {
     var opts = {
-      order: [
-        [ Influencer, CampaignProposal, 'createdAt', 'DESC' ]
-      ],
       include: [{
         model: Resource,
         as: "profilePicture"
@@ -689,7 +686,7 @@ module.exports = {
       return Campaign.findAll(opts)
         .then(function(rows) {
           rows = _.compact(_.map(rows, function(e) {
-            if(e.status !== 'open' && 
+            if(e.status !== 'open' &&
                 _.findIndex(e.campaignProposals, function(r) {
                   return r.isSelected
                 }) < 0) {
