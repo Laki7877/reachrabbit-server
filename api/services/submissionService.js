@@ -61,19 +61,14 @@ module.exports = {
   },
   confirmSubmissionProofAndPay: function(values, submissionId, t) {
     return CampaignSubmission.findById(submissionId, {
-      include: [CampaignProposal, {
+      include: [{
+        model: CampaignProposal
+      }, {
         model: Influencer,
         include: [User]
       }, {
-        model: Campaign,
-        include: [{
-          model: CampaignProposal,
-          include: [CampaignSubmission]
-        }]
-      }],
-      order: [
-        [Campaign, CampaignProposal, CampaignSubmission, 'createdAt', 'DESC']
-      ]
+        model: Campaign
+      }]
     })
     .then(function(submission) {
       if(!submission) {
@@ -117,15 +112,35 @@ module.exports = {
               return instances;
             })
             .then(function(instances) {
-              return submission.campaign.reload();
+              return Campaign.findOne({
+                where: {
+                  campaignId: instance.campaignId
+                },
+                include: [{
+                  model: CampaignProposal,
+                  where: {
+                    isSelected: true
+                  },
+                  include: [{
+                    model: CampaignSubmission,
+                    where: {
+                      status: 'paid'
+                    },
+                    required: false
+                  }],
+                  required: false
+                }]
+              });
             })
             .then(function(campaign) {
               var i = true;
               _.forEach(campaign.campaignProposals, function(e) {
-                if(e.campaignSubmissions.length > 0) {
-                  i = i && (e[0].status === 'paid');
+                if(e.CampaignSubmission.length > 0) {
+
+                } else {
+                  i = false;
                 }
-              });
+              })
 
               if(i) {
                 return campaign.update({status: 'complete'})
