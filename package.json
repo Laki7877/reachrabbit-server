@@ -1,6 +1,9 @@
 {
   "name": "projectx-server",
   "version": "0.0.3",
+  "engines": {
+    "node": "5.1.0"
+  },
   "description": "ProjectX",
   "main": "index.js",
   "dependencies": {
@@ -44,9 +47,7 @@
     "pretty-error": "^2.0.0",
     "request": "^2.72.0",
     "sequelize": "^3.23.3",
-    "winston": "^2.2.0"
-  },
-  "devDependencies": {
+    "winston": "^2.2.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "git": "^0.1.5",
