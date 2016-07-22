@@ -299,7 +299,10 @@ module.exports = {
           required: true
         }],
         required: true
-      }]
+      }],
+      order: [
+        [ Influencer, CampaignProposal, 'createdAt', 'DESC' ]
+      ]
     };
 
     // _.merge(opts, criteria);
