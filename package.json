@@ -68,7 +68,7 @@
     "pg": "^5.1.0",
     "pg-hstore": "^2.3.2",
     "pretty-error": "^2.0.0",
-    "sequelize": "^3.23.3"
+    "sequelize": "3.23.3"
   },
   "scripts": {
     "prestart": "npm install",
