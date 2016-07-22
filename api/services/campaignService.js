@@ -133,12 +133,12 @@ module.exports = {
           model: CampaignProposal,
           where: {
             influencerId: influencerId
-          },
-          order: 'createdAt DESC'
+          }
         }],
         where: {
           campaignId: campaignId
-        }
+        },
+        order: [ CampaignProposal, 'createdAt', 'DESC' ]
       })
       .then(function(campaign) {
         if(!campaign) {
@@ -224,7 +224,8 @@ module.exports = {
         include: [{
           model: User
         }]
-      }]
+      }],
+      order: 'createdAt DESC'
     };
 
     _.merge(opts, criteria);
@@ -246,7 +247,8 @@ module.exports = {
         include: [{
           model: User
         }]
-      }]
+      }],
+      order: 'createdAt DESC'
     };
 
     _.merge(opts, criteria);
@@ -265,7 +267,7 @@ module.exports = {
           where: {
             campaignId: campaignId
           },
-          include: [{
+          include: [Resource, {
             model: Campaign,
             where: {
               brandId: brandId
@@ -275,7 +277,10 @@ module.exports = {
           required: true
         }],
         required: true
-      }]
+      }],
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ]
+      ]
     };
 
     _.merge(opts, criteria);
@@ -297,7 +302,7 @@ module.exports = {
           where: {
             campaignId: campaignId
           },
-          include: [{
+          include: [Resource, {
             model: Campaign,
             where: {
               brandId: brandId
@@ -307,7 +312,10 @@ module.exports = {
           required: true
         }],
         required: true
-      }]
+      }],
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ]
+      ]
     };
 
     _.merge(opts, criteria);
@@ -320,8 +328,7 @@ module.exports = {
       where: {
         campaignId: campaignId,
         submissionId: submissionId
-      }
-    }, {
+      },
       include: [{
         model: Campaign,
         where: {
@@ -480,9 +487,12 @@ module.exports = {
       where: {
         brandId: brandId,
         campaignId: campaignId
-      }
-    }, {
-      include: include
+      },
+      include: include,
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ],
+        [ CampaignSubmission, 'createdAt', 'DESC' ]
+      ]
     })
     .then(function(instance) {
       if(!instance) {
@@ -597,7 +607,10 @@ module.exports = {
       where: {
         '$campaignProposals.proposalId$': null,
         status: 'open'
-      }
+      },
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ]
+      ]
     };
 
     //opts.where.status = 'open';
@@ -629,7 +642,10 @@ module.exports = {
         model: Media,
         where: {},
         required: false
-      }]
+      }],
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ]
+      ]
     };
     _.merge(opts, extopts, criteria);
 
@@ -638,9 +654,17 @@ module.exports = {
   listByOwner: function(brandId, criteria) {
     // get only ones belong to this brand
     var opts = {
-      where: { brandId: brandId }
+      where: { brandId: brandId },
+      include: include,
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ],
+        [ CampaignSubmission, 'createdAt', 'DESC' ]
+      ]
     };
-    return this.list(criteria, opts);
+
+    _.merge(opts, criteria);
+
+    return Campaign.findAndCountAll(opts);
   },
   listByInfluencer: function(influencerId, criteria) {
     // all
@@ -656,20 +680,51 @@ module.exports = {
         required: true
       }, {
         model: CampaignSubmission
-      }]
+      }, {
+        model: Media
+      }],
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ],
+        [ CampaignSubmission, 'createdAt', 'DESC' ]
+      ]
     };
 
     // extend with pagination criteria
-    opts = _.extend(opts, criteria);
+    //opts = _.extend(opts, criteria);
 
-    return Campaign.findAndCountAll(opts);
+    return Campaign.count(opts)
+    .then(function(count) {
+      return Campaign.findAll(opts)
+        .then(function(rows) {
+          rows = _.compact(_.map(rows, function(e) {
+            if(e.status !== 'open' && 
+                _.findIndex(e.campaignProposals, function(r) {
+                  return r.isSelected
+                }) < 0) {
+              return null;
+            }
+            else {
+              return e;
+            }
+          }));
+          rows = _(rows).slice(criteria.offset).take(criteria.limit).value();
+          return {
+            count: count,
+            rows: rows
+          };
+        });
+    });
   },
   findById: function(id) {
     return Campaign.findOne({
       where: {
         campaignId: id
       },
-      include: include
+      include: include,
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ],
+        [ CampaignSubmission, 'createdAt', 'DESC' ]
+      ]
     });
   },
   findByIdWithInfluencer: function(id, influencerId){
@@ -711,7 +766,8 @@ module.exports = {
       },
       include: include,
       order: [
-        [ CampaignProposal, 'createdAt', 'DESC' ]
+        [ CampaignProposal, 'createdAt', 'DESC' ],
+        [ CampaignSubmission, 'createdAt', 'DESC' ]
       ]
     });
   },
@@ -721,7 +777,11 @@ module.exports = {
         campaignId: id,
         brandId: brandId
       },
-      include: include
+      include: include,
+      order: [
+        [ CampaignProposal, 'createdAt', 'DESC' ],
+        [ CampaignSubmission, 'createdAt', 'DESC' ]
+      ]
     });
   }
 };

@@ -12,7 +12,7 @@ var fs        = require('fs'),
     basename  = path.basename(module.filename),
     db        = {},
     uri       = process.env.DB_CONNECTION_URI,
-    opts      = { logging: true };
+    opts      = { logging: false };
 
 // create sequelize object
 var sequelize = new Sequelize(uri, opts);

@@ -49,6 +49,8 @@ describe('GET ' + myPath, function() {
           var data = res.body;
           helpers.checkPagination(data);
 
+          console.log(data);
+
           for(var i = 0; i < data.rows.length; i++) {
             expect(data.rows[i]).to.have.property('campaignId');
             expect(data.rows[i]).to.have.deep.property('brandId', '86d9ebb5-78e2-4c8c-8eb6-f0e61010e2d6');
