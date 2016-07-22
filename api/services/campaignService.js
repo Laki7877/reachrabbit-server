@@ -40,6 +40,8 @@ var include = [{
       ]
     }
   }]
+},{
+  model: CampaignSubmission
 }, {
   model: CampaignProposal,
   include: [{

@@ -23,7 +23,7 @@ module.exports = function() {
   return function(req, res, next) {
     var authHeader = req.get('Authorization');
 
-    if(_.isNil(authHeader)) {
+    if(_.isEmpty(authHeader)) {
       return next(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN));
     }
 
