@@ -157,6 +157,7 @@ module.exports = {
       .catch(next);
     }
     else {
+      console.log('listing');
       campaignService.list(_.extend(req.criteria, req.query))
       .then(function(result) {
         return res.send(result);
