@@ -1,4 +1,5 @@
-var path = require("path");
+'use strict';
+var path = require('path');
 var normalizedPath = path.join(__dirname);
 var fs = require('fs');
 var templates = {};

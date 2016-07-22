@@ -7,10 +7,12 @@
 'use strict';
 
 var config  = require('config'),
-    AuthService = require('../services/authService'),
-    UserService = require('../services/UserService');
+    userService = require('../services/userService'),
+    authHelper = require('../helpers/authHelper'),
+    cacheHelper = require('../helpers/cacheHelper');
 
-module.exports = function(roles) {
+module.exports = function() {
+  var roles = Array.from(arguments);
   /**
    * Auth middleware function
    *
@@ -21,54 +23,77 @@ module.exports = function(roles) {
   return function(req, res, next) {
     var authHeader = req.get('Authorization');
 
+    if(_.isEmpty(authHeader)) {
+      return next(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN));
+    }
+
     // auth exist
-    if(!_.isNil(authHeader)) {
-      var splits = authHeader.split(' ');
+    var splits = authHeader.split(' ');
 
-      // invalid authentication
-      if(splits.length !== 2 || splits[0] !== config.AUTHORIZATION_TYPE) {
-        return next(new errors.AuthenticationRequiredError('Invalid authorization header'));
-      }
+    // invalid authentication
+    if(splits.length !== 2 || splits[0] !== config.AUTHORIZATION_TYPE) {
+      return next(new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN));
+    }
 
-      // get auth token
-      var token = splits[1];
-      async.waterfall([
-        function(cb) {
-          // decode jwt token to userid
-          AuthService.decode(token, cb);
-        },
-        function(id, cb) {
-          // get user by id
-          UserService.read(id, cb);
+    // get auth token
+    var token = splits[1];
+    return authHelper.decode(token)
+      .then(function(decoded) {
+        // get cached object from cache
+        if(!decoded) {
+          throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
         }
-      ], function(err, user) {
-        // internal error
-        if(err) {
-          return next(new errors.AuthenticationRequiredError(err));
+        return cacheHelper.get(decoded.userId)
+          .then(function(data) {
+            if(!data) {
+              return [false, decoded];
+            }
+            return [true, data];
+          });
+      })
+      .spread(function(found, data) {
+        if(!found) {
+          return userService.findById(data.userId)
+            .then(function(user) {
+              // no user found
+              var role = null;
+              if(!user) {
+                throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
+              }
+
+              // assign arbitary role
+              if(user.Brand) {
+                role = config.ROLE.BRAND;
+              }
+              else if(user.Influencer) {
+                role = config.ROLE.INFLUENCER;
+              }
+              else {
+                role = config.ROLE.ADMIN;
+              }
+              return {user: user, role: role};
+            });
         }
-        // no user
-        if(!user) {
-          return next(new errors.AuthenticationRequiredError(err));
-        }
-        // check roles
+        return data;
+      })
+      .then(function(data) {
+        // no roles
         if(!_.isNil(roles)) {
-          if(_.isString(roles) && user.role !== roles) {
-            // wrong role
-            return next(new errors.AuthenticationRequiredError(err));
-          } else if(_.isArray(roles) && !_.includes(roles, user.role)) {
-            // wrong role
-            return next(new errors.AuthenticationRequiredError(err));
-          } else {
-            // no roles?
-            return next(new errors.HttpStatusError(httpStatus.INTERNAL_SERVER_ERROR, 'role not found'));
+          // array of roles (OR condition)
+          if(_.isArray(roles) && roles.length > 0 && !_.includes(roles, data.role)){
+            // not role
+            throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_PERMISSION);
           }
         }
-        req.user = user; // pass user forward
+        // cannot find user
+        if(!data.user) {
+          throw new errors.HttpStatusError(httpStatus.UNAUTHORIZED, config.ERROR.NO_TOKEN);
+        }
+        // put onto req for next usage
+        req.user = data.user;
+        req.role = data.role;
         return next();
-      });
-    } else {
-      // no auth header
-      return next(new errors.AuthenticationRequiredError('Required authorization header'));
-    }
+      })
+      .catch(next);
   };
 };

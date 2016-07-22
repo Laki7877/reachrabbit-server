@@ -1,5 +1,5 @@
 {
   "AUTHORIZATION_TYPE": "JWT",
   "EMAIL_CONFIRMATION_BRAND_URL": "http://xhancer-c.herokuapp.com/brand#/confirm",
-  "EMAIL_CONFIRMATION_INF_URL": "http://xhancer-c.herokuapp.com/inf#/confirm"
+  "EMAIL_CONFIRMATION_INFLUENCER_URL": "http://xhancer-c.herokuapp.com/influencer#/confirm"
 }

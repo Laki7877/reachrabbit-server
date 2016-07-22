@@ -1,5 +1,23 @@
 {
   "AUTHORIZATION_TYPE": "JWT",
   "EMAIL_CONFIRMATION_BRAND_URL": "http://localhost:8080/brand#/confirm",
-  "EMAIL_CONFIRMATION_INF_URL": "http://localhost:8080/inf#/confirm"
+  "EMAIL_CONFIRMATION_INFLUENCER_URL": "http://localhost:8080/influencer#/confirm",
+  "ROLE": {
+    "BRAND": "brand",
+    "INFLUENCER": "influencer",
+    "ADMIN": "admin"
+  },
+  "FACEBOOK_APP_VERSION": "2.6",
+  "ERROR": {
+  	"USER_NOT_FOUND": "",
+  	"WRONG_EMAIL_PASSWORD": "ล็อกอินไม่ผ่าน",
+  	"NO_TOKEN": "",
+  	"NO_PERMISSION": ""
+  },
+  "ADMIN": {
+    "USER_ID": "b23f49b3-7803-489e-931e-37a0ba1a90b6"
+  },
+  "PAYMENT": {
+    "FEE": 0.2
+  }
 }

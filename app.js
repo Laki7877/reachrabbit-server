@@ -8,19 +8,19 @@
 'use strict';
 
 // set process.env from .env
-// require('dotenv').config();
+require('dotenv-extended').load();
 
 
 // set default config folder
 process.env.NODE_CONFIG_DIR = './api/config';
 
+
 // global variables
 global._          = require('lodash'); // your best friend
-global.async      = require('async'); // async lib
+global.async      = require('async-q'); // async lib
 global.errors     = require('common-errors'); // handle error object
 global.httpStatus = require('http-status'); // access http status by name
 global.CJSON      = require('circular-json'); // handle circular json
-global.winston    = require('winston'); // console logging module
 
 // app modules
 var app         = require('express')(),

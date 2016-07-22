@@ -12,7 +12,7 @@
 ### Mail Service Usage
 
 ```
-var M = require('../services/MailService.js');
+var M = require('../services/mailService.js');
 M.send('tony@stark.com', 'Welcome to Project X', 'email_confirmation', {name: 'Tony Stark'})
 .then(function(){
     //done

@@ -27,7 +27,7 @@
     // with different skill levels.
 
     "bitwise"       : true,     // Prohibit bitwise operators (&, |, ^, etc.).
-    "camelcase"     : true,     // Enforce the use of camelcase or uppercase variable naming
+    "camelcase"     : false,     // Enforce the use of camelcase or uppercase variable naming
     "curly"         : false,     // Require {} for every new block or scope.
     "eqeqeq"        : true,     // Require triple equals i.e. `===`.
     "forin"         : true,     // Tolerate `for in` loops without `hasOwnPrototype`.
@@ -122,7 +122,8 @@
         "it",
         "describe",
         "beforeEach",
-        "afterEach"
+        "afterEach",
+        "assert"
     ],
     "globals": {
         "_": true,

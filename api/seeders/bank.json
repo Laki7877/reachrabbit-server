@@ -1,0 +1,184 @@
+[
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "002",
+            "bankName": "ธนาคารกรุงเทพ จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "004",
+            "bankName": "ธนาคารกสิกรไทย จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "005",
+            "bankName": "ธนาคารเอบีเอ็น แอมโร เอ็น.วี."
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "006",
+            "bankName": "ธนาคารกรุงไทย จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "007",
+            "bankName": "ธนาคารสแตนดาร์ดชาร์เตอร์ด"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "008",
+            "bankName": "ธนาคารเชสแมนแฮตตัน"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "010",
+            "bankName": "ธนาคารแห่งโตเกียว-มิตซูบิชิ"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "011",
+            "bankName": "ธนาคารทหารไทย จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "012",
+            "bankName": "ธนาคารไทยทนุ จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "013",
+            "bankName": "ธนาคารมหานคร จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "014",
+            "bankName": "ธนาคารไทยพาณิชย์ จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "015",
+            "bankName": "ธนาคารนครหลวงไทย จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "017",
+            "bankName": "ธนาคารซิตี้แบงค์"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "018",
+            "bankName": "ธนาคารซากุระ"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "019",
+            "bankName": "ธนาคารรัตนสิน"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "020",
+            "bankName": "ธนาคารนครธน จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "021",
+            "bankName": "ธนาคารศรีนคร จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "022",
+            "bankName": "ธนาคารสหธนาคาร จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "024",
+            "bankName": "ธนาคารเอเชีย จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "025",
+            "bankName": "ธนาคารกรุงศรีอยุธยา จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "026",
+            "bankName": "ธนาคารสากลพาณิชย์จีน"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "027",
+            "bankName": "ธนาคารแห่งอเมริกา"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "030",
+            "bankName": "ธนาคารออมสิน จำกัด (มหาชน)"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "031",
+            "bankName": "ธนาคารฮ่องกงและเซี่ยงไฮ้แบงกิ้งคอร์ปอเรชั่น ธนาคารที่เป็นสมาชิกในเดือนพฤษภาคม 2540"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "032",
+            "bankName": "ธนาคารดอยซ์แบงค์"
+        }
+    },
+    {
+        "model": "Bank",
+        "data": {
+            "bankId": "033",
+            "bankName": "ธนาคารอาคารสงเคราะห์ สาขาธนาคารพาณิชย์ในต่างประเทศ"
+        }
+    }
+]

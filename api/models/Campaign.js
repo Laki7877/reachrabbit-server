@@ -1,22 +1,34 @@
-/**
- * Campaign model
- *
- * @author     Poon Wu <poon.wuthi@gmail.com>
- * @since      0.0.2
- */
+/* jshint indent: 2 */
 'use strict';
-
 module.exports = function(sequelize, DataTypes) {
-  var Campaign = sequelize.define('Campaign', {
-    id: {
+  var Campaign = sequelize.define('campaign', {
+    campaignId: {
       type: DataTypes.UUID,
+      allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    title: DataTypes.STRING,
+    brandId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'Brand',
+        key: 'brandId'
+      }
+    },
+    categoryId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'Category',
+        key: 'categoryId'
+      }
+    },
+    title: {
+      type: DataTypes.STRING
+    },
     description: {
-      type: DataTypes.TEXT,
-      length: 'long'
+      type: DataTypes.TEXT
     },
     proposalDeadline: {
       type: DataTypes.DATE
@@ -24,36 +36,62 @@ module.exports = function(sequelize, DataTypes) {
     submissionDeadline: {
       type: DataTypes.DATE
     },
-    status: DataTypes.ENUM('draft', 'open', 'production', 'complete')
+    status: {
+      type: DataTypes.ENUM('draft', 'open', 'production','payment pending', 'wait for confirm', 'complete')
+    },
+    budget: {
+      type: DataTypes.ENUM('500-1,000', '1,000-5,000', '5,000-10,000', '10,000+')
+    },
+    createdBy: {
+      type: DataTypes.STRING
+    },
+    updatedBy: {
+      type: DataTypes.STRING
+    }
   }, {
+    tableName: 'Campaign',
+    paranoid: true,
     classMethods: {
       associate: function(models) {
-        // brand owner
-        Campaign.belongsTo(models.User, {
-          foreignKey: 'ownerId'
+        // owner
+        Campaign.belongsTo(models.Brand, {
+          foreignKey: 'brandId'
         });
 
-        // application
-        Campaign.belongsToMany(models.User, {
-          foreignKey: 'campaignId',
-          otherKey: 'userId',
-          scope: {
-            role: 'inf'
-          },
-          through: models.CampaignApplication
+        // category of campaign
+        Campaign.belongsTo(models.Category, {
+          foreignKey: 'categoryId'
         });
 
-        // submission
-        Campaign.belongsToMany(models.User, {
-          foreignKey: 'campaignId',
-          otherKey: 'userId',
-          scope: {
-            role: 'inf'
-          },
-          through: models.CampaignSubmission
+        // social media channels
+        Campaign.belongsToMany(models.Media, {
+          through: models.CampaignMedia,
+          foreignKey: 'campaignId'
+        });
+
+        // resources related to this campaign
+        Campaign.belongsToMany(models.Resource, {
+          through: models.CampaignResource,
+          foreignKey: 'campaignId'
+        });
+
+        // payment referred to this campaign
+        Campaign.hasMany(models.PaymentTransaction, {
+          foreignKey: 'campaignId'
+        });
+
+        // campaign proposal
+        Campaign.hasMany(models.CampaignProposal, {
+          foreignKey: 'campaignId'
+        });
+
+        // campaign submission
+        Campaign.hasMany(models.CampaignSubmission, {
+          foreignKey: 'campaignId'
         });
       }
     }
   });
+
   return Campaign;
 };

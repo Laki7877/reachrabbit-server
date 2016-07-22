@@ -9,19 +9,10 @@
 var fs        = require('fs'),
     path      = require('path'),
     Sequelize = require('sequelize'),
-    _         = require('lodash'),
     basename  = path.basename(module.filename),
     db        = {},
-    uri       = '',
-    opts      = {};
-
-// test environment
-if(process.env.NODE_ENV === 'test') {
-  uri = process.env.DB_CONNECTION_URI_TEST;
-  opts.logging = false;
-} else {
-  uri = process.env.DB_CONNECTION_URI;
-}
+    uri       = process.env.DB_CONNECTION_URI,
+    opts      = { logging: false };
 
 // create sequelize object
 var sequelize = new Sequelize(uri, opts);
@@ -34,7 +25,7 @@ fs.readdirSync(__dirname)
   .forEach(function(file) {
     // import models
     var model = sequelize['import'](path.join(__dirname, file));
-    db[model.name] = model;
+    db[model.tableName] = model;
   });
 
 // associate models (one-to-one, one-to-many, etc.)

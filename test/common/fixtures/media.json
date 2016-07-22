@@ -1,0 +1,26 @@
+[
+  {
+    "model": "Media",
+    "data": {
+      "mediaId": "facebook",
+      "mediaName": "Facebook",
+      "isActive": true
+    }
+  },
+  {
+    "model": "Media",
+    "data": {
+      "mediaId": "google",
+      "mediaName": "YouTube",
+      "isActive": true
+    }
+  },
+  {
+    "model": "Media",
+    "data": {
+      "mediaId": "instagram",
+      "mediaName": "Instagram",
+      "isActive": true
+    }
+  }
+]

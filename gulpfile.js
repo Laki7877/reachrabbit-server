@@ -6,15 +6,15 @@
  */
 'use strict';
 
-require('dotenv').config();
+require('dotenv-extended').load();
 
 var _       = require('lodash'),
-  async     = require('async'),
   fs        = require('fs'),
   args      = require('yargs').argv,
   gulp      = require('gulp-help')(require('gulp')),
   guppy     = require('git-guppy')(gulp),
   path      = require('path'),
+  fixtures  = require('sequelize-fixtures'),
   _exec     = require('child_process').exec,
   plugins   = require('gulp-load-plugins')({
       pattern: ['gulp-*', 'gulp.*'],
@@ -66,23 +66,30 @@ gulp.task('pre-commit', 'Git hook pre-commit', ['lint']);
 
 // pre test
 gulp.task('pre-test', 'Setup pretest routine', function() {
-  return gulp.src(['api/**/*.js'])
+  // test mode
+  process.env.NODE_ENV = 'test';
+
+  return gulp.src(['api/**/*.js',
+                  '!api/controllers/defaultController.js',
+                  '!api/controllers/testController.js'])
     .pipe(plugins.istanbul())
     .pipe(plugins.istanbul.hookRequire());
 });
 
 // test
-gulp.task('test', 'Run mocha test API', function() {
+gulp.task('test', 'Run mocha test API', ['pre-test'], function() {
   var opts = {
     reporter: 'mocha-better-spec-reporter',
     timeout: 60000,
+    bail: true,
     require: ['./test/common/init.js']
   };
+
   return gulp.src(['test/**/*.spec.js'])
     .pipe(plugins.mocha(opts))
-    //.pipe(plugins.istanbul.writeReports())
-    //.pipe(plugins.istanbul.enforceThresholds({thresholds: {global: 90}}))
-    .once('error', function() {
+    .pipe(plugins.istanbul.writeReports())
+    .pipe(plugins.istanbul.enforceThresholds({thresholds: {global: 90}}))
+    .once('error', function(err) {
       process.exit(1);
     })
     .once('end', function() {
@@ -104,74 +111,24 @@ gulp.task('db:migrate:create', 'Create migration file', seqExecTask, {
   }
 });
 
-gulp.task('db:seed', 'Run specified seed', seqExecTask);
-gulp.task('db:seed:all', 'Run every seeder', seqExecTask);
-gulp.task('db:seed:undo', 'Delete data from the database', seqExecTask);
-gulp.task('db:seed:undo:all', 'Delete data from the database', seqExecTask);
-
-// create model using our own migration file
-gulp.task('model:create', 'Generate model', function(done) {
-  var migrationPath = './api/migrations';
-  async.waterfall([
-    // call to sequelize model creation
-    function(cb) {
-      seqExec('model:create', cb);
-    },
-    // remove sequelize migration file (we don't need theirs)
-    function(stdout, stderr, cb) {
-      // delete native migration file
-      var toBeDeleted = null;
-      fs.readdir('./api/migrations', function(err, list) {
-        if(err) {
-          return cb(err);
-        }
-
-        // get latest created file
-        _.forEach(list, function(f) {
-          if(_.isNil(toBeDeleted)) {
-            toBeDeleted = f;
-          } else if(fs.statSync(path.resolve(migrationPath, toBeDeleted)).ctime.getTime() > fs.statSync(path.resolve(migrationPath, f)).ctime.getTime()) {
-            toBeDeleted = f;
-          }
-        });
-
-        if(toBeDeleted === null) {
-          return cb(null);
-        }
-
-        // delete it
-        fs.unlink(path.resolve(migrationPath, toBeDeleted), cb);
-      });
-    },
-    // add our own version of migration file
-    function(cb) {
-      createMigrationFiles(cb);
-    }
-  ], done);
-}, {
-  aliases: ['model:generate'],
-  options: {
-    attributes: 'Model attributes in string form i.e, "username:string, phone:integer"',
-    name: 'Model name'
-  }
-});
-
 gulp.task('db:sync', 'Sync all tables to sequelize models', function() {
-  return db.sequelize.sync();
+  return db.sequelize.sync({ force: true })
+    .then(function() {
+      return fixtures.loadFile('api/seeders/**/*.json', db);
+    })
+    .then(function() {
+      return fixtures.loadFile('api/seeders/**/*.js', db);
+    });
 });
 
 gulp.task('db:drop', 'Drop all tables', function() {
   return db.sequelize.drop({cascade: true});
 });
 
-// depreciated
-gulp.task('migration:default', false, function(done) {
-  createMigrationFiles(done);
-}, {
-  options: {
-    name: 'Model name'
-  }
+gulp.task('db:seed', 'Seed all table', function() {
+  return fixtures.loadFile('api/seeders/**/*.json', db);
 });
+
 
 /***************************************************
  * Application

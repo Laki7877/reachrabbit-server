@@ -2,7 +2,7 @@
   {
     "model": "User",
     "data": {
-      "email": "tester@gmail.com",
+      "email": "test2@test.com",
       "password": "test1234"
     }
   }
