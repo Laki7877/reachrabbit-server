@@ -47,6 +47,10 @@ module.exports = {
       return result.reload();
     })
     .then(function(result) {
+      return result.get({plain: true});
+    })
+    .then(function(result) {
+      console.log(result);
       return res.send(result);
     })
     .catch(next);

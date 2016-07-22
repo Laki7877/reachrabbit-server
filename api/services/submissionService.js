@@ -51,6 +51,8 @@ module.exports = {
       }, {
         model: Resource,
         as: 'proof'
+      },{
+        model: Resource
       }]
     });
   },
@@ -140,8 +142,9 @@ module.exports = {
       // update submission to posted
       return submission.update({ status: 'posted' }, { transaction: t })
         .then(function(instance) {
+          console.log(instance);
           // set proofs
-          return instance.setProofs(_.map(values, 'resourceId'), {transaction: t})
+          return instance.setProof(_.map(values, 'resourceId'), {transaction: t})
           .then(function() {
             return instance;
           });
