@@ -568,9 +568,6 @@ module.exports = {
   },
   listOpenInfluencer: function(criteria, influencerId) {
     var opts = {
-      where: {
-        status: 'open'
-      },
       include: [
       {
         model: CampaignProposal,
@@ -590,12 +587,14 @@ module.exports = {
         required: false
       }],
       where: {
-        '$campaignProposals.proposalId$': null
+        '$campaignProposals.proposalId$': null,
+        status: 'open'
       }
     };
 
     //opts.where.status = 'open';
     //_.merge(opts, criteria);
+    // _.merge(opts, criteria);
 
     return Campaign.count(opts)
     .then(function(count) {
