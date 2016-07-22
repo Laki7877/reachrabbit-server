@@ -220,7 +220,7 @@ describe('PUT ' + path + '/:id', function() {
     description: 'hi'
   };
   it('should update campaign', function(done) {
-    api.put('/campaigns')
+    api.put('/campaigns/' + id)
       .send(campaign)
       .set('Authorization', helpers.brandToken)
       .expect(200)
