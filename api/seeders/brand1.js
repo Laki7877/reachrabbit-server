@@ -64,11 +64,10 @@ module.exports = [
       "category": {
         "categoryName": "Lifestyle"
       },
-      "media": {
+      "media": [{
         "mediaId": "facebook"
-      },
-      "resources":[
-      {
+      }],
+      "resources":[{
         "resourceId": "07ac9a84-f137-6b7e-b27a-240e1701b6c4"
       }],
       "createdBy": "user1@test.com",
@@ -106,9 +105,9 @@ module.exports = [
       "proposalDeadline": moment().add(1, 'hours').format(),
       "submissionDeadline": moment().add(2, 'hours').format(),
       "status": "open",
-      "media": {
+      "media": [{
         "mediaId": "instagram"
-      },
+      }],
       "category": {
         "categoryName": "Food"
       },
