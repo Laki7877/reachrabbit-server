@@ -33,9 +33,6 @@ module.exports = {
       return campaignService.readyToPay(req.params.campaignId, req.user.brand.brandId, t);
     })
     .then(function(result) {
-      return result.reload();
-    })
-    .then(function(result) {
       return res.send(result);
     })
     .catch(next);
