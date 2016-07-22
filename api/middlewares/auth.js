@@ -68,6 +68,9 @@ module.exports = function() {
               else if(user.Influencer) {
                 role = config.ROLE.INFLUENCER;
               }
+              else {
+                role = config.ROLE.ADMIN;
+              }
               return {user: user, role: role};
             });
         }
