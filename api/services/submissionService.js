@@ -66,8 +66,14 @@ module.exports = {
         include: [User]
       }, {
         model: Campaign,
-        include: [CampaignSubmission]
-      }]
+        include: [{
+          model: CampaignProposal,
+          include: [CampaignSubmission]
+        }]
+      }],
+      order: [
+        [Campaign, CampaignProposal, CampaignSubmission, 'createdAt', 'DESC']
+      ]
     })
     .then(function(submission) {
       if(!submission) {
@@ -115,12 +121,11 @@ module.exports = {
             })
             .then(function(campaign) {
               var i = true;
-              console.log(campaign.campaignSubmissions);
-              _.forEach(campaign.campaignSubmissions, function(e) {
-                i = i && (e.status === 'paid');
+              _.forEach(campaign.campaignProposals, function(e) {
+                if(e.campaignSubmissions.length > 0) {
+                  i = i && (e[0].status === 'paid');
+                }
               });
-
-              console.log(i);
 
               if(i) {
                 return campaign.update({status: 'complete'})
