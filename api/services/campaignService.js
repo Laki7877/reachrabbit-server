@@ -27,8 +27,7 @@ var db = require('../models'),
 // eagerload for campaign search
 var include = [{
   model: CampaignSubmission,
-  order: 'createdAt DESC',
-  include: [{
+  include: [{model: Resource},{
     model: Influencer,
     include: {
       model: User,
@@ -43,7 +42,7 @@ var include = [{
 }, {
   model: CampaignProposal,
   include: [{
-          model: Resource
+     model: Resource
   },{
     model: Influencer,
     include: [{
@@ -55,8 +54,7 @@ var include = [{
         }
       ]
     }]
-  }],
-  order: 'createdAt DESC'
+  }]
 }, {
   model: Media
 }, {
@@ -131,13 +129,14 @@ module.exports = {
         where: {
           campaignId: campaignId
         },
-        order: [ CampaignProposal, 'createdAt', 'DESC' ]
+        order: [[ CampaignProposal, 'createdAt', 'DESC' ]]
       })
       .then(function(campaign) {
         if(!campaign) {
           throw new Error('campaign not found');
         }
 
+        // console.log(campaign);
         if(campaign.campaignProposals.length <= 0) {
           throw new Error('you havent propose yet!');
         }
@@ -152,7 +151,7 @@ module.exports = {
           data.influencerId = influencerId;
           data.proposalId = campaign.campaignProposals[0].proposalId;
 
-          return CampaignSubmission.create(data, {transaction: t })
+          return CampaignSubmission.create(data, {include: [Resource], transaction: t })
             .then(function(instance) {
               if(resources) {
                 return instance.setResources(_.map(resources, 'resourceId'), {transaction: t})
@@ -257,12 +256,10 @@ module.exports = {
         model: Influencer,
         include: [{
           model: CampaignSubmission,
-          where: {
-            campaignId: campaignId
-          },
-          include: [Resource, {
+          include: [{ model: Resource}, {
             model: Campaign,
             where: {
+              campaignId: campaignId,
               brandId: brandId
             },
             required: true
@@ -272,11 +269,11 @@ module.exports = {
         required: true
       }],
       order: [
-        [ CampaignProposal, 'createdAt', 'DESC' ]
+        [ Influencer, CampaignSubmission, 'createdAt', 'DESC' ]
       ]
     };
 
-    _.merge(opts, criteria);
+    // _.merge(opts, criteria);
 
     return User.findAndCountAll(opts);
   },
@@ -302,13 +299,10 @@ module.exports = {
           required: true
         }],
         required: true
-      }],
-      order: [
-        [ CampaignProposal, 'createdAt', 'DESC' ]
-      ]
+      }]
     };
 
-    _.merge(opts, criteria);
+    // _.merge(opts, criteria);
 
     return User.findAndCountAll(opts);
   },
@@ -331,15 +325,12 @@ module.exports = {
         throw new Error('submission not found');
       }
 
-      if(submission.status !== 'wait for review') {
-        throw new Error('not in approvable status');
-      }
+      // if(values.status === 'need revision') {
+      //   values = _.pick(values, ['status', 'comment']);
+      // } else {
+      //   values = _.pick(values, ['status', 'comment']);
+      // }
 
-      if(values.status === 'need revision') {
-        values = _.pick(values, ['status', 'comment']);
-      } else {
-        values = _.pick(values, ['status']);
-      }
       return submission.update(values, {transaction: t});
     });
   },
@@ -720,7 +711,10 @@ module.exports = {
 
       var include = [{
         model: CampaignSubmission,
-        order: 'createdAt DESC'
+        order: 'createdAt DESC',
+        include: [{
+          model: Resource
+        }]
       }, {
         model: CampaignProposal,
         where: {
