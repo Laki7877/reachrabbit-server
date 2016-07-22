@@ -81,7 +81,7 @@ module.exports = function() {
   router.put('/campaigns/:campaignId/proposals/:proposalId', auth('brand'), $.campaignController.updateProposal); //done
   router.put('/campaigns/:campaignId/submissions/:submissionId', auth('brand'), $.campaignController.updateSubmission); //done
 
-  router.post('/campaigns/:campaignId/transactions/confirm', auth('admin'), $.campaignController.confirmCampaignPayment); //done
+  router.post('/campaigns/:campaignId/transactions/confirm', auth(), $.campaignController.confirmCampaignPayment); //done
   router.post('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.readyToPayForCampaign); //done
   router.put('/campaigns/:campaignId/transactions', auth('brand'), $.campaignController.payForCampaign); //done
 
@@ -93,7 +93,7 @@ module.exports = function() {
   router.get('/submissions', auth(), $.submissionController.listSubmission);
   router.get('/submissions/:submissionId', auth(), $.submissionController.getSubmission);
   router.post('/submissions/:submissionId/proofs', auth('influencer'), $.submissionController.createSubmissionProof);
-  router.put('/submissions/:submissionId/proofs', auth('admin'), $.submissionController.confirmSubmissionProof);
+  router.put('/submissions/:submissionId/proofs', auth(), $.submissionController.confirmSubmissionProof);
 
   /*********************************
    * Payment

@@ -9,6 +9,7 @@
 var db = require('../models'),
   Promise = require('bluebird'),
   moment = require('moment'),
+  config = require('config'),
   validate = require('jsonschema').validate,
   sequelize = db.sequelize,
   User = db.User,
@@ -24,10 +25,12 @@ var db = require('../models'),
 module.exports = {
   list: function(criteria) {
     var opts = {
+      include: [{
+        model: Resource,
+        as: 'proof'
+      }],
       where: {}
     };
-
-    opts.where.status = criteria.status;
 
     _.extend(opts, criteria);
 
@@ -61,6 +64,9 @@ module.exports = {
       include: [CampaignProposal, {
         model: Influencer,
         include: [User]
+      }, {
+        model: Campaign,
+        include: [CampaignSubmission]
       }]
     })
     .then(function(submission) {
@@ -68,15 +74,7 @@ module.exports = {
         throw new Error('no submission found');
       }
 
-      if(submission.status !== 'posted') {
-        throw new Error('is not posted yet');
-      }
-
-      if(!submission.campaignProposal) {
-        throw new Error('no proposal?');
-      }
-
-      values.reference = values.reference || autogen();
+      values.reference = values.reference || 'test';
 
       return submission.update({ status: 'paid' })
         .then(function(instance) {
@@ -106,9 +104,31 @@ module.exports = {
             amount: instance.campaignProposal.proposePrice * config.PAYMENT.FEE
           };
 
+          var payments = [];
           return PaymentTransaction.bulkCreate([transactionPayment, feePayment], { transaction: t })
             .then(function(instances) {
+              payments = instances;
               return instances;
+            })
+            .then(function(instances) {
+              return submission.campaign.reload();
+            })
+            .then(function(campaign) {
+              var i = true;
+              console.log(campaign.campaignSubmissions);
+              _.forEach(campaign.campaignSubmissions, function(e) {
+                i = i && (e.status === 'paid');
+              });
+
+              console.log(i);
+
+              if(i) {
+                return campaign.update({status: 'complete'})
+                  .then(function() {
+                    return payments;
+                  });
+              }
+              return payments;
             });
         });
     });

@@ -42,7 +42,7 @@ module.exports = {
   confirmSubmissionProof: function(req, res, next) {
     var data = req.body;
     sequelize.transaction(function(t) {
-      return submissionService.confirmSubmissionAndPay(data, req.params.submissionId, t);
+      return submissionService.confirmSubmissionProofAndPay(data, req.params.submissionId, t);
     })
     .then(function(result) {
       return res.send(result);

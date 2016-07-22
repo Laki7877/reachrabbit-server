@@ -107,15 +107,8 @@ module.exports = {
       }]
     })
     .then(function(campaign) {
-      if(campaign.paymentTransaction.length <= 0) {
-        throw new Error('payment not found');
-      }
-
       var promises = [];
-      _.forEach(campaign.paymentTransaction, function(payment) {
-        if(payment.status === 'complete') {
-          throw new Error('payment already confirmed?');
-        }
+      _.forEach(campaign.paymentTransactions, function(payment) {
         promises.push(payment.update({status: 'complete'}, {transaction: t}));
       });
 
@@ -631,7 +624,6 @@ module.exports = {
         include: [User]
       }, {
         model: Media,
-        where: {},
         required: false
       }],
       order: [

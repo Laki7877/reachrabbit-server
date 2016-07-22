@@ -96,7 +96,7 @@ module.exports = {
         if(user.brand || user.influencer) {
           throw new errors.HttpStatusError(httpStatus.BAD_REQUEST, config.ERROR.WRONG_EMAIL_PASSWORD);
         } else {
-          return userService.createToken(user, config.ROLE.BRAND, true);
+          return userService.createToken(user, config.ROLE.ADMIN, true);
         }
       })
       // send
