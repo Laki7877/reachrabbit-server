@@ -1,3 +1,0 @@
---reporter mocha-better-spec-reporter
---require ./test/common/init.js
---bail

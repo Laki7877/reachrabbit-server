@@ -1,9 +1,0 @@
-[
-  {
-    "model": "User",
-    "data": {
-      "email": "test2@test.com",
-      "password": "test1234"
-    }
-  }
-]
