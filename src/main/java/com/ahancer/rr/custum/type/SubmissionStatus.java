@@ -1,14 +1,15 @@
 package com.ahancer.rr.custum.type;
 
-public enum ProposalStatus {
+public enum SubmissionStatus {
+	WaitForSubmission("Wait for Submission"),
 	WaitForReview("Wait for Review"),
 	NeedRevision("Need Revision"),
-	Reject("Reject"),
-	Approve("Approve");
-	
+	WaitForPost("Wait for Post"),
+	Posted("Posted");
+
 	private String displayName;
 
-	ProposalStatus(String displayName) {
+	SubmissionStatus(String displayName) {
 		this.displayName = displayName;
 	}
 
