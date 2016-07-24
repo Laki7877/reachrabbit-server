@@ -20,12 +20,16 @@ import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custum.type.ProposalStatus;
 
-@Entity(name="campaignSubmission")
-public class CampaignSubmission {
-
+@Entity(name="campaignSubmissionRevision")
+public class CampaignSubmissionRevision {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long submissionId;
+	private Long revisionlId;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="submissionId",nullable=false)
+	private CampaignSubmission submission;
 	
 	@Column(name="title",length=255)
 	private String title;
@@ -41,7 +45,7 @@ public class CampaignSubmission {
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 			name="CampaignSubmissionResource",
-			joinColumns=@JoinColumn(name="submissionId", referencedColumnName="submissionId"),
+			joinColumns=@JoinColumn(name="revisionlId", referencedColumnName="revisionlId"),
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
 	private List<Resource> resources;
 	
@@ -64,16 +68,24 @@ public class CampaignSubmission {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 	
-	public CampaignSubmission() {
+	public CampaignSubmissionRevision() {
 		
 	}
 
-	public Long getSubmissionId() {
-		return submissionId;
+	public Long getRevisionlId() {
+		return revisionlId;
 	}
 
-	public void setSubmissionId(Long submissionId) {
-		this.submissionId = submissionId;
+	public void setRevisionlId(Long revisionlId) {
+		this.revisionlId = revisionlId;
+	}
+
+	public CampaignSubmission getSubmission() {
+		return submission;
+	}
+
+	public void setSubmission(CampaignSubmission submission) {
+		this.submission = submission;
 	}
 
 	public String getTitle() {
@@ -155,5 +167,5 @@ public class CampaignSubmission {
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
-	
+
 }
