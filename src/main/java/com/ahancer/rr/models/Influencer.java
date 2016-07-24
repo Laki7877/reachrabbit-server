@@ -40,12 +40,19 @@ public class Influencer {
 	@Column(name="about",length=255)
 	private String about;
 
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 			name="InfluencerMedia",
 			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
 	private List<Media> media;
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(
+			name="InfluencerCategory",
+			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
+			inverseJoinColumns=@JoinColumn(name="categoryId", referencedColumnName="categoryId"))
+	private List<Category> categories;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date createdAt;
@@ -105,6 +112,22 @@ public class Influencer {
 
 	public void setAbout(String about) {
 		this.about = about;
+	}
+
+	public List<Media> getMedia() {
+		return media;
+	}
+
+	public void setMedia(List<Media> media) {
+		this.media = media;
+	}
+
+	public List<Category> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<Category> categories) {
+		this.categories = categories;
 	}
 
 	public Date getCreatedAt() {
