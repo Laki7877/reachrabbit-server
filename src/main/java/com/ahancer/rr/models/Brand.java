@@ -27,17 +27,20 @@ public class Brand {
 	@Column(name="brandName",length=255)
 	private String brandName;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdAt;
+	
 	@Column(name="createdBy")
-	public Long createdBy;
+	private Long createdBy;
 	
 	@Column(name="updatedBy")
-	public Long updatedBy;
+	private Long updatedBy;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date updatedAt;
+	private Date updatedAt;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date deletedAt;
+	private Date deletedAt;
 	
 	
 
@@ -100,7 +103,13 @@ public class Brand {
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
-	
-	
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 	
 }

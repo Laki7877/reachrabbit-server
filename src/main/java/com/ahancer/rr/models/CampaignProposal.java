@@ -18,95 +18,87 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ahancer.rr.custum.type.CampaignStatus;
+import com.ahancer.rr.custum.type.ProposalStatus;
 
-@Entity(name="campaign")
-public class Campaign {
-
+@Entity(name="campaignProposal")
+public class CampaignProposal {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long campaignId;
-
+	private Long proposalId;
+	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="brandId",nullable=false)
-	private Brand brand;
-
+	@JoinColumn(name="influencerId",nullable=false)
+	private Influencer influencer;
+	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="categoryId",nullable=false)
-	private Category category;
-
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(
-			name="CampaignMedia",
-			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
-			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
-	private List<Media> media;
-
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(
-			name="CampaignResource",
-			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
-			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
-	private List<Resource> resources;
-
+	@JoinColumn(name="campaignId",nullable=false)
+	private Influencer campaign;
+	
 	@Column(name="title",length=255)
 	private String title;
-
+	
 	@Column(name="description",length=255)
 	private String description;
-
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date proposalDeadline;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date submissionDeadline;
-
+	
+	@Column(name="comment",length=255)
+	private String comment;
+	
+	
+	@Column(name="proposePrice",scale=10,precision=3)
+	private Double proposePrice;
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(
+			name="CampaignProposalResource",
+			joinColumns=@JoinColumn(name="proposalId", referencedColumnName="proposalId"),
+			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
+	private List<Resource> resources;
+	
+	@Column(name="isSelected",length=255)
+	private Boolean isSelected;
+	
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
-	private CampaignStatus status;
-
+	private ProposalStatus status;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
-
+	
 	@Column(name="createdBy")
 	private Long createdBy;
-
+	
 	@Column(name="updatedBy")
 	private Long updatedBy;
-
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
-
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 
-	public Campaign() {
-
+	public Long getProposalId() {
+		return proposalId;
 	}
 
-	public Long getCampaignId() {
-		return campaignId;
+	public void setProposalId(Long proposalId) {
+		this.proposalId = proposalId;
 	}
 
-	public void setCampaignId(Long campaignId) {
-		this.campaignId = campaignId;
+	public Influencer getInfluencer() {
+		return influencer;
 	}
 
-	public Brand getBrand() {
-		return brand;
+	public void setInfluencer(Influencer influencer) {
+		this.influencer = influencer;
 	}
 
-	public void setBrand(Brand brand) {
-		this.brand = brand;
+	public Influencer getCampaign() {
+		return campaign;
 	}
 
-	public Category getCategory() {
-		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
+	public void setCampaign(Influencer campaign) {
+		this.campaign = campaign;
 	}
 
 	public String getTitle() {
@@ -125,20 +117,36 @@ public class Campaign {
 		this.description = description;
 	}
 
-	public Date getProposalDeadline() {
-		return proposalDeadline;
+	public String getComment() {
+		return comment;
 	}
 
-	public void setProposalDeadline(Date proposalDeadline) {
-		this.proposalDeadline = proposalDeadline;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
-	public Date getSubmissionDeadline() {
-		return submissionDeadline;
+	public Double getProposePrice() {
+		return proposePrice;
 	}
 
-	public void setSubmissionDeadline(Date submissionDeadline) {
-		this.submissionDeadline = submissionDeadline;
+	public void setProposePrice(Double proposePrice) {
+		this.proposePrice = proposePrice;
+	}
+
+	public Boolean getIsSelected() {
+		return isSelected;
+	}
+
+	public void setIsSelected(Boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+
+	public ProposalStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ProposalStatus status) {
+		this.status = status;
 	}
 
 	public Date getCreatedAt() {
@@ -180,6 +188,5 @@ public class Campaign {
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
-
-
+	
 }

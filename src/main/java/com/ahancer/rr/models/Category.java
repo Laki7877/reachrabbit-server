@@ -13,13 +13,14 @@ public class Category {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long categoryId;
 	
-	
-	@Column(name="categoryName",length=255)
+	@Column(name="categoryName",length=255,nullable=false)
 	private String categoryName;
 	
-	@Column(name="isActive")
-	private boolean isActive;
+	@Column(name="isActive",nullable=false)
+	private Boolean isActive;
 	
-	
+	public Category() {
+		isActive = true;
+	}
 
 }

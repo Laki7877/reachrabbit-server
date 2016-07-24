@@ -6,68 +6,85 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ahancer.rr.custum.type.ResourceType;
+import com.ahancer.rr.custum.type.PaymentStatus;
 
-@Entity(name="resource")
-public class Resource {
-
+@Entity(name="payment")
+public class Payment {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long resourceId;
-
-	@Column(name="resourcePath",length=255)
-	private String resourcePath;
-
+	private Long paymentId;
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="userId",nullable=false)
+	private User user;
+	
+	@Column(name="amount",scale=10,precision=3,nullable=false)
+	private Double amount;
+	
+	
+	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
-	private ResourceType resourceType;
-
+	private PaymentStatus status;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
-	
+
 	@Column(name="createdBy")
 	private Long createdBy;
-	
+
 	@Column(name="updatedBy")
 	private Long updatedBy;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
-
-	public Resource() {
-
+	
+	public Payment() {
+		
 	}
 
-	public Long getResourceId() {
-		return resourceId;
+	public Long getPaymentId() {
+		return paymentId;
 	}
 
-	public void setResourceId(Long resourceId) {
-		this.resourceId = resourceId;
+	public void setPaymentId(Long paymentId) {
+		this.paymentId = paymentId;
 	}
 
-	public String getResourcePath() {
-		return resourcePath;
+	public User getUser() {
+		return user;
 	}
 
-	public void setResourcePath(String resourcePath) {
-		this.resourcePath = resourcePath;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public ResourceType getResourceType() {
-		return resourceType;
+	public Double getAmount() {
+		return amount;
 	}
 
-	public void setResourceType(ResourceType resourceType) {
-		this.resourceType = resourceType;
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public PaymentStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PaymentStatus status) {
+		this.status = status;
 	}
 
 	public Date getCreatedAt() {
@@ -109,7 +126,7 @@ public class Resource {
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
+	
+	
 
 }
-
-

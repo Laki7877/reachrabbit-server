@@ -55,19 +55,19 @@ public class Influencer {
 	private List<Category> categories;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date createdAt;
-
+	private Date createdAt;
+	
 	@Column(name="createdBy")
-	public Long createdBy;
-
+	private Long createdBy;
+	
 	@Column(name="updatedBy")
-	public Long updatedBy;
-
+	private Long updatedBy;
+	
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date updatedAt;
-
+	private Date updatedAt;
+	
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date deletedAt;
+	private Date deletedAt;
 
 
 	public Influencer() {
