@@ -18,7 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ahancer.rr.custum.type.CampaignStatus;
+import com.ahancer.rr.custom.type.CampaignStatus;
 
 @Entity(name="campaign")
 public class Campaign {

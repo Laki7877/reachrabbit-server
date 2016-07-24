@@ -18,7 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ahancer.rr.custum.type.Gender;
+import com.ahancer.rr.custom.type.Gender;
 
 @Entity(name="influencer")
 public class Influencer {

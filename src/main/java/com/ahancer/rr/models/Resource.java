@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ahancer.rr.custum.type.ResourceType;
+import com.ahancer.rr.custom.type.ResourceType;
 
 @Entity(name="resource")
 public class Resource {

@@ -15,7 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ahancer.rr.custum.type.PaymentStatus;
+import com.ahancer.rr.custom.type.PaymentStatus;
 
 @Entity(name="payment")
 public class Payment {
