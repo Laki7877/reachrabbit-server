@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.ahancer.rr.custom.type.Role;
 
 @Entity(name="user")
 public class User {
@@ -29,6 +33,10 @@ public class User {
 
 	@Column(name="password",length=255)
 	private String password;
+	
+	@Column(name="role", length=20)
+	@Enumerated(EnumType.STRING)
+	private Role role;
 
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="profilePictureId")
@@ -40,7 +48,6 @@ public class User {
 	
 	@Column(name="bankAccount",length=255)
 	private String bankAccount;
-
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
@@ -92,7 +99,15 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	
+	public Role getRole() {
+		return role;
+	}
+	
+	public void setRole(Role role) {
+		this.role = role;
+	}
+	
 	public Resource getProfilePicture() {
 		return profilePicture;
 	}

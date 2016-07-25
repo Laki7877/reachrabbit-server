@@ -31,7 +31,6 @@ public class Payment {
 	@Column(name="amount",scale=10,precision=3,nullable=false)
 	private Double amount;
 	
-	
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
 	private PaymentStatus status;
