@@ -13,7 +13,7 @@ import com.ahancer.rr.models.User;
 
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
 	@Autowired
