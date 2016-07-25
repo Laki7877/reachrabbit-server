@@ -19,7 +19,7 @@ public class UserController {
 	@Autowired
 	private UserDao userDao;
 
-	@RequestMapping(value="/create",method=RequestMethod.POST)
+	@RequestMapping(value="",method=RequestMethod.POST)
 	@ResponseBody
 	public String CreateUser(@RequestBody User user) {
 		try {
