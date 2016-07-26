@@ -1,7 +1,5 @@
 package com.ahancer.rr.exception;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 
 public class ResponseException extends Exception {

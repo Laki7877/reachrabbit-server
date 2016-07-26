@@ -26,6 +26,9 @@ public class AuthenticationFilter implements Filter {
 
 	@Value("${reachrabbit.token.header}")
 	private String tokenHeader;
+	
+	@Value("${reachrabbit.attribute.user}")
+	private String userAttribute;
 
 	@Autowired
 	private JwtUtil jwt;
@@ -47,6 +50,7 @@ public class AuthenticationFilter implements Filter {
 				Long userId = jwt.getUserId(token);
 				User user = authenticationService.getUserById(userId);
 				if(null != user) {
+					request.setAttribute(userAttribute, user);
 					chain.doFilter(req, res);
 				} else {
 					response.sendError(401);
