@@ -17,6 +17,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity(name="user")
 public class User {
@@ -31,6 +34,7 @@ public class User {
 	@Column(name="email",length=255)
 	private String email;
 
+	@JsonIgnore
 	@Column(name="password",length=255)
 	private String password;
 	
@@ -49,18 +53,23 @@ public class User {
 	@Column(name="bankAccount",length=255)
 	private String bankAccount;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 	
+	@JsonIgnore
 	@Column(name="createdBy")
 	private Long createdBy;
 	
+	@JsonIgnore
 	@Column(name="updatedBy")
 	private Long updatedBy;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 
