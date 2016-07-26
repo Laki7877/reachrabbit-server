@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.utils.EncryptionUtil;
 
 
 @Controller
@@ -22,6 +23,7 @@ public class UserController {
 	@RequestMapping(value="",method=RequestMethod.POST)
 	@ResponseBody
 	public String CreateUser(@RequestBody User user) {
+		
 		try {
 			userDao.save(user);
 		}

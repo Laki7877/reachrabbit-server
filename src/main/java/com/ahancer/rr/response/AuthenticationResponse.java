@@ -7,7 +7,7 @@ public class AuthenticationResponse implements Serializable {
 	private static final long serialVersionUID = 3588938921062154848L;
 	private String token;
 
-	public AuthenticationResponse() {
+	private AuthenticationResponse() {
 		super();
 	}
 
