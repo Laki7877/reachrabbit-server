@@ -18,8 +18,6 @@ import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity(name="user")
 public class User {

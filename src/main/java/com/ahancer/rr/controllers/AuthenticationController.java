@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,7 @@ public class AuthenticationController {
 	private JwtUtil jwt;
 	
 	@RequestMapping(value = "/login" ,method = RequestMethod.POST)
-	public ResponseEntity<?> brandAuthenticationRequest(@RequestBody AuthenticationRequest authenticationRequest, Device device) 
+	public ResponseEntity<?> brandAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest, Device device) 
 			throws Exception {
 		
 		User user = authenticationService.brandAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword());
