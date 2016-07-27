@@ -1,5 +1,6 @@
 package com.ahancer.rr.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,8 +15,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity(name="brand")
-public class Brand {
+public class Brand implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6103774649322540379L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long bankId;

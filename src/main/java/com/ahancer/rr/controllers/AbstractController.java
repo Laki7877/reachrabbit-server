@@ -14,8 +14,11 @@ public abstract class AbstractController {
 	@Autowired
 	private HttpServletRequest request;
 	
-	@Value("${reachrabbit.attribute.user}")
+	@Value("${reachrabbit.request.attribute.user}")
 	private String userAttribute;
+	
+	@Value("${reachrabbit.request.attribute.token}")
+	private String tokenAttribute;
 	
 	final public User getUserRequest() { 
 		Object user = request.getAttribute(userAttribute);
@@ -24,5 +27,10 @@ public abstract class AbstractController {
 		} else {
 			return null;
 		}
+	}
+	
+	final public String getTokenRequest() {
+		Object token = request.getAttribute(tokenAttribute);
+		return (String)token;
 	}
 }

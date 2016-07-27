@@ -1,11 +1,18 @@
 package com.ahancer.rr.models;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity(name="bank")
-public class Bank {
+public class Bank implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4625248350260494348L;
 
 	@Id
 	@Column(columnDefinition="CHAR(3)")

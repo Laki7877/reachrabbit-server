@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.services.AuthenticationService;
+import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.JwtUtil;
 
 @Component
@@ -26,9 +27,15 @@ public class AuthenticationFilter implements Filter {
 
 	@Value("${reachrabbit.token.header}")
 	private String tokenHeader;
-	
-	@Value("${reachrabbit.attribute.user}")
+
+	@Value("${reachrabbit.request.attribute.user}")
 	private String userAttribute;
+	
+	@Value("${reachrabbit.request.attribute.token}")
+	private String tokenAttribute;
+
+	@Value("${reachrabbit.cache.userrequest}")
+	private String userRequestCache;
 
 	@Autowired
 	private JwtUtil jwt;
@@ -47,10 +54,14 @@ public class AuthenticationFilter implements Filter {
 		} else {
 			try {
 				String token = request.getHeader(tokenHeader);
-				Long userId = jwt.getUserId(token);
-				User user = authenticationService.getUserById(userId);
+				User user = (User) CacheUtil.getCacheObject(userRequestCache, token);
+				if(null == user) {
+					Long userId = jwt.getUserId(token);
+					user = authenticationService.getUserById(userId);
+				}
 				if(null != user) {
 					request.setAttribute(userAttribute, user);
+					request.setAttribute(tokenAttribute, token);
 					chain.doFilter(req, res);
 				} else {
 					response.sendError(401);
@@ -60,12 +71,12 @@ public class AuthenticationFilter implements Filter {
 			}
 		}
 	}
-	
+
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 
 	}
-	
+
 	@Override
 	public void destroy() {
 

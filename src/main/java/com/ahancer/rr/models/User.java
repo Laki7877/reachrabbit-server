@@ -1,5 +1,6 @@
 package com.ahancer.rr.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -20,7 +21,12 @@ import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="user")
-public class User {
+public class User implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8851171178921502214L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
