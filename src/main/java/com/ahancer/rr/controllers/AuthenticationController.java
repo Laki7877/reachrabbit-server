@@ -35,7 +35,7 @@ public class AuthenticationController {
 		
 		User user = authenticationService.brandAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 		if(null == user) {
-			throw new ResponseException("Unauthorize",HttpStatus.UNAUTHORIZED);
+			throw new ResponseException("error.unauthorize",HttpStatus.UNAUTHORIZED);
 		}else {
 			String token = jwt.generateToken(user.getUserId());
 			AuthenticationResponse response = new AuthenticationResponse(token);

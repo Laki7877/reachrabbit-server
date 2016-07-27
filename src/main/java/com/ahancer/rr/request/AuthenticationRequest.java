@@ -11,12 +11,12 @@ public class AuthenticationRequest implements Serializable {
 
 	private static final long serialVersionUID = -1109021554580568494L;
 	
-	@NotNull(message="email is requeird")
-	@Size(min=3,max=255,message="email should be between 3 to 255 characters")
-	@Email(message="email is invalid")
+	@NotNull(message="error.email.require")
+	@Size(min=3,max=255,message="error.email.length")
+	@Email(message="error.email.invalid")
 	private String email;
 	
-	@NotNull
+	@NotNull(message="error.password.require")
 	private String password;
 
 	public AuthenticationRequest() {
