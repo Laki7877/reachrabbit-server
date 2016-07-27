@@ -1,38 +1,66 @@
 package com.ahancer.rr.filter;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.models.User;
 
 @Component
-@Order(3)
-public class RoleFilter implements Filter {
+@Order(4)
+public class RoleFilter implements HandlerInterceptor {
+
+	@Value("${reachrabbit.attribute.user}")
+	private String userAttribute;
 
 	@Override
-	public void destroy() {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		HandlerMethod handlerMethod = (HandlerMethod) handler;
+		com.ahancer.rr.annotations.Role role = handlerMethod.getMethodAnnotation(com.ahancer.rr.annotations.Role.class);
+		
+		if(role != null) {
+			User user = (User) request.getAttribute(userAttribute);
+			if(role.value().length == 0) {
+				// Check with all roles
+				Role[] roles = Role.values();
+				if(ArrayUtils.contains(roles, user.getRole())) {
+					return true; 
+				}
+			} else if(ArrayUtils.contains(role.value(), user.getRole())) {
+				// found role
+				return true;
+			}
+		} else {
+			// no annotation, so just pass on
+			return true;
+		}
+		
+		// Some authentication error by role
+		response.sendError(401);
+		return false;
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-			throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		chain.doFilter(req, res);
-	}
-
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 }
