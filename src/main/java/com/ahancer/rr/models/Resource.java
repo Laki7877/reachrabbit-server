@@ -1,5 +1,6 @@
 package com.ahancer.rr.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,7 +16,12 @@ import javax.persistence.TemporalType;
 import com.ahancer.rr.custom.type.ResourceType;
 
 @Entity(name="resource")
-public class Resource {
+public class Resource implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8947832737382539230L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

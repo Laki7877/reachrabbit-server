@@ -2,7 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>com.ahancer.rr</groupId>
 	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -106,8 +105,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId><!--$NO-MVN-MAN-VER$-->
-			<version>${hibernate-validator.version}</version>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -139,6 +138,22 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson-annotations.version}</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
+		<!-- Spring caching framework inside this -->
+		
+
+		<!-- Support for Ehcache and others -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>4.1.4.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>2.10.0</version>
+		</dependency>
+
 
 	</dependencies>
 

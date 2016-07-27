@@ -1,5 +1,6 @@
 package com.ahancer.rr.models;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,12 @@ import javax.persistence.TemporalType;
 import com.ahancer.rr.custom.type.Gender;
 
 @Entity(name="influencer")
-public class Influencer {
+public class Influencer implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2725911649000100273L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

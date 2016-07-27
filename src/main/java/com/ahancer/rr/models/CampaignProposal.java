@@ -1,5 +1,6 @@
 package com.ahancer.rr.models;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -21,8 +22,13 @@ import javax.persistence.TemporalType;
 import com.ahancer.rr.custom.type.ProposalStatus;
 
 @Entity(name="campaignProposal")
-public class CampaignProposal {
+public class CampaignProposal implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2295333503977165543L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long proposalId;
