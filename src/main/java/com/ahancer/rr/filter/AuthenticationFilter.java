@@ -49,7 +49,14 @@ public class AuthenticationFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) res;
 		HttpServletRequest request = (HttpServletRequest)req;
 		String path = request.getRequestURI();
-		if (path.startsWith("/auth/") || path.startsWith("/webjar") || path.startsWith("/images") || path.startsWith("/swagger-ui") || path.startsWith("/swagger-resources") || path.startsWith("/configuration") || path.startsWith("/v2")) {
+		if (path.startsWith("/auth/") 
+				|| path.startsWith("/signup")
+				|| path.startsWith("/webjar") 
+				|| path.startsWith("/images") 
+				|| path.startsWith("/swagger-ui") 
+				|| path.startsWith("/swagger-resources") 
+				|| path.startsWith("/configuration") 
+				|| path.startsWith("/v2")) {
 			chain.doFilter(req, res);
 		} else {
 			try {

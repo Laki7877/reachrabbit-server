@@ -2,6 +2,7 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,12 +14,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity(name="user")
 public class User implements Serializable{
@@ -34,7 +37,7 @@ public class User implements Serializable{
 	@Column(name="email",length=255)
 	private String email;
 
-	@JsonIgnore
+	
 	@Column(name="password",length=255)
 	private String password;
 	
@@ -72,7 +75,10 @@ public class User implements Serializable{
 	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
+	
 
+	@OneToMany(mappedBy="user")
+	private List<Brand> brands;
 
 	public User() {
 	}
@@ -93,10 +99,12 @@ public class User implements Serializable{
 		this.name = name;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
 
+	@JsonProperty("password")
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -180,7 +188,14 @@ public class User implements Serializable{
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
-	
+
+	public List<Brand> getBrands() {
+		return brands;
+	}
+
+	public void setBrands(List<Brand> brands) {
+		this.brands = brands;
+	}
 	
 
 }
