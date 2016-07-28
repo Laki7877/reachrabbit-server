@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="influencer")
 public class Influencer implements Serializable{
@@ -60,18 +61,23 @@ public class Influencer implements Serializable{
 			inverseJoinColumns=@JoinColumn(name="categoryId", referencedColumnName="categoryId"))
 	private List<Category> categories;
 
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 	
+	@JsonIgnore
 	@Column(name="createdBy")
 	private Long createdBy;
 	
+	@JsonIgnore
 	@Column(name="updatedBy")
 	private Long updatedBy;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 

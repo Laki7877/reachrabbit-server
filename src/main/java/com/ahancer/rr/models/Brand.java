@@ -14,6 +14,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name="brand")
 public class Brand implements Serializable{
 	
@@ -33,18 +35,23 @@ public class Brand implements Serializable{
 	@Column(name="brandName",length=255)
 	private String brandName;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 	
+	@JsonIgnore
 	@Column(name="createdBy")
 	private Long createdBy;
 	
+	@JsonIgnore
 	@Column(name="updatedBy")
 	private Long updatedBy;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 	
