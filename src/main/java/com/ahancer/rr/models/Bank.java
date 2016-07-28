@@ -18,7 +18,7 @@ public class Bank implements Serializable{
 	@Column(columnDefinition="CHAR(3)")
 	private String bankId;
 	
-	@Column(name="createdBy",length=255)
+	@Column(name="bankName",length=255)
 	private String bankName;
 	
 

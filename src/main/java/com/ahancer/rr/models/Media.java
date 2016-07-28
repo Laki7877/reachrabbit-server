@@ -17,22 +17,33 @@ public class Media implements Serializable{
 	private static final long serialVersionUID = -7106394972853750323L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long mediaId;
+	@Column(length=255)
+	private String mediaId;
 
 	@Column(name="mediaName",length=255)
 	private String mediaName;
+	
+	@Column(name="isActive")
+	private boolean isActive;
 
 	public Media() {
 
 	}
 
-	public Long getMediaId() {
+	public String getMediaId() {
 		return mediaId;
 	}
 
-	public void setMediaId(Long mediaId) {
+	public void setMediaId(String mediaId) {
 		this.mediaId = mediaId;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getMediaName() {
