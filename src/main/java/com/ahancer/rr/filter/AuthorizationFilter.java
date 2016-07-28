@@ -16,7 +16,7 @@ import com.ahancer.rr.models.User;
 
 @Component
 @Order(4)
-public class RoleFilter implements HandlerInterceptor {
+public class AuthorizationFilter implements HandlerInterceptor {
 
 	@Value("${reachrabbit.attribute.user}")
 	private String userAttribute;
@@ -25,7 +25,7 @@ public class RoleFilter implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
-		com.ahancer.rr.annotations.Role role = handlerMethod.getMethodAnnotation(com.ahancer.rr.annotations.Role.class);
+		com.ahancer.rr.annotations.Authorization role = handlerMethod.getMethodAnnotation(com.ahancer.rr.annotations.Authorization.class);
 		
 		if(role != null) {
 			User user = (User) request.getAttribute(userAttribute);

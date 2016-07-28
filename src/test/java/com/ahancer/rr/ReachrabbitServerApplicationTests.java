@@ -12,5 +12,4 @@ public class ReachrabbitServerApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }
