@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="campaignProposalRevision")
 public class CampaignProposalRevision implements Serializable{
@@ -73,18 +74,23 @@ public class CampaignProposalRevision implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private ProposalStatus status;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 	
+	@JsonIgnore
 	@Column(name="createdBy")
 	private Long createdBy;
 	
+	@JsonIgnore
 	@Column(name="updatedBy")
 	private Long updatedBy;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 

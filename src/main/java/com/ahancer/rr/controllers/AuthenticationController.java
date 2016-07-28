@@ -10,6 +10,7 @@ import org.springframework.mobile.device.Device;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.exception.ResponseException;
@@ -36,7 +37,8 @@ public class AuthenticationController {
 	private JwtUtil jwt;
 	
 	@RequestMapping(value = "/login" ,method = RequestMethod.POST)
-	public ResponseEntity<?> brandAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest, Device device) 
+	@ResponseBody
+	public AuthenticationResponse brandAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest, Device device) 
 			throws Exception {
 		User user = authenticationService.brandAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 		if(null == user) {
@@ -45,7 +47,7 @@ public class AuthenticationController {
 			String token = jwt.generateToken(user.getUserId());
 			CacheUtil.putCacheObject(userRequestCache, token, user);
 			AuthenticationResponse response = new AuthenticationResponse(token);
-			return ResponseEntity.ok(response);
+			return response;
 		}
 	}
 	

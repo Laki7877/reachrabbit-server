@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.PaymentStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="payment")
 public class Payment implements Serializable{
@@ -41,18 +42,23 @@ public class Payment implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private PaymentStatus status;
 	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
-
+	
+	@JsonIgnore
 	@Column(name="createdBy")
 	private Long createdBy;
-
+	
+	@JsonIgnore
 	@Column(name="updatedBy")
 	private Long updatedBy;
-
+	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
-
+	
+	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 	
