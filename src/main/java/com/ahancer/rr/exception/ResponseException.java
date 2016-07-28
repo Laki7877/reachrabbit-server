@@ -15,7 +15,7 @@ public class ResponseException extends Exception {
 	}
 	
 	public ResponseException(){
-		this("Internal error",HttpStatus.INTERNAL_SERVER_ERROR); 
+		this("error.internal.server",HttpStatus.INTERNAL_SERVER_ERROR); 
 	}
 	
 	public ResponseException(String message){

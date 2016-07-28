@@ -1,34 +1,49 @@
 package com.ahancer.rr.services;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.AuthenticationResponse;
+import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
+import com.ahancer.rr.utils.JwtUtil;
 
-
-@Component
+@Service
+@Transactional(rollbackFor=Exception.class)
 public class AuthenticationService {
 
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private EncryptionUtil encrypt;
 	
+	@Autowired
+	private JwtUtil jwt;
 	
-	public User brandAuthentication(String email, String password) {
+	@Value("${reachrabbit.cache.userrequest}")
+	private String userRequestCache;
+
+	public AuthenticationResponse brandAuthentication(String email, String password) {
 		User user = userDao.findByEmail(email);
 		if(null == user || !encrypt.checkPassword(password, user.getPassword())){
 			return null;
 		} else {
-			return user;
+			String token = jwt.generateToken(user.getUserId());
+			CacheUtil.putCacheObject(userRequestCache, token, user);
+			AuthenticationResponse response = new AuthenticationResponse(token);
+			return response;
 		}
 	}
-	
+
 	public User getUserById(Long userId) {
 		return userDao.findOne(userId);
 	}
-	
+
 }
