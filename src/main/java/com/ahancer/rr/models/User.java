@@ -22,10 +22,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="user")
 public class User implements Serializable{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8851171178921502214L;
 
 	@Id
