@@ -11,6 +11,7 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.AuthenticationResponse;
+import com.ahancer.rr.response.OAuthenticationResponse;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
 import com.ahancer.rr.utils.JwtUtil;
@@ -41,6 +42,10 @@ public class AuthenticationService {
 			AuthenticationResponse response = new AuthenticationResponse(token);
 			return response;
 		}
+	}
+	
+	public AuthenticationResponse influencerAuthentication(String provider, String id) {
+		return null;
 	}
 
 	public User getUserById(Long userId) {

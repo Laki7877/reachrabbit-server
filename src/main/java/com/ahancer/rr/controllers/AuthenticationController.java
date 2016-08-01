@@ -12,16 +12,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.request.AuthenticationRequest;
+import com.ahancer.rr.request.OAuthenticationRequest;
 import com.ahancer.rr.response.AuthenticationResponse;
+import com.ahancer.rr.response.OAuthenticationResponse;
 import com.ahancer.rr.services.AuthenticationService;
+import com.ahancer.rr.services.FacebookService;
+import com.ahancer.rr.services.InfluencerService;
 
 
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
+	@Autowired
+	private InfluencerService influencerService;
+	
+	@Autowired
+	private FacebookService facebookService;
 	
 	@Autowired
 	private AuthenticationService authenticationService;
@@ -39,8 +47,18 @@ public class AuthenticationController {
 	}
 	
 	@RequestMapping(value = "/facebook" ,method = RequestMethod.POST)
-	public ResponseEntity<?> facebookAuthenticationRequest(Device device) {
-		return ResponseEntity.ok("");
+	public OAuthenticationResponse facebookAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest, Device device) throws ResponseException {
+		String accessToken = facebookService.getAccessToken(oauthenticationRequest.getCode());
+		facebook4j.User fbUser = facebookService.getProfile(accessToken);
+		OAuthenticationResponse authResponse = (OAuthenticationResponse)authenticationService.influencerAuthentication("facebook", fbUser.getId());
+		
+		if(authResponse == null) {
+			authResponse = new OAuthenticationResponse();
+			authResponse.setId(fbUser.getId());
+			authResponse.setName(fbUser.getName());
+			authResponse.setProvider("facebook");
+		}
+		return authResponse;
 	}
 	
 	@RequestMapping(value = "/instagram" ,method = RequestMethod.POST)
