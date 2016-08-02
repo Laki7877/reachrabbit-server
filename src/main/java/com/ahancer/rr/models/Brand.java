@@ -65,7 +65,7 @@ public class Brand implements Serializable{
 		return brandId;
 	}
 
-
+	@JsonIgnore
 	public void setBrandId(Long brandId) {
 		this.brandId = brandId;
 	}

@@ -25,6 +25,7 @@ import org.hibernate.validator.constraints.Email;
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity(name="user")
 public class User implements Serializable{
@@ -43,9 +44,8 @@ public class User implements Serializable{
 	@Column(name="email",length=255)
 	private String email;
 
-	
+	@NotNull(message="error.password.require")	
 	@Column(name="password",length=255)
-	@NotNull(message="error.password.require")
 	private String password;
 	
 	@Column(name="role", length=20)
@@ -109,6 +109,14 @@ public class User implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -116,15 +124,6 @@ public class User implements Serializable{
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
-	}
-
-	@JsonIgnore
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getEmail() {
