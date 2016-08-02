@@ -123,7 +123,6 @@ public class User implements Serializable{
 		return password;
 	}
 
-	@JsonProperty("password")
 	public void setPassword(String password) {
 		this.password = password;
 	}
