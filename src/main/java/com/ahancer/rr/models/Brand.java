@@ -10,7 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -26,9 +26,9 @@ public class Brand implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long bankId;
+	private Long brandId;
 
-	@ManyToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="userId",nullable=false)
 	private User user;
 	
@@ -55,19 +55,21 @@ public class Brand implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 	
-	
 
 	public Brand() {
 		
 	}
 
-	public Long getBankId() {
-		return bankId;
+
+	public Long getBrandId() {
+		return brandId;
 	}
 
-	public void setBankId(Long bankId) {
-		this.bankId = bankId;
+
+	public void setBrandId(Long brandId) {
+		this.brandId = brandId;
 	}
+
 
 	public User getUser() {
 		return user;

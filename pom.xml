@@ -38,8 +38,23 @@
 			<name>jcenter</name>
 			<url>https://jcenter.bintray.com/</url>
 		</repository>
+	    <repository>
+	        <id>io.spring.repo.maven.release</id>
+	        <url>http://repo.spring.io/release/</url>
+	        <snapshots><enabled>false</enabled></snapshots>
+	    </repository>
 	</repositories>
 	<dependencies>
+	  <dependency>
+	        <groupId>commons-io</groupId>
+	        <artifactId>commons-io</artifactId>
+	        <version>2.4</version>
+      </dependency>
+	  <dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-aws-context</artifactId>
+		    <version>1.1.0.RELEASE</version>
+	  </dependency> 
 		<dependency>
 		    <groupId>org.facebook4j</groupId>
 		    <artifactId>facebook4j-core</artifactId>

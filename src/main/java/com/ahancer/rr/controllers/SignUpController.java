@@ -17,7 +17,7 @@ public class SignUpController {
 	@Autowired
 	private BrandService brandService;
 	
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(value="/brand", method=RequestMethod.POST)
 	public AuthenticationResponse SignUpBrand(@RequestBody Brand brand) throws Exception {
 		String token = brandService.signUpBrand(brand);
 		AuthenticationResponse response = new AuthenticationResponse(token);

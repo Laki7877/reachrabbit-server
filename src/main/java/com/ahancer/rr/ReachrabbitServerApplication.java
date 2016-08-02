@@ -22,51 +22,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@EnableSwagger2
 @ComponentScan
 public class ReachrabbitServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ReachrabbitServerApplication.class, args);
 	}
-	@Bean
-	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.any())
-				.build()
-				.pathMapping("/")
-				.apiInfo(apiInfo())
-				.enableUrlTemplating(true);
-				//.securitySchemes(Arrays.asList(apiKey()));
-	}
-	
-	public SecurityScheme apiKey() {
-		return new ApiKey("X-Auth-Token", "X-Auth-Token", "header");
-	}
-	public ApiInfo apiInfo() {
-		return new ApiInfoBuilder()
-				.title("Reachrabbit API")
-				.description("Reaching you before you know it")
-				.version("0.0.1")
-				.license("AHA License")
-				.licenseUrl("www.ahancer.com")
-				.contact(new Contact("Laki", "www.ahancer.com", "laki7877@gmail.com"))
-				.build();
-	}
-	
-	@Bean
-	public SecurityConfiguration securityInfo() {
-		return new SecurityConfiguration("","","","reachrabbit","",ApiKeyVehicle.HEADER, "X-Auth-Token", ",");
-	}
-    @Bean
-    public UiConfiguration uiConfig() {
-	    return new UiConfiguration(
-	        null,// url
-	        "list",       // docExpansion          => none | list
-	        "alpha",      // apiSorter             => alpha
-	        "schema",     // defaultModelRendering => schema
-	        false,        // enableJsonEditor      => true | false
-	        true);        // showRequestHeaders    => true | false
-  	}
 }

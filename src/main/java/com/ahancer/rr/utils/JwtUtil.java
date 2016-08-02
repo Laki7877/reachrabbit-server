@@ -15,7 +15,6 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 @Component
 public class JwtUtil {
 	
-	
 	@Value("${reachrabbit.jwt.issuer}")
 	private String issuer;
 

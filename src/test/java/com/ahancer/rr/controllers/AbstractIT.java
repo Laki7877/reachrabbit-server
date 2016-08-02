@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.daos.BrandDao;
+import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.utils.EncryptionUtil;
@@ -25,6 +27,12 @@ public abstract class AbstractIT {
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private BrandDao brandDao;
+	
+	@Autowired
+	private InfluencerDao influencerDao;
 	
 	@Autowired
 	private EncryptionUtil encryptionUtil;
@@ -59,6 +67,8 @@ public abstract class AbstractIT {
 	
 	@After
 	public void after() {
+		influencerDao.deleteAll();
+		brandDao.deleteAll();
 		userDao.deleteAll();
 	}
 }

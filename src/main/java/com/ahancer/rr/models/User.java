@@ -2,7 +2,6 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,10 +13,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
 
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,11 +36,15 @@ public class User implements Serializable{
 	@Column(name="name",length=255)
 	private String name;
 
+	@NotNull(message="error.email.require")
+	@Size(min=3,max=255,message="error.email.length")
+	@Email(message="error.email.invalid")
 	@Column(name="email",length=255)
 	private String email;
 
 	
 	@Column(name="password",length=255)
+	@NotNull(message="error.password.require")
 	private String password;
 	
 	@Column(name="role", length=20)
@@ -55,6 +61,9 @@ public class User implements Serializable{
 	
 	@Column(name="bankAccount",length=255)
 	private String bankAccount;
+	
+	@Column(name="phoneNumber",length=255)
+	private String phoneNumber;
 	
 	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
@@ -77,16 +86,16 @@ public class User implements Serializable{
 	private Date deletedAt;
 	
 
-	@OneToMany(mappedBy="user")
-	private List<Brand> brands;
+	@OneToOne(mappedBy="user")
+	private Brand brand;
 
 	public User() {
 	}
-
+	
 	public Long getUserId() {
 		return userId;
 	}
-
+	@JsonIgnore
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
@@ -97,6 +106,14 @@ public class User implements Serializable{
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	@JsonIgnore
@@ -116,7 +133,8 @@ public class User implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
+	@JsonIgnore
 	public Role getRole() {
 		return role;
 	}
@@ -189,13 +207,12 @@ public class User implements Serializable{
 		this.deletedAt = deletedAt;
 	}
 
-	public List<Brand> getBrands() {
-		return brands;
+	public Brand getBrand() {
+		return brand;
 	}
 
-	public void setBrands(List<Brand> brands) {
-		this.brands = brands;
+	public void setBrand(Brand brand) {
+		this.brand = brand;
 	}
 	
-
 }

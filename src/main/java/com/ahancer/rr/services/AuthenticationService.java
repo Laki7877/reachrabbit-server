@@ -11,7 +11,6 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.AuthenticationResponse;
-import com.ahancer.rr.response.OAuthenticationResponse;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
 import com.ahancer.rr.utils.JwtUtil;

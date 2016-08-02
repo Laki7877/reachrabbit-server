@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BrandDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
@@ -35,6 +36,9 @@ public class BrandService {
 		User user = brand.getUser();
 		String hashPassword = encrypt.hashPassword(user.getPassword());
 		user.setPassword(hashPassword);
+		
+		//Set role
+		brand.getUser().setRole(Role.Brand);
 		
 		userDao.save(brand.getUser());
 		brandDao.save(brand);
