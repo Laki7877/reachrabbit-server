@@ -20,6 +20,7 @@ public class ResponseExceptionHandler  {
 	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> processValidationError(Exception ex) {
+		ex.printStackTrace();
 		ResponseException responseEx = null;
 		if(ex instanceof MethodArgumentNotValidException) {
 			MethodArgumentNotValidException exception = (MethodArgumentNotValidException)ex;
