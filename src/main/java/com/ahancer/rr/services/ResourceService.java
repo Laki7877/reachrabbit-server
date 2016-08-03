@@ -15,7 +15,6 @@ import com.ahancer.rr.custom.type.ResourceType;
 import com.ahancer.rr.daos.ResourceDao;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.utils.S3Util;
-import com.amazonaws.services.s3.model.PutObjectResult;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -25,6 +24,10 @@ public class ResourceService {
 	
 	@Autowired
 	private S3Util s3Util;
+	
+	public Resource getById(Long id) {
+		return resourceDao.findOne(id);
+	}
 	
 	public String generateResourceName(String filename) throws Exception {
 		//Get extension
