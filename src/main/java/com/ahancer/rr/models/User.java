@@ -3,6 +3,7 @@ package com.ahancer.rr.models;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -24,8 +26,6 @@ import org.hibernate.validator.constraints.Email;
 
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity(name="user")
 public class User implements Serializable{
@@ -88,16 +88,21 @@ public class User implements Serializable{
 	private Date deletedAt;
 	
 
-	@OneToOne(mappedBy="user")
+	@OneToOne(cascade = CascadeType.ALL,mappedBy="user")
+	@PrimaryKeyJoinColumn
 	private Brand brand;
+	
+	@OneToOne(cascade = CascadeType.ALL,mappedBy="user")
+	@PrimaryKeyJoinColumn
+	private Influencer influencer;
 
 	public User() {
 	}
-	
+
 	public Long getUserId() {
 		return userId;
 	}
-	@JsonIgnore
+
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
@@ -109,22 +114,6 @@ public class User implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
 
 	public String getEmail() {
 		return email;
@@ -134,14 +123,22 @@ public class User implements Serializable{
 		this.email = email;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public Role getRole() {
 		return role;
 	}
-	
+
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	
+
 	public Resource getProfilePicture() {
 		return profilePicture;
 	}
@@ -164,6 +161,14 @@ public class User implements Serializable{
 
 	public void setBankAccount(String bankAccount) {
 		this.bankAccount = bankAccount;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	public Date getCreatedAt() {
@@ -213,5 +218,13 @@ public class User implements Serializable{
 	public void setBrand(Brand brand) {
 		this.brand = brand;
 	}
+
+	public Influencer getInfluencer() {
+		return influencer;
+	}
+
+	public void setInfluencer(Influencer influencer) {
+		this.influencer = influencer;
+	}	
 	
 }

@@ -9,12 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,14 +28,17 @@ public class Influencer implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -2725911649000100273L;
-
+	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="influencerId",unique = true, nullable = false)
 	private Long influencerId;
 
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="userId",nullable=false)
+	@MapsId
+	@OneToOne
+    @JoinColumn(name = "influencerId")
 	private User user;
+	
+	
 
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
