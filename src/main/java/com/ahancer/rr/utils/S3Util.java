@@ -40,6 +40,10 @@ public class S3Util {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 	
+	public String getUrl(String key) {
+		return amazonS3Client.getUrl(bucket, key).toString();
+	}
+	
 	public PutObjectResult upload(String filePath, String uploadKey) throws FileNotFoundException {
 		return upload(new FileInputStream(filePath), uploadKey);
 	}
@@ -56,6 +60,8 @@ public class S3Util {
 		return putObjectResult;
 	}
 
+	
+	
 	public List<PutObjectResult> upload(MultipartFile[] multipartFiles) {
 		List<PutObjectResult> putObjectResults = new ArrayList<>();
 

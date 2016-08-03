@@ -21,7 +21,7 @@ public class UserController extends AbstractController {
 	
 	@RequestMapping(value="/{userId}",method=RequestMethod.GET)
 	@Authorization(Role.Admin)
-	public User GetOneUser(@PathVariable long userId) {
+	public User getOneUser(@PathVariable long userId) {
 		return userDao.findOne(userId);
 	}
 

@@ -16,17 +16,17 @@ import com.ahancer.rr.models.Media;
 public class DataController {
 
 	@RequestMapping(value="/media",method=RequestMethod.GET)
-	public List<Media> GetAllMedia() throws Exception{
+	public List<Media> getAllMedia() throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
 	
 	@RequestMapping(value="/categories",method=RequestMethod.GET)
-	public List<Category> GetAllCategories() throws Exception{
+	public List<Category> getAllCategories() throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
 	
 	@RequestMapping(value="/banks",method=RequestMethod.GET)
-	public List<Bank> GetAllBanks() throws Exception{
+	public List<Bank> getAllBanks() throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
 	

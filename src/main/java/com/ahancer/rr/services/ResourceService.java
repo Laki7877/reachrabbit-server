@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ahancer.rr.custom.type.ResourceType;
 import com.ahancer.rr.daos.ResourceDao;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.utils.S3Util;
@@ -26,19 +27,26 @@ public class ResourceService {
 	private S3Util s3Util;
 	
 	public String generateResourceName(String filename) throws Exception {
+		//Get extension
 		String extension = FilenameUtils.getExtension(filename);
 		
 		//Encode with md5
 		MessageDigest md5 = MessageDigest.getInstance("MD5");
 		md5.update(StandardCharsets.UTF_8.encode(filename + LocalDateTime.now().toString()));
-		return String.format("%032x", new BigInteger(1, md5.digest()));
+		
+		//{MD5}.{extension}
+		return String.format("%032x", new BigInteger(1, md5.digest())) + "." + extension;
 	}
 	
 	public Resource upload(MultipartFile multipartFile) throws Exception {
+		//Upload with generated name
+		String resourcePath = generateResourceName(multipartFile.getOriginalFilename());
+		s3Util.upload(multipartFile.getInputStream(), resourcePath);
 		
-		PutObjectResult s3Result = s3Util.upload(multipartFile.getInputStream(), generateResourceName(multipartFile.getOriginalFilename()));
+		//Save resource
 		Resource resource = new Resource();
-		
-		return null;
+		resource.setResourcePath(resourcePath);
+		resource.setResourceType(ResourceType.Binary);
+		return resourceDao.save(resource);
 	}
 }

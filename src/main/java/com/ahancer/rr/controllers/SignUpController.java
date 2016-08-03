@@ -18,7 +18,7 @@ public class SignUpController {
 	private BrandService brandService;
 	
 	@RequestMapping(value="/brand", method=RequestMethod.POST)
-	public AuthenticationResponse SignUpBrand(@RequestBody Brand brand) throws Exception {
+	public AuthenticationResponse signUpBrand(@RequestBody Brand brand) throws Exception {
 		String token = brandService.signUpBrand(brand);
 		AuthenticationResponse response = new AuthenticationResponse(token);
 		return response;

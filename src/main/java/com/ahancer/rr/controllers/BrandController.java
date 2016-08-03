@@ -23,28 +23,28 @@ public class BrandController {
 	private BrandService brandService;
 
 	@RequestMapping(method=RequestMethod.GET)
-	public List<Brand> GetAllBrand() throws Exception{
+	public List<Brand> getAllBrand() throws Exception{
 		throw new ResponseException();
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public AuthenticationResponse CreateBrand(@RequestBody Brand brand) throws ResponseException {
+	public AuthenticationResponse createBrand(@RequestBody Brand brand) throws ResponseException {
 		AuthenticationResponse authenticationResponse = new AuthenticationResponse(brandService.signUpBrand(brand));
 		return authenticationResponse;
 	}
 	
 	@RequestMapping(value="/{brandId}",method=RequestMethod.GET)
-	public Brand GetOneBrand(@PathVariable Long brandId) throws Exception{
+	public Brand getOneBrand(@PathVariable Long brandId) throws Exception{
 		throw new ResponseException();
 	}
 	
 	@RequestMapping(value="/{brandId}",method=RequestMethod.PUT)
-	public Brand UpdateBrand(@PathVariable Long brandId,@RequestBody Brand brand) throws Exception{
+	public Brand updateBrand(@PathVariable Long brandId,@RequestBody Brand brand) throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
 	
 	@RequestMapping(value="/{brandId}",method=RequestMethod.DELETE)
-	public void DeleteBrand(@PathVariable Long brandId) throws Exception{
+	public void deleteBrand(@PathVariable Long brandId) throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
 	

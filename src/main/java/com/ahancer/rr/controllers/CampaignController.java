@@ -16,27 +16,27 @@ import com.ahancer.rr.models.Campaign;
 public class CampaignController extends AbstractController{
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public List<Campaign> GetAllCampaign() throws Exception{
+	public List<Campaign> getAllCampaign() throws Exception{
 		throw new ResponseException();
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
-	public Campaign GetOneCampaign(@PathVariable Long campaignId) throws Exception{
+	public Campaign getOneCampaign(@PathVariable Long campaignId) throws Exception{
 		throw new ResponseException();
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public Campaign CreateCampaign(@RequestBody Campaign campaign) throws Exception{
+	public Campaign createCampaign(@RequestBody Campaign campaign) throws Exception{
 		throw new ResponseException();
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign UpdateCampaign(@PathVariable Long campaignId,@RequestBody Campaign campaign) throws Exception{
+	public Campaign updateCampaign(@PathVariable Long campaignId,@RequestBody Campaign campaign) throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
-	public void DeleteCampaign(@PathVariable Long campaignId) throws Exception{
+	public void deleteCampaign(@PathVariable Long campaignId) throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
 	

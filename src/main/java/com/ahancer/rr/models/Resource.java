@@ -12,11 +12,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.ahancer.rr.custom.type.ResourceType;
+import com.ahancer.rr.utils.S3Util;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity(name="resource")
+@Component
 public class Resource implements Serializable{
 
 	/**
@@ -54,8 +61,16 @@ public class Resource implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 
+	@Autowired
+	@Transient
+	private S3Util s3Util;
+	
 	public Resource() {
 
+	}
+	@JsonProperty("url")
+	public String getUrl() {
+		return s3Util.getUrl(this.resourcePath); 
 	}
 
 	public Long getResourceId() {
