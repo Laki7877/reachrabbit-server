@@ -52,11 +52,11 @@ public class User implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="profilePictureId")
 	private Resource profilePicture;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="bankId")
 	private Bank bank;
 	
@@ -88,10 +88,12 @@ public class User implements Serializable{
 	private Date deletedAt;
 	
 
+	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
 	private Brand brand;
 	
+	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
 	private Influencer influencer;
