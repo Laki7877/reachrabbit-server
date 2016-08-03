@@ -26,7 +26,7 @@ public class Brand implements Serializable{
 	@Column(name="brandId",unique = true, nullable = false)
 	private Long brandId;
 
-	@MapsId
+	@MapsId("brandId")
 	@OneToOne
     @JoinColumn(name = "brandId")
 	private User user;
