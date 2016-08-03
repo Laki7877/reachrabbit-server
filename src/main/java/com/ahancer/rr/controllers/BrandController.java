@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Brand;
-import com.ahancer.rr.request.AuthenticationRequest;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.services.BrandService;
 
@@ -34,8 +33,9 @@ public class BrandController {
 	}
 	
 	@RequestMapping(value="/{brandId}",method=RequestMethod.GET)
-	public Brand getOneBrand(@PathVariable Long brandId) throws Exception{
-		throw new ResponseException();
+	public Brand getOneBrand(@PathVariable Long brandId) throws Exception {
+		Brand brand = brandService.getBrand(brandId);
+		return brand;
 	}
 	
 	@RequestMapping(value="/{brandId}",method=RequestMethod.PUT)
