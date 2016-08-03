@@ -1,8 +1,8 @@
 package com.ahancer.rr.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
-import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.User;
@@ -21,12 +20,11 @@ import com.ahancer.rr.services.CampaignService;
 @RequestMapping("/campaigns")
 public class CampaignController extends AbstractController{
 	@Autowired
-	CampaignService campaignService;
+	private CampaignService campaignService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public List<Campaign> getAllCampaign() throws Exception{
-		
-		throw new ResponseException();
+	public Page<Campaign> getAllCampaign(PageRequest pageRequest) throws Exception{
+		return campaignService.findAllByBrand(this.getUserRequest().getBrand(), pageRequest);
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
