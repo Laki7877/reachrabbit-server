@@ -58,7 +58,7 @@ public class PageableParameterBuilderPlugin implements ParameterBuilderPlugin {
     if (type != null && Pageable.class.isAssignableFrom(type)) {
       Function<ResolvedType, ? extends ModelReference> factory =
           createModelRefFactory(context);
-
+      
       ModelReference intModel = factory.apply(resolver.resolve(Integer.TYPE));
       ModelReference stringModel = factory.apply(resolver.resolve(List.class, String.class));
 
@@ -66,16 +66,19 @@ public class PageableParameterBuilderPlugin implements ParameterBuilderPlugin {
           context.parameterBuilder()
               .parameterType("query").name("page").modelRef(intModel)
               .description("Results page you want to retrieve (0..N)")
+              .required(false)
               .build(),
           context.parameterBuilder()
               .parameterType("query").name("size").modelRef(intModel)
               .description("Number of recods per page")
+              .required(false)
               .build(),
           context.parameterBuilder()
               .parameterType("query").name("sort").modelRef(stringModel).allowMultiple(true)
               .description("Sorting criteria in the format: property(,asc|desc). "
                   + "Default sort order is ascending. "
                   + "Multiple sort criteria are supported.")
+              .required(false)
               .build());
 
       context.getOperationContext().operationBuilder().parameters(parameters);

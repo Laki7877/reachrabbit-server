@@ -2,7 +2,7 @@ package com.ahancer.rr.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public class CampaignController extends AbstractController{
 	private CampaignService campaignService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Page<Campaign> getAllCampaign(PageRequest pageRequest) throws Exception{
+	public Page<Campaign> getAllCampaign(Pageable pageRequest) throws Exception{
 		return campaignService.findAllByBrand(this.getUserRequest().getBrand(), pageRequest);
 	}
 	
