@@ -52,7 +52,7 @@ public class BrandService {
 		String hashPassword = encrypt.hashPassword(user.getPassword());
 		user.setPassword(hashPassword);
 		//Set role
-		brand.getUser().setRole(Role.Brand);
+		user.setRole(Role.Brand);
 		userDao.save(brand.getUser());
 		brandDao.save(brand);
 		String token = jwt.generateToken(user.getUserId());
