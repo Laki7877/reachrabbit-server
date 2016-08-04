@@ -50,6 +50,7 @@ public class AuthenticationFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest)req;
 		String path = request.getRequestURI();
 		
+		String method = request.getMethod().toLowerCase();
 		if (path.startsWith("/auth/") 
 				|| path.startsWith("/signup")
 				|| path.startsWith("/webjar") 
@@ -57,7 +58,8 @@ public class AuthenticationFilter implements Filter {
 				|| path.startsWith("/swagger-ui") 
 				|| path.startsWith("/swagger-resources") 
 				|| path.startsWith("/configuration") 
-				|| path.startsWith("/v2")) {
+				|| path.startsWith("/v2")
+				|| "options".equals(method)) {
 			chain.doFilter(req, res);
 		} else {
 			try {

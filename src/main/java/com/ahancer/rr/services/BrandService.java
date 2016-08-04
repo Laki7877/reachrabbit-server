@@ -39,8 +39,13 @@ public class BrandService {
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
 
-	public String signUpBrand(Brand brand) throws ResponseException {
-		User user = brand.getUser();
+	public String signUpBrand(User user) throws ResponseException {
+		
+		Brand brand = user.getBrand();
+		if(null == brand){
+			throw new ResponseException();
+		}
+		
 		//Validate duplicate Email
 		int emailCount = userDao.countByEmail(user.getEmail());
 		if(emailCount > 0) {
@@ -49,11 +54,12 @@ public class BrandService {
 		String hashPassword = encrypt.hashPassword(user.getPassword());
 		user.setPassword(hashPassword);
 		//Set role
-		brand.getUser().setRole(Role.Brand);
-		userDao.save(brand.getUser());
+		user.setRole(Role.Brand);
+		user.setBrand(null);
+		userDao.save(user);
+		brand.setBrandId(user.getUserId());
 		brandDao.save(brand);
 		String token = jwt.generateToken(user.getUserId());
-		user.setBrand(brand);
 		CacheUtil.putCacheObject(userRequestCache, token, user);
 		return token;
 	}
