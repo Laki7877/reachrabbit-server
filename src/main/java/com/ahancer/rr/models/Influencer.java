@@ -33,12 +33,11 @@ public class Influencer implements Serializable{
 	@Column(name="influencerId",unique = true, nullable = false)
 	private Long influencerId;
 
+	@JsonIgnore
 	@MapsId
 	@OneToOne
     @JoinColumn(name = "influencerId")
 	private User user;
-	
-	
 
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
