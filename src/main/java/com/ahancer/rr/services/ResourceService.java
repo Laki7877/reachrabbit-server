@@ -44,7 +44,7 @@ public class ResourceService {
 	public Resource upload(MultipartFile multipartFile) throws Exception {
 		//Upload with generated name
 		String resourcePath = generateResourceName(multipartFile.getOriginalFilename());
-		s3Util.upload(multipartFile.getInputStream(), resourcePath);
+		s3Util.upload(multipartFile, resourcePath);
 		
 		//Save resource
 		Resource resource = new Resource();

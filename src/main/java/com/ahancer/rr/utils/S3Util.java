@@ -41,23 +41,31 @@ public class S3Util {
 	private String bucket;
 	
 	public String getUrl(String key) {
-		return amazonS3Client.getUrl(bucket, key).toString();
+		String url = amazonS3Client.getResourceUrl(bucket, key);
+		return url;
 	}
 	
 	public PutObjectResult upload(String filePath, String uploadKey) throws FileNotFoundException {
 		return upload(new FileInputStream(filePath), uploadKey);
 	}
 
+	
 	public PutObjectResult upload(InputStream inputStream, String uploadKey) {
-		PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, uploadKey, inputStream, new ObjectMetadata());
-
+		return upload(inputStream, uploadKey, new ObjectMetadata());
+	}
+	public PutObjectResult upload(InputStream inputStream, String uploadKey, ObjectMetadata metaData) {
+		PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, uploadKey, inputStream, metaData);
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-
 		PutObjectResult putObjectResult = amazonS3Client.putObject(putObjectRequest);
-
 		IOUtils.closeQuietly(inputStream, null);
 
 		return putObjectResult;
+	}
+
+	public PutObjectResult upload(MultipartFile file, String uploadKey) throws IOException {
+		ObjectMetadata metaData = new ObjectMetadata();
+		metaData.setContentType(file.getContentType());
+		return upload(file.getInputStream(), uploadKey, metaData);
 	}
 
 	

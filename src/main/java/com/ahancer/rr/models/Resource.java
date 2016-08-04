@@ -68,9 +68,9 @@ public class Resource implements Serializable{
 	public Resource() {
 
 	}
-	@JsonProperty("url")
 	public String getUrl() {
-		return s3Util.getUrl(this.resourcePath); 
+		String url = s3Util.getUrl(this.getResourcePath()); 
+		return url;
 	}
 
 	public Long getResourceId() {
