@@ -41,15 +41,13 @@ public class S3Util {
 	private String bucket;
 	
 	public String getUrl(String key) {
-		String url = amazonS3Client.getResourceUrl(bucket, key);
-		return url;
+		return amazonS3Client.getResourceUrl(bucket, key);
 	}
 	
 	public PutObjectResult upload(String filePath, String uploadKey) throws FileNotFoundException {
 		return upload(new FileInputStream(filePath), uploadKey);
 	}
 
-	
 	public PutObjectResult upload(InputStream inputStream, String uploadKey) {
 		return upload(inputStream, uploadKey, new ObjectMetadata());
 	}
@@ -59,6 +57,8 @@ public class S3Util {
 		PutObjectResult putObjectResult = amazonS3Client.putObject(putObjectRequest);
 		IOUtils.closeQuietly(inputStream, null);
 
+		System.out.println(getUrl(uploadKey));
+		
 		return putObjectResult;
 	}
 
@@ -68,7 +68,9 @@ public class S3Util {
 		return upload(file.getInputStream(), uploadKey, metaData);
 	}
 
-	
+	public void delete(String key){ 
+		amazonS3Client.deleteObject(bucket, key);
+	}
 	
 	public List<PutObjectResult> upload(MultipartFile[] multipartFiles) {
 		List<PutObjectResult> putObjectResults = new ArrayList<>();

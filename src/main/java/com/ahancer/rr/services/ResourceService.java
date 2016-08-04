@@ -49,7 +49,14 @@ public class ResourceService {
 		//Save resource
 		Resource resource = new Resource();
 		resource.setResourcePath(resourcePath);
-		resource.setResourceType(ResourceType.Binary);
-		return resourceDao.save(resource);
+		
+		try {
+			Resource result = resourceDao.save(resource);
+			return result;
+		}
+		catch(Exception e) {
+			s3Util.delete(resourcePath);
+			throw e;
+		}
 	}
 }

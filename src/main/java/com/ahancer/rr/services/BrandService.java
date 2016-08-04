@@ -57,6 +57,11 @@ public class BrandService {
 		return token;
 	}
 	
+	public User updateBrandUser(Long userId, User newUser) {
+		User oldUser = userDao.findOne(userId);
+		return oldUser;
+		
+	}
 	public Brand getBrand(Long brandId) throws ResponseException {
 		Brand brand = brandDao.findOne(brandId);
 		if(null == brand){
