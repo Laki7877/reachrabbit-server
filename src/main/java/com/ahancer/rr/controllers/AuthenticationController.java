@@ -36,7 +36,7 @@ public class AuthenticationController {
 	
 	@RequestMapping(value = "/login" ,method = RequestMethod.POST)
 	@ResponseBody
-	public AuthenticationResponse brandAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest, Device device) 
+	public AuthenticationResponse brandAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
 			throws Exception {
 		AuthenticationResponse authen = authenticationService.brandAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 		if(null == authen) {
@@ -47,7 +47,7 @@ public class AuthenticationController {
 	}
 	
 	@RequestMapping(value = "/facebook" ,method = RequestMethod.POST)
-	public OAuthenticationResponse facebookAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest, Device device) throws ResponseException {
+	public OAuthenticationResponse facebookAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException {
 		String accessToken = facebookService.getAccessToken(oauthenticationRequest.getCode());
 		facebook4j.User fbUser = facebookService.getProfile(accessToken);
 		OAuthenticationResponse authResponse = (OAuthenticationResponse)authenticationService.influencerAuthentication("facebook", fbUser.getId());

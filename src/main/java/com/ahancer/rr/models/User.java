@@ -38,13 +38,13 @@ public class User implements Serializable{
 	@Column(name="name",length=255)
 	private String name;
 
-	@NotNull(message="error.email.require")
+	//@NotNull(message="error.email.require")
 	@Size(min=3,max=255,message="error.email.length")
 	@Email(message="error.email.invalid")
 	@Column(name="email",length=255)
 	private String email;
 
-	@NotNull(message="error.password.require")	
+	//@NotNull(message="error.password.require")	
 	@Column(name="password",length=255)
 	private String password;
 	
@@ -64,7 +64,7 @@ public class User implements Serializable{
 	private String bankAccount;
 	
 	@Column(name="phoneNumber",length=255)
-	@Pattern(regexp="[0-9]*", message="error.")
+	@Pattern(regexp="[0-9]*", message="error.phone")
 	private String phoneNumber;
 	
 	@JsonIgnore
@@ -91,7 +91,6 @@ public class User implements Serializable{
 	@PrimaryKeyJoinColumn
 	private Brand brand;
 	
-
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
 	private Influencer influencer;

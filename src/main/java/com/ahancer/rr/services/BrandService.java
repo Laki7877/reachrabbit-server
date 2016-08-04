@@ -2,6 +2,7 @@ package com.ahancer.rr.services;
 
 
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -59,8 +60,10 @@ public class BrandService {
 	
 	public User updateBrandUser(Long userId, User newUser) {
 		User oldUser = userDao.findOne(userId);
-		return oldUser;
-		
+		BeanUtils.copyProperties(newUser, oldUser);
+		oldUser.setUserId(userId);
+		oldUser.getBrand().setBrandId(userId);
+		return userDao.save(oldUser);
 	}
 	public Brand getBrand(Long brandId) throws ResponseException {
 		Brand brand = brandDao.findOne(brandId);

@@ -49,6 +49,7 @@ public class AuthenticationFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) res;
 		HttpServletRequest request = (HttpServletRequest)req;
 		String path = request.getRequestURI();
+		
 		if (path.startsWith("/auth/") 
 				|| path.startsWith("/signup")
 				|| path.startsWith("/webjar") 

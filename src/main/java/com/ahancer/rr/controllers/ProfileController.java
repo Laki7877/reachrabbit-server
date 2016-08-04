@@ -1,16 +1,21 @@
 package com.ahancer.rr.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.services.BrandService;
+import com.mysql.jdbc.NotImplemented;
 
 @RestController
 @RequestMapping("/profile")
 public class ProfileController extends AbstractController{
-	
+	@Autowired
+	private BrandService brandService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public User getMyProfile() {
@@ -18,7 +23,11 @@ public class ProfileController extends AbstractController{
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT)
-	public User updateProfile(@RequestBody User user) {
-		return null;
+	public User updateProfile(@RequestBody User user) throws Exception {
+		User ownUser = this.getUserRequest();
+		if(ownUser.getRole().equals(Role.Brand)) {
+			return brandService.updateBrandUser(ownUser.getUserId(), user);
+		}
+		throw new NotImplemented();
 	}
 }
