@@ -55,7 +55,7 @@ public class SwaggerConfig {
     public UiConfiguration uiConfig() {
 	    return new UiConfiguration(
 	        null,// url
-	        "list",       // docExpansion          => none | list
+	        "none",       // docExpansion          => none | list
 	        "alpha",      // apiSorter             => alpha
 	        "schema",     // defaultModelRendering => schema
 	        false,        // enableJsonEditor      => true | false
