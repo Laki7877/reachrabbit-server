@@ -38,8 +38,12 @@ public class BrandService {
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
 
-	public String signUpBrand(Brand brand) throws ResponseException {
-		User user = brand.getUser();
+	public String signUpBrand(User user) throws ResponseException {
+		
+		Brand brand = user.getBrand();
+		if(null == brand){
+			throw new ResponseException();
+		}
 		//Validate duplicate Email
 		int emailCount = userDao.countByEmail(user.getEmail());
 		if(emailCount > 0) {
