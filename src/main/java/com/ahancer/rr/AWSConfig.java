@@ -22,12 +22,12 @@ public class AWSConfig {
 	@Value("${cloud.aws.region}")
 	private String region;
 
-	//@Bean
+	@Bean
 	public BasicAWSCredentials basicAWSCredentials() {
 		return new BasicAWSCredentials(accessKey, secretKey);
 	}
 
-	//@Bean
+	@Bean
 	public AmazonS3Client amazonS3Client(AWSCredentials awsCredentials) {
 		AmazonS3Client amazonS3Client = new AmazonS3Client(awsCredentials);
 		amazonS3Client.setRegion(Region.getRegion(Regions.fromName(region)));
