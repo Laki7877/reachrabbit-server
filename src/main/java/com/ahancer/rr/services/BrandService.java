@@ -44,6 +44,7 @@ public class BrandService {
 		if(null == brand){
 			throw new ResponseException();
 		}
+		
 		//Validate duplicate Email
 		int emailCount = userDao.countByEmail(user.getEmail());
 		if(emailCount > 0) {
@@ -53,10 +54,11 @@ public class BrandService {
 		user.setPassword(hashPassword);
 		//Set role
 		user.setRole(Role.Brand);
-		userDao.save(brand.getUser());
+		user.setBrand(null);
+		userDao.save(user);
+		brand.setBrandId(user.getUserId());
 		brandDao.save(brand);
 		String token = jwt.generateToken(user.getUserId());
-		user.setBrand(brand);
 		CacheUtil.putCacheObject(userRequestCache, token, user);
 		return token;
 	}
