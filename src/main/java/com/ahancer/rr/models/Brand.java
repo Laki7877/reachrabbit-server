@@ -34,6 +34,13 @@ public class Brand implements Serializable{
 
 	@Column(name="brandName",length=255)
 	private String brandName;
+	
+	@Column(name="about",length=255)
+	private String about;
+	
+	@Column(name="website",length=255)
+	private String website;
+
 
 	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
@@ -140,4 +147,25 @@ public class Brand implements Serializable{
 		this.deletedAt = deletedAt;
 	}
 
+
+	public String getAbout() {
+		return about;
+	}
+
+
+	public void setAbout(String about) {
+		this.about = about;
+	}
+
+
+	public String getWebsite() {
+		return website;
+	}
+
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	
 }
