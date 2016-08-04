@@ -87,13 +87,11 @@ public class User implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 	
-
-	@JsonIgnore
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
 	private Brand brand;
 	
-	@JsonIgnore
+
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
 	private Influencer influencer;
