@@ -89,12 +89,12 @@ public class User implements Serializable{
 	
 
 	@JsonIgnore
-	@OneToOne(cascade = CascadeType.ALL,mappedBy="user")
+	@OneToOne(fetch=FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
 	private Brand brand;
 	
 	@JsonIgnore
-	@OneToOne(cascade = CascadeType.ALL,mappedBy="user")
+	@OneToOne(fetch=FetchType.EAGER,cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
 	private Influencer influencer;
 
