@@ -11,6 +11,10 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
+
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan
@@ -32,5 +36,11 @@ public class ReachrabbitServerApplication {
 		source.setBasenames("messages/messages");  // name of the resource bundle 
 		source.setUseCodeAsDefaultMessage(true);
 		return source;
+	}
+	
+	@Bean
+	public Module datatypeHibernateModule() {
+	  return new Hibernate5Module()
+			  .enable(Feature.FORCE_LAZY_LOADING);
 	}
 }

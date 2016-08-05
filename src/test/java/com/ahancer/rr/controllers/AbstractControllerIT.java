@@ -20,7 +20,7 @@ import io.restassured.config.LogConfig;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 
-public abstract class AbstractIT {
+public abstract class AbstractControllerIT {
 
     @Value("${server.port}") 
     private int port;

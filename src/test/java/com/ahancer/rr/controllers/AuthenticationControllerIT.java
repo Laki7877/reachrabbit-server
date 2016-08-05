@@ -14,7 +14,7 @@ import com.ahancer.rr.models.User;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
 @WebIntegrationTest
-public class AuthenticationControllerIT extends AbstractIT{
+public class AuthenticationControllerIT extends AbstractControllerIT{
 	@Test
 	public void loginWithWrongUser() {
 		User user = new User();

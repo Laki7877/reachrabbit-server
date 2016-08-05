@@ -1,7 +1,10 @@
 package com.ahancer.rr;
 
+import java.util.Date;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -29,7 +32,11 @@ public class SwaggerConfig {
 				.build()
 				.pathMapping("/")
 				.apiInfo(apiInfo())
-				.enableUrlTemplating(true);
+				.genericModelSubstitutes(ResponseEntity.class)
+	            .directModelSubstitute(java.time.LocalDate.class, java.sql.Date.class)
+	            .directModelSubstitute(java.time.ZonedDateTime.class, Date.class)
+	            .directModelSubstitute(java.time.LocalDateTime.class, Date.class)
+				.enableUrlTemplating(false);
 				//.securitySchemes(Arrays.asList(apiKey()));
 	}
 	
@@ -58,6 +65,7 @@ public class SwaggerConfig {
 	        "none",       // docExpansion          => none | list
 	        "alpha",      // apiSorter             => alpha
 	        "schema",     // defaultModelRendering => schema
+	        null, 
 	        false,        // enableJsonEditor      => true | false
 	        true);        // showRequestHeaders    => true | false
   	}

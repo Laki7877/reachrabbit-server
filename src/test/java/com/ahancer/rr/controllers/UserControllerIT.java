@@ -10,7 +10,7 @@ import com.ahancer.rr.ReachrabbitServerApplication;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
 @WebIntegrationTest
-public class UserControllerIT extends AbstractIT {
+public class UserControllerIT extends AbstractControllerIT {
 	
 	public void findUser() {
 	}

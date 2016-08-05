@@ -18,7 +18,7 @@ import com.ahancer.rr.models.User;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
 @WebIntegrationTest
-public class BrandControllerIT extends AbstractIT {
+public class BrandControllerIT extends AbstractControllerIT {
 	@Test
 	public void createBrand() {
 		User user = new User();
