@@ -29,6 +29,7 @@ overridedb.*
 *.iml
 *.ipr
 *.iws
+*.pem
 .idea
 *.jar
 .DS_Store
