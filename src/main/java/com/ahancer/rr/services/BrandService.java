@@ -92,6 +92,12 @@ public class BrandService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.brand.not.found");
 		}
 		Util.copyProperties(newUser, oldUser);
+		
+		if(newUser.getPassword() != null) {
+			String hashPassword = encrypt.hashPassword(newUser.getPassword());
+			oldUser.setPassword(hashPassword);
+				
+		}
 		oldUser.setUserId(userId);
 		oldUser.getBrand().setBrandId(userId);
 		return userDao.save(oldUser);

@@ -22,6 +22,6 @@ public class Util {
 		Set<String> set = new HashSet<String>();
 		set.addAll(Arrays.asList(ignoreProperties));
 		set.addAll(Arrays.asList(getNullPropertyNames(source)));
-		BeanUtils.copyProperties(source, target, (String[])set.toArray());
+		BeanUtils.copyProperties(source, target, set.toArray(new String[set.size()]));
 	}
 }
