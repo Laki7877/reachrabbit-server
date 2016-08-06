@@ -28,7 +28,7 @@ public class ResponseExceptionHandler  {
 			BindingResult result = exception.getBindingResult();
 			FieldError error = result.getFieldError();
 			String msg = messageSource.getMessage(error.getDefaultMessage(),null,locale);
-			responseEx = new ResponseException(msg, HttpStatus.BAD_REQUEST);
+			responseEx = new ResponseException(HttpStatus.BAD_REQUEST, msg);
 		}else if(ex instanceof ResponseException) {
 			responseEx = (ResponseException)ex;
 			String msg = messageSource.getMessage(responseEx.getMessage(),null,locale);

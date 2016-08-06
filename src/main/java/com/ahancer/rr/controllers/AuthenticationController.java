@@ -40,7 +40,7 @@ public class AuthenticationController {
 			throws Exception {
 		AuthenticationResponse authen = authenticationService.brandAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 		if(null == authen) {
-			throw new ResponseException("error.unauthorize",HttpStatus.UNAUTHORIZED);
+			throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
 		}else {
 			return authen;
 		}

@@ -2,7 +2,6 @@ package com.ahancer.rr.services;
 
 
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,6 +21,7 @@ import com.ahancer.rr.models.User;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
 import com.ahancer.rr.utils.JwtUtil;
+import com.ahancer.rr.utils.Util;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -56,7 +56,7 @@ public class BrandService {
 		//Validate duplicate Email
 		int emailCount = userDao.countByEmail(user.getEmail());
 		if(emailCount > 0) {
-			throw new ResponseException("error.email.duplicate",HttpStatus.BAD_REQUEST);
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
 		}
 		String hashPassword = encrypt.hashPassword(user.getPassword());
 		user.setPassword(hashPassword);
@@ -73,9 +73,9 @@ public class BrandService {
 		//Create campaign
 		Campaign campaign = new Campaign();
 		campaign.setBrandId(brand.getBrandId());
-		campaign.setTitle("My first campaign");
+		campaign.setTitle("Campaign แรกของคุณ");
 		campaign.setCategory(category);
-		campaign.setDescription("This is my first campaign");
+		campaign.setDescription("นี่คือคำอธิบาย");
 		campaign.setStatus(CampaignStatus.Draft);
 		campaignDao.save(campaign);
 		
@@ -85,9 +85,13 @@ public class BrandService {
 		return token;
 	}
 	
-	public User updateBrandUser(Long userId, User newUser) {
+	public User updateBrandUser(Long userId, User newUser) throws ResponseException {
 		User oldUser = userDao.findOne(userId);
-		BeanUtils.copyProperties(newUser, oldUser);
+		
+		if(oldUser == null) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.brand.not.found");
+		}
+		Util.copyProperties(newUser, oldUser);
 		oldUser.setUserId(userId);
 		oldUser.getBrand().setBrandId(userId);
 		return userDao.save(oldUser);
@@ -95,7 +99,7 @@ public class BrandService {
 	public Brand getBrand(Long brandId) throws ResponseException {
 		Brand brand = brandDao.findOne(brandId);
 		if(null == brand){
-			throw new ResponseException("error.brand.not.found",HttpStatus.BAD_REQUEST);
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.brand.not.found");
 		}
 		return brand;
 	}

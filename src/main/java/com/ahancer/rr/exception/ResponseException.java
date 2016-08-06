@@ -9,17 +9,17 @@ public class ResponseException extends Exception {
 	private String message;
 	
 	
-	public ResponseException(String message, HttpStatus statusCode){
+	public ResponseException(HttpStatus statusCode, String message){
 		this.statusCode = statusCode;
 		this.message = message;
 	}
 	
 	public ResponseException(){
-		this("error.internal.server",HttpStatus.INTERNAL_SERVER_ERROR); 
+		this(HttpStatus.INTERNAL_SERVER_ERROR,"error.internal.server"); 
 	}
 	
 	public ResponseException(String message){
-		this(message ,HttpStatus.INTERNAL_SERVER_ERROR);
+		this(HttpStatus.INTERNAL_SERVER_ERROR ,message);
 	}
 	
 	public HttpStatus getStatusCode() {

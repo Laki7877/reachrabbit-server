@@ -30,7 +30,7 @@ public class FacebookService {
 		try {
 			return facebook.getOAuthAccessToken(authorizationCode).getToken();
 		} catch(Exception e) {
-			throw new ResponseException("error.oauth.facebook.invalid", HttpStatus.BAD_REQUEST);
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.oauth.facebook.invalid");
 		}
 	}
 	
@@ -45,7 +45,7 @@ public class FacebookService {
 		try {
 			return facebook.getMe();			
 		} catch(Exception e) {
-			throw new ResponseException("error.oauth.facebook.invalid", HttpStatus.BAD_REQUEST);
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.oauth.facebook.invalid");
 		}
 	}
 }
