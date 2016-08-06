@@ -2,6 +2,8 @@ package com.ahancer.rr.services;
 
 
 
+import java.util.Calendar;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -72,6 +74,11 @@ public class BrandService {
 		
 		//Create campaign
 		Campaign campaign = new Campaign();
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, 5);
+		campaign.setSubmissionDeadline(cal.getTime());
+		campaign.setFromBudget(5000.00);
+		campaign.setToBudget(10000.00);
 		campaign.setBrandId(brand.getBrandId());
 		campaign.setTitle("Campaign แรกของคุณ");
 		campaign.setCategory(category);

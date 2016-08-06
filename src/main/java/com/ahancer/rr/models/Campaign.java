@@ -66,6 +66,12 @@ public class Campaign implements Serializable{
 
 	@Column(name="description",length=255)
 	private String description;
+	
+	@Column(name="fromBudget",scale=10,precision=3)
+	private Double fromBudget;
+	
+	@Column(name="toBudget",scale=10,precision=3)
+	private Double toBudget;
 
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -230,5 +236,22 @@ public class Campaign implements Serializable{
 		this.status = status;
 	}
 
+	public Double getFromBudget() {
+		return fromBudget;
+	}
+
+	public void setFromBudget(Double fromBudget) {
+		this.fromBudget = fromBudget;
+	}
+
+	public Double getToBudget() {
+		return toBudget;
+	}
+
+	public void setToBudget(Double toBudget) {
+		this.toBudget = toBudget;
+	}
+
+	
 
 }
