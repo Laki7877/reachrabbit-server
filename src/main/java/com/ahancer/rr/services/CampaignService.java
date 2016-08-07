@@ -11,7 +11,6 @@ import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
-import com.ahancer.rr.models.CampaignKeyword;
 import com.ahancer.rr.utils.Util;
 
 @Service
