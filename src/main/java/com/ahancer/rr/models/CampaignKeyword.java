@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,12 +30,12 @@ public class CampaignKeyword implements Serializable {
 	private String keyword;
 	
 	
-	@Column(name="campaignId")
-	private Long campaignId;
+//	@Column(name="campaignId")
+//	private Long campaignId;
 	
 	
 	@JsonIgnore
-	@MapsId("campaignId")
+	//@MapsId("campaignId")
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="campaignId", nullable = false)
 	private Campaign campaign;
@@ -61,13 +60,13 @@ public class CampaignKeyword implements Serializable {
 		this.keyword = keyword;
 	}
 
-	public Long getCampaignId() {
-		return campaignId;
-	}
-
-	public void setCampaignId(Long campaignId) {
-		this.campaignId = campaignId;
-	}
+//	public Long getCampaignId() {
+//		return campaignId;
+//	}
+//
+//	public void setCampaignId(Long campaignId) {
+//		this.campaignId = campaignId;
+//	}
 
 	public Campaign getCampaign() {
 		return campaign;
