@@ -278,6 +278,9 @@ public class Campaign implements Serializable{
 	}
 
 	public void setKeywords(List<CampaignKeyword> keywords) {
+		for(CampaignKeyword keyword : keywords) {
+			keyword.setCampaign(this);
+		}
 		this.keywords = keywords;
 	}
 
