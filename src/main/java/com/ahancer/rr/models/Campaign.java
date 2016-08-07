@@ -37,12 +37,12 @@ public class Campaign implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long campaignId;
 	
-	@Column(name="brandId", nullable = false)
+	@Column(name="brandId")
 	private Long brandId;
 
 	@MapsId("brandId")
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="brandId",nullable=false)
+	@JoinColumn(name="brandId")
 	private Brand brand;
 	
 //	@Column(name="categoryId", nullable = false)
@@ -51,7 +51,7 @@ public class Campaign implements Serializable{
 //
 //	@MapsId("categoryId")
 	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
-	@JoinColumn(name="categoryId",nullable=false)
+	@JoinColumn(name="categoryId")
 	private Category category;
 
 	@ManyToMany(fetch=FetchType.LAZY)
