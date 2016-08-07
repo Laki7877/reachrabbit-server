@@ -36,7 +36,7 @@ INSERT INTO bank (bankId,bankName) VALUES ('031','ธนาคารฮ่อง
 INSERT INTO bank (bankId,bankName) VALUES ('032','ธนาคารดอยซ์แบงค์');
 INSERT INTO bank (bankId,bankName) VALUES ('033','ธนาคารอาคารสงเคราะห์ สาขาธนาคารพาณิชย์ในต่างประเทศ');
 INSERT INTO media (mediaId,mediaName,isActive) VALUES ('facebook','Facebook',true);
-INSERT INTO media (mediaId,mediaName,isActive) VALUES ('google','YouTube',true);
+INSERT INTO media (mediaId,mediaName,isActive) VALUES ('youtube','YouTube',true);
 INSERT INTO media (mediaId,mediaName,isActive) VALUES ('instagram','Instagram',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Beauty & Fashion',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Travel',true);
@@ -52,3 +52,9 @@ INSERT INTO category (categoryName,isActive) VALUES ('Mom & Kid',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Gadget',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Educational',true);
 INSERT INTO campaign (title, description, brandId, categoryId) VALUES ('My campaign', 'This is my campaign', 2, 1);
+
+
+INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (1, 0, 1000);
+INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (2, 1001, 2000);
+INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (3, 2001, 5000);
+INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (4, 5001, 10000);
