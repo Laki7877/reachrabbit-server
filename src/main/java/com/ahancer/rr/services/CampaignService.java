@@ -19,8 +19,11 @@ public class CampaignService {
 	@Autowired
 	private CampaignDao campaignDao;
 	
+	
 	public Campaign createCampaignByBrand(Campaign campaign, Brand brand) {
-		campaign.setBrand(brand);
+		//campaign.setBrand(brand);
+		campaign.setBrandId(brand.getBrandId());
+		//campaign.setCategoryId(campaign.getCategory().getCategoryId());
 		return campaignDao.save(campaign);
 	}
 

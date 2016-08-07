@@ -15,7 +15,7 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="brand")
-public class Brand implements Serializable{
+public class Brand implements Serializable {
 
 	/**
 	 * 
