@@ -90,7 +90,7 @@ public class Campaign implements Serializable{
 	private Date submissionDeadline;
 	
 	
-	@OneToMany(mappedBy="campaign",cascade=CascadeType.PERSIST)
+	@OneToMany(mappedBy="campaign",cascade=CascadeType.ALL)
 	private List<CampaignKeyword> keywords;
 
 	@Column(name="status",length=20)
