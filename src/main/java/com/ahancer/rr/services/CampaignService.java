@@ -23,6 +23,7 @@ public class CampaignService {
 	public Campaign createCampaignByBrand(Campaign campaign, Brand brand) {
 		//campaign.setBrand(brand);
 		campaign.setBrandId(brand.getBrandId());
+		campaign.setBrand(brand);
 		//campaign.setCategoryId(campaign.getCategory().getCategoryId());
 		return campaignDao.save(campaign);
 	}
