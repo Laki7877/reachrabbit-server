@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import com.ahancer.rr.models.Campaign;
 
 @Transactional
-public interface CampaignDao extends CrudRepository<Campaign, Long>{
+public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	@Query("SELECT c from campaign c WHERE c.brandId = :brandId")
 	Page<Campaign> findAllByBrand(@Param("brandId") Long brandId, Pageable pageable);
 	

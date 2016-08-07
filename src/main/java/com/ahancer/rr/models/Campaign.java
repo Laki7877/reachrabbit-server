@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -35,15 +37,20 @@ public class Campaign implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long campaignId;
 	
-	@Column(name="brandId",unique = true, nullable = false)
+	@Column(name="brandId", nullable = false)
 	private Long brandId;
 
 	@MapsId("brandId")
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="brandId",nullable=false)
 	private Brand brand;
-
-	@ManyToOne(fetch=FetchType.LAZY)
+	
+//	@Column(name="categoryId", nullable = false)
+//	private Long categoryId;
+//	
+//
+//	@MapsId("categoryId")
+	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
 	@JoinColumn(name="categoryId",nullable=false)
 	private Category category;
 
@@ -73,12 +80,18 @@ public class Campaign implements Serializable{
 	@Column(name="toBudget",scale=10,precision=3)
 	private Double toBudget;
 
+	@Column(name="website",length=255)
+	private String website;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date proposalDeadline;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date submissionDeadline;
+	
+	
+	@OneToMany(mappedBy="campaign",cascade=CascadeType.ALL)
+	private List<CampaignKeyword> keywords;
 
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
@@ -251,6 +264,30 @@ public class Campaign implements Serializable{
 	public void setToBudget(Double toBudget) {
 		this.toBudget = toBudget;
 	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	public List<CampaignKeyword> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(List<CampaignKeyword> keywords) {
+		this.keywords = keywords;
+	}
+
+//	public Long getCategoryId() {
+//		return categoryId;
+//	}
+//
+//	public void setCategoryId(Long categoryId) {
+//		this.categoryId = categoryId;
+//	}
 
 	
 

@@ -13,7 +13,6 @@ import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
-import com.ahancer.rr.models.User;
 import com.ahancer.rr.services.CampaignService;
 
 @RestController
