@@ -52,13 +52,13 @@ public class BrandService {
 		
 		Brand brand = user.getBrand();
 		if(null == brand){
-			throw new ResponseException();
+			brand = new Brand();
 		}
 		
 		//Validate duplicate Email
 		int emailCount = userDao.countByEmail(user.getEmail());
 		if(emailCount > 0) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
+			throw new ResponseException(HttpStatus.INTERNAL_SERVER_ERROR,"error.email.duplicate");
 		}
 		String hashPassword = encrypt.hashPassword(user.getPassword());
 		user.setPassword(hashPassword);
