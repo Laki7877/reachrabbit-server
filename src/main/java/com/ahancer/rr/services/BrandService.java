@@ -2,7 +2,9 @@ package com.ahancer.rr.services;
 
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +16,13 @@ import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BrandDao;
 import com.ahancer.rr.daos.CampaignDao;
+import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Category;
+import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
@@ -38,6 +42,9 @@ public class BrandService {
 	
 	@Autowired
 	private CampaignDao campaignDao;
+	
+	@Autowired
+	private MediaDao mediaDao;
 
 	@Autowired
 	private EncryptionUtil encrypt;
@@ -48,7 +55,7 @@ public class BrandService {
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
 
-	public String signUpBrand(User user) throws ResponseException {
+	public User signUpBrand(User user) throws ResponseException {
 		
 		Brand brand = user.getBrand();
 		if(null == brand){
@@ -66,7 +73,9 @@ public class BrandService {
 		user.setBrand(null);
 		userDao.save(user);
 		brand.setBrandId(user.getUserId());
-		brandDao.save(brand);
+		user.setBrand(brandDao.save(brand));
+		
+		
 		
 		//Category
 		Category category = new Category();
@@ -84,12 +93,14 @@ public class BrandService {
 		campaign.setCategory(category);
 		campaign.setDescription("นี่คือคำอธิบาย");
 		campaign.setStatus(CampaignStatus.Draft);
+		
+		List<Media> allMedia = new ArrayList<Media>();
+		mediaDao.findAll().forEach(allMedia::add);
+		
+		campaign.setMedia(allMedia);	
 		campaignDao.save(campaign);
 		
-		//Create token
-		String token = jwt.generateToken(user.getUserId());
-		CacheUtil.putCacheObject(userRequestCache, token, user);
-		return token;
+		return user;
 	}
 	
 	public User updateBrandUser(Long userId, User newUser) throws ResponseException {

@@ -46,6 +46,13 @@ public class AuthenticationService {
 	public AuthenticationResponse influencerAuthentication(String provider, String id) {
 		return null;
 	}
+	
+	public AuthenticationResponse generateTokenFromUser(User user) {
+		String token = jwt.generateToken(user.getUserId());
+		CacheUtil.putCacheObject(userRequestCache, token, user);
+		AuthenticationResponse response = new AuthenticationResponse(token);
+		return response;
+	}
 
 	public User getUserById(Long userId) {
 		return userDao.findOne(userId);
