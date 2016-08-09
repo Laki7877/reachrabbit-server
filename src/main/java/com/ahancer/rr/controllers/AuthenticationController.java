@@ -40,7 +40,7 @@ public class AuthenticationController {
 			throws Exception {
 		AuthenticationResponse authen = authenticationService.brandAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 		if(null == authen) {
-			throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
 		}else {
 			return authen;
 		}
@@ -48,18 +48,8 @@ public class AuthenticationController {
 	
 	@RequestMapping(value = "/facebook" ,method = RequestMethod.POST)
 	public OAuthenticationResponse facebookAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException {
-		String accessToken = facebookService.getAccessToken(oauthenticationRequest.getCode());
-		facebook4j.User fbUser = facebookService.getProfile(accessToken);
-		OAuthenticationResponse authResponse = (OAuthenticationResponse)authenticationService.influencerAuthentication("facebook", fbUser.getId());
-		
-		if(authResponse == null) {
-			authResponse = new OAuthenticationResponse();
-			authResponse.setId(fbUser.getId());
-			authResponse.setName(fbUser.getName());
-			authResponse.setProvider("facebook");
-		}
-		return authResponse;
-	}
+		throw new ResponseException();
+	}	
 	
 	@RequestMapping(value = "/instagram" ,method = RequestMethod.POST)
 	public ResponseEntity<?> instagramAuthenticationRequest(Device device) {

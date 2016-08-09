@@ -1,18 +1,25 @@
 package com.ahancer.rr.response;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.springframework.social.facebook.api.Account;
+
+import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.Resource;
 
 public class OAuthenticationResponse extends AuthenticationResponse implements Serializable {
 	
 	private static final long serialVersionUID = -8190324180657188609L;
-	private String provider;
+	private Media media;
 	private String name;
+	private String email;
 	private String id;
 	private Integer followerCount;
-	private Resource picture;
-
+	private List<Account> accounts;
+	private Resource profilePicture;
+	
+	
 	public OAuthenticationResponse() {
 		super(null);
 		// TODO Auto-generated constructor stub
@@ -21,17 +28,23 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 		super(token);
 		// TODO Auto-generated constructor stub
 	}
-	public String getProvider() {
-		return provider;
+	public Media getMedia() {
+		return media;
 	}
-	public void setProvider(String provider) {
-		this.provider = provider;
+	public void setMedia(Media media) {
+		this.media = media;
 	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getId() {
 		return id;
@@ -45,10 +58,17 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 	public void setFollowerCount(Integer followerCount) {
 		this.followerCount = followerCount;
 	}
-	public Resource getPicture() {
-		return picture;
+	public List<Account> getAccounts() {
+		return accounts;
 	}
-	public void setPicture(Resource picture) {
-		this.picture = picture;
-	}	
+	public void setAccounts(List<Account> accounts) {
+		this.accounts = accounts;
+	}
+	public Resource getProfilePicture() {
+		return profilePicture;
+	}
+	public void setProfilePicture(Resource profilePicture) {
+		this.profilePicture = profilePicture;
+	}
+	
 }
