@@ -86,8 +86,8 @@ public class BrandService {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, 5);
 		campaign.setSubmissionDeadline(cal.getTime());
-		campaign.setFromBudget(5000.00);
-		campaign.setToBudget(10000.00);
+		campaign.setFromBudget(null);
+		campaign.setToBudget(null);
 		campaign.setBrandId(brand.getBrandId());
 		campaign.setTitle("Campaign แรกของคุณ");
 		campaign.setCategory(category);
