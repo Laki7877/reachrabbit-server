@@ -75,12 +75,6 @@ public class BrandService {
 		brand.setBrandId(user.getUserId());
 		user.setBrand(brandDao.save(brand));
 		
-		
-		
-		//Category
-		Category category = new Category();
-		category.setCategoryId(1L);
-		
 		//Create campaign
 		Campaign campaign = new Campaign();
 		Calendar cal = Calendar.getInstance();
@@ -90,7 +84,7 @@ public class BrandService {
 		campaign.setToBudget(null);
 		campaign.setBrandId(brand.getBrandId());
 		campaign.setTitle("Campaign แรกของคุณ");
-		campaign.setCategory(category);
+		campaign.setCategory(null);
 		campaign.setDescription("นี่คือคำอธิบาย");
 		campaign.setStatus(CampaignStatus.Draft);
 		
