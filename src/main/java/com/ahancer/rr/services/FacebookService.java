@@ -4,6 +4,8 @@ package com.ahancer.rr.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,8 +33,9 @@ public class FacebookService {
 	@Autowired
 	private AuthenticationService authenticationService;
 	
-	@Autowired
-	public FacebookService() {
+	@PostConstruct
+	public void init() {
+		System.out.println("LAUNCHED");
 		connectionFactory = new FacebookConnectionFactory(appKey, appSecret);
 	}
 	public Facebook getInstance(String accessToken) throws ResponseException {
@@ -42,8 +45,8 @@ public class FacebookService {
 		}
 		return fb;
 	}
-	public String getAccessToken(String authorizationCode) {
-		AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeCredentialsForAccess(authorizationCode, null, null);
+	public String getAccessToken(String authorizationCode, String redirectUri) {
+		AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(authorizationCode, redirectUri, null);
 		return accessGrant.getAccessToken();
 	}
 	

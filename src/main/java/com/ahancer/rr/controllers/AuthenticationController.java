@@ -48,7 +48,7 @@ public class AuthenticationController {
 	
 	@RequestMapping(value = "/facebook" ,method = RequestMethod.POST)
 	public OAuthenticationResponse facebookAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException {
-		throw new ResponseException();
+		return facebookService.authenticate(facebookService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
 	}	
 	
 	@RequestMapping(value = "/instagram" ,method = RequestMethod.POST)
