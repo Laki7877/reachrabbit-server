@@ -1,6 +1,7 @@
 package com.ahancer.rr.services;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,18 +47,26 @@ public class FacebookService {
 		return accessGrant.getAccessToken();
 	}
 	
-	public OAuthenticationResponse authenticate(String accessToken, boolean createNew) throws ResponseException {
+	public OAuthenticationResponse authenticate(String accessToken) throws ResponseException {
 		Facebook fb = getInstance(accessToken);
 		org.springframework.social.facebook.api.User fbUser = fb.userOperations().getUserProfile();
 		List<Account> accounts = fb.pageOperations().getAccounts();
+		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>(); {
+		}; 
+		
+		for(Account account : accounts) {
+			pages.add(new OAuthenticationResponse.Page(account.getId(), fb.pageOperations().getPage(account.getId()).getEngagement().getCount()));
+		}
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook");
 
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();
+			oauth.setId(fbUser.getId());
 			oauth.setName(fbUser.getName());
 			oauth.setEmail(fbUser.getEmail());
-			oauth.setAccounts(accounts);
+			oauth.setPages(pages);
+			
 			return oauth;
 		} else {
 			return (OAuthenticationResponse)auth;

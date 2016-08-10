@@ -15,9 +15,35 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 	private String name;
 	private String email;
 	private String id;
-	private Integer followerCount;
-	private List<Account> accounts;
-	private Resource profilePicture;
+	private List<Page> pages;
+	private String profilePicture;
+	
+	public static class Page implements Serializable{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4297074126284943105L;
+		private String id;
+		private Integer followerCount;
+		public Page(String id, Integer followerCount) {
+			super();
+			this.id = id;
+			this.followerCount = followerCount;
+		}
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		public Integer getFollowerCount() {
+			return followerCount;
+		}
+		public void setFollowerCount(Integer followerCount) {
+			this.followerCount = followerCount;
+		}
+	}
 	
 	
 	public OAuthenticationResponse() {
@@ -52,22 +78,16 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Integer getFollowerCount() {
-		return followerCount;
+	public List<Page> getPages() {
+		return pages;
 	}
-	public void setFollowerCount(Integer followerCount) {
-		this.followerCount = followerCount;
+	public void setPages(List<Page> pages) {
+		this.pages = pages;
 	}
-	public List<Account> getAccounts() {
-		return accounts;
-	}
-	public void setAccounts(List<Account> accounts) {
-		this.accounts = accounts;
-	}
-	public Resource getProfilePicture() {
+	public String getProfilePicture() {
 		return profilePicture;
 	}
-	public void setProfilePicture(Resource profilePicture) {
+	public void setProfilePicture(String profilePicture) {
 		this.profilePicture = profilePicture;
 	}
 	

@@ -1,6 +1,7 @@
 package com.ahancer.rr.services;
 
 import java.math.BigInteger;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ahancer.rr.custom.type.ResourceType;
 import com.ahancer.rr.daos.ResourceDao;
 import com.ahancer.rr.models.Resource;
+import com.ahancer.rr.request.ResourceRemoteRequest;
 import com.ahancer.rr.utils.S3Util;
 
 @Service
@@ -46,13 +47,34 @@ public class ResourceService {
 		String resourcePath = generateResourceName(multipartFile.getOriginalFilename());
 		s3Util.upload(multipartFile, resourcePath);
 		
-		//Save resource
-		Resource resource = new Resource();
-		resource.setResourcePath(resourcePath);
-		
 		try {
-			Resource result = resourceDao.save(resource);
-			return result;
+			//Save resource
+			Resource resource = new Resource();
+			resource.setResourcePath(resourcePath);
+			return resourceDao.save(resource);
+		}
+		catch(Exception e) {
+			s3Util.delete(resourcePath);
+			throw e;
+		}
+	}
+	
+	public Resource upload(ResourceRemoteRequest request) throws Exception {
+		//Download from remote url
+		URLConnection conn = request.getUrl().openConnection();
+		conn.connect();
+		
+		//Generate resource name
+		String resourcePath = generateResourceName(request.getUrl().getFile());
+
+		//Upload to s3
+		s3Util.upload(conn.getInputStream(), resourcePath);
+		
+		//Save resource
+		try {
+			Resource resource = new Resource();
+			resource.setResourcePath(resourcePath);
+			return resourceDao.save(resource);
 		}
 		catch(Exception e) {
 			s3Util.delete(resourcePath);
