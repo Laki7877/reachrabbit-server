@@ -15,6 +15,8 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	@Query("SELECT c from campaign c WHERE c.brandId = :brandId")
 	Page<Campaign> findAllByBrand(@Param("brandId") Long brandId, Pageable pageable);
 	
+	Page<Campaign> findAll(Pageable pageable);
+	
 	@Query("SELECT c from campaign c WHERE c.brandId=:brandId AND c.campaignId=:campaignId")
 	Campaign findOneWithBrandId(@Param("campaignId") Long campaignId, @Param("brandId") Long brandId);
 }
