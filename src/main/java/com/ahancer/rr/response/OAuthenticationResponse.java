@@ -3,10 +3,7 @@ package com.ahancer.rr.response;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.social.facebook.api.Account;
-
 import com.ahancer.rr.models.Media;
-import com.ahancer.rr.models.Resource;
 
 public class OAuthenticationResponse extends AuthenticationResponse implements Serializable {
 	

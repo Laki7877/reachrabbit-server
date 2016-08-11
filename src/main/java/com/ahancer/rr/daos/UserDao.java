@@ -9,6 +9,7 @@ import com.ahancer.rr.models.User;
 
 public interface UserDao extends CrudRepository<User, Long> {
 	 public User findByEmail(String email);
+	 public User findByInfluencerMediaLinkMediaIdAndInfluencerMediaLinkSocialId(String mediaId, String socialId);
 	 /*
 	 @Query("SELECT * FROM user u"
 	 		+ " LEFT JOIN influencer i on u.userId=i.influencerId"

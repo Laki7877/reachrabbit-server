@@ -44,8 +44,7 @@ public class AuthenticationService {
 	}
 	
 	public AuthenticationResponse influencerAuthentication(String socialId, String providerName) {
-		User user = null; //userDao.findWithInfluencerMedia(socialId, providerName);
-		
+		User user = userDao.findByInfluencerMediaLinkMediaIdAndInfluencerMediaLinkSocialId(providerName, socialId);
 		if(user == null) {
 			return null;
 		}

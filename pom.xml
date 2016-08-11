@@ -53,6 +53,11 @@
 	    </repository>
 	</repositories>
 	<dependencies>
+	<dependency>
+	  <groupId>com.google.api-client</groupId>
+	  <artifactId>google-api-client</artifactId>
+	  <version>1.19.1</version>
+	</dependency>
 	  <dependency>
 	      <groupId>com.fasterxml.jackson.datatype</groupId>
 	      <artifactId>jackson-datatype-hibernate5</artifactId>
