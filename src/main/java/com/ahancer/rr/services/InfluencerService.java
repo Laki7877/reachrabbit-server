@@ -35,14 +35,14 @@ public class InfluencerService {
 		}
 		
 		//Check for social media linkage
-		if(influencer.getMediaLink() == null || 
-			influencer.getMediaLink().size() == 0) {
+		if(influencer.getMediaLinks() == null || 
+			influencer.getMediaLinks().size() == 0) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.no.media");
 		}
 		
 		//Check if media link exists
-		for(MediaLink link : influencer.getMediaLink()) {
-			if(mediaLinkDao.countByMediaIdAndSocialId(link.getMediaId(), link.getSocialId()) > 0) {
+		for(MediaLink link : influencer.getMediaLinks()) {
+			if(mediaLinkDao.countByMediaMediaIdAndSocialId(link.getMedia().getMediaId(), link.getSocialId()) > 0) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.alreadyexist.media");
 			}
 		}

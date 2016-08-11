@@ -1,15 +1,13 @@
 package com.ahancer.rr.daos;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
 import com.ahancer.rr.models.User;
 
 
 public interface UserDao extends CrudRepository<User, Long> {
 	 public User findByEmail(String email);
-	 public User findByInfluencerMediaLinkMediaIdAndInfluencerMediaLinkSocialId(String mediaId, String socialId);
+	 public User findByInfluencerMediaLinksMediaMediaIdAndInfluencerMediaLinksSocialId(String mediaId, String socialId);
 	 /*
 	 @Query("SELECT * FROM user u"
 	 		+ " LEFT JOIN influencer i on u.userId=i.influencerId"
@@ -19,7 +17,7 @@ public interface UserDao extends CrudRepository<User, Long> {
 	 		+ " LIMIT 1")
 	 public User findWithInfluencerMedia(@Param("socialId") String socialId, @Param("email") String mediaId);
 	 */
-	 @Query("SELECT COUNT(u) FROM user u WHERE u.email=:email")
-	 public int countByEmail(@Param("email") String email);
+	// @Query("SELECT COUNT(u) FROM user u WHERE u.email=:email")
+	 public int countByEmail(String email);
 	 
 }
