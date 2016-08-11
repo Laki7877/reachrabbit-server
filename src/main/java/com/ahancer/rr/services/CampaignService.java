@@ -35,6 +35,10 @@ public class CampaignService {
 		return campaignDao.save(oldCampaign);
 	}
 	
+	public Page<Campaign> findAll(Pageable pageable) {
+		return campaignDao.findAll(pageable);
+	}
+	
 	public Page<Campaign> findAllByBrand(Brand brand, Pageable pageable) {
 		return campaignDao.findAllByBrand(brand.getBrandId(), pageable);
 	}

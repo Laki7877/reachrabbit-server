@@ -88,8 +88,7 @@ public class Campaign implements Serializable{
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date submissionDeadline;
-	
-	
+
 	@OneToMany(mappedBy="campaign",cascade=CascadeType.ALL)
 	private List<CampaignKeyword> keywords;
 

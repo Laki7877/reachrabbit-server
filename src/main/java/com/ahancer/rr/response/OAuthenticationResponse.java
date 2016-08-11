@@ -1,18 +1,51 @@
 package com.ahancer.rr.response;
 
 import java.io.Serializable;
+import java.util.List;
 
-import com.ahancer.rr.models.Resource;
+import com.ahancer.rr.models.Media;
 
 public class OAuthenticationResponse extends AuthenticationResponse implements Serializable {
 	
 	private static final long serialVersionUID = -8190324180657188609L;
-	private String provider;
+	private Media media;
 	private String name;
+	private String email;
 	private String id;
-	private Integer followerCount;
-	private Resource picture;
+	private List<Page> pages;
+	private String profilePicture;
+	
+	public static class Page implements Serializable{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4297074126284943105L;
+		private String id;
+		private Integer count;
+		
+		public Page(String id, Integer count) {
+			super();
+			this.id = id;
+			this.count = count;
+		}
+		public Integer getCount() {
+			return count;
+		}
+
+		public void setCount(Integer count) {
+			this.count = count;
+		}
+
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+	}
+	
+	
 	public OAuthenticationResponse() {
 		super(null);
 		// TODO Auto-generated constructor stub
@@ -21,11 +54,11 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 		super(token);
 		// TODO Auto-generated constructor stub
 	}
-	public String getProvider() {
-		return provider;
+	public Media getMedia() {
+		return media;
 	}
-	public void setProvider(String provider) {
-		this.provider = provider;
+	public void setMedia(Media media) {
+		this.media = media;
 	}
 	public String getName() {
 		return name;
@@ -33,22 +66,29 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Integer getFollowerCount() {
-		return followerCount;
+	public List<Page> getPages() {
+		return pages;
 	}
-	public void setFollowerCount(Integer followerCount) {
-		this.followerCount = followerCount;
+	public void setPages(List<Page> pages) {
+		this.pages = pages;
 	}
-	public Resource getPicture() {
-		return picture;
+	public String getProfilePicture() {
+		return profilePicture;
 	}
-	public void setPicture(Resource picture) {
-		this.picture = picture;
-	}	
+	public void setProfilePicture(String profilePicture) {
+		this.profilePicture = profilePicture;
+	}
+	
 }

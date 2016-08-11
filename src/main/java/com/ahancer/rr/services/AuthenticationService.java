@@ -43,8 +43,16 @@ public class AuthenticationService {
 		}
 	}
 	
-	public AuthenticationResponse influencerAuthentication(String provider, String id) {
-		return null;
+	public AuthenticationResponse influencerAuthentication(String socialId, String providerName) {
+		User user = userDao.findByInfluencerMediaLinkMediaIdAndInfluencerMediaLinkSocialId(providerName, socialId);
+		if(user == null) {
+			return null;
+		}
+		
+		String token = jwt.generateToken(user.getUserId());
+		CacheUtil.putCacheObject(userRequestCache, token, user);
+		AuthenticationResponse response = new AuthenticationResponse(token);
+		return response;
 	}
 	
 	public AuthenticationResponse generateTokenFromUser(User user) {

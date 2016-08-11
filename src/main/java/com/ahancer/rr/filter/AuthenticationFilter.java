@@ -58,6 +58,7 @@ public class AuthenticationFilter implements Filter {
 				|| path.startsWith("/signup")
 				|| path.startsWith("/webjar") 
 				|| path.startsWith("/images") 
+				|| path.startsWith("/resources") 
 				|| path.startsWith("/swagger-ui") 
 				|| path.startsWith("/swagger-resources") 
 				|| path.startsWith("/configuration") 

@@ -37,3 +37,5 @@ overridedb.*
 dump.rdb
 transaction-logs
 bella.sh
+hibernate.cfg.xml
+hibernate.reveng.xml

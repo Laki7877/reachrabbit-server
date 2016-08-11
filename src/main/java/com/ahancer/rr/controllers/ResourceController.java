@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Resource;
+import com.ahancer.rr.request.ResourceRemoteRequest;
 import com.ahancer.rr.services.ResourceService;
 
 @RestController
@@ -22,6 +23,11 @@ public class ResourceController {
 	@RequestMapping(method=RequestMethod.POST)
 	public Resource createResource(@RequestBody MultipartFile file) throws Exception{
 		return resourceService.upload(file);
+	}
+	
+	@RequestMapping(value="/remote",method=RequestMethod.POST)
+	public Resource createResource(@RequestBody ResourceRemoteRequest request) throws Exception {
+		return resourceService.upload(request);
 	}
 	
 	@RequestMapping(value="/{resourceId}",method=RequestMethod.GET)

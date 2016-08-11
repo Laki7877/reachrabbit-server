@@ -48,12 +48,13 @@ public class Influencer implements Serializable{
 	@Column(name="about",length=255)
 	private String about;
 
+	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
-			name="InfluencerMedia",
+			name="InfluencerMediaLink",
 			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
-			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
-	private List<Media> media;
+			inverseJoinColumns=@JoinColumn(name="linkId", referencedColumnName="linkId"))
+	private List<MediaLink> mediaLink;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
@@ -127,14 +128,6 @@ public class Influencer implements Serializable{
 		this.about = about;
 	}
 
-	public List<Media> getMedia() {
-		return media;
-	}
-
-	public void setMedia(List<Media> media) {
-		this.media = media;
-	}
-
 	public List<Category> getCategories() {
 		return categories;
 	}
@@ -181,6 +174,14 @@ public class Influencer implements Serializable{
 
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
+	}
+
+	public List<MediaLink> getMediaLink() {
+		return mediaLink;
+	}
+
+	public void setMediaLink(List<MediaLink> mediaLink) {
+		this.mediaLink = mediaLink;
 	}
 
 }

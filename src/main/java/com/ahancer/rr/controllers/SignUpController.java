@@ -10,6 +10,7 @@ import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.services.BrandService;
+import com.ahancer.rr.services.InfluencerService;
 
 @RestController
 @RequestMapping("/signup")
@@ -20,9 +21,17 @@ public class SignUpController {
 	@Autowired
 	private BrandService brandService;
 	
+	@Autowired
+	private InfluencerService influencerService;
+	
 	@RequestMapping(value="/brand", method=RequestMethod.POST)
 	public AuthenticationResponse signUpBrand(@RequestBody User user) throws Exception {
 		User newUser = brandService.signUpBrand(user);
+		return authenticationService.generateTokenFromUser(newUser);
+	}
+	@RequestMapping(value="/influencer", method=RequestMethod.POST)
+	public AuthenticationResponse signUpInfluencer(@RequestBody User user) throws Exception {
+		User newUser = influencerService.signupInfluencer(user);
 		return authenticationService.generateTokenFromUser(newUser);
 	}
 
