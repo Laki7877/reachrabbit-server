@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
@@ -26,9 +27,14 @@ public class CampaignController extends AbstractController{
 		if(this.getUserRequest().getRole() == Role.Brand) {
 			return campaignService.findAllByBrand(this.getUserRequest().getBrand(), pageRequest);	
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			return campaignService.findAll(pageRequest);
+			return campaignService.findAll(pageRequest);		
 		}	
 		throw new Exception();
+	}
+	
+	@RequestMapping(value="/open", method=RequestMethod.GET)
+	public Page<Campaign> getOpenCampaign(@RequestParam(name = "mediaId", required=false) String mediaId, Pageable pageRequest) throws Exception {
+		return campaignService.findAllOpen(mediaId, pageRequest);
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)

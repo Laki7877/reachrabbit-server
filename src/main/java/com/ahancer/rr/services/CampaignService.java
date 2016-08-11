@@ -1,5 +1,8 @@
 package com.ahancer.rr.services;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Brand;
@@ -18,8 +22,6 @@ import com.ahancer.rr.utils.Util;
 public class CampaignService {
 	@Autowired
 	private CampaignDao campaignDao;
-	
-	
 	public Campaign createCampaignByBrand(Campaign campaign, Brand brand) {
 		campaign.setBrandId(brand.getBrandId());
 		campaign.setBrand(null);
@@ -41,6 +43,14 @@ public class CampaignService {
 	
 	public Page<Campaign> findAllByBrand(Brand brand, Pageable pageable) {
 		return campaignDao.findByBrandId(brand.getBrandId(), pageable);
+	}
+	
+	public Page<Campaign> findAllOpen(String mediaFilter,Pageable pageable) {		List<String> mediaFilters = null;
+		if(mediaFilter != null) {
+			return campaignDao.findByStatusNotInAndMediaMediaIdIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), Arrays.asList(mediaFilter), pageable);
+		} else {
+			return campaignDao.findByStatusNotIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), pageable);
+		}
 	}
 	
 	public Campaign findOneByBrand(Long id, Brand brand) {

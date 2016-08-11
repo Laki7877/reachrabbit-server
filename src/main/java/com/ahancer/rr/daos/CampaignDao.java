@@ -14,6 +14,7 @@ import com.ahancer.rr.models.Campaign;
 @Transactional
 public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	Page<Campaign> findByStatusNotInAndMediaMediaIdIn(Collection<CampaignStatus> statuses, Collection<String> mediaIds, Pageable pageable);
+	Page<Campaign> findByStatusNotIn(Collection<CampaignStatus> statuses, Pageable pageable);
 	Page<Campaign> findByBrandId(Long brandId, Pageable pageable);	
 	Page<Campaign> findAll(Pageable pageable);
 	Campaign findByCampaignIdAndBrandId(Long campaignId, Long brandId);
