@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan
+@EntityScan("com.ahancer.rr.models")
 public class ReachrabbitServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ReachrabbitServerApplication.class, args);

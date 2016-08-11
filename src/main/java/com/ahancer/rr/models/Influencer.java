@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,14 +48,17 @@ public class Influencer implements Serializable{
 
 	@Column(name="about",length=255)
 	private String about;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "influencer")
+	private List<InfluencerMedia> influencerMedias;
 
 	
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(
-			name="InfluencerMediaLink",
-			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
-			inverseJoinColumns=@JoinColumn(name="linkId", referencedColumnName="linkId"))
-	private List<MediaLink> mediaLink;
+//	@ManyToMany(fetch=FetchType.LAZY)
+//	@JoinTable(
+//			name="InfluencerMediaLink",
+//			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
+//			inverseJoinColumns=@JoinColumn(name="linkId", referencedColumnName="linkId"))
+//	private List<MediaLink> mediaLink;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
@@ -176,12 +180,24 @@ public class Influencer implements Serializable{
 		this.deletedAt = deletedAt;
 	}
 
-	public List<MediaLink> getMediaLink() {
-		return mediaLink;
+	public List<InfluencerMedia> getInfluencerMedias() {
+		return influencerMedias;
 	}
 
-	public void setMediaLink(List<MediaLink> mediaLink) {
-		this.mediaLink = mediaLink;
+	public void setInfluencerMedias(List<InfluencerMedia> influencerMedias) {
+		this.influencerMedias = influencerMedias;
 	}
+	
+	
+
+//	public List<MediaLink> getMediaLink() {
+//		return mediaLink;
+//	}
+//
+//	public void setMediaLink(List<MediaLink> mediaLink) {
+//		this.mediaLink = mediaLink;
+//	}
+	
+	
 
 }

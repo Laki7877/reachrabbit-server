@@ -7,11 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.InfluencerDao;
-import com.ahancer.rr.daos.MediaLinkDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Influencer;
-import com.ahancer.rr.models.MediaLink;
 import com.ahancer.rr.models.User;
 
 @Service
@@ -23,8 +21,8 @@ public class InfluencerService {
 	@Autowired
 	private UserDao userDao;
 	
-	@Autowired
-	private MediaLinkDao mediaLinkDao;
+//	@Autowired
+//	private MediaLinkDao mediaLinkDao;
 	
 	public User signupInfluencer(User user) throws ResponseException {
 		Influencer influencer = user.getInfluencer();
@@ -35,17 +33,17 @@ public class InfluencerService {
 		}
 		
 		//Check for social media linkage
-		if(influencer.getMediaLink() == null || 
-			influencer.getMediaLink().size() == 0) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.no.media");
-		}
-		
-		//Check if media link exists
-		for(MediaLink link : influencer.getMediaLink()) {
-			if(mediaLinkDao.countByMediaIdAndSocialId(link.getMediaId(), link.getSocialId()) > 0) {
-				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.alreadyexist.media");
-			}
-		}
+//		if(influencer.getMediaLink() == null || 
+//			influencer.getMediaLink().size() == 0) {
+//			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.no.media");
+//		}
+//		
+//		//Check if media link exists
+//		for(MediaLink link : influencer.getMediaLink()) {
+//			if(mediaLinkDao.countByMediaIdAndSocialId(link.getMediaId(), link.getSocialId()) > 0) {
+//				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.alreadyexist.media");
+//			}
+//		}
 		
 		user.setRole(Role.Influencer);
 		user.setInfluencer(null);

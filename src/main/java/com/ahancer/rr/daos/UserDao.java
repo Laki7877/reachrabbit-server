@@ -8,9 +8,19 @@ import com.ahancer.rr.models.User;
 
 
 public interface UserDao extends CrudRepository<User, Long> {
-	 public User findByEmail(String email);
-	 public User findByInfluencerMediaLinkMediaIdAndInfluencerMediaLinkSocialId(String mediaId, String socialId);
-	 /*
+	public User findByEmail(String email);
+
+	//	 public User findByInfluencerInfluencerMedia
+
+
+	@Query("SELECT u FROM user u"
+			+ " JOIN u.influencer i"
+			+ " JOIN i.influencerMedias im"
+			+ " WHERE im.influencerMediaId.mediaId=:mediaId AND im.socialId=:socialId")
+	public User findBySocialIdAndMediaId(@Param("mediaId") String mediaId,@Param("socialId") String socialId);
+
+	//public User findByInfluencerMediaLinkMediaIdAndInfluencerMediaLinkSocialId(String mediaId, String socialId);
+	/*
 	 @Query("SELECT * FROM user u"
 	 		+ " LEFT JOIN influencer i on u.userId=i.influencerId"
 	 		+ " LEFT JOIN influencerMedia im on i.influencerId=im.influencerId"
@@ -19,7 +29,7 @@ public interface UserDao extends CrudRepository<User, Long> {
 	 		+ " LIMIT 1")
 	 public User findWithInfluencerMedia(@Param("socialId") String socialId, @Param("email") String mediaId);
 	 */
-	 @Query("SELECT COUNT(u) FROM user u WHERE u.email=:email")
-	 public int countByEmail(@Param("email") String email);
-	 
+	@Query("SELECT COUNT(u) FROM user u WHERE u.email=:email")
+	public int countByEmail(@Param("email") String email);
+
 }
