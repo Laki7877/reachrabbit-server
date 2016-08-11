@@ -20,7 +20,5 @@ public class OAuthenticationRequest implements Serializable{
 	}
 	public void setRedirectUri(String redirectUri) {
 		this.redirectUri = redirectUri;
-	}
-	
-	
+	}	
 }

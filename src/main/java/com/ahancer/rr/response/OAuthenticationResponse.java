@@ -23,13 +23,16 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 		 */
 		private static final long serialVersionUID = 4297074126284943105L;
 		private String id;
+		private String name;
 		private BigInteger count;
 		
-		public Page(String id, BigInteger count) {
+		public Page(String id, BigInteger count, String name) {
 			super();
 			this.id = id;
 			this.count = count;
+			this.name = name;
 		}
+		
 		public BigInteger getCount() {
 			return count;
 		}
@@ -43,6 +46,13 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 		}
 		public void setId(String id) {
 			this.id = id;
+		}
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
 		}
 	}
 	

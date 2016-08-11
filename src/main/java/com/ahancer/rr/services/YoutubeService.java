@@ -55,13 +55,13 @@ public class YoutubeService {
 	public String getAccessToken(String authorizationCode, String redirectUri) throws IOException {
 		return authorizationCodeFlow.newTokenRequest(authorizationCode).setRedirectUri(redirectUri).execute().getAccessToken();
 	}
-	public YouTube getYoutubeInstance(String accessToken) throws GeneralSecurityException, IOException {
+	public YouTube getInstance(String accessToken) throws GeneralSecurityException, IOException {
 		Credential credential = new GoogleCredential().setAccessToken(accessToken);
 		return new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).build();
 	}
 	
 	public OAuthenticationResponse authentication(String accessToken) throws Exception {
-		YouTube youtube = getYoutubeInstance(accessToken);
+		YouTube youtube = getInstance(accessToken);
 		YouTube.Channels.List channelRequest = youtube.channels().list("contentDetails");
 		channelRequest.setMine(true);
 		channelRequest.setPart("snippet,statistics");
@@ -76,15 +76,17 @@ public class YoutubeService {
 		
 		Channel channel = channelsList.get(0);
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
-		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getStatistics().getSubscriberCount()));
+		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getStatistics().getSubscriberCount(), channel.getSnippet().getTitle()));
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "youtube");
 		
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();
 			oauth.setName(channel.getSnippet().getTitle());
+			
 			oauth.setId(channel.getId());
 			oauth.setMedia(mediaDao.findByMediaId("youtube"));
+			oauth.setProfilePicture(channel.getSnippet().getThumbnails().getDefault().getUrl());
 			oauth.setPages(pages);
 			return oauth;
 		} else {

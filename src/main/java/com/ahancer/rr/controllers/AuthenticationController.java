@@ -2,6 +2,7 @@ package com.ahancer.rr.controllers;
 
 import javax.validation.Valid;
 
+import org.jinstagram.exceptions.InstagramException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
 import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.services.FacebookService;
+import com.ahancer.rr.services.InstagramService;
 import com.ahancer.rr.services.YoutubeService;
 
 
@@ -27,6 +29,8 @@ public class AuthenticationController {
 	private FacebookService facebookService;
 	@Autowired
 	private YoutubeService youtubeService;
+	@Autowired
+	private InstagramService instagramService;
 	
 	@Autowired
 	private AuthenticationService authenticationService;
@@ -50,11 +54,11 @@ public class AuthenticationController {
 
 	
 	@RequestMapping(value = "/instagram" ,method = RequestMethod.POST)
-	public OAuthenticationResponse instagramAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException {
-		return facebookService.authenticate(facebookService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
+	public OAuthenticationResponse instagramAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException, InstagramException {
+		return instagramService.authenticate(instagramService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
 	}	
 	
-	@RequestMapping(value = "/youtube" ,method = RequestMethod.POST)
+	@RequestMapping(value = "/google" ,method = RequestMethod.POST)
 	public OAuthenticationResponse youtubeAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception {
 		return youtubeService.authentication(youtubeService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
 	}

@@ -63,8 +63,8 @@ public class FacebookService {
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>(); 
 		
 		for(Account account : accounts) {
-			Page page = fb.fetchObject(account.getId(), Page.class, "engagement");
-			pages.add(new OAuthenticationResponse.Page(account.getId(), BigInteger.valueOf(page.getEngagement().getCount())));
+			Page page = fb.fetchObject(account.getId(), Page.class, "engagement", "name");
+			pages.add(new OAuthenticationResponse.Page(account.getId(), BigInteger.valueOf(page.getEngagement().getCount()), page.getName()));
 		}
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook");
