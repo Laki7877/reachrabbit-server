@@ -1,6 +1,7 @@
 package com.ahancer.rr.services;
 
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class FacebookService {
 		
 		for(Account account : accounts) {
 			Page page = fb.fetchObject(account.getId(), Page.class, "engagement");
-			pages.add(new OAuthenticationResponse.Page(account.getId(), page.getEngagement().getCount()));
+			pages.add(new OAuthenticationResponse.Page(account.getId(), BigInteger.valueOf(page.getEngagement().getCount())));
 		}
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook");
@@ -71,7 +72,6 @@ public class FacebookService {
 			oauth.setName(fbUser.getName());
 			oauth.setEmail(fbUser.getEmail());
 			oauth.setPages(pages);
-			
 			return oauth;
 		} else {
 			return (OAuthenticationResponse)auth;

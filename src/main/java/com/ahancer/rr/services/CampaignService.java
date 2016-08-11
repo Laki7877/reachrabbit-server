@@ -27,7 +27,7 @@ public class CampaignService {
 	}
 
 	public Campaign updateCampaignByBrand(Long campaignId, Campaign newCampaign, Brand brand) throws ResponseException {
-		Campaign oldCampaign = campaignDao.findOneWithBrandId(campaignId, brand.getBrandId());
+		Campaign oldCampaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brand.getBrandId());
 		if(oldCampaign == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
 		}
@@ -40,10 +40,10 @@ public class CampaignService {
 	}
 	
 	public Page<Campaign> findAllByBrand(Brand brand, Pageable pageable) {
-		return campaignDao.findAllByBrand(brand.getBrandId(), pageable);
+		return campaignDao.findByBrandId(brand.getBrandId(), pageable);
 	}
 	
 	public Campaign findOneByBrand(Long id, Brand brand) {
-		return campaignDao.findOneWithBrandId(id, brand.getBrandId());
+		return campaignDao.findByCampaignIdAndBrandId(id, brand.getBrandId());
 	}
 }

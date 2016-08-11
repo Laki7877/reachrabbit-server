@@ -1,6 +1,7 @@
 package com.ahancer.rr.response;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.List;
 
 import com.ahancer.rr.models.Media;
@@ -22,18 +23,18 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 		 */
 		private static final long serialVersionUID = 4297074126284943105L;
 		private String id;
-		private Integer count;
+		private BigInteger count;
 		
-		public Page(String id, Integer count) {
+		public Page(String id, BigInteger count) {
 			super();
 			this.id = id;
 			this.count = count;
 		}
-		public Integer getCount() {
+		public BigInteger getCount() {
 			return count;
 		}
 
-		public void setCount(Integer count) {
+		public void setCount(BigInteger count) {
 			this.count = count;
 		}
 
