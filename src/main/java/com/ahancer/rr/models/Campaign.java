@@ -26,7 +26,7 @@ import com.ahancer.rr.custom.type.CampaignStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="campaign")
-public class Campaign implements Serializable{
+public class Campaign implements Serializable {
 
 	/**
 	 * 

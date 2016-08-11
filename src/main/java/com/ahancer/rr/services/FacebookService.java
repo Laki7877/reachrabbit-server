@@ -56,8 +56,7 @@ public class FacebookService {
 		Facebook fb = getInstance(accessToken);
 		org.springframework.social.facebook.api.User fbUser = fb.userOperations().getUserProfile();
 		List<Account> accounts = fb.pageOperations().getAccounts();
-		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>(); {
-		}; 
+		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>(); 
 		
 		for(Account account : accounts) {
 			Page page = fb.fetchObject(account.getId(), Page.class, "engagement");

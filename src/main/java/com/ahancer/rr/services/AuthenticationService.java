@@ -44,11 +44,10 @@ public class AuthenticationService {
 	}
 	
 	public AuthenticationResponse influencerAuthentication(String socialId, String providerName) {
-		User user = userDao.findByInfluencerMediaLinksMediaMediaIdAndInfluencerMediaLinksSocialId(providerName, socialId);
+		User user = userDao.findBySocialIdAndMediaId(providerName, socialId);
 		if(user == null) {
 			return null;
 		}
-		
 		String token = jwt.generateToken(user.getUserId());
 		CacheUtil.putCacheObject(userRequestCache, token, user);
 		AuthenticationResponse response = new AuthenticationResponse(token);
