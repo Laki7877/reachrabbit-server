@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.social.facebook.api.Account;
 import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.Page;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.oauth2.AccessGrant;
@@ -26,8 +27,8 @@ import com.ahancer.rr.response.OAuthenticationResponse;
 public class FacebookService {
 	@Value("${facebook.appKey}")
 	private String appKey;
-	@Value("${faceobok.appSecret")
-	private String appSecret;
+	@Value("${facebook.appSecret}")
+	private String appSecret;;
 	private FacebookConnectionFactory connectionFactory;
 	
 	@Autowired
@@ -35,8 +36,8 @@ public class FacebookService {
 	
 	@PostConstruct
 	public void init() {
-		System.out.println("LAUNCHED");
 		connectionFactory = new FacebookConnectionFactory(appKey, appSecret);
+		connectionFactory.setScope("manage_pages,publish_pages");
 	}
 	public Facebook getInstance(String accessToken) throws ResponseException {
 		Facebook fb = new FacebookTemplate(accessToken);
@@ -58,7 +59,8 @@ public class FacebookService {
 		}; 
 		
 		for(Account account : accounts) {
-			pages.add(new OAuthenticationResponse.Page(account.getId(), fb.pageOperations().getPage(account.getId()).getEngagement().getCount()));
+			Page page = fb.fetchObject(account.getId(), Page.class, "engagement");
+			pages.add(new OAuthenticationResponse.Page(account.getId(), page.getEngagement().getCount()));
 		}
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook");

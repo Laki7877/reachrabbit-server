@@ -25,23 +25,26 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 		 */
 		private static final long serialVersionUID = 4297074126284943105L;
 		private String id;
-		private Integer followerCount;
-		public Page(String id, Integer followerCount) {
+		private Integer count;
+		
+		public Page(String id, Integer count) {
 			super();
 			this.id = id;
-			this.followerCount = followerCount;
+			this.count = count;
 		}
+		public Integer getCount() {
+			return count;
+		}
+
+		public void setCount(Integer count) {
+			this.count = count;
+		}
+
 		public String getId() {
 			return id;
 		}
 		public void setId(String id) {
 			this.id = id;
-		}
-		public Integer getFollowerCount() {
-			return followerCount;
-		}
-		public void setFollowerCount(Integer followerCount) {
-			this.followerCount = followerCount;
 		}
 	}
 	
