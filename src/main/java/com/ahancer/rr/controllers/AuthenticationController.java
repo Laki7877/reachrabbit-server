@@ -4,8 +4,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mobile.device.Device;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,17 +17,16 @@ import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
 import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.services.FacebookService;
-import com.ahancer.rr.services.InfluencerService;
+import com.ahancer.rr.services.YoutubeService;
 
 
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
 	@Autowired
-	private InfluencerService influencerService;
-	
-	@Autowired
 	private FacebookService facebookService;
+	@Autowired
+	private YoutubeService youtubeService;
 	
 	@Autowired
 	private AuthenticationService authenticationService;
@@ -50,18 +47,16 @@ public class AuthenticationController {
 	public OAuthenticationResponse facebookAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException {
 		return facebookService.authenticate(facebookService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
 	}	
+
 	
 	@RequestMapping(value = "/instagram" ,method = RequestMethod.POST)
-	public ResponseEntity<?> instagramAuthenticationRequest(Device device) {
-		return ResponseEntity.ok("");
-	}
+	public OAuthenticationResponse instagramAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException {
+		return facebookService.authenticate(facebookService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
+	}	
 	
 	@RequestMapping(value = "/youtube" ,method = RequestMethod.POST)
-	public ResponseEntity<?> youtubemAuthenticationRequest(Device device) {
-		return ResponseEntity.ok("");
+	public OAuthenticationResponse youtubeAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception {
+		return youtubeService.authentication(youtubeService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
 	}
-	
-	
-	
 	
 }

@@ -50,7 +50,7 @@ public class CampaignService {
 			return campaignDao.findByStatusNotInAndMediaMediaIdIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), Arrays.asList(mediaFilter), pageable);
 		} else {
 			return campaignDao.findByStatusNotIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), pageable);
-		}
+		}		
 	}
 	
 	public Campaign findOneByBrand(Long id, Brand brand) {

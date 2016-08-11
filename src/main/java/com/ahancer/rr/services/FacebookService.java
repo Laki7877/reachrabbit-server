@@ -19,6 +19,7 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
@@ -29,8 +30,11 @@ public class FacebookService {
 	@Value("${facebook.appKey}")
 	private String appKey;
 	@Value("${facebook.appSecret}")
-	private String appSecret;;
+	private String appSecret;
 	private FacebookConnectionFactory connectionFactory;
+	
+	@Autowired
+	private MediaDao mediaDao;
 	
 	@Autowired
 	private AuthenticationService authenticationService;
@@ -70,6 +74,7 @@ public class FacebookService {
 			oauth.setId(fbUser.getId());
 			oauth.setName(fbUser.getName());
 			oauth.setEmail(fbUser.getEmail());
+			oauth.setMedia(mediaDao.findByMediaId("facebook"));
 			oauth.setPages(pages);
 			return oauth;
 		} else {

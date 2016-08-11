@@ -3,13 +3,17 @@ package com.ahancer.rr.services;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
@@ -19,6 +23,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.YouTubeScopes;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
 
@@ -31,7 +36,21 @@ public class YoutubeService {
 	
 	@Autowired
 	private AuthenticationService authenticationService;
+	
+	@Autowired
+	private MediaDao mediaDao;
+	
 	private GoogleAuthorizationCodeFlow authorizationCodeFlow;
+	
+	@PostConstruct
+	public void init() throws GeneralSecurityException, IOException {
+		authorizationCodeFlow = new GoogleAuthorizationCodeFlow.Builder(GoogleNetHttpTransport.newTrustedTransport(),
+				JacksonFactory.getDefaultInstance(),
+				appKey,
+				appSecret, 
+				Collections.singleton(YouTubeScopes.YOUTUBE))
+				.build();
+	}
 	
 	public String getAccessToken(String authorizationCode, String redirectUri) throws IOException {
 		return authorizationCodeFlow.newTokenRequest(authorizationCode).setRedirectUri(redirectUri).execute().getAccessToken();
@@ -45,7 +64,7 @@ public class YoutubeService {
 		YouTube youtube = getYoutubeInstance(accessToken);
 		YouTube.Channels.List channelRequest = youtube.channels().list("contentDetails");
 		channelRequest.setMine(true);
-		channelRequest.setPart("snippets,statistics");
+		channelRequest.setPart("snippet,statistics");
 		
 		ChannelListResponse channelResult = channelRequest.execute();
 		
@@ -65,6 +84,7 @@ public class YoutubeService {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();
 			oauth.setName(channel.getSnippet().getTitle());
 			oauth.setId(channel.getId());
+			oauth.setMedia(mediaDao.findByMediaId("youtube"));
 			oauth.setPages(pages);
 			return oauth;
 		} else {
