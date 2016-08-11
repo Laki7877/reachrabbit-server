@@ -51,14 +51,6 @@ public class Influencer implements Serializable{
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "influencer")
 	private List<InfluencerMedia> influencerMedias;
-
-	
-//	@ManyToMany(fetch=FetchType.LAZY)
-//	@JoinTable(
-//			name="InfluencerMediaLink",
-//			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
-//			inverseJoinColumns=@JoinColumn(name="linkId", referencedColumnName="linkId"))
-//	private List<MediaLink> mediaLink;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
@@ -187,17 +179,5 @@ public class Influencer implements Serializable{
 	public void setInfluencerMedias(List<InfluencerMedia> influencerMedias) {
 		this.influencerMedias = influencerMedias;
 	}
-	
-	
-
-//	public List<MediaLink> getMediaLink() {
-//		return mediaLink;
-//	}
-//
-//	public void setMediaLink(List<MediaLink> mediaLink) {
-//		this.mediaLink = mediaLink;
-//	}
-	
-	
 
 }

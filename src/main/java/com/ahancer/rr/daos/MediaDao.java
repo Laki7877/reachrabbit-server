@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.ahancer.rr.models.Media;
 
-public interface MediaDao extends CrudRepository<Media, Long> {
+public interface MediaDao extends CrudRepository<Media, String> {
 
 }
