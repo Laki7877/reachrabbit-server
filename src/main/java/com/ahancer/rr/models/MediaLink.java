@@ -28,6 +28,9 @@ public class MediaLink implements Serializable{
 	@Column(name="socialId")
 	private String socialId;
 	
+	@Column(name="pageId")
+	private String pageId;
+	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="mediaId")
 	private Media media;
@@ -54,5 +57,13 @@ public class MediaLink implements Serializable{
 
 	public void setMedia(Media media) {
 		this.media = media;
+	}
+
+	public String getPageId() {
+		return pageId;
+	}
+
+	public void setPageId(String pageId) {
+		this.pageId = pageId;
 	}
 }
