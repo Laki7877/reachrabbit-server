@@ -27,8 +27,6 @@ public class InfluencerMedia implements Serializable {
 			@AttributeOverride(name = "mediaId", column = @Column(name = "mediaId", nullable = false)) })
 	private InfluencerMediaId influencerMediaId;
 	
-	
-	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "influencerId", nullable = false, insertable = false, updatable = false)
 	private Influencer influencer;
