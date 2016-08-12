@@ -1,5 +1,7 @@
 package com.ahancer.rr.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.User;
+import com.google.api.client.util.Lists;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -52,7 +55,11 @@ public class InfluencerService {
 		userDao.save(user);
 		influencer.setInfluencerId(user.getUserId());
 		user.setInfluencer(influencerDao.save(influencer));
-		
+		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
+			link.setInfluencer(influencer);
+			link.setMedia(link.getMedia());
+		}
+		user.getInfluencer().setInfluencerMedias(Lists.newArrayList(influencerMediaDao.save(influencer.getInfluencerMedias())));		
 		return user;
 	}
 }
