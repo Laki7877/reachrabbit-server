@@ -76,7 +76,7 @@ public class YoutubeService {
 		
 		Channel channel = channelsList.get(0);
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
-		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getStatistics().getSubscriberCount(), channel.getSnippet().getTitle()));
+		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getSnippet().getTitle(), null, channel.getStatistics().getSubscriberCount()));
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "youtube");
 		

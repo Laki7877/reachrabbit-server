@@ -3,6 +3,7 @@ package com.ahancer.rr.services;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -56,6 +57,7 @@ public class FacebookService {
 		return accessGrant.getAccessToken();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public OAuthenticationResponse authenticate(String accessToken) throws ResponseException {
 		Facebook fb = getInstance(accessToken);
 		org.springframework.social.facebook.api.User fbUser = fb.userOperations().getUserProfile();
@@ -63,8 +65,9 @@ public class FacebookService {
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>(); 
 		
 		for(Account account : accounts) {
-			Page page = fb.fetchObject(account.getId(), Page.class, "engagement", "name");
-			pages.add(new OAuthenticationResponse.Page(account.getId(), BigInteger.valueOf(page.getEngagement().getCount()), page.getName()));
+			Page page = fb.fetchObject(account.getId(), Page.class, "engagement", "name", "picture.type(large)", "id");
+			String url = ((LinkedHashMap<String, LinkedHashMap<String, String>>)page.getExtraData().get("picture")).get("data").get("url");
+			pages.add(new OAuthenticationResponse.Page(account.getId(), page.getName(), url, BigInteger.valueOf(page.getEngagement().getCount())));
 		}
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook");
