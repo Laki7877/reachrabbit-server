@@ -9,12 +9,12 @@ import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 
 @SpringBootApplication
 @EnableAutoConfiguration
@@ -41,9 +41,14 @@ public class ReachrabbitServerApplication {
 	}
 	
 	@Bean
-	public Module datatypeHibernateModule() {
-	  return new Hibernate5Module()
-			  .enable(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS)
-			  .enable(Feature.FORCE_LAZY_LOADING);
-	}
+    public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
+        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper mapper = new ObjectMapper();
+        //Registering Hibernate4Module to support lazy objects
+        mapper.registerModule(new Hibernate5Module());
+
+        messageConverter.setObjectMapper(mapper);
+        return messageConverter;
+    }
+
 }
