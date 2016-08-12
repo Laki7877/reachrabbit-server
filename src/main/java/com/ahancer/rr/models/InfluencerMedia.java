@@ -37,6 +37,9 @@ public class InfluencerMedia implements Serializable {
 	@Column(name="socialId")
 	private String socialId;
 	
+	@Column(name="pageId")
+	private String pageId;
+	
 	public InfluencerMedia() {
 		
 	}
@@ -71,6 +74,14 @@ public class InfluencerMedia implements Serializable {
 
 	public void setSocialId(String socialId) {
 		this.socialId = socialId;
+	}
+
+	public String getPageId() {
+		return pageId;
+	}
+
+	public void setPageId(String pageId) {
+		this.pageId = pageId;
 	}
 	
 	
