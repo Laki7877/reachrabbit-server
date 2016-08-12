@@ -30,7 +30,7 @@ public class InfluencerMedia implements Serializable {
 	@JoinColumn(name = "influencerId", nullable = false, insertable = false, updatable = false)
 	private Influencer influencer;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "mediaId", nullable = false, insertable = false, updatable = false)
 	private Media media;
 	

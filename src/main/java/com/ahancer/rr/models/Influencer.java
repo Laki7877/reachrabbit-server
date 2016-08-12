@@ -49,7 +49,7 @@ public class Influencer implements Serializable{
 	@Column(name="about",length=255)
 	private String about;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "influencer")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "influencer")
 	private List<InfluencerMedia> influencerMedias;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
