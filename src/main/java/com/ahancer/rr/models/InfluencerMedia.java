@@ -11,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name="influencerMedia")
 public class InfluencerMedia implements Serializable {
 	
@@ -26,11 +28,12 @@ public class InfluencerMedia implements Serializable {
 	private InfluencerMediaId influencerMediaId;
 	
 	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "influencerId", nullable = false, insertable = false, updatable = false)
 	private Influencer influencer;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "mediaId", nullable = false, insertable = false, updatable = false)
 	private Media media;
 	

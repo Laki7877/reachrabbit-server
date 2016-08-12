@@ -43,6 +43,7 @@ public class ReachrabbitServerApplication {
 	@Bean
 	public Module datatypeHibernateModule() {
 	  return new Hibernate5Module()
+			  .enable(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS)
 			  .enable(Feature.FORCE_LAZY_LOADING);
 	}
 }
