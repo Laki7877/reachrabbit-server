@@ -86,7 +86,7 @@ public class YoutubeService {
 			
 			oauth.setId(channel.getId());
 			oauth.setMedia(mediaDao.findByMediaId("youtube"));
-			oauth.setProfilePicture(channel.getSnippet().getThumbnails().getDefault().getUrl());
+			oauth.setProfilePicture(channel.getSnippet().getThumbnails().getHigh().getUrl());
 			oauth.setPages(pages);
 			return oauth;
 		} else {
