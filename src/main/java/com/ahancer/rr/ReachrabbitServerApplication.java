@@ -13,6 +13,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 
@@ -46,7 +47,7 @@ public class ReachrabbitServerApplication {
         ObjectMapper mapper = new ObjectMapper();
         //Registering Hibernate4Module to support lazy objects
         mapper.registerModule(new Hibernate5Module());
-
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         messageConverter.setObjectMapper(mapper);
         return messageConverter;
     }
