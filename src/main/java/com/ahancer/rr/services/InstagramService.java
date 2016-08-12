@@ -53,7 +53,7 @@ public class InstagramService {
 			oauth.setPages(null);
 			return oauth;
 		} else {
-			return (OAuthenticationResponse)auth;
+			return new OAuthenticationResponse(auth.getToken());
 		}
 	}
 }

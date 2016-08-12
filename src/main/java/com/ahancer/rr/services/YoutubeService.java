@@ -90,7 +90,7 @@ public class YoutubeService {
 			oauth.setPages(pages);
 			return oauth;
 		} else {
-			return (OAuthenticationResponse)auth;
+			return new OAuthenticationResponse(auth.getToken());
 		}
 	}
 }
