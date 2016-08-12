@@ -33,19 +33,19 @@ public class InfluencerService {
 		
 		//Check for influencer object
 		if(null == influencer) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.no.influencer");
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.signup.no.influencer");
 		}
 		
 		//Check for social media linkage
 		if(influencer.getInfluencerMedias() == null || 
 				influencer.getInfluencerMedias().size() == 0) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.no.media");
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.signup.no.media");
 		}
 //		
 //		//Check if media link exists
 		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
 			if(influencerMediaDao.countByMediaIdAndSocialId(link.getMedia().getMediaId(), link.getSocialId()) > 0) {
-				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.signup.alreadyexist.media");
+				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.already.exist");
 			}
 		}
 		
@@ -57,7 +57,7 @@ public class InfluencerService {
 		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
 			link.setInfluencerMediaId(new InfluencerMediaId(influencer.getInfluencerId(), link.getMedia().getMediaId()));
 		}
-		user.getInfluencer().setInfluencerMedias(Lists.newArrayList(influencerMediaDao.save(influencer.getInfluencerMedias())));		
+		influencerMediaDao.save(influencer.getInfluencerMedias());
 		return user;
 	}
 }
