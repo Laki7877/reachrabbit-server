@@ -33,6 +33,10 @@ public class CampaignService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
 		}
 		Util.copyProperties(newCampaign, oldCampaign, "brand", "brandId", "campaignId");
+		
+		oldCampaign.setResources(newCampaign.getResources());
+		oldCampaign.setMedia(newCampaign.getMedia());
+		
 		return campaignDao.save(oldCampaign);
 	}
 	
@@ -50,6 +54,10 @@ public class CampaignService {
 		} else {
 			return campaignDao.findByStatusNotIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), pageable);
 		}		
+	}
+	
+	public Campaign findOne(Long id) {
+		return campaignDao.findOne(id);
 	}
 	
 	public Campaign findOneByBrand(Long id, Brand brand) {
