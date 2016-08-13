@@ -1,7 +1,6 @@
 package com.ahancer.rr.services;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,7 +44,7 @@ public class CampaignService {
 		return campaignDao.findByBrandId(brand.getBrandId(), pageable);
 	}
 	
-	public Page<Campaign> findAllOpen(String mediaFilter,Pageable pageable) {		List<String> mediaFilters = null;
+	public Page<Campaign> findAllOpen(String mediaFilter,Pageable pageable) {		
 		if(mediaFilter != null) {
 			return campaignDao.findByStatusNotInAndMediaMediaIdIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), Arrays.asList(mediaFilter), pageable);
 		} else {
