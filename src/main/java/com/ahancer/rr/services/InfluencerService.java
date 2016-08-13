@@ -1,5 +1,8 @@
 package com.ahancer.rr.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,7 +17,7 @@ import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.User;
-import com.google.api.client.util.Lists;
+import com.ahancer.rr.utils.Util;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -27,6 +30,32 @@ public class InfluencerService {
 	
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
+	
+	public User updateInfluencerUser(Long userId, User newUser) throws ResponseException {
+		User oldUser = userDao.findOne(userId);
+		if(oldUser == null) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
+		}
+		
+		List<InfluencerMedia> newList = new ArrayList<InfluencerMedia>();
+		//Override duplicates
+		for(InfluencerMedia link : oldUser.getInfluencer().getInfluencerMedias()) {
+			boolean isFound = false;
+			for(InfluencerMedia link2 : newUser.getInfluencer().getInfluencerMedias()) {
+				if(link2.getMedia().getMediaId().equals(link.getMedia().getMediaId())) {
+					newList.add(link2);
+					isFound = true;
+				}
+			}
+			if(!isFound) {
+				newList.add(link);
+			}
+		}
+		
+		Util.copyProperties(newUser, oldUser);
+		oldUser.getInfluencer().setInfluencerMedias(newList);
+		return userDao.save(oldUser);
+	}
 	
 	public User signupInfluencer(User user) throws ResponseException {
 		Influencer influencer = user.getInfluencer();

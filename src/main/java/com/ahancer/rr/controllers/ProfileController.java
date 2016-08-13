@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.services.BrandService;
+import com.ahancer.rr.services.InfluencerService;
 import com.mysql.jdbc.NotImplemented;
 
 @RestController
@@ -16,7 +17,8 @@ import com.mysql.jdbc.NotImplemented;
 public class ProfileController extends AbstractController{
 	@Autowired
 	private BrandService brandService;
-	
+	@Autowired
+	private InfluencerService influencerService;
 	@RequestMapping(method=RequestMethod.GET)
 	public User getMyProfile() {
 		return this.getUserRequest();
@@ -27,6 +29,8 @@ public class ProfileController extends AbstractController{
 		User ownUser = this.getUserRequest();
 		if(ownUser.getRole().equals(Role.Brand)) {
 			return brandService.updateBrandUser(ownUser.getUserId(), user);
+		} else if(ownUser.getRole().equals(Role.Influencer)) {
+			return influencerService.updateInfluencerUser(ownUser.getUserId(), user);
 		}
 		throw new NotImplemented();
 	}
