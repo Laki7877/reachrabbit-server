@@ -39,7 +39,7 @@ public class CampaignController extends AbstractController{
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
 	public Campaign getOneCampaign(@PathVariable Long campaignId) throws Exception{
-		return campaignService.findOneByBrand(campaignId, this.getUserRequest().getBrand());
+		return campaignService.findOne(campaignId);
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)

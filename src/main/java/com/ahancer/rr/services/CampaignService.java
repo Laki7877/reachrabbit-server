@@ -52,6 +52,10 @@ public class CampaignService {
 		}		
 	}
 	
+	public Campaign findOne(Long id) {
+		return campaignDao.findOne(id);
+	}
+	
 	public Campaign findOneByBrand(Long id, Brand brand) {
 		return campaignDao.findByCampaignIdAndBrandId(id, brand.getBrandId());
 	}
