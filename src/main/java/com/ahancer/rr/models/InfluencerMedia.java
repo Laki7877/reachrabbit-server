@@ -21,6 +21,7 @@ public class InfluencerMedia implements Serializable {
 	 */
 	private static final long serialVersionUID = -8946159458429934385L;
 
+	@JsonIgnore
 	@EmbeddedId
 	@AttributeOverrides({
 			@AttributeOverride(name = "influencerId", column = @Column(name = "influencerId", nullable = false)),
