@@ -33,6 +33,10 @@ public class CampaignService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
 		}
 		Util.copyProperties(newCampaign, oldCampaign, "brand", "brandId", "campaignId");
+		
+		oldCampaign.setResources(newCampaign.getResources());
+		oldCampaign.setMedia(newCampaign.getMedia());
+		
 		return campaignDao.save(oldCampaign);
 	}
 	
