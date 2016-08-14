@@ -78,14 +78,14 @@ public class YoutubeService {
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
 		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getSnippet().getTitle(), null, channel.getStatistics().getSubscriberCount()));
 		
-		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "youtube");
+		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "google");
 		
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();
 			oauth.setName(channel.getSnippet().getTitle());
 			
 			oauth.setId(channel.getId());
-			oauth.setMedia(mediaDao.findByMediaId("youtube"));
+			oauth.setMedia(mediaDao.findByMediaId("google"));
 			oauth.setProfilePicture(channel.getSnippet().getThumbnails().getHigh().getUrl());
 			oauth.setPages(pages);
 			return oauth;

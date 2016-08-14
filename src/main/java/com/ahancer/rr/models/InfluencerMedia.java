@@ -21,12 +21,14 @@ public class InfluencerMedia implements Serializable {
 	 */
 	private static final long serialVersionUID = -8946159458429934385L;
 
+	@JsonIgnore
 	@EmbeddedId
 	@AttributeOverrides({
 			@AttributeOverride(name = "influencerId", column = @Column(name = "influencerId", nullable = false)),
 			@AttributeOverride(name = "mediaId", column = @Column(name = "mediaId", nullable = false)) })
 	private InfluencerMediaId influencerMediaId;
 	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "influencerId", nullable = false, insertable = false, updatable = false)
 	private Influencer influencer;
