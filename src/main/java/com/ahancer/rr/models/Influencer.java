@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
@@ -46,7 +47,8 @@ public class Influencer implements Serializable{
 	@Column(name="web",length=255)
 	private String web;
 
-	@Column(name="about",length=255)
+	@Lob
+	@Column(name="about")
 	private String about;
 
 	@Temporal(TemporalType.TIMESTAMP)

@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -71,7 +72,8 @@ public class Campaign implements Serializable {
 	@Column(name="title",length=255)
 	private String title;
 
-	@Column(name="description",length=255)
+	@Lob
+	@Column(name="description")
 	private String description;
 	
 	@Column(name="fromBudget",scale=10,precision=3)

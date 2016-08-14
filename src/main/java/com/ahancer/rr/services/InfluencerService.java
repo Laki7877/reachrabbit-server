@@ -13,6 +13,7 @@ import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
@@ -52,8 +53,24 @@ public class InfluencerService {
 			}
 		}
 		
+		//Override categories
+		List<Category> newCategory = new ArrayList<Category>();
+		for(Category cat : oldUser.getInfluencer().getCategories()) {
+			boolean isFound = false;
+			for(Category cat2 : newUser.getInfluencer().getCategories()) {
+				if(cat.getCategoryId().equals(cat2.getCategoryId())) {
+					newCategory.add(cat2);
+					isFound = true;
+				}
+			}
+			if(!isFound) {
+				newCategory.add(cat);
+			}
+		}
+		
 		Util.copyProperties(newUser, oldUser);
 		oldUser.getInfluencer().setInfluencerMedias(newList);
+		oldUser.getInfluencer().setCategories(newCategory);
 		return userDao.save(oldUser);
 	}
 	
