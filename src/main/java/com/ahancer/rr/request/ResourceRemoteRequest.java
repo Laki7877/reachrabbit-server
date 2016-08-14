@@ -10,6 +10,9 @@ public class ResourceRemoteRequest implements Serializable{
 	private static final long serialVersionUID = -6458453346810719139L;
 	private String url;
 	
+	public ResourceRemoteRequest() {
+		
+	}
 	public ResourceRemoteRequest(String url) {
 		super();
 		this.url = url;

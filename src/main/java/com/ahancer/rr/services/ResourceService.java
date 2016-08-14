@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ahancer.rr.custom.type.ResourceType;
 import com.ahancer.rr.daos.ResourceDao;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.request.ResourceRemoteRequest;
@@ -75,6 +76,7 @@ public class ResourceService {
 		//Save resource
 		try {
 			Resource resource = new Resource();
+			resource.setResourceType(ResourceType.Image);
 			resource.setResourcePath(resourcePath);
 			return resourceDao.save(resource);
 		}
