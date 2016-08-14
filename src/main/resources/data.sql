@@ -36,7 +36,7 @@ INSERT INTO bank (bankId,bankName) VALUES ('031','ธนาคารฮ่อง
 INSERT INTO bank (bankId,bankName) VALUES ('032','ธนาคารดอยซ์แบงค์');
 INSERT INTO bank (bankId,bankName) VALUES ('033','ธนาคารอาคารสงเคราะห์ สาขาธนาคารพาณิชย์ในต่างประเทศ');
 INSERT INTO media (mediaId,mediaName,isActive) VALUES ('facebook','Facebook',true);
-INSERT INTO media (mediaId,mediaName,isActive) VALUES ('youtube','YouTube',true);
+INSERT INTO media (mediaId,mediaName,isActive) VALUES ('google','YouTube',true);
 INSERT INTO media (mediaId,mediaName,isActive) VALUES ('instagram','Instagram',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Beauty & Fashion',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Travel',true);
