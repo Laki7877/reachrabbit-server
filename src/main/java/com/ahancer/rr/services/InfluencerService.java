@@ -43,7 +43,7 @@ public class InfluencerService {
 		for(InfluencerMedia link : oldUser.getInfluencer().getInfluencerMedias()) {
 			boolean isFound = false;
 			for(InfluencerMedia link2 : newUser.getInfluencer().getInfluencerMedias()) {
-				if(link2.getMedia().getMediaId().equals(link.getMedia().getMediaId())) {
+				if(link2.getInfluencerMediaId().getMediaId().equals(link.getInfluencerMediaId().getMediaId())) {
 					newList.add(link2);
 					isFound = true;
 				}
