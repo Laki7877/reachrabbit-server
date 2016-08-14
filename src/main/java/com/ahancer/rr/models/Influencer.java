@@ -48,6 +48,10 @@ public class Influencer implements Serializable{
 
 	@Column(name="about",length=255)
 	private String about;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="birthday")
+	private Date birthday;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "influencer")
 	private List<InfluencerMedia> influencerMedias;
@@ -178,6 +182,14 @@ public class Influencer implements Serializable{
 
 	public void setInfluencerMedias(List<InfluencerMedia> influencerMedias) {
 		this.influencerMedias = influencerMedias;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
 	}
 
 }
