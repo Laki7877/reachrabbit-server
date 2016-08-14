@@ -1,6 +1,7 @@
 package com.ahancer.rr.services;
 
 import java.math.BigInteger;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -61,11 +62,12 @@ public class ResourceService {
 	
 	public Resource upload(ResourceRemoteRequest request) throws Exception {
 		//Download from remote url
-		URLConnection conn = request.getUrl().openConnection();
+		URL url = new URL(request.getUrl());
+		URLConnection conn = url.openConnection();
 		conn.connect();
 		
 		//Generate resource name
-		String resourcePath = generateResourceName(request.getUrl().getFile());
+		String resourcePath = generateResourceName(url.getFile());
 
 		//Upload to s3
 		s3Util.upload(conn.getInputStream(), resourcePath);
