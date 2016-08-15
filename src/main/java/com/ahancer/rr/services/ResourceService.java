@@ -34,7 +34,7 @@ public class ResourceService {
 	
 	public String generateResourceName(String filename) throws Exception {
 		//Get extension
-		String extension = FilenameUtils.getExtension(filename).split("?")[0];
+		String extension = FilenameUtils.getExtension(filename).split("\\?")[0];
 		
 		//Encode with md5
 		MessageDigest md5 = MessageDigest.getInstance("MD5");
