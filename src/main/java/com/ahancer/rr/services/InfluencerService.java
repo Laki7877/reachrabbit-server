@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,6 @@ import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.User;
-import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.Util;
 
 @Service
@@ -34,14 +32,12 @@ public class InfluencerService {
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
 	
-	@Value("${reachrabbit.cache.userrequest}")
-	private String userRequestCache;
-	
-	public User updateInfluencerUser(Long userId, User newUser, String token) throws ResponseException {
+	public User updateInfluencerUser(Long userId, User newUser) throws ResponseException {
 		User oldUser = userDao.findOne(userId);
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
+		
 		List<InfluencerMedia> newList = new ArrayList<InfluencerMedia>();
 		//Override duplicates
 		for(InfluencerMedia link : oldUser.getInfluencer().getInfluencerMedias()) {
@@ -56,6 +52,7 @@ public class InfluencerService {
 				newList.add(link);
 			}
 		}
+		
 		//Override categories
 		List<Category> newCategory = new ArrayList<Category>();
 		for(Category cat : oldUser.getInfluencer().getCategories()) {
@@ -70,12 +67,11 @@ public class InfluencerService {
 				newCategory.add(cat);
 			}
 		}
+		
 		Util.copyProperties(newUser, oldUser);
 		oldUser.getInfluencer().setInfluencerMedias(newList);
 		oldUser.getInfluencer().setCategories(newCategory);
-		User user = userDao.save(oldUser);
-		CacheUtil.updateCacheObject(userRequestCache, token, user);
-		return user;
+		return userDao.save(oldUser);
 	}
 	
 	public User signupInfluencer(User user) throws ResponseException {
