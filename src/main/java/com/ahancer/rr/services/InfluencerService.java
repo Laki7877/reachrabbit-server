@@ -77,7 +77,7 @@ public class InfluencerService {
 		oldUser.getInfluencer().setInfluencerMedias(newList);
 		oldUser.getInfluencer().setCategories(newCategory);
 		User user = userDao.save(oldUser);
-		CacheUtil.updateCacheObject(userRequestCache, token, user);
+		//CacheUtil.updateCacheObject(userRequestCache, token, user);
 		return user;
 	}
 	
