@@ -80,7 +80,7 @@ public class InfluencerService {
 		System.out.println(oldUser.getInfluencer());
 		System.out.println(oldUser.getInfluencer().getInfluencerMedias());
 		User user = userDao.save(oldUser);
-		CacheUtil.updateCacheObject(userRequestCache, token, user);
+	//	CacheUtil.updateCacheObject(userRequestCache, token, user);
 		return user;
 	}
 	
