@@ -17,7 +17,6 @@ public class CacheUtil {
 		}
 	}
 	
-	
 	public static void putCacheObject(String cacheName,Object key,Object value){
 		CacheManager manager = CacheManager.getInstance();
 		Cache cache = manager.getCache(cacheName);

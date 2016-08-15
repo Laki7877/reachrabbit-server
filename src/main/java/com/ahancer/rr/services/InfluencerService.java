@@ -15,6 +15,7 @@ import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.Util;
 
 @Service
@@ -23,7 +24,7 @@ public class InfluencerService {
 	@Autowired
 	private InfluencerDao influencerDao;
 	
-	@Value("${reachrabbit.cache.userrequest")
+	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
 	
 	@Autowired
@@ -43,31 +44,27 @@ public class InfluencerService {
 		}
 		Util.copyProperties(newUser, oldUser);
 		User user = userDao.save(oldUser);
-		//CacheUtil.updateCacheObject(userRequestCache, token, user);
+		CacheUtil.updateCacheObject(userRequestCache, token, user);
 		return user;
 	}
 	
 	public User signupInfluencer(User user) throws ResponseException {
 		Influencer influencer = user.getInfluencer();
-		
 		//Check for influencer object
 		if(null == influencer) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.signup.no.influencer");
 		}
-		
 		//Check for social media linkage
 		if(influencer.getInfluencerMedias() == null || 
 				influencer.getInfluencerMedias().size() == 0) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.signup.no.media");
 		}
-//		
-//		//Check if media link exists
+		//Check if media link exists
 		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
 			if(influencerMediaDao.countByMediaIdAndSocialId(link.getMedia().getMediaId(), link.getSocialId()) > 0) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.already.exist");
 			}
 		}
-		
 		user.setRole(Role.Influencer);
 		user.setInfluencer(null);
 		userDao.save(user);
@@ -77,7 +74,6 @@ public class InfluencerService {
 			link.setInfluencerMediaId(new InfluencerMediaId(influencer.getInfluencerId(), link.getMedia().getMediaId()));
 		}
 		user.setInfluencer(influencerDao.save(influencer));
-		//influencerMediaDao.save(influencer.getInfluencerMedias());
 		return user;
 	}
 

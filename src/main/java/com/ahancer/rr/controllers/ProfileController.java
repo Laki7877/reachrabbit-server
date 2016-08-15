@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.custom.type.Role;
-import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.services.BrandService;
 import com.ahancer.rr.services.InfluencerService;
@@ -21,12 +20,12 @@ public class ProfileController extends AbstractController{
 	@Autowired
 	private InfluencerService influencerService;
 	
-	@Autowired
-	private UserDao userDao;
+//	@Autowired
+//	private UserDao userDao;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public User getMyProfile() {
-		return userDao.findOne(this.getUserRequest().getUserId());
+		return this.getUserRequest();
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT)
