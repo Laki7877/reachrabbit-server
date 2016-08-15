@@ -54,14 +54,14 @@ public class Campaign implements Serializable {
 	@JoinColumn(name="categoryId")
 	private Category category;
 
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 			name="CampaignMedia",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
 	private List<Media> media;
 
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 			name="CampaignResource",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
@@ -89,7 +89,7 @@ public class Campaign implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date submissionDeadline;
 
-	@OneToMany(mappedBy="campaign",cascade=CascadeType.ALL)
+	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
 	private List<CampaignKeyword> keywords;
 
 	@Column(name="status",length=20)
