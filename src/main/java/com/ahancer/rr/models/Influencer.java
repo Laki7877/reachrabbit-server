@@ -3,9 +3,9 @@ package com.ahancer.rr.models;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -57,15 +57,15 @@ public class Influencer implements Serializable{
 	@Column(name="birthday")
 	private Date birthday;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "influencer")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "influencer",cascade=CascadeType.ALL)
 	private Set<InfluencerMedia> influencerMedias = new HashSet<InfluencerMedia>(0);
 	
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
 	@JoinTable(
 			name="InfluencerCategory",
 			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
 			inverseJoinColumns=@JoinColumn(name="categoryId", referencedColumnName="categoryId"))
-	private List<Category> categories;
+	private Set<Category> categories = new HashSet<Category>(0);
 
 	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
@@ -132,11 +132,11 @@ public class Influencer implements Serializable{
 		this.about = about;
 	}
 
-	public List<Category> getCategories() {
+	public Set<Category> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List<Category> categories) {
+	public void setCategories(Set<Category> categories) {
 		this.categories = categories;
 	}
 

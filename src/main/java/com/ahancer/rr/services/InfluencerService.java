@@ -1,10 +1,5 @@
 package com.ahancer.rr.services;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -16,7 +11,6 @@ import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
-import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
@@ -43,40 +37,11 @@ public class InfluencerService {
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
-		
-		Set<InfluencerMedia> newList = new HashSet<InfluencerMedia>();
-		//Override duplicates
 		for(InfluencerMedia link : newUser.getInfluencer().getInfluencerMedias()) {
-			boolean isFound = false;
-			for(InfluencerMedia link2 : oldUser.getInfluencer().getInfluencerMedias()) {
-				if(link2.getMedia().getMediaId().equals(link.getMedia().getMediaId())) {
-					newList.add(link2);
-					isFound = true;
-				}
-			}
-			if(!isFound) {
-				newList.add(link);
-			}
+			InfluencerMediaId id = new InfluencerMediaId(userId, link.getMedia().getMediaId());
+			link.setInfluencerMediaId(id);
 		}
-		
-		//Override categories
-		List<Category> newCategory = new ArrayList<Category>();
-		for(Category cat : newUser.getInfluencer().getCategories()) {
-			boolean isFound = false;
-			for(Category cat2 : oldUser.getInfluencer().getCategories()) {
-				if(cat.getCategoryId().equals(cat2.getCategoryId())) {
-					newCategory.add(cat2);
-					isFound = true;
-				}
-			}
-			if(!isFound) {
-				newCategory.add(cat);
-			}
-		}
-		
 		Util.copyProperties(newUser, oldUser);
-		oldUser.getInfluencer().setInfluencerMedias(newList);
-		oldUser.getInfluencer().setCategories(newCategory);
 		User user = userDao.save(oldUser);
 		//CacheUtil.updateCacheObject(userRequestCache, token, user);
 		return user;
@@ -107,11 +72,12 @@ public class InfluencerService {
 		user.setInfluencer(null);
 		userDao.save(user);
 		influencer.setInfluencerId(user.getUserId());
-		user.setInfluencer(influencerDao.save(influencer));
 		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
+			link.setInfluencer(influencer);
 			link.setInfluencerMediaId(new InfluencerMediaId(influencer.getInfluencerId(), link.getMedia().getMediaId()));
 		}
-		influencerMediaDao.save(influencer.getInfluencerMedias());
+		user.setInfluencer(influencerDao.save(influencer));
+		//influencerMediaDao.save(influencer.getInfluencerMedias());
 		return user;
 	}
 
