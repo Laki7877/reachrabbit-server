@@ -2,9 +2,9 @@ package com.ahancer.rr.services;
 
 
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +25,6 @@ import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
-import com.ahancer.rr.utils.JwtUtil;
 import com.ahancer.rr.utils.Util;
 
 @Service
@@ -48,8 +47,6 @@ public class BrandService {
 	@Autowired
 	private EncryptionUtil encrypt;
 
-	@Autowired
-	private JwtUtil jwt;
 	
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
@@ -87,7 +84,7 @@ public class BrandService {
 		campaign.setDescription("นี่คือคำอธิบาย");
 		campaign.setStatus(CampaignStatus.Draft);
 		
-		List<Media> allMedia = new ArrayList<Media>();
+		Set<Media> allMedia = new HashSet<Media>();
 		mediaDao.findAll().forEach(allMedia::add);
 		
 		campaign.setMedia(allMedia);	

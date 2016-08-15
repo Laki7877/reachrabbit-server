@@ -2,7 +2,7 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -47,11 +47,6 @@ public class Campaign implements Serializable {
 	@JoinColumn(name="brandId")
 	private Brand brand;
 	
-//	@Column(name="categoryId", nullable = false)
-//	private Long categoryId;
-//	
-//
-//	@MapsId("categoryId")
 	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
 	@JoinColumn(name="categoryId")
 	private Category category;
@@ -61,14 +56,17 @@ public class Campaign implements Serializable {
 			name="CampaignMedia",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
-	private List<Media> media;
+	private Set<Media> media = new HashSet<Media>(0);
 
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 			name="CampaignResource",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
-	private Set<Resource> resources;
+	private Set<Resource> resources= new HashSet<Resource>(0);
+	
+	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
+	private Set<CampaignKeyword> keywords = new HashSet<CampaignKeyword>(0);
 
 	@Column(name="title",length=255)
 	private String title;
@@ -91,9 +89,6 @@ public class Campaign implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date submissionDeadline;
-
-	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
-	private List<CampaignKeyword> keywords;
 
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
@@ -227,11 +222,11 @@ public class Campaign implements Serializable {
 		this.brandId = brandId;
 	}
 
-	public List<Media> getMedia() {
+	public Set<Media> getMedia() {
 		return media;
 	}
 
-	public void setMedia(List<Media> media) {
+	public void setMedia(Set<Media> media) {
 		this.media = media;
 	}
 
@@ -275,11 +270,11 @@ public class Campaign implements Serializable {
 		this.website = website;
 	}
 
-	public List<CampaignKeyword> getKeywords() {
+	public Set<CampaignKeyword> getKeywords() {
 		return keywords;
 	}
 
-	public void setKeywords(List<CampaignKeyword> keywords) {
+	public void setKeywords(Set<CampaignKeyword> keywords) {
 		for(CampaignKeyword keyword : keywords) {
 			keyword.setCampaign(this);
 		}

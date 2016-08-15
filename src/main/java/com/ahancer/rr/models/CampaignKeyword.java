@@ -29,13 +29,7 @@ public class CampaignKeyword implements Serializable {
 	@Column(name="keyword",length=30)
 	private String keyword;
 	
-	
-//	@Column(name="campaignId")
-//	private Long campaignId;
-	
-	
 	@JsonIgnore
-	//@MapsId("campaignId")
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="campaignId", nullable = false)
 	private Campaign campaign;

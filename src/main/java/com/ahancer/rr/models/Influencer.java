@@ -2,7 +2,9 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -56,7 +58,7 @@ public class Influencer implements Serializable{
 	private Date birthday;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "influencer")
-	private List<InfluencerMedia> influencerMedias;
+	private Set<InfluencerMedia> influencerMedias = new HashSet<InfluencerMedia>(0);
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
@@ -178,11 +180,11 @@ public class Influencer implements Serializable{
 		this.deletedAt = deletedAt;
 	}
 
-	public List<InfluencerMedia> getInfluencerMedias() {
+	public Set<InfluencerMedia> getInfluencerMedias() {
 		return influencerMedias;
 	}
 
-	public void setInfluencerMedias(List<InfluencerMedia> influencerMedias) {
+	public void setInfluencerMedias(Set<InfluencerMedia> influencerMedias) {
 		this.influencerMedias = influencerMedias;
 	}
 

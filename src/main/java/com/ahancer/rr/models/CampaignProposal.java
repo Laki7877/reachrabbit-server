@@ -2,7 +2,8 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,7 +61,7 @@ public class CampaignProposal implements Serializable{
 			name="CampaignProposalResource",
 			joinColumns=@JoinColumn(name="proposalId", referencedColumnName="proposalId"),
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
-	private List<Resource> resources;
+	private Set<Resource> resources = new HashSet<Resource>(0);
 	
 	@Column(name="isSelected",length=255)
 	private Boolean isSelected;
@@ -199,6 +200,14 @@ public class CampaignProposal implements Serializable{
 
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
+	}
+
+	public Set<Resource> getResources() {
+		return resources;
+	}
+
+	public void setResources(Set<Resource> resources) {
+		this.resources = resources;
 	}
 	
 }
