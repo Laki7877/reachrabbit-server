@@ -23,6 +23,7 @@ public class ProfileController extends AbstractController{
 	
 	@Autowired
 	private UserDao userDao;
+	
 	@RequestMapping(method=RequestMethod.GET)
 	public User getMyProfile() {
 		return userDao.findOne(this.getUserRequest().getUserId());
