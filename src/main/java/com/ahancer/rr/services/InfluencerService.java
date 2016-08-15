@@ -43,7 +43,7 @@ public class InfluencerService {
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
-		
+		/*
 		List<InfluencerMedia> newList = new ArrayList<InfluencerMedia>();
 		//Override duplicates
 		for(InfluencerMedia link : oldUser.getInfluencer().getInfluencerMedias()) {
@@ -72,11 +72,13 @@ public class InfluencerService {
 			if(!isFound) {
 				newCategory.add(cat);
 			}
-		}
+		}*/
 		
-		Util.copyProperties(newUser, oldUser);
+		Util.copyProperties(newUser, oldUser);/*
 		oldUser.getInfluencer().setInfluencerMedias(newList);
-		oldUser.getInfluencer().setCategories(newCategory);
+		oldUser.getInfluencer().setCategories(newCategory);*/
+		System.out.println(oldUser.getInfluencer());
+		System.out.println(oldUser.getInfluencer().getInfluencerMedias());
 		User user = userDao.save(oldUser);
 		CacheUtil.updateCacheObject(userRequestCache, token, user);
 		return user;
