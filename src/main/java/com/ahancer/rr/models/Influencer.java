@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
@@ -46,8 +47,13 @@ public class Influencer implements Serializable{
 	@Column(name="web",length=255)
 	private String web;
 
-	@Column(name="about",length=255)
+	@Lob
+	@Column(name="about")
 	private String about;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="birthday")
+	private Date birthday;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "influencer")
 	private List<InfluencerMedia> influencerMedias;
@@ -178,6 +184,14 @@ public class Influencer implements Serializable{
 
 	public void setInfluencerMedias(List<InfluencerMedia> influencerMedias) {
 		this.influencerMedias = influencerMedias;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
 	}
 
 }

@@ -14,6 +14,7 @@ import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
@@ -46,7 +47,7 @@ public class InfluencerService {
 		for(InfluencerMedia link : oldUser.getInfluencer().getInfluencerMedias()) {
 			boolean isFound = false;
 			for(InfluencerMedia link2 : newUser.getInfluencer().getInfluencerMedias()) {
-				if(link2.getMedia().getMediaId().equals(link.getMedia().getMediaId())) {
+				if(link2.getInfluencerMediaId().getMediaId().equals(link.getInfluencerMediaId().getMediaId())) {
 					newList.add(link2);
 					isFound = true;
 				}
@@ -55,8 +56,23 @@ public class InfluencerService {
 				newList.add(link);
 			}
 		}
+		//Override categories
+		List<Category> newCategory = new ArrayList<Category>();
+		for(Category cat : oldUser.getInfluencer().getCategories()) {
+			boolean isFound = false;
+			for(Category cat2 : newUser.getInfluencer().getCategories()) {
+				if(cat.getCategoryId().equals(cat2.getCategoryId())) {
+					newCategory.add(cat2);
+					isFound = true;
+				}
+			}
+			if(!isFound) {
+				newCategory.add(cat);
+			}
+		}
 		Util.copyProperties(newUser, oldUser);
 		oldUser.getInfluencer().setInfluencerMedias(newList);
+		oldUser.getInfluencer().setCategories(newCategory);
 		User user = userDao.save(oldUser);
 		CacheUtil.updateCacheObject(userRequestCache, token, user);
 		return user;
