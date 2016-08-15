@@ -1,7 +1,9 @@
 package com.ahancer.rr.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +21,6 @@ import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.User;
-import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.Util;
 
 @Service
@@ -43,7 +44,7 @@ public class InfluencerService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
 		
-		List<InfluencerMedia> newList = new ArrayList<InfluencerMedia>();
+		Set<InfluencerMedia> newList = new HashSet<InfluencerMedia>();
 		//Override duplicates
 		for(InfluencerMedia link : newUser.getInfluencer().getInfluencerMedias()) {
 			boolean isFound = false;
