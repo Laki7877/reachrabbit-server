@@ -58,7 +58,7 @@ public class Influencer implements Serializable{
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "influencer")
 	private List<InfluencerMedia> influencerMedias;
 	
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 			name="InfluencerCategory",
 			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
