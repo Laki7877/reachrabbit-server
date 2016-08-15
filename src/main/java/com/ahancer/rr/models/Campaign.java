@@ -3,6 +3,7 @@ package com.ahancer.rr.models;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,7 +68,7 @@ public class Campaign implements Serializable {
 			name="CampaignResource",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
-	private List<Resource> resources;
+	private Set<Resource> resources;
 
 	@Column(name="title",length=255)
 	private String title;
@@ -234,11 +235,11 @@ public class Campaign implements Serializable {
 		this.media = media;
 	}
 
-	public List<Resource> getResources() {
+	public Set<Resource> getResources() {
 		return resources;
 	}
 
-	public void setResources(List<Resource> resources) {
+	public void setResources(Set<Resource> resources) {
 		this.resources = resources;
 	}
 
