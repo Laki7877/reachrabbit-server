@@ -28,9 +28,9 @@ public class ProfileController extends AbstractController{
 	public User updateProfile(@RequestBody User user) throws Exception {
 		User ownUser = this.getUserRequest();
 		if(ownUser.getRole().equals(Role.Brand)) {
-			return brandService.updateBrandUser(ownUser.getUserId(), user);
+			return brandService.updateBrandUser(ownUser.getUserId(), user, this.getTokenRequest());
 		} else if(ownUser.getRole().equals(Role.Influencer)) {
-			return influencerService.updateInfluencerUser(ownUser.getUserId(), user);
+			return influencerService.updateInfluencerUser(ownUser.getUserId(), user, this.getTokenRequest());
 		}
 		throw new NotImplemented();
 	}

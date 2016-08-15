@@ -25,5 +25,18 @@ public class CacheUtil {
 		cache.put(element);
 	}
 	
+	public static void removeCacheObject(String cacheName,Object key){
+		CacheManager manager = CacheManager.getInstance();
+		Cache cache = manager.getCache(cacheName);
+		Element element = cache.get(key);
+		if(null != element) {
+			cache.removeElement(element);
+		}
+	}
+	
+	public static void updateCacheObject(String cacheName,Object key,Object newValue) {
+		removeCacheObject(cacheName,key);
+		putCacheObject(cacheName,key,newValue);
+	}
 
 }
