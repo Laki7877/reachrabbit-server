@@ -68,6 +68,7 @@ public class InfluencerService {
 		user.setRole(Role.Influencer);
 		user.setInfluencer(null);
 		userDao.save(user);
+		influencer.setUser(null);
 		influencer.setInfluencerId(user.getUserId());
 		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
 			link.setInfluencer(influencer);
