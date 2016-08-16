@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
@@ -26,9 +27,8 @@ public class Brand implements Serializable {
 	@Column(name="brandId",unique = true, nullable = false)
 	private Long brandId;
 
-	@JsonIgnore
 	@MapsId("brandId")
-	@OneToOne
+	@OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "brandId")
 	private User user;
 
