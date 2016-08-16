@@ -15,7 +15,7 @@ import com.ahancer.rr.models.User;
 @SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
 @WebIntegrationTest
 public class AuthenticationControllerIT extends AbstractControllerIT{
-	@Test
+	/*@Test
 	public void loginWithWrongUser() {
 		User user = new User();
 		user.setEmail("wrong@email.com");
@@ -28,5 +28,5 @@ public class AuthenticationControllerIT extends AbstractControllerIT{
 			.statusCode(400)
 		.when()
 			.post("/auth/login");
-	}
+	}*/
 }
