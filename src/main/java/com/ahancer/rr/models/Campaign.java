@@ -20,7 +20,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -43,7 +42,7 @@ public class Campaign implements Serializable {
 	private Long brandId;
 
 	@MapsId("brandId")
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="brandId")
 	private Brand brand;
 	
@@ -63,10 +62,13 @@ public class Campaign implements Serializable {
 			name="CampaignResource",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
-	private Set<Resource> resources= new HashSet<Resource>(0);
+	private Set<Resource> resources = new HashSet<Resource>(0);
 	
-	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
-	private Set<CampaignKeyword> keywords = new HashSet<CampaignKeyword>(0);
+//	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
+//	private Set<CampaignKeyword> keywords = new HashSet<CampaignKeyword>(0);
+	
+	@Column(name="title",length=255)
+	private String keyword;
 
 	@Column(name="title",length=255)
 	private String title;
@@ -270,25 +272,12 @@ public class Campaign implements Serializable {
 		this.website = website;
 	}
 
-	public Set<CampaignKeyword> getKeywords() {
-		return keywords;
+	public String getKeyword() {
+		return keyword;
 	}
 
-	public void setKeywords(Set<CampaignKeyword> keywords) {
-		for(CampaignKeyword keyword : keywords) {
-			keyword.setCampaign(this);
-		}
-		this.keywords = keywords;
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
-
-//	public Long getCategoryId() {
-//		return categoryId;
-//	}
-//
-//	public void setCategoryId(Long categoryId) {
-//		this.categoryId = categoryId;
-//	}
-
-	
 
 }
