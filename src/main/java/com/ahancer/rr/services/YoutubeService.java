@@ -83,7 +83,6 @@ public class YoutubeService {
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();
 			oauth.setName(channel.getSnippet().getTitle());
-			
 			oauth.setId(channel.getId());
 			oauth.setMedia(mediaDao.findByMediaId("google"));
 			oauth.setProfilePicture(channel.getSnippet().getThumbnails().getHigh().getUrl());

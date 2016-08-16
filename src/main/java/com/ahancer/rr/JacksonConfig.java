@@ -21,7 +21,7 @@ public class JacksonConfig {
             return new ObjectIdInfo(
                     PropertyName.construct("@id", null),
                     null,
-                    ObjectIdGenerators.IntSequenceGenerator.class,
+                    ObjectIdGenerators.UUIDGenerator.class,
                     null);
         }
     }
