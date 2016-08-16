@@ -1,5 +1,9 @@
 package com.ahancer.rr.services;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jinstagram.Instagram;
 import org.jinstagram.auth.InstagramAuthService;
 import org.jinstagram.auth.model.Token;
@@ -43,6 +47,8 @@ public class InstagramService {
 		UserInfoData userInfo = instagram.getCurrentUserInfo().getData();
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(userInfo.getId(), "instagram");
+		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
+		pages.add(new OAuthenticationResponse.Page(userInfo.getId(), userInfo.getFullName(), userInfo.getProfilePicture(), BigInteger.valueOf(userInfo.getCounts().getFollowedBy())));
 		
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();
@@ -50,7 +56,7 @@ public class InstagramService {
 			oauth.setId(userInfo.getId());
 			oauth.setMedia(mediaDao.findByMediaId("instagram"));
 			oauth.setProfilePicture(userInfo.getProfilePicture());
-			oauth.setPages(null);
+			oauth.setPages(pages);
 			return oauth;
 		} else {
 			return new OAuthenticationResponse(auth.getToken());
