@@ -51,7 +51,7 @@ INSERT INTO category (categoryName,isActive) VALUES ('DIY',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Mom & Kid',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Gadget',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Educational',true);
-INSERT INTO campaign (title, description, brandId, categoryId, status) VALUES ('My campaign', 'This is my campaign', 2, 1, 'Open');
+INSERT INTO campaign (title, description, brandId, categoryId, status) VALUES ('My campaign', 'This is my campaign', 2, 1, 'Draft');
 
 
 INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (1, 0, 1000);
