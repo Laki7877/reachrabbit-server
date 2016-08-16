@@ -25,6 +25,7 @@ import org.hibernate.validator.constraints.Email;
 
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name="user")
 public class User implements Serializable{
@@ -88,10 +89,12 @@ public class User implements Serializable{
 	
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
+	@JsonManagedReference
 	private Brand brand;
 	
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
+	@JsonManagedReference
 	private Influencer influencer;
 
 	public User() {

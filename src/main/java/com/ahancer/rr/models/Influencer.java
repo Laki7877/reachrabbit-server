@@ -23,6 +23,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.Gender;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="influencer")
@@ -41,6 +42,7 @@ public class Influencer implements Serializable{
 	@MapsId("influencerId")
 	@OneToOne
     @JoinColumn(name = "influencerId")
+	@JsonBackReference
 	private User user;
 
 	@Enumerated(EnumType.STRING)

@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="brand")
@@ -30,6 +31,7 @@ public class Brand implements Serializable {
 	@MapsId("brandId")
 	@OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "brandId")
+	@JsonBackReference
 	private User user;
 
 	@Column(name="brandName",length=255)
