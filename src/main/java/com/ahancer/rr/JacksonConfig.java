@@ -19,7 +19,7 @@ public class JacksonConfig {
         @Override
         public ObjectIdInfo findObjectIdInfo(final Annotated ann) {
             return new ObjectIdInfo(
-                    PropertyName.construct("__id__", null),
+                    PropertyName.construct("@id", null),
                     null,
                     ObjectIdGenerators.IntSequenceGenerator.class,
                     null);
