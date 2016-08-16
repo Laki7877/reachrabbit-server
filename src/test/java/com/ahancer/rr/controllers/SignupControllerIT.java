@@ -30,7 +30,7 @@ import io.restassured.response.Response;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
 @WebIntegrationTest
-public class SignupControllerIT {
+public class SignupControllerIT extends AbstractControllerIT{
 	@Autowired
 	private UserDao userDao;
 	@Autowired
@@ -77,7 +77,7 @@ public class SignupControllerIT {
 		//Afterward, try get check if userExist
 		User newUser = userDao.findByEmail("test@test.com");
 
-		eUtil.checkPassword(newUser.getPassword(), (String)user.get("password"));
+		eUtil.checkPassword((String)user.get("password"), newUser.getPassword());
 		assertThat(newUser, allOf(
 				hasProperty("name", equalTo(user.get("name"))),
 				hasProperty("email", equalTo(user.get("email"))),
@@ -90,19 +90,16 @@ public class SignupControllerIT {
 	@Test
 	public void Should_Fail_With_400_When_CreateBrandWithDuplicateEmail() {
 		Map<String, Object> user = new HashMap<>();
-		user.put("email", "test2@test");
+		user.put("email", "test@test");
 		user.put("password", "1234");
 		
 		Map<String, Object> user2 = new HashMap<>();
-		user.put("email", "test2@test");
-		user.put("password", "1234");
+		user2.put("email", "test@test");
+		user2.put("password", "1234");
 
 		//First user
 		given()
 			.body(user)
-		.expect()
-			.statusCode(200)
-			.body("token", allOf(notNullValue(), not(isEmptyString()), instanceOf(String.class)))
 		.when()
 			.post("/signup/brand");
 		
