@@ -28,7 +28,7 @@ public class Brand implements Serializable {
 	private Long brandId;
 
 	@MapsId("brandId")
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "brandId")
 	private User user;
 
