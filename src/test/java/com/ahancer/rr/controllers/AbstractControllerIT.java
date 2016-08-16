@@ -43,7 +43,6 @@ public abstract class AbstractControllerIT {
 	
 	public void setupRestAssured() {
 		LogConfig logConfig = LogConfig.logConfig().enableLoggingOfRequestAndResponseIfValidationFails(LogDetail.ALL).enablePrettyPrinting(true);
-		
 		RestAssured.port = port;
 		RestAssured.config = RestAssured.config()
 			.logConfig(logConfig);
