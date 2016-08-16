@@ -68,8 +68,10 @@ public class BrandService {
 		user.setRole(Role.Brand);
 		user.setBrand(null);
 		userDao.save(user);
+		brand.setUser(null);
 		brand.setBrandId(user.getUserId());
-		user.setBrand(brandDao.save(brand));
+		brand = brandDao.save(brand);
+		user.setBrand(brand);
 		
 		//Create campaign
 		Campaign campaign = new Campaign();
