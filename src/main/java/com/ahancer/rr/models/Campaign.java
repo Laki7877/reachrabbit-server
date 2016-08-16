@@ -67,7 +67,7 @@ public class Campaign implements Serializable {
 //	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
 //	private Set<CampaignKeyword> keywords = new HashSet<CampaignKeyword>(0);
 	
-	@Column(name="title",length=255)
+	@Column(name="keyword",length=255)
 	private String keyword;
 
 	@Column(name="title",length=255)
