@@ -38,7 +38,6 @@ public class Influencer implements Serializable{
 	@Column(name="influencerId",unique = true, nullable = false)
 	private Long influencerId;
 
-	@JsonIgnore
 	@MapsId("influencerId")
 	@OneToOne
     @JoinColumn(name = "influencerId")
