@@ -1,4 +1,10 @@
 package com.ahancer.rr.controllers;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -11,7 +17,4 @@ import com.ahancer.rr.ReachrabbitServerApplication;
 @SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
 @WebIntegrationTest
 public class UserControllerIT extends AbstractControllerIT {
-	
-	public void findUser() {
-	}
 }
