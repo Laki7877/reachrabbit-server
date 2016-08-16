@@ -12,10 +12,10 @@ public interface UserDao extends CrudRepository<User, Long> {
 	public User findByEmail(String email);
 	
 	@Query("SELECT u FROM user u"
-			+ " JOIN u.profilePicture r"
+			+ " LEFT JOIN u.profilePicture r"
 			+ " JOIN u.influencer i"
 			+ " JOIN i.influencerMedias im"
-			+ " JOIN i.categories ic"
+			+ " LEFT JOIN i.categories ic"
 			+ " WHERE im.influencerMediaId.mediaId=:mediaId AND im.socialId=:socialId")
 	public User findBySocialIdAndMediaId(@Param("mediaId") String mediaId,@Param("socialId") String socialId);
 
