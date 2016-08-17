@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/proposalmessages")
 public class ProposalMessageController extends AbstractController {
-	
+
 }

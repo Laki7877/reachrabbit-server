@@ -43,5 +43,13 @@ public class ProposalController extends AbstractController {
 		message = proposalMessageService.createProposalMessage(message, this.getUserRequest());
 		return message;
 	}
+	
+	
+	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
+	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
+	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId,Pageable pageRequest) throws Exception {
+		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, pageRequest);
+		return messages;
+	}
 
 }
