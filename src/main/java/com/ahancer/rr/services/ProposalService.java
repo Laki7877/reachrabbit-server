@@ -7,31 +7,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ahancer.rr.daos.CampaignProposalDao;
+import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
-import com.ahancer.rr.models.CampaignProposal;
+import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.Influencer;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
-public class CampaignProposalService {
+public class ProposalService {
 	
 	@Autowired
-	private CampaignProposalDao campaignProposalDao;
+	private ProposalDao proposalDao;
 	
-	public Page<CampaignProposal> findAll(Pageable pageable) {
-		return campaignProposalDao.findAll(pageable);
+	public Page<Proposal> findAll(Pageable pageable) {
+		return proposalDao.findAll(pageable);
 	}
 	
-	public CampaignProposal createCampaignProposalByInfluencer(CampaignProposal proposal,Influencer influencer) throws Exception {
+	public Proposal createCampaignProposalByInfluencer(Proposal proposal,Influencer influencer) throws Exception {
 		Campaign campaign = proposal.getCampaign();
-		int count = campaignProposalDao.countByInfluencerAndCampaign(influencer.getInfluencerId(), campaign.getCampaignId());
+		int count = proposalDao.countByInfluencerAndCampaign(influencer.getInfluencerId(), campaign.getCampaignId());
 		if(0 < count){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.already.proposal");
 		}
 		proposal.setInfluencer(influencer);
-		proposal = campaignProposalDao.save(proposal);
+		proposal = proposalDao.save(proposal);
 		return proposal;
 	}
 

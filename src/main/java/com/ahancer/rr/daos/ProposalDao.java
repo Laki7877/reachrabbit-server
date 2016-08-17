@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.ahancer.rr.models.CampaignProposal;
+import com.ahancer.rr.models.Proposal;
 
-public interface CampaignProposalDao extends CrudRepository<CampaignProposal, Long> {
+public interface ProposalDao extends CrudRepository<Proposal, Long> {
 
-	public Page<CampaignProposal> findAll(Pageable pageable);
+	public Page<Proposal> findAll(Pageable pageable);
 
 	@Query("SELECT COUNT(cp) FROM campaignProposal cp WHERE cp.influencer.influencerId=:influencerId AND cp.campaign.campaignId=:campaignId")
 	public int countByInfluencerAndCampaign(@Param("influencerId") Long influencerId, @Param("campaignId") Long campaignId);

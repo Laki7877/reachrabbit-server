@@ -23,8 +23,8 @@ import javax.persistence.TemporalType;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name="campaignProposal")
-public class CampaignProposal implements Serializable{
+@Entity(name="proposal")
+public class Proposal implements Serializable{
 	
 	/**
 	 * 
@@ -84,7 +84,7 @@ public class CampaignProposal implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
 	
-	public CampaignProposal() {
+	public Proposal() {
 		
 	}
 

@@ -36,7 +36,7 @@ public class ProposalMessage implements Serializable  {
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="proposalId",nullable=false)
-	private CampaignProposal proposal;
+	private Proposal proposal;
 	
 
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -135,11 +135,11 @@ public class ProposalMessage implements Serializable  {
 		this.isBrandRead = isBrandRead;
 	}
 
-	public CampaignProposal getProposal() {
+	public Proposal getProposal() {
 		return proposal;
 	}
 
-	public void setProposal(CampaignProposal proposal) {
+	public void setProposal(Proposal proposal) {
 		this.proposal = proposal;
 	}
 	

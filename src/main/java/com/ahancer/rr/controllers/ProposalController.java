@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
-import com.ahancer.rr.models.CampaignProposal;
-import com.ahancer.rr.services.CampaignProposalService;
+import com.ahancer.rr.models.Proposal;
+import com.ahancer.rr.services.ProposalService;
 
 @RestController
 @RequestMapping("/campaignproposals")
-public class CampaignProposalController extends AbstractController {
+public class ProposalController extends AbstractController {
 	
 	
 	@Autowired
-	private CampaignProposalService campaignProposalService;
+	private ProposalService proposalService;
 	
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Page<CampaignProposal> getAllCampaign(Pageable pageRequest) throws Exception{
+	public Page<Proposal> getAllCampaign(Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
 			return null;
 			//return campaignService.findAllByBrand(this.getUserRequest().getBrand(), pageRequest);	
@@ -36,8 +36,8 @@ public class CampaignProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Influencer)
-	public CampaignProposal createCampaign(@RequestBody CampaignProposal proposal) throws Exception {
-		return campaignProposalService.createCampaignProposalByInfluencer(proposal, this.getUserRequest().getInfluencer());
+	public Proposal createCampaign(@RequestBody Proposal proposal) throws Exception {
+		return proposalService.createCampaignProposalByInfluencer(proposal, this.getUserRequest().getInfluencer());
 	}
 
 }
