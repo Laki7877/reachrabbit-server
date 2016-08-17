@@ -35,36 +35,30 @@ public class CampaignProposal implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long proposalId;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="influencerId",nullable=false)
 	private Influencer influencer;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="campaignId",nullable=false)
 	private Influencer campaign;
 	
-	@Column(name="title",length=255)
-	private String title;
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="completionId")
+	private CompletionTime completionTime;
+	
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(
+			name="CampaignProposalMedia",
+			joinColumns=@JoinColumn(name="proposalId", referencedColumnName="proposalId"),
+			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
+	private Set<Media> media = new HashSet<Media>(0);
 	
 	@Column(name="description",length=255)
 	private String description;
 	
-	@Column(name="comment",length=255)
-	private String comment;
-	
-	
 	@Column(name="proposePrice",scale=10,precision=3)
 	private Double proposePrice;
-	
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(
-			name="CampaignProposalResource",
-			joinColumns=@JoinColumn(name="proposalId", referencedColumnName="proposalId"),
-			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
-	private Set<Resource> resources = new HashSet<Resource>(0);
-	
-	@Column(name="isSelected",length=255)
-	private Boolean isSelected;
 	
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
@@ -89,6 +83,10 @@ public class CampaignProposal implements Serializable{
 	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletedAt;
+	
+	public CampaignProposal() {
+		
+	}
 
 	public Long getProposalId() {
 		return proposalId;
@@ -114,12 +112,20 @@ public class CampaignProposal implements Serializable{
 		this.campaign = campaign;
 	}
 
-	public String getTitle() {
-		return title;
+	public CompletionTime getCompletionTime() {
+		return completionTime;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setCompletionTime(CompletionTime completionTime) {
+		this.completionTime = completionTime;
+	}
+
+	public Set<Media> getMedia() {
+		return media;
+	}
+
+	public void setMedia(Set<Media> media) {
+		this.media = media;
 	}
 
 	public String getDescription() {
@@ -130,28 +136,12 @@ public class CampaignProposal implements Serializable{
 		this.description = description;
 	}
 
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
 	public Double getProposePrice() {
 		return proposePrice;
 	}
 
 	public void setProposePrice(Double proposePrice) {
 		this.proposePrice = proposePrice;
-	}
-
-	public Boolean getIsSelected() {
-		return isSelected;
-	}
-
-	public void setIsSelected(Boolean isSelected) {
-		this.isSelected = isSelected;
 	}
 
 	public ProposalStatus getStatus() {
@@ -200,14 +190,6 @@ public class CampaignProposal implements Serializable{
 
 	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
-	}
-
-	public Set<Resource> getResources() {
-		return resources;
-	}
-
-	public void setResources(Set<Resource> resources) {
-		this.resources = resources;
 	}
 	
 }
