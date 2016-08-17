@@ -14,13 +14,18 @@ import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
+import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.services.CampaignService;
+import com.ahancer.rr.services.ProposalService;
 
 @RestController
 @RequestMapping("/campaigns")
 public class CampaignController extends AbstractController{
 	@Autowired
 	private CampaignService campaignService;
+	
+	@Autowired
+	private ProposalService proposalService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Campaign> getAllCampaign(Pageable pageRequest) throws Exception{
@@ -58,5 +63,13 @@ public class CampaignController extends AbstractController{
 	public void deleteCampaign(@PathVariable Long campaignId) throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
+	
+	
+	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
+	@Authorization(Role.Influencer)
+	public Proposal createCampaign(@PathVariable Long campaignId,@RequestBody Proposal proposal) throws Exception {
+		return proposalService.createCampaignProposalByInfluencer(proposal, this.getUserRequest().getInfluencer());
+	}
+	
 	
 }
