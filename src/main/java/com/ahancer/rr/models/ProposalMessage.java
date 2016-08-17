@@ -33,13 +33,17 @@ public class ProposalMessage implements Serializable  {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long messageId;
-
+	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="campaignId")
+	@JoinColumn(name="proposalId",nullable=false)
+	private CampaignProposal proposal;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="campaignId",nullable=false)
 	private Campaign campaign;
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="userId")
+	@JoinColumn(name="userId",nullable=false)
 	private User user;
 	
 	@Column(name="message")
@@ -141,7 +145,13 @@ public class ProposalMessage implements Serializable  {
 	public void setIsBrandRead(Boolean isBrandRead) {
 		this.isBrandRead = isBrandRead;
 	}
-	
-	
 
+	public CampaignProposal getProposal() {
+		return proposal;
+	}
+
+	public void setProposal(CampaignProposal proposal) {
+		this.proposal = proposal;
+	}
+	
 }
