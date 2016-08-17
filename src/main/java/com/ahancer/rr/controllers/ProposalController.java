@@ -3,12 +3,17 @@ package com.ahancer.rr.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Proposal;
+import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalService;
 
 @RestController
@@ -19,6 +24,9 @@ public class ProposalController extends AbstractController {
 	@Autowired
 	private ProposalService proposalService;
 	
+	@Autowired
+	private ProposalMessageService proposalMessageService;
+	
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Proposal> getAllCampaign(Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
@@ -27,6 +35,13 @@ public class ProposalController extends AbstractController {
 			return proposalService.findByInfluencer(this.getUserRequest().getInfluencer(), pageRequest);		
 		}	
 		throw new Exception();
+	}
+	
+	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/proposalmessages")
+	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
+	public ProposalMessage createProposalMessage(@PathVariable Long proposalId,@RequestBody ProposalMessage message) throws Exception {
+		message = proposalMessageService.createProposalMessage(message, this.getUserRequest());
+		return message;
 	}
 
 }
