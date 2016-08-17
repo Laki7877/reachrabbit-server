@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Brand;
@@ -20,6 +21,10 @@ public class ProposalService {
 	
 	@Autowired
 	private ProposalDao proposalDao;
+
+	
+	@Autowired
+	private CampaignDao campaignDao;
 	
 	public Page<Proposal> findByBrand(Brand brand,Pageable pageable) {
 		return proposalDao.findByCampaignBrand(brand, pageable);
@@ -29,18 +34,17 @@ public class ProposalService {
 		return proposalDao.findByInfluencer(influencer, pageable);
 	}
 	
-	
-	
 	public Page<Proposal> findAll(Pageable pageable) {
 		return proposalDao.findAll(pageable);
 	}
 	
-	public Proposal createCampaignProposalByInfluencer(Proposal proposal,Influencer influencer) throws Exception {
-		Campaign campaign = proposal.getCampaign();
+	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,Influencer influencer) throws Exception {
+		Campaign campaign = campaignDao.findOne(campaignId);
 		int count = proposalDao.countByInfluencerAndCampaign(influencer.getInfluencerId(), campaign.getCampaignId());
 		if(0 < count){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.already.proposal");
 		}
+		proposal.setCampaign(campaign);
 		proposal.setInfluencer(influencer);
 		proposal = proposalDao.save(proposal);
 		return proposal;

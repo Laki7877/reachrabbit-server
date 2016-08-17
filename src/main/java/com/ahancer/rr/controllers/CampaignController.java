@@ -64,11 +64,10 @@ public class CampaignController extends AbstractController{
 		throw new ResponseException("error.notimplement");
 	}
 	
-	
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
 	@Authorization(Role.Influencer)
 	public Proposal createCampaign(@PathVariable Long campaignId,@RequestBody Proposal proposal) throws Exception {
-		return proposalService.createCampaignProposalByInfluencer(proposal, this.getUserRequest().getInfluencer());
+		return proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest().getInfluencer());
 	}
 	
 	

@@ -11,7 +11,9 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BrandDao;
 import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.UserDao;
+import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.utils.EncryptionUtil;
 
 import io.restassured.RestAssured;
@@ -40,6 +42,13 @@ public abstract class AbstractControllerIT {
 	protected String adminToken;
 	protected String brandToken;
 	protected String influencerToken;
+
+	protected User brand;
+	protected User admin;
+	protected User influencer;
+	
+	@Autowired
+	protected AuthenticationService authenticationService;
 	
 	public void setupRestAssured() {
 		LogConfig logConfig = LogConfig.logConfig().enableLoggingOfRequestAndResponseIfValidationFails(LogDetail.ALL).enablePrettyPrinting(true);
@@ -60,6 +69,16 @@ public abstract class AbstractControllerIT {
 		admin.setEmail("admin@reachrabbit.com");
 		admin.setPassword(encryptionUtil.hashPassword("1234"));
 		admin.setRole(Role.Admin);
+		
+		User brand = new User();
+		brand.setName("Nattamoto brand");
+		brand.setEmail("brand@reachrabbit.com");
+		brand.setPassword(encryptionUtil.hashPassword("1234"));
+		brand.setRole(Role.Brand);
+		brand.setBrand(new Brand());
+		
+		User influencer = new User();
+		influencer.setInfluencer(influencer);
 		
 		userDao.save(Arrays.asList(admin));
 	}
