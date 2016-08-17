@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahancer.rr.daos.BankDao;
 import com.ahancer.rr.daos.BudgetDao;
 import com.ahancer.rr.daos.CategoryDao;
+import com.ahancer.rr.daos.CompletionTimeDao;
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.models.Bank;
 import com.ahancer.rr.models.Budget;
 import com.ahancer.rr.models.Category;
+import com.ahancer.rr.models.CompletionTime;
 import com.ahancer.rr.models.Media;
 
 @RestController
@@ -29,6 +31,9 @@ public class DataController {
 	
 	@Autowired
 	private BudgetDao budgetDao;
+	
+	@Autowired
+	private CompletionTimeDao completionTimeDao;
 
 	@RequestMapping(value="/media",method=RequestMethod.GET)
 	public Iterable<Media> getAllMedia() throws Exception{
@@ -48,6 +53,11 @@ public class DataController {
 	@RequestMapping(value="/budget",method=RequestMethod.GET)
 	public Iterable<Budget> getBudget() throws Exception{
 		return budgetDao.findAll();
+	}
+	
+	@RequestMapping(value="/completiontime",method=RequestMethod.GET)
+	public Iterable<CompletionTime> getCompletionTime() throws Exception{
+		return completionTimeDao.findAll();
 	}
 	
 }
