@@ -38,9 +38,6 @@ public class ProposalMessage implements Serializable  {
 	@JoinColumn(name="proposalId",nullable=false)
 	private CampaignProposal proposal;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="campaignId",nullable=false)
-	private Campaign campaign;
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="userId",nullable=false)
@@ -80,14 +77,6 @@ public class ProposalMessage implements Serializable  {
 
 	public void setMessageId(Long messageId) {
 		this.messageId = messageId;
-	}
-
-	public Campaign getCampaign() {
-		return campaign;
-	}
-
-	public void setCampaign(Campaign campaign) {
-		this.campaign = campaign;
 	}
 
 	public User getUser() {
