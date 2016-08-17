@@ -41,7 +41,7 @@ public class CampaignProposal implements Serializable{
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="campaignId",nullable=false)
-	private Influencer campaign;
+	private Campaign campaign;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="completionId")
@@ -104,11 +104,11 @@ public class CampaignProposal implements Serializable{
 		this.influencer = influencer;
 	}
 
-	public Influencer getCampaign() {
+	public Campaign getCampaign() {
 		return campaign;
 	}
 
-	public void setCampaign(Influencer campaign) {
+	public void setCampaign(Campaign campaign) {
 		this.campaign = campaign;
 	}
 
