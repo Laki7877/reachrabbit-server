@@ -11,9 +11,6 @@ import javax.persistence.Id;
 @Entity(name="completionTime")
 public class CompletionTime implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7303810285357268606L;
 
 	@Id

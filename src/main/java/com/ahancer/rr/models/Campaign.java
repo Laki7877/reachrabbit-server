@@ -24,14 +24,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="campaign")
-public class Campaign implements Serializable {
+public class Campaign extends AbstractModel implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3194504854142231694L;
 
 	@Id
@@ -96,25 +92,6 @@ public class Campaign implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private CampaignStatus status;
 
-	@JsonIgnore
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
-	
-	@JsonIgnore
-	@Column(name="createdBy")
-	private Long createdBy;
-	
-	@JsonIgnore
-	@Column(name="updatedBy")
-	private Long updatedBy;
-	
-	@JsonIgnore
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
-	
-	@JsonIgnore
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date deletedAt;
 
 	public Campaign() {
 
@@ -174,46 +151,6 @@ public class Campaign implements Serializable {
 
 	public void setSubmissionDeadline(Date submissionDeadline) {
 		this.submissionDeadline = submissionDeadline;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Long getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(Long updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public Date getDeletedAt() {
-		return deletedAt;
-	}
-
-	public void setDeletedAt(Date deletedAt) {
-		this.deletedAt = deletedAt;
 	}
 
 	public Long getBrandId() {

@@ -1,7 +1,6 @@
 package com.ahancer.rr.models;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,18 +12,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.PaymentStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="payment")
-public class Payment implements Serializable{
+public class Payment extends AbstractModel implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4988663340552083919L;
 
 	@Id
@@ -42,25 +35,6 @@ public class Payment implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private PaymentStatus status;
 	
-	@JsonIgnore
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
-	
-	@JsonIgnore
-	@Column(name="createdBy")
-	private Long createdBy;
-	
-	@JsonIgnore
-	@Column(name="updatedBy")
-	private Long updatedBy;
-	
-	@JsonIgnore
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
-	
-	@JsonIgnore
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date deletedAt;
 	
 	public Payment() {
 		
@@ -97,47 +71,5 @@ public class Payment implements Serializable{
 	public void setStatus(PaymentStatus status) {
 		this.status = status;
 	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Long getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(Long updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public Date getDeletedAt() {
-		return deletedAt;
-	}
-
-	public void setDeletedAt(Date deletedAt) {
-		this.deletedAt = deletedAt;
-	}
-	
-	
 
 }

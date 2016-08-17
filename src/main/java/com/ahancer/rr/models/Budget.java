@@ -9,9 +9,6 @@ import javax.persistence.Id;
 @Entity(name="budget")
 public class Budget implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2449020776236138591L;
 	
 	@Id

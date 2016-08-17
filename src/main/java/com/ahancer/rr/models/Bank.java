@@ -9,9 +9,6 @@ import javax.persistence.Id;
 @Entity(name="bank")
 public class Bank implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4625248350260494348L;
 
 	@Id

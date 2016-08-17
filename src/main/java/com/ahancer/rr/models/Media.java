@@ -9,9 +9,6 @@ import javax.persistence.Id;
 @Entity(name="media")
 public class Media implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7106394972853750323L;
 
 	@Id

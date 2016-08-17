@@ -1,7 +1,6 @@
 package com.ahancer.rr.models;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,18 +15,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity(name="proposalMessage")
-public class ProposalMessage implements Serializable  {
+public class ProposalMessage extends AbstractModel implements Serializable  {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2277636873977709793L;
 
 	@Id
@@ -59,13 +51,6 @@ public class ProposalMessage implements Serializable  {
 			joinColumns=@JoinColumn(name="messageId", referencedColumnName="messageId"),
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
 	private Set<Resource> resources = new HashSet<Resource>(0);
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
-	
-	@JsonIgnore
-	@Column(name="createdBy")
-	private Long createdBy;
 	
 	public ProposalMessage(){
 		
@@ -102,23 +87,7 @@ public class ProposalMessage implements Serializable  {
 	public void setResources(Set<Resource> resources) {
 		this.resources = resources;
 	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
-	}
-
+	
 	public Boolean getIsInfluencerRead() {
 		return isInfluencerRead;
 	}
