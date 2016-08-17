@@ -12,6 +12,6 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 
 	public Page<Proposal> findAll(Pageable pageable);
 
-	@Query("SELECT COUNT(cp) FROM campaignProposal cp WHERE cp.influencer.influencerId=:influencerId AND cp.campaign.campaignId=:campaignId")
+	@Query("SELECT COUNT(cp) FROM proposal cp WHERE cp.influencer.influencerId=:influencerId AND cp.campaign.campaignId=:campaignId")
 	public int countByInfluencerAndCampaign(@Param("influencerId") Long influencerId, @Param("campaignId") Long campaignId);
 }
