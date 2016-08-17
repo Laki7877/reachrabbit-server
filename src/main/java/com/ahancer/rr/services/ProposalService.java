@@ -9,9 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
-import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.Influencer;
+import com.ahancer.rr.models.Proposal;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -19,6 +20,16 @@ public class ProposalService {
 	
 	@Autowired
 	private ProposalDao proposalDao;
+	
+	public Page<Proposal> findByBrand(Brand brand,Pageable pageable) {
+		return proposalDao.findByCampaignBrand(brand, pageable);
+	}
+	
+	public Page<Proposal> findByInfluencer(Influencer influencer,Pageable pageable) {
+		return proposalDao.findByInfluencer(influencer, pageable);
+	}
+	
+	
 	
 	public Page<Proposal> findAll(Pageable pageable) {
 		return proposalDao.findAll(pageable);

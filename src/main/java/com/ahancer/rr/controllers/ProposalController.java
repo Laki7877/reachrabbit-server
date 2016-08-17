@@ -19,15 +19,12 @@ public class ProposalController extends AbstractController {
 	@Autowired
 	private ProposalService proposalService;
 	
-	
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Proposal> getAllCampaign(Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			return null;
-			//return campaignService.findAllByBrand(this.getUserRequest().getBrand(), pageRequest);	
+			return proposalService.findByBrand(this.getUserRequest().getBrand(), pageRequest);
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			return null;
-			//return campaignService.findAll(pageRequest);		
+			return proposalService.findByInfluencer(this.getUserRequest().getInfluencer(), pageRequest);		
 		}	
 		throw new Exception();
 	}
