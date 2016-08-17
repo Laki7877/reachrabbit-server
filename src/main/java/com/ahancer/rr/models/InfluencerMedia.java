@@ -43,6 +43,9 @@ public class InfluencerMedia implements Serializable {
 	@Column(name="pageId")
 	private String pageId;
 	
+	@Column(name="followerCount")
+	private Long followerCount;
+	
 	public InfluencerMedia() {
 		
 	}
@@ -86,7 +89,13 @@ public class InfluencerMedia implements Serializable {
 	public void setPageId(String pageId) {
 		this.pageId = pageId;
 	}
-	
-	
+
+	public Long getFollowerCount() {
+		return followerCount;
+	}
+
+	public void setFollowerCount(Long followerCount) {
+		this.followerCount = followerCount;
+	}
 	
 }
