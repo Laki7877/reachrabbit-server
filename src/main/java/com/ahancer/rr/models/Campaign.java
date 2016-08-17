@@ -52,14 +52,14 @@ public class Campaign implements Serializable {
 
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
-			name="CampaignMedia",
+			name="campaignMedia",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
 	private Set<Media> media = new HashSet<Media>(0);
 
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
-			name="CampaignResource",
+			name="campaignResource",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
 	private Set<Resource> resources = new HashSet<Resource>(0);
