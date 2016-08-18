@@ -6,19 +6,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.ahancer.rr.models.Brand;
-import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.Proposal;
 
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
-	public Proposal findByProposalIdAndInfluencer(Long proposalId,Influencer influencer);
+	public Proposal findByProposalIdAndInfluencerId(Long proposalId,Long influencerId);
 	
-	public Proposal findByProposalIdAndCampaignBrand(Long proposalId,Brand brand);
+	public Proposal findByProposalIdAndCampaignBrandId(Long proposalId,Long brandId);
 
-	public Page<Proposal> findByInfluencer(Influencer influencer,Pageable pageable);
+	public Page<Proposal> findByInfluencerId(Long influencerId,Pageable pageable);
 	
-	public Page<Proposal> findByCampaignBrand(Brand brand,Pageable pageable);
+	public Page<Proposal> findByCampaignBrandId(Long brandId,Pageable pageable);
 	
 	public Page<Proposal> findAll(Pageable pageable);
 

@@ -18,10 +18,10 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.Pattern;
 
 import com.ahancer.rr.custom.type.Role;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity(name="user")
-public class User extends AbstractModel implements Serializable{
+public class User extends AbstractModel implements Serializable {
 	
 	private static final long serialVersionUID = -8851171178921502214L;
 
@@ -64,12 +64,14 @@ public class User extends AbstractModel implements Serializable{
 
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
-	@JsonManagedReference
+//	@JsonManagedReference
+	@JsonBackReference(value="user-brand")
 	private Brand brand;
 	
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
-	@JsonManagedReference
+//	@JsonManagedReference
+	@JsonBackReference(value="user-influencer")
 	private Influencer influencer;
 
 	public User() {

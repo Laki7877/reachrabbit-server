@@ -11,9 +11,11 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.AuthenticationResponse;
+import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
 import com.ahancer.rr.utils.JwtUtil;
+import com.ahancer.rr.utils.Util;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -37,7 +39,8 @@ public class AuthenticationService {
 			return null;
 		} else {
 			String token = jwt.generateToken(user.getUserId());
-			CacheUtil.putCacheObject(userRequestCache, token, user);
+			UserResponse userResponse = Util.getUserResponse(user);
+			CacheUtil.putCacheObject(userRequestCache, token, userResponse);
 			AuthenticationResponse response = new AuthenticationResponse(token);
 			return response;
 		}
@@ -56,7 +59,8 @@ public class AuthenticationService {
 	
 	public AuthenticationResponse generateTokenFromUser(User user) {
 		String token = jwt.generateToken(user.getUserId());
-		CacheUtil.putCacheObject(userRequestCache, token, user);
+		UserResponse userResponse = Util.getUserResponse(user);
+		CacheUtil.putCacheObject(userRequestCache, token, userResponse);
 		AuthenticationResponse response = new AuthenticationResponse(token);
 		return response;
 	}

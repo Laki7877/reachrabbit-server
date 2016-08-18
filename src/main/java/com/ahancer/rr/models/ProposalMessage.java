@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -35,9 +36,12 @@ public class ProposalMessage extends AbstractModel implements Serializable  {
 	@JoinColumn(name="proposalId",nullable=false)
 	private Proposal proposal;
 	
-
+	@Column(name="userId", nullable = false)
+	private Long userId;
+	
+	@MapsId("userId")
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="userId",nullable=false)
+	@JoinColumn(name="userId")
 	private User user;
 	
 	@Column(name="message")
@@ -114,6 +118,14 @@ public class ProposalMessage extends AbstractModel implements Serializable  {
 		this.isBrandRead = isBrandRead;
 	}
 
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
 	public Proposal getProposal() {
 		return proposal;
 	}
@@ -129,5 +141,6 @@ public class ProposalMessage extends AbstractModel implements Serializable  {
 	public void setTime(Date time) {
 		this.time = time;
 	}
+	
 	
 }

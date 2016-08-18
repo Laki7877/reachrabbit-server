@@ -13,9 +13,7 @@ import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.exception.ResponseException;
-import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
-import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
@@ -34,34 +32,35 @@ public class ProposalService {
 	@Autowired
 	private CampaignDao campaignDao;
 
-	public Page<Proposal> findAllByBrand(Brand brand,Pageable pageable) {
-		return proposalDao.findByCampaignBrand(brand, pageable);
+	public Page<Proposal> findAllByBrand(Long brandId,Pageable pageable) {
+		return proposalDao.findByCampaignBrandId(brandId, pageable);
 	}
 
-	public Proposal findOneByBrand(Long proposalId,Brand brand) {
-		return proposalDao.findByProposalIdAndCampaignBrand(proposalId,brand);
+	public Proposal findOneByBrand(Long proposalId,Long brandId) {
+		return proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 	}
 
-	public Proposal findOneByInfluencer(Long proposalId,Influencer influencer) {
-		return proposalDao.findByProposalIdAndInfluencer(proposalId,influencer);
+	public Proposal findOneByInfluencer(Long proposalId,Long influencerId) {
+		return proposalDao.findByProposalIdAndInfluencerId(proposalId,influencerId);
 	}
 
-	public Page<Proposal> findAllByInfluencer(Influencer influencer,Pageable pageable) {
-		return proposalDao.findByInfluencer(influencer, pageable);
+	public Page<Proposal> findAllByInfluencer(Long influencerId,Pageable pageable) {
+		return proposalDao.findByInfluencerId(influencerId, pageable);
 	}
 
 	public Page<Proposal> findAll(Pageable pageable) {
 		return proposalDao.findAll(pageable);
 	}
 
-	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,Influencer influencer) throws Exception {
+	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,Long influencerId) throws Exception {
 		Campaign campaign = campaignDao.findOne(campaignId);
-		int count = proposalDao.countByInfluencerAndCampaign(influencer.getInfluencerId(), campaign.getCampaignId());
+		int count = proposalDao.countByInfluencerAndCampaign(influencerId, campaign.getCampaignId());
 		if(0 < count){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.already.proposal");
 		}
 		proposal.setCampaign(campaign);
-		proposal.setInfluencer(influencer);
+		proposal.setInfluencerId(influencerId);
+		//proposal.setInfluencer(influencer);
 		proposal.setMessageUpdatedAt(new Date());
 		proposal = proposalDao.save(proposal);
 		//Insert first message
@@ -71,14 +70,14 @@ public class ProposalService {
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
 		User user = new User();
-		user.setUserId(influencer.getInfluencerId());
+		user.setUserId(influencerId);
 		firstMessage.setUser(user);
 		firstMessage = proposalMessageDao.save(firstMessage);
 		return proposal;
 	}
 
-	public Proposal updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,Influencer influencer) throws Exception {
-		Proposal oldProposal = findOneByInfluencer(proposalId,influencer);
+	public Proposal updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,Long influencerId) throws Exception {
+		Proposal oldProposal = findOneByInfluencer(proposalId,influencerId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}

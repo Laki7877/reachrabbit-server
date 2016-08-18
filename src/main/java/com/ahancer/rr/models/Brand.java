@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name="brand")
 public class Brand extends AbstractModel implements Serializable {
@@ -24,7 +24,8 @@ public class Brand extends AbstractModel implements Serializable {
 	@MapsId("brandId")
 	@OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "brandId")
-	@JsonBackReference
+//	@JsonBackReference
+	@JsonManagedReference(value="user-brand")
 	private User user;
 
 	@Column(name="brandName",length=255)

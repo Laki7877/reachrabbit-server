@@ -31,9 +31,9 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Proposal> getAllCampaign(Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			return proposalService.findAllByBrand(this.getUserRequest().getBrand(), pageRequest);
+			return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer(), pageRequest);		
+			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);		
 		}
 		throw new Exception();
 	}
@@ -41,14 +41,14 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/proposalmessages")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
 	public ProposalMessage createProposalMessage(@PathVariable Long proposalId,@RequestBody ProposalMessage message) throws Exception {
-		message = proposalMessageService.createProposalMessage(message, this.getUserRequest());
+		message = proposalMessageService.createProposalMessage(message, this.getUserRequest().getUserId());
 		return message;
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}")
 	@Authorization(Role.Influencer)
 	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal) throws Exception {
-		return proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer());
+		return proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	
 	
@@ -74,9 +74,9 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}")
 	public Proposal getOneProposal(@PathVariable Long proposalId) throws Exception {
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			return proposalService.findOneByBrand(proposalId,this.getUserRequest().getBrand());
+			return proposalService.findOneByBrand(proposalId,this.getUserRequest().getBrand().getBrandId());
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			return proposalService.findOneByInfluencer(proposalId,this.getUserRequest().getInfluencer());		
+			return proposalService.findOneByInfluencer(proposalId,this.getUserRequest().getInfluencer().getInfluencerId());		
 		}
 		throw new Exception();
 	}

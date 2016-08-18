@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -34,8 +35,12 @@ public class Proposal extends AbstractModel implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long proposalId;
 	
+	@Column(name="influencerId", nullable = false)
+	private Long influencerId;
+	
+	@MapsId("influencerId")
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="influencerId",nullable=false)
+	@JoinColumn(name="influencerId")
 	private Influencer influencer;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -155,6 +160,14 @@ public class Proposal extends AbstractModel implements Serializable{
 
 	public void setMessageUpdatedAt(Date messageUpdatedAt) {
 		this.messageUpdatedAt = messageUpdatedAt;
+	}
+
+	public Long getInfluencerId() {
+		return influencerId;
+	}
+
+	public void setInfluencerId(Long influencerId) {
+		this.influencerId = influencerId;
 	}
 	
 }

@@ -23,7 +23,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.Gender;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name="influencer")
 public class Influencer extends AbstractModel implements Serializable{
@@ -37,7 +37,8 @@ public class Influencer extends AbstractModel implements Serializable{
 	@MapsId("influencerId")
 	@OneToOne
     @JoinColumn(name = "influencerId")
-	@JsonBackReference
+//	@JsonBackReference
+	@JsonManagedReference(value="user-influencer")
 	private User user;
 
 	@Enumerated(EnumType.STRING)

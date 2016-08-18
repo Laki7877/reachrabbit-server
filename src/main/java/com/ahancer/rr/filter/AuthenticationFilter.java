@@ -17,9 +17,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.JwtUtil;
+import com.ahancer.rr.utils.Util;
 
 @Component
 @Order(2)
@@ -67,13 +69,17 @@ public class AuthenticationFilter implements Filter {
 		} else {
 			try {
 				String token = request.getHeader(tokenHeader);
-				User user = (User) CacheUtil.getCacheObject(userRequestCache, token);
-				if(null == user) {
+				UserResponse userResponse = (UserResponse) CacheUtil.getCacheObject(userRequestCache, token);
+				if(null == userResponse) {
 					Long userId = jwt.getUserId(token);
-					user = authenticationService.getUserById(userId);
+					User user = authenticationService.getUserById(userId);
+					if(null != user){
+						userResponse = Util.getUserResponse(user);
+						CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+					}
 				}
-				if(null != user) {
-					request.setAttribute(userAttribute, user);
+				if(null != userResponse) {
+					request.setAttribute(userAttribute, userResponse);
 					request.setAttribute(tokenAttribute, token);
 					chain.doFilter(req, res);
 				} else {

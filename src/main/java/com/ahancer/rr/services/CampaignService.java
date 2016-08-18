@@ -29,10 +29,10 @@ public class CampaignService {
 	@Autowired
 	private CampaignResourceDao campaignResourceDao;
 	
-	public Campaign createCampaignByBrand(Campaign campaign, Brand brand) {
+	public Campaign createCampaignByBrand(Campaign campaign, Long brandId) {
 		Set<CampaignResource> resources = campaign.getCampaignResources();
 		campaign.setCampaignResources(null);
-		campaign.setBrandId(brand.getBrandId());
+		campaign.setBrandId(brandId);
 		campaign.setBrand(null);
 		campaign = campaignDao.save(campaign);
 		for(CampaignResource resource : resources) {
@@ -47,8 +47,8 @@ public class CampaignService {
 		return campaignDao.save(campaign);
 	}
 
-	public Campaign updateCampaignByBrand(Long campaignId, Campaign newCampaign, Brand brand) throws ResponseException {
-		Campaign oldCampaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brand.getBrandId());
+	public Campaign updateCampaignByBrand(Long campaignId, Campaign newCampaign, Long brandId) throws ResponseException {
+		Campaign oldCampaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
 		if(oldCampaign == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
 		}
@@ -68,8 +68,8 @@ public class CampaignService {
 		return campaignDao.findAll(pageable);
 	}
 	
-	public Page<Campaign> findAllByBrand(Brand brand, Pageable pageable) {
-		return campaignDao.findByBrandId(brand.getBrandId(), pageable);
+	public Page<Campaign> findAllByBrand(Long brandId, Pageable pageable) {
+		return campaignDao.findByBrandId(brandId, pageable);
 	}
 	
 	public Page<Campaign> findAllOpen(String mediaFilter,Pageable pageable) {		

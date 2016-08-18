@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.UserResponse;
 
 @Component
 public abstract class AbstractController {
@@ -20,10 +21,10 @@ public abstract class AbstractController {
 	@Value("${reachrabbit.request.attribute.token}")
 	private String tokenAttribute;
 	
-	final public User getUserRequest() { 
+	final public UserResponse getUserRequest() { 
 		Object user = request.getAttribute(userAttribute);
-		if(user instanceof User){
-			return (User)user;
+		if(user instanceof UserResponse){
+			return (UserResponse)user;
 		} else {
 			return null;
 		}

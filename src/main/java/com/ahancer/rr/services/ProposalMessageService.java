@@ -12,7 +12,6 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.models.ProposalMessage;
-import com.ahancer.rr.models.User;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -59,8 +58,8 @@ public class ProposalMessageService {
 		}
 	}
 	
-	public ProposalMessage createProposalMessage(ProposalMessage messaage,User user) throws Exception {
-		messaage.setUser(user);
+	public ProposalMessage createProposalMessage(ProposalMessage messaage,Long userId) throws Exception {
+		messaage.setUserId(userId);
 		messaage = proposalMessageDao.save(messaage);
 		return messaage;
 	}

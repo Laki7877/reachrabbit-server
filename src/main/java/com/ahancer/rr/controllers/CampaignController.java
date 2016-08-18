@@ -30,7 +30,7 @@ public class CampaignController extends AbstractController{
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Campaign> getAllCampaign(Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			return campaignService.findAllByBrand(this.getUserRequest().getBrand(), pageRequest);	
+			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);	
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
 			return campaignService.findAll(pageRequest);		
 		}	
@@ -51,12 +51,12 @@ public class CampaignController extends AbstractController{
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
 	public Campaign createCampaign(@RequestBody Campaign campaign) throws Exception{
-		return campaignService.createCampaignByBrand(campaign, this.getUserRequest().getBrand());
+		return campaignService.createCampaignByBrand(campaign, this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
 	public Campaign updateCampaign(@PathVariable Long campaignId,@RequestBody Campaign campaign) throws Exception{
-		return campaignService.updateCampaignByBrand(campaignId, campaign, this.getUserRequest().getBrand());
+		return campaignService.updateCampaignByBrand(campaignId, campaign, this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
@@ -67,7 +67,7 @@ public class CampaignController extends AbstractController{
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
 	@Authorization(Role.Influencer)
 	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal) throws Exception {
-		return proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest().getInfluencer());
+		return proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	
 	

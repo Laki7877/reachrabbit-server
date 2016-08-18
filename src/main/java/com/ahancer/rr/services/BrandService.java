@@ -23,6 +23,7 @@ import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
 import com.ahancer.rr.utils.Util;
@@ -95,7 +96,7 @@ public class BrandService {
 		return user;
 	}
 	
-	public User updateBrandUser(Long userId, User newUser,String token) throws ResponseException {
+	public UserResponse updateBrandUser(Long userId, User newUser,String token) throws ResponseException {
 		User oldUser = userDao.findOne(userId);
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.brand.not.found");
@@ -109,8 +110,9 @@ public class BrandService {
 		oldUser.setUserId(userId);
 		oldUser.getBrand().setBrandId(userId);
 		User user = userDao.save(oldUser);
-		CacheUtil.updateCacheObject(userRequestCache, token, user);
-		return user;
+		UserResponse userResponse = Util.getUserResponse(user);
+		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);
+		return userResponse;
 	}
 	
 	public Brand getBrand(Long brandId) throws ResponseException {

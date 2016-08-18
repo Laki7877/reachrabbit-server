@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.services.BrandService;
 import com.ahancer.rr.services.InfluencerService;
 import com.mysql.jdbc.NotImplemented;
@@ -24,13 +25,13 @@ public class ProfileController extends AbstractController{
 //	private UserDao userDao;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public User getMyProfile() {
+	public UserResponse getMyProfile() {
 		return this.getUserRequest();
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT)
-	public User updateProfile(@RequestBody User user) throws Exception {
-		User ownUser = this.getUserRequest();
+	public UserResponse updateProfile(@RequestBody User user) throws Exception {
+		UserResponse ownUser = this.getUserRequest();
 		if(ownUser.getRole().equals(Role.Brand)) {
 			return brandService.updateBrandUser(ownUser.getUserId(), user, this.getTokenRequest());
 		} else if(ownUser.getRole().equals(Role.Influencer)) {
