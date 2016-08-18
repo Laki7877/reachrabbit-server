@@ -20,10 +20,12 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
+
 
 @Entity(name="campaign")
 public class Campaign extends AbstractModel implements Serializable {
@@ -53,12 +55,8 @@ public class Campaign extends AbstractModel implements Serializable {
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
 	private Set<Media> media = new HashSet<Media>(0);
 
-	@ManyToMany(fetch=FetchType.EAGER)
-	@JoinTable(
-			name="campaignResource",
-			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
-			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
-	private Set<Resource> resources = new HashSet<Resource>(0);
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "campaign")
+	private Set<CampaignResource> resources = new HashSet<CampaignResource>(0);
 	
 //	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
 //	private Set<CampaignKeyword> keywords = new HashSet<CampaignKeyword>(0);
@@ -169,11 +167,11 @@ public class Campaign extends AbstractModel implements Serializable {
 		this.media = media;
 	}
 
-	public Set<Resource> getResources() {
+	public Set<CampaignResource> getResources() {
 		return resources;
 	}
 
-	public void setResources(Set<Resource> resources) {
+	public void setResources(Set<CampaignResource> resources) {
 		this.resources = resources;
 	}
 
