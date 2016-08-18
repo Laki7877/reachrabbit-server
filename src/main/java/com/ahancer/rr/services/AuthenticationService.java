@@ -52,7 +52,8 @@ public class AuthenticationService {
 			return null;
 		}
 		String token = jwt.generateToken(user.getUserId());
-		CacheUtil.putCacheObject(userRequestCache, token, user);
+		UserResponse userResponse = Util.getUserResponse(user);
+		CacheUtil.putCacheObject(userRequestCache, token, userResponse);
 		AuthenticationResponse response = new AuthenticationResponse(token);
 		return response;
 	}
