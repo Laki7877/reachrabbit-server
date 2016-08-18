@@ -10,9 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ahancer.rr.ReachrabbitServerApplication;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
-@WebIntegrationTest
 public class CampaignControllerIT extends AbstractControllerIT {
 	@Test
 	public void Should_Fail_With_401_When_CreateCampaign_WithInfluencer() {

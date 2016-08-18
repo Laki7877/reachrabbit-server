@@ -3,10 +3,17 @@ package com.ahancer.rr.controllers;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.ReachrabbitServerApplication;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BrandDao;
 import com.ahancer.rr.daos.InfluencerDao;
@@ -24,6 +31,10 @@ import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
+@WebIntegrationTest
 public abstract class AbstractControllerIT {
 
     @Value("${server.port}") 
@@ -73,7 +84,7 @@ public abstract class AbstractControllerIT {
 				.header("X-Auth-Token", influencerToken);
 	}
 	
-	@Before
+	@Before()
 	@Transactional
 	public void before() {
 		//Setup test framework
@@ -123,12 +134,7 @@ public abstract class AbstractControllerIT {
 			System.err.println(e.getConstraintName());
 		}
 	}
-	
 	@After
-	@Transactional
 	public void after() {
-		influencerDao.deleteAll();
-		brandDao.deleteAll();
-		userDao.deleteAll();
 	}
 }

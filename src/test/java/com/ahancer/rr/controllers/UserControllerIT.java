@@ -8,9 +8,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ahancer.rr.ReachrabbitServerApplication;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
-@WebIntegrationTest
 public class UserControllerIT extends AbstractControllerIT {
 	@Test
 	public void Should_Succeed_With_User_When_GetOneUser() {

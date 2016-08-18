@@ -22,9 +22,6 @@ import com.ahancer.rr.utils.JwtUtil;
 
 import io.restassured.response.Response;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
-@WebIntegrationTest
 public class AuthenticationControllerIT extends AbstractControllerIT{
 	@Autowired
 	private JwtUtil jwtUtil;
