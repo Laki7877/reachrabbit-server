@@ -30,7 +30,7 @@ import io.restassured.response.Response;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
 @WebIntegrationTest
-public class SignupControllerIT extends AbstractControllerIT{
+public class SignUpControllerIT extends AbstractControllerIT{
 	@Autowired
 	private UserDao userDao;
 	@Autowired
@@ -39,7 +39,7 @@ public class SignupControllerIT extends AbstractControllerIT{
 	private EncryptionUtil eUtil;
 
 	@Test
-	public void Should_Succeed_With_TokenObject_When_CreateNewBrand() {
+	public void Should_Succeed_With_Token_When_CreateNewBrand() {
 		//Create brand
 		Map<String, Object> user = new HashMap<>();
 		Map<String, Object> brand = new HashMap<>();
@@ -62,7 +62,7 @@ public class SignupControllerIT extends AbstractControllerIT{
 			.body(user)
 		.expect()
 			.statusCode(200)
-			.body("token", allOf(notNullValue(), not(isEmptyString()), instanceOf(String.class)))
+			.body("token", allOf(not(isEmptyString()), instanceOf(String.class)))
 		.when()
 			.post("/signup/brand")
 		.then()
@@ -88,7 +88,7 @@ public class SignupControllerIT extends AbstractControllerIT{
 		));
 	}
 	@Test
-	public void Should_Fail_With_400_When_CreateBrandWithDuplicateEmail() {
+	public void Should_Fail_With_400_When_CreateNewBrand_WithDuplicateEmail() {
 		Map<String, Object> user = new HashMap<>();
 		user.put("email", "test@test");
 		user.put("password", "1234");
@@ -111,9 +111,8 @@ public class SignupControllerIT extends AbstractControllerIT{
 		.when()
 			.post("/signup/brand");
 	}
-	
 	@Test
-	public void Should_Fail_With_400_When_CreateBrandWithoutEmail() {
+	public void Should_Fail_With_400_When_CreateNewBrand_WithoutEmail() {
 		Map<String, Object> user = new HashMap<>();
 		user.put("password", "1234");
 		
@@ -126,7 +125,7 @@ public class SignupControllerIT extends AbstractControllerIT{
 			.post("/signup/brand");
 	}
 	@Test
-	public void Should_Fail_With_400_When_CreateBrandWithoutPassword() {
+	public void Should_Fail_With_400_When_CreateNewBrand_WithoutPassword() {
 		Map<String, Object> user = new HashMap<>();
 		user.put("email", "test4@test");
 		
@@ -138,4 +137,17 @@ public class SignupControllerIT extends AbstractControllerIT{
 		.when()
 			.post("/signup/brand");
 	}
+	@Test
+	public void Should_Fail_With_400_When_CreateNewBrand_WithEmptyObject() {
+		Map<String, Object> user = new HashMap<>();
+		
+		//First user
+		given()
+			.body(user)
+		.expect()
+			.statusCode(400)
+		.when()
+			.post("/signup/brand");
+	}
+	
 }
