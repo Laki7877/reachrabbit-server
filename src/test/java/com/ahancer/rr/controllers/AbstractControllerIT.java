@@ -1,11 +1,11 @@
 package com.ahancer.rr.controllers;
 
-import java.util.Arrays;
-
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BrandDao;
@@ -22,6 +22,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.LogConfig;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 
 public abstract class AbstractControllerIT {
 
@@ -59,17 +60,33 @@ public abstract class AbstractControllerIT {
 		RestAssured.requestSpecification = new RequestSpecBuilder().setContentType(ContentType.JSON).build();
 	}
 	
+	public RequestSpecification givenAdmin() {
+		return RestAssured.given()
+				.header("X-Auth-Token", adminToken);
+	}
+	public RequestSpecification givenBrand() {
+		return RestAssured.given()
+				.header("X-Auth-Token", brandToken);
+	}
+	public RequestSpecification givenInfluencer() {
+		return RestAssured.given()
+				.header("X-Auth-Token", influencerToken);
+	}
+	
 	@Before
+	@Transactional
 	public void before() {
 		//Setup test framework
 		setupRestAssured();
 		
+		try{
 		//Create admin
 		User admin = new User();
 		admin.setName("PLK THE ADMIN");
 		admin.setEmail("admin@reachrabbit.com");
 		admin.setPassword(encryptionUtil.hashPassword("1234"));
 		admin.setRole(Role.Admin);
+		admin = userDao.save(admin);
 		
 		User brand = new User();
 		Brand br = new Brand();
@@ -77,26 +94,38 @@ public abstract class AbstractControllerIT {
 		brand.setEmail("brand@reachrabbit.com");
 		brand.setPassword(encryptionUtil.hashPassword("1234"));
 		brand.setRole(Role.Brand);
-		brand.setBrand(br);
+		brand.setBrand(null);
+		brand = userDao.save(brand);
+		br.setUser(null);
+		br.setBrandId(brand.getUserId());
+		brand.setBrand(brandDao.save(br));
 		
 		User influencer = new User();
 		Influencer inf = new Influencer();
 		influencer.setName("Influencer");
 		influencer.setEmail("influencer@reachrabbit.com");
-		influencer.setInfluencer(inf);
-
-		userDao.save(Arrays.asList(admin, influencer, brand));
+		influencer.setRole(Role.Influencer);
+		influencer.setInfluencer(null);
+		influencer = userDao.save(influencer);
+		inf.setUser(null);
+		inf.setInfluencerId(influencer.getUserId());
+		influencer.setInfluencer(influencerDao.save(inf));
 		
 		adminToken = authenticationService.generateTokenFromUser(admin).getToken();
 		influencerToken = authenticationService.generateTokenFromUser(influencer).getToken();
 		brandToken = authenticationService.generateTokenFromUser(brand).getToken();
-		
+
 		this.admin = admin;
 		this.brand = brand;
 		this.influencer = influencer;
+		
+		} catch(ConstraintViolationException e) {
+			System.err.println(e.getConstraintName());
+		}
 	}
 	
 	@After
+	@Transactional
 	public void after() {
 		influencerDao.deleteAll();
 		brandDao.deleteAll();
