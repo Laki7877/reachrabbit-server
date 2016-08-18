@@ -16,7 +16,6 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
-import com.ahancer.rr.models.User;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -69,9 +68,10 @@ public class ProposalService {
 		firstMessage.setIsInfluencerRead(true);
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
-		User user = new User();
-		user.setUserId(influencerId);
-		firstMessage.setUser(user);
+		firstMessage.setUserId(influencerId);
+//		User user = new User();
+//		user.setUserId(influencerId);
+//		firstMessage.setUser(user);
 		firstMessage = proposalMessageDao.save(firstMessage);
 		return proposal;
 	}
