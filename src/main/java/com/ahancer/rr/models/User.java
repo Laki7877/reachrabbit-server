@@ -16,9 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Email;
 
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -36,8 +33,8 @@ public class User extends AbstractModel implements Serializable{
 	private String name;
 
 	//@NotNull(message="error.email.require")
-	@Size(min=3,max=255,message="error.email.length")
-	@Email(message="error.email.invalid")
+	//@Size(min=3,max=255,message="error.email.length")
+	//@Email(message="error.email.invalid")
 	@Column(name="email",length=255)
 	private String email;
 

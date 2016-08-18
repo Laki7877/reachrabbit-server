@@ -1,5 +1,6 @@
 package com.ahancer.rr.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,13 @@ public class InfluencerService {
 			InfluencerMediaId id = new InfluencerMediaId(userId, link.getMedia().getMediaId());
 			link.setInfluencerMediaId(id);
 		}
+		if(StringUtils.isNotEmpty(oldUser.getEmail()) 
+				&& !oldUser.getEmail().equals(newUser.getEmail())) {
+			int countEmail = userDao.countByEmail(newUser.getEmail());
+			if(0 < countEmail){
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
+			}
+		}
 		Util.copyProperties(newUser, oldUser);
 		User user = userDao.save(oldUser);
 		CacheUtil.updateCacheObject(userRequestCache, token, user);
@@ -64,6 +72,10 @@ public class InfluencerService {
 			if(influencerMediaDao.countByMediaIdAndSocialId(link.getMedia().getMediaId(), link.getSocialId()) > 0) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.already.exist");
 			}
+		}
+		int countEmail = userDao.countByEmail(user.getEmail());
+		if(0 < countEmail){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
 		}
 		user.setRole(Role.Influencer);
 		user.setInfluencer(null);
