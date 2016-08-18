@@ -1,6 +1,7 @@
 package com.ahancer.rr.models;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
 
@@ -59,6 +62,10 @@ public class Proposal extends AbstractModel implements Serializable{
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
 	private ProposalStatus status;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "messageUpdatedAt")
+	private Date messageUpdatedAt;
 	
 	public Proposal() {
 		
@@ -134,6 +141,14 @@ public class Proposal extends AbstractModel implements Serializable{
 
 	public void setStatus(ProposalStatus status) {
 		this.status = status;
+	}
+
+	public Date getMessageUpdatedAt() {
+		return messageUpdatedAt;
+	}
+
+	public void setMessageUpdatedAt(Date messageUpdatedAt) {
+		this.messageUpdatedAt = messageUpdatedAt;
 	}
 	
 }

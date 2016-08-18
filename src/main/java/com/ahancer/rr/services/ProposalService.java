@@ -1,5 +1,7 @@
 package com.ahancer.rr.services;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +62,7 @@ public class ProposalService {
 		}
 		proposal.setCampaign(campaign);
 		proposal.setInfluencer(influencer);
+		proposal.setMessageUpdatedAt(new Date());
 		proposal = proposalDao.save(proposal);
 		//Insert first message
 		ProposalMessage firstMessage = new ProposalMessage();
