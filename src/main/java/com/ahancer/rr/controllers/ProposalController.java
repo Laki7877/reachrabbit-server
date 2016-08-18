@@ -44,7 +44,7 @@ public class ProposalController extends AbstractController {
 		return message;
 	}
 	
-	@RequestMapping(method=RequestMethod.PUT,value="/proposals/{proposalId}")
+	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}")
 	@Authorization(Role.Influencer)
 	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal) throws Exception {
 		return proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer());
