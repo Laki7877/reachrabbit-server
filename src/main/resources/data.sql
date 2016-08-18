@@ -1,12 +1,12 @@
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE brand;
-TRUNCATE user;
-TRUNCATE bank; 
-TRUNCATE media;
-TRUNCATE category;
-TRUNCATE budget;
-TRUNCATE completiontime;
-SET FOREIGN_KEY_CHECKS = 1;
+--SET FOREIGN_KEY_CHECKS = 0;
+--TRUNCATE brand;
+--TRUNCATE user;
+--TRUNCATE bank; 
+--TRUNCATE media;
+--TRUNCATE category;
+--TRUNCATE budget;
+--TRUNCATE completiontime;
+--SET FOREIGN_KEY_CHECKS = 1;
 
 
 INSERT INTO user (email,password,name,role,createdAt) VALUES ('laki7877@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Laki Sik','Admin',current_timestamp);
