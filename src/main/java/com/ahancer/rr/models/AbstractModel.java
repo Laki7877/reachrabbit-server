@@ -16,7 +16,7 @@ public abstract class AbstractModel {
 
 	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "createdAt",updatable=false,nullable=false)
+	@Column(name = "createdAt",updatable=false)
 	private Date createdAt;
 
 	@JsonIgnore
