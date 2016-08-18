@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
 
@@ -47,7 +48,7 @@ public class Proposal extends AbstractModel implements Serializable{
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
 	private Set<Media> media = new HashSet<Media>(0);
 	
-	@Column(name="description",length=255)
+	@Transient
 	private String description;
 	
 	@Column(name="proposePrice",scale=10,precision=3)
