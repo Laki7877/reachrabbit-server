@@ -42,7 +42,7 @@ public class Proposal extends AbstractModel implements Serializable{
 	
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
-			name="CampaignProposalMedia",
+			name="proposalMedia",
 			joinColumns=@JoinColumn(name="proposalId", referencedColumnName="proposalId"),
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
 	private Set<Media> media = new HashSet<Media>(0);
