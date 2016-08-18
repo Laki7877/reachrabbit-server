@@ -59,5 +59,9 @@ public abstract class AbstractModel {
 		this.createdBy = createdBy;
 	}
 
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+	
 
 }

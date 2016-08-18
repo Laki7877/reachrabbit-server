@@ -1,6 +1,7 @@
 package com.ahancer.rr.models;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +16,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 
 @Entity(name="proposalMessage")
@@ -52,8 +57,13 @@ public class ProposalMessage extends AbstractModel implements Serializable  {
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
 	private Set<Resource> resources = new HashSet<Resource>(0);
 	
+	@Transient
+	@JsonSerialize
+	@JsonDeserialize
+	private Date time;
+	
 	public ProposalMessage(){
-		
+		this.setTime(this.getCreatedAt());
 	}
 
 	public Long getMessageId() {
@@ -110,6 +120,14 @@ public class ProposalMessage extends AbstractModel implements Serializable  {
 
 	public void setProposal(Proposal proposal) {
 		this.proposal = proposal;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
 	}
 	
 }
