@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "campaignresource")
+@Table(name = "campaignResource")
 public class CampaignResource implements java.io.Serializable {
 
 	private static final long serialVersionUID = 5411958738292073352L;

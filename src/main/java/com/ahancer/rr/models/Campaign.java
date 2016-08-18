@@ -21,6 +21,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -56,6 +57,7 @@ public class Campaign extends AbstractModel implements Serializable {
 	private Set<Media> media = new HashSet<Media>(0);
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign",cascade=CascadeType.ALL)
+	@OrderBy("position")
 	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
 	
 //	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
