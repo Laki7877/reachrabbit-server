@@ -26,11 +26,19 @@ public class ProposalService {
 	@Autowired
 	private CampaignDao campaignDao;
 	
-	public Page<Proposal> findByBrand(Brand brand,Pageable pageable) {
+	public Page<Proposal> findAllByBrand(Brand brand,Pageable pageable) {
 		return proposalDao.findByCampaignBrand(brand, pageable);
 	}
 	
-	public Page<Proposal> findByInfluencer(Influencer influencer,Pageable pageable) {
+	public Proposal findOneByBrand(Long proposalId,Brand brand) {
+		return proposalDao.findByProposalIdAndCampaignBrand(proposalId,brand);
+	}
+	
+	public Proposal findOneByInfluencer(Long proposalId,Influencer influencer) {
+		return proposalDao.findByProposalIdAndInfluencer(proposalId,influencer);
+	}
+	
+	public Page<Proposal> findAllByInfluencer(Influencer influencer,Pageable pageable) {
 		return proposalDao.findByInfluencer(influencer, pageable);
 	}
 	
