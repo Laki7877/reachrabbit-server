@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +17,7 @@ import com.ahancer.rr.models.Budget;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.CompletionTime;
 import com.ahancer.rr.models.Media;
+import com.google.api.client.util.Lists;
 
 @RestController
 @RequestMapping("/data")
@@ -36,28 +39,28 @@ public class DataController {
 	private CompletionTimeDao completionTimeDao;
 
 	@RequestMapping(value="/media",method=RequestMethod.GET)
-	public Iterable<Media> getAllMedia() throws Exception{
-		return mediaDao.findAll();
+	public List<Media> getAllMedia() throws Exception{
+		return Lists.newArrayList(mediaDao.findAll());
 	}
 	
 	@RequestMapping(value="/categories",method=RequestMethod.GET)
-	public Iterable<Category> getAllCategories() throws Exception{
-		return categoryDao.findAll();
+	public List<Category> getAllCategories() throws Exception{
+		return Lists.newArrayList(categoryDao.findAll());
 	}
 	
 	@RequestMapping(value="/banks",method=RequestMethod.GET)
-	public Iterable<Bank> getAllBanks() throws Exception{
-		return bankDao.findAll();
+	public List<Bank> getAllBanks() throws Exception{
+		return Lists.newArrayList(bankDao.findAll());
 	}
 	
 	@RequestMapping(value="/budget",method=RequestMethod.GET)
-	public Iterable<Budget> getBudget() throws Exception{
-		return budgetDao.findAll();
+	public List<Budget> getBudget() throws Exception{
+		return Lists.newArrayList(budgetDao.findAll());
 	}
 	
 	@RequestMapping(value="/completiontime",method=RequestMethod.GET)
-	public Iterable<CompletionTime> getCompletionTime() throws Exception{
-		return completionTimeDao.findAll();
+	public List<CompletionTime> getCompletionTime() throws Exception{
+		return Lists.newArrayList(completionTimeDao.findAll());
 	}
 	
 }
