@@ -75,12 +75,12 @@ public class SignUpControllerIT extends AbstractControllerIT{
 
 		eUtil.checkPassword((String)user.get("password"), newUser.getPassword());
 		assertThat(newUser, allOf(
-				hasProperty("name", equalTo(user.get("name"))),
-				hasProperty("email", equalTo(user.get("email"))),
-				hasProperty("phoneNumber", equalTo(user.get("phoneNumber"))),
-				hasProperty("brand", hasProperty("brandName", equalTo(brand.get("brandName")))),
-				hasProperty("bankAccount", equalTo(user.get("bankAccount"))),
-				hasProperty("bank", hasProperty("bankId", equalTo(bank.get("bankId"))))
+			hasProperty("name", equalTo(user.get("name"))),
+			hasProperty("email", equalTo(user.get("email"))),
+			hasProperty("phoneNumber", equalTo(user.get("phoneNumber"))),
+			hasProperty("brand", hasProperty("brandName", equalTo(brand.get("brandName")))),
+			hasProperty("bankAccount", equalTo(user.get("bankAccount"))),
+			hasProperty("bank", hasProperty("bankId", equalTo(bank.get("bankId"))))
 		));
 	}
 	@Test
