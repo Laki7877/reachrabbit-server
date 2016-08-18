@@ -14,50 +14,50 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @MappedSuperclass
 public abstract class AbstractModel {
 
-//	@JsonIgnore
-//	@Temporal(TemporalType.TIMESTAMP)
-//	@Column(name = "createdAt",columnDefinition="datetime default current_timestamp",updatable=false)
-//	private Date createdAt;
-//
-//	@JsonIgnore
-//	@Temporal(TemporalType.TIMESTAMP)
-//	@Column(name = "updatedAt",columnDefinition="datetime default current_timestamp")
-//	private Date updatedAt;
-//	
-//	
-//	@JsonIgnore
-//	@Column(name="createdBy")
-//	private Long createdBy;
-//	
-//	@JsonIgnore
-//	@Column(name="updatedBy")
-//	private Long updatedBy;
-//	
-//	@PrePersist
-//	protected void onCreate() {
-//		updatedAt = createdAt = new Date();
-//	}
-//
-//	@PreUpdate
-//	protected void onUpdate() {
-//		updatedAt = new Date();
-//	}
-//	
-//	public Long getUpdatedBy() {
-//		return updatedBy;
-//	}
-//
-//	public void setUpdatedBy(Long updatedBy) {
-//		this.updatedBy = updatedBy;
-//	}
-//	
-//	public Long getCreatedBy() {
-//		return createdBy;
-//	}
-//
-//	public void setCreatedBy(Long createdBy) {
-//		this.createdBy = createdBy;
-//	}
+	@JsonIgnore
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "createdAt",updatable=false)
+	private Date createdAt;
+
+	@JsonIgnore
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "updatedAt")
+	private Date updatedAt;
+	
+	
+	@JsonIgnore
+	@Column(name="createdBy")
+	private Long createdBy;
+	
+	@JsonIgnore
+	@Column(name="updatedBy")
+	private Long updatedBy;
+	
+	@PrePersist
+	protected void onCreate() {
+		updatedAt = createdAt = new Date();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedAt = new Date();
+	}
+	
+	public Long getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(Long updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+	
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
 
 
 }
