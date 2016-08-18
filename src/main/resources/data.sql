@@ -9,8 +9,8 @@
 --SET FOREIGN_KEY_CHECKS = 1;
 
 
-INSERT INTO user (email,password,name,role,createdAt) VALUES ('laki7877@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Laki Sik','Admin',current_timestamp);
-INSERT INTO user (email,password,name,role,createdAt) VALUES ('brand@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Laki Sik','Brand',current_timestamp);
+INSERT INTO user (email,password,name,role) VALUES ('laki7877@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Laki Sik','Admin');
+INSERT INTO user (email,password,name,role) VALUES ('brand@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Laki Sik','Brand');
 INSERT INTO brand (brandName, brandId) VALUES ('My Brand', 2);
 INSERT INTO bank (bankId,bankName) VALUES ('002','ธนาคารกรุงเทพ จำกัด (มหาชน)');
 INSERT INTO bank (bankId,bankName) VALUES ('004','ธนาคารกสิกรไทย จำกัด (มหาชน)');
