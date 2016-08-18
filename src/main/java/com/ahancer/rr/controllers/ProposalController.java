@@ -30,10 +30,10 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Proposal> getAllCampaign(Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			return proposalService.findByBrand(this.getUserRequest().getBrand(), pageRequest);
+			return proposalService.findAllByBrand(this.getUserRequest().getBrand(), pageRequest);
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			return proposalService.findByInfluencer(this.getUserRequest().getInfluencer(), pageRequest);		
-		}	
+			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer(), pageRequest);		
+		}
 		throw new Exception();
 	}
 	
@@ -44,6 +44,12 @@ public class ProposalController extends AbstractController {
 		return message;
 	}
 	
+	@RequestMapping(method=RequestMethod.PUT,value="/proposals/{proposalId}")
+	@Authorization(Role.Influencer)
+	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal) throws Exception {
+		return proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer());
+	}
+	
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
@@ -51,5 +57,17 @@ public class ProposalController extends AbstractController {
 		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, pageRequest);
 		return messages;
 	}
+	
+	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}")
+	public Proposal getOneProposal(@PathVariable Long proposalId) throws Exception {
+		if(this.getUserRequest().getRole() == Role.Brand) {
+			return proposalService.findOneByBrand(proposalId,this.getUserRequest().getBrand());
+		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+			return proposalService.findOneByInfluencer(proposalId,this.getUserRequest().getInfluencer());		
+		}
+		throw new Exception();
+	}
+	
+	
 
 }

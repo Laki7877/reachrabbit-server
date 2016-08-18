@@ -53,6 +53,9 @@ public class Proposal extends AbstractModel implements Serializable{
 	@Column(name="proposePrice",scale=10,precision=3)
 	private Double proposePrice;
 	
+	@Column(name="proposeFee",scale=10,precision=3)
+	private Double proposeFee;
+	
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
 	private ProposalStatus status;
@@ -123,6 +126,14 @@ public class Proposal extends AbstractModel implements Serializable{
 
 	public void setStatus(ProposalStatus status) {
 		this.status = status;
+	}
+
+	public Double getProposeFee() {
+		return proposeFee;
+	}
+
+	public void setProposeFee(Double proposeFee) {
+		this.proposeFee = proposeFee;
 	}
 	
 }
