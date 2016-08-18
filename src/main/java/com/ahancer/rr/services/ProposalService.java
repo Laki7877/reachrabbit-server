@@ -57,5 +57,18 @@ public class ProposalService {
 		proposal = proposalDao.save(proposal);
 		return proposal;
 	}
+	
+	public Proposal updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,Influencer influencer) throws Exception {
+		Proposal oldProposal = findOneByInfluencer(proposalId,influencer);
+		if(null == oldProposal){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+		}
+		oldProposal.setMedia(proposal.getMedia());
+		oldProposal.setCompletionTime(proposal.getCompletionTime());
+		oldProposal.setProposePrice(proposal.getProposePrice());
+		oldProposal.setDescription(proposal.getDescription());
+		oldProposal = proposalDao.save(oldProposal);
+		return oldProposal;
+	}
 
 }
