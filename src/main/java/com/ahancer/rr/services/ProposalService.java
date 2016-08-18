@@ -78,7 +78,7 @@ public class ProposalService {
 		}
 		oldProposal.setMedia(proposal.getMedia());
 		oldProposal.setCompletionTime(proposal.getCompletionTime());
-		oldProposal.setProposePrice(proposal.getProposePrice());
+		oldProposal.setPrice(proposal.getPrice());
 		oldProposal.setDescription(proposal.getDescription());
 		oldProposal = proposalDao.save(oldProposal);
 		return oldProposal;

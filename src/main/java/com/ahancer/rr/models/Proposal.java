@@ -56,11 +56,11 @@ public class Proposal extends AbstractModel implements Serializable{
 	@JsonDeserialize
 	private String description;
 	
-	@Column(name="proposePrice",scale=10,precision=3)
-	private Double proposePrice;
+	@Column(name="price",scale=10,precision=3)
+	private Double price;
 	
-	@Column(name="proposeFee",scale=10,precision=3)
-	private Double proposeFee;
+	@Column(name="fee",scale=10,precision=3)
+	private Double fee;
 	
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
@@ -118,12 +118,20 @@ public class Proposal extends AbstractModel implements Serializable{
 		this.description = description;
 	}
 
-	public Double getProposePrice() {
-		return proposePrice;
+	public Double getPrice() {
+		return price;
 	}
 
-	public void setProposePrice(Double proposePrice) {
-		this.proposePrice = proposePrice;
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+	public Double getFee() {
+		return fee;
+	}
+
+	public void setFee(Double fee) {
+		this.fee = fee;
 	}
 
 	public ProposalStatus getStatus() {
@@ -132,14 +140,6 @@ public class Proposal extends AbstractModel implements Serializable{
 
 	public void setStatus(ProposalStatus status) {
 		this.status = status;
-	}
-
-	public Double getProposeFee() {
-		return proposeFee;
-	}
-
-	public void setProposeFee(Double proposeFee) {
-		this.proposeFee = proposeFee;
 	}
 	
 }
