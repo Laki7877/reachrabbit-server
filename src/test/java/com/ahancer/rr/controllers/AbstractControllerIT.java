@@ -12,6 +12,7 @@ import com.ahancer.rr.daos.BrandDao;
 import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.Brand;
+import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.utils.EncryptionUtil;
@@ -71,16 +72,28 @@ public abstract class AbstractControllerIT {
 		admin.setRole(Role.Admin);
 		
 		User brand = new User();
+		Brand br = new Brand();
 		brand.setName("Nattamoto brand");
 		brand.setEmail("brand@reachrabbit.com");
 		brand.setPassword(encryptionUtil.hashPassword("1234"));
 		brand.setRole(Role.Brand);
-		brand.setBrand(new Brand());
+		brand.setBrand(br);
 		
 		User influencer = new User();
-		influencer.setInfluencer(influencer);
+		Influencer inf = new Influencer();
+		influencer.setName("Influencer");
+		influencer.setEmail("influencer@reachrabbit.com");
+		influencer.setInfluencer(inf);
+
+		userDao.save(Arrays.asList(admin, influencer, brand));
 		
-		userDao.save(Arrays.asList(admin));
+		adminToken = authenticationService.generateTokenFromUser(admin).getToken();
+		influencerToken = authenticationService.generateTokenFromUser(influencer).getToken();
+		brandToken = authenticationService.generateTokenFromUser(brand).getToken();
+		
+		this.admin = admin;
+		this.brand = brand;
+		this.influencer = influencer;
 	}
 	
 	@After
