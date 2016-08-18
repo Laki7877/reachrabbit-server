@@ -34,7 +34,7 @@ public class CampaignService {
 		}
 		Util.copyProperties(newCampaign, oldCampaign, "brand", "brandId", "campaignId");
 		
-		oldCampaign.setResources(newCampaign.getResources());
+		oldCampaign.setCampaignResources(newCampaign.getCampaignResources());
 		oldCampaign.setMedia(newCampaign.getMedia());
 		
 		return campaignDao.save(oldCampaign);

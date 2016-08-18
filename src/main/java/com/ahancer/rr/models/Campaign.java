@@ -55,8 +55,8 @@ public class Campaign extends AbstractModel implements Serializable {
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
 	private Set<Media> media = new HashSet<Media>(0);
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "campaign")
-	private Set<CampaignResource> resources = new HashSet<CampaignResource>(0);
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign",cascade=CascadeType.ALL)
+	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
 	
 //	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
 //	private Set<CampaignKeyword> keywords = new HashSet<CampaignKeyword>(0);
@@ -167,14 +167,6 @@ public class Campaign extends AbstractModel implements Serializable {
 		this.media = media;
 	}
 
-	public Set<CampaignResource> getResources() {
-		return resources;
-	}
-
-	public void setResources(Set<CampaignResource> resources) {
-		this.resources = resources;
-	}
-
 	public CampaignStatus getStatus() {
 		return status;
 	}
@@ -215,4 +207,12 @@ public class Campaign extends AbstractModel implements Serializable {
 		this.keyword = keyword;
 	}
 
+	public Set<CampaignResource> getCampaignResources() {
+		return campaignResources;
+	}
+
+	public void setCampaignResources(Set<CampaignResource> campaignResources) {
+		this.campaignResources = campaignResources;
+	}
+	
 }

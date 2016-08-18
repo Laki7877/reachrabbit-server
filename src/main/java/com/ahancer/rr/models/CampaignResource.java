@@ -10,23 +10,27 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "campaignresource")
 public class CampaignResource implements java.io.Serializable {
 
 	private static final long serialVersionUID = 5411958738292073352L;
 	
+	@JsonIgnore
 	@EmbeddedId
 	@AttributeOverrides({
 			@AttributeOverride(name = "campaignId", column = @Column(name = "campaignId", nullable = false)),
 			@AttributeOverride(name = "resourceId", column = @Column(name = "resourceId", nullable = false)) })
 	private CampaignResourceId id;
 	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "campaignId", nullable = false, insertable = false, updatable = false)
 	private Campaign campaign;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "resourceId", nullable = false, insertable = false, updatable = false)
 	private Resource resource;
 	
