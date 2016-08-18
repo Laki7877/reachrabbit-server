@@ -54,10 +54,10 @@ INSERT INTO category (categoryName,isActive) VALUES ('DIY',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Mom & Kid',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Gadget',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Educational',true);
---INSERT INTO completiontime (completionTime) VALUES ('1 สัปดาห์');
---INSERT INTO completiontime (completionTime) VALUES ('2 สัปดาห์');
---INSERT INTO completiontime (completionTime) VALUES ('3 สัปดาห์');
---INSERT INTO completiontime (completionTime) VALUES ('4 สัปดาห์');
+INSERT INTO completiontime (completionTime) VALUES ('1 สัปดาห์');
+INSERT INTO completiontime (completionTime) VALUES ('2 สัปดาห์');
+INSERT INTO completiontime (completionTime) VALUES ('3 สัปดาห์');
+INSERT INTO completiontime (completionTime) VALUES ('4 สัปดาห์');
 
 
 INSERT INTO campaign (title, description, brandId, categoryId, status) VALUES ('My campaign', 'This is my campaign', 2, 1, 'Draft');
