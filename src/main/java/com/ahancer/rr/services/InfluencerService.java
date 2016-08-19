@@ -44,6 +44,7 @@ public class InfluencerService {
 			InfluencerMediaId id = new InfluencerMediaId(userId, link.getMedia().getMediaId());
 			link.setInfluencerMediaId(id);
 		}
+		//Validate duplicate Email
 		if(StringUtils.isNotEmpty(oldUser.getEmail()) 
 				&& !oldUser.getEmail().equals(newUser.getEmail())) {
 			int countEmail = userDao.countByEmail(newUser.getEmail());
@@ -75,6 +76,7 @@ public class InfluencerService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.already.exist");
 			}
 		}
+		//Validate duplicate Email
 		int countEmail = userDao.countByEmail(user.getEmail());
 		if(0 < countEmail){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");

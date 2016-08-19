@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -53,12 +54,10 @@ public class BrandService {
 	private String userRequestCache;
 
 	public User signUpBrand(User user) throws ResponseException {
-		
 		Brand brand = user.getBrand();
 		if(null == brand){
 			brand = new Brand();
 		}
-		
 		//Validate duplicate Email
 		int emailCount = userDao.countByEmail(user.getEmail());
 		if(emailCount > 0) {
@@ -73,7 +72,6 @@ public class BrandService {
 		brand.setBrandId(user.getUserId());
 		brand = brandDao.save(brand);
 		user.setBrand(brand);
-		
 		//Create campaign
 		Campaign campaign = new Campaign();
 		Calendar cal = Calendar.getInstance();
@@ -86,26 +84,30 @@ public class BrandService {
 		campaign.setCategory(null);
 		campaign.setDescription("นี่คือคำอธิบาย");
 		campaign.setStatus(CampaignStatus.Draft);
-		
 		Set<Media> allMedia = new HashSet<Media>();
 		mediaDao.findAll().forEach(allMedia::add);
-		
 		campaign.setMedia(allMedia);	
 		campaignDao.save(campaign);
-		
 		return user;
 	}
 	
 	public UserResponse updateBrandUser(Long userId, User newUser,String token) throws ResponseException {
 		User oldUser = userDao.findOne(userId);
-		if(oldUser == null) {
+		if(null == oldUser) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.brand.not.found");
 		}
+		//Validate duplicate Email
+		if(StringUtils.isNotEmpty(oldUser.getEmail()) 
+				&& !oldUser.getEmail().equals(newUser.getEmail())) {
+			int countEmail = userDao.countByEmail(newUser.getEmail());
+			if(0 < countEmail){
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
+			}
+		}
 		Util.copyProperties(newUser, oldUser);
-		if(newUser.getPassword() != null) {
+		if(StringUtils.isNotEmpty(newUser.getPassword())) {
 			String hashPassword = encrypt.hashPassword(newUser.getPassword());
 			oldUser.setPassword(hashPassword);
-				
 		}
 		oldUser.setUserId(userId);
 		oldUser.getBrand().setBrandId(userId);

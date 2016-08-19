@@ -21,9 +21,6 @@ public class ProfileController extends AbstractController{
 	@Autowired
 	private InfluencerService influencerService;
 	
-//	@Autowired
-//	private UserDao userDao;
-	
 	@RequestMapping(method=RequestMethod.GET)
 	public UserResponse getMyProfile() {
 		return this.getUserRequest();
