@@ -28,7 +28,7 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	@Modifying
 	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId AND ( "
-			+ " ( cp.influencerId=:userId ) OR ( cp.campaign.brandId=:userId ) "
+			+ " ( cp.influencerId=:influencerId ) OR ( cp.campaign.brandId=:brandId ) "
 			+ " )")
 	public int updateMessageUpdatedAt(@Param("proposalId") Long proposalId,  @Param("influencerId") Long influencerId,@Param ("brandId") Long brandId, @Param("messageUpdatedAt") Date messageUpdatedAt);
 	
