@@ -15,6 +15,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
+import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.ProposalMessage;
 
@@ -45,6 +46,8 @@ public class ProposalMessageService {
 	
 	@Autowired
 	private ProposalMessageDao proposalMessageDao;
+	@Autowired
+	private UserDao userDao;
 	
 	@Autowired
 	private ProposalDao proposalDao;
@@ -66,7 +69,7 @@ public class ProposalMessageService {
 		}
 	}
 	
-	public ProposalMessage createProposalMessage(Long proposalId, ProposalMessage messaage,Long userId,Role userRole) throws Exception {
+	public ProposalMessage createProposalMessage(Long proposalId, ProposalMessage message,Long userId,Role userRole) throws Exception {
 		int updateCount = 0;
 		if(Role.Influencer == userRole){
 			updateCount = proposalDao.updateMessageUpdatedAtByInfluencer(proposalId, userId,new Date());
@@ -76,19 +79,20 @@ public class ProposalMessageService {
 		if(0 >= updateCount) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
-		messaage.setIsInfluencerRead(false);
-		messaage.setIsBrandRead(false);
+		message.setIsInfluencerRead(false);
+		message.setIsBrandRead(false);
 		if(Role.Influencer == userRole){
-			messaage.setIsInfluencerRead(true);
-			messaage.setIsBrandRead(false);
+			message.setIsInfluencerRead(true);
+			message.setIsBrandRead(false);
 		}
 		else if(Role.Brand == userRole){
-			messaage.setIsInfluencerRead(false);
-			messaage.setIsBrandRead(true);
+			message.setIsInfluencerRead(false);
+			message.setIsBrandRead(true);
 		}
-		messaage.setUserId(userId);
-		messaage = proposalMessageDao.save(messaage);
-		return messaage;
+		message.setUserId(userId);
+		message = proposalMessageDao.save(message);
+		message.setUser(userDao.findOne(userId));
+		return message;
 	}
 	
 	public Page<ProposalMessage> findByProposal(Long proposalId,Pageable pageable) {
