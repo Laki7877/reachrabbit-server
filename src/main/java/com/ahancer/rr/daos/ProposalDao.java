@@ -22,7 +22,8 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 
 	public List<Proposal> findByInfluencerIdAndCampaignStatusIn(Long influencerId, Collection<CampaignStatus> statuses);
 	public Page<Proposal> findByInfluencerId(Long influencerId,Pageable pageable);
-	
+	public List<Proposal> findByInfluencerId(Long influencerId);
+
 	public Page<Proposal> findByCampaignBrandId(Long brandId,Pageable pageable);
 	public Page<Proposal> findByCampaignBrandIdAndCampaignCampaignId(Long brandId, Long campaignId, Pageable pageable);
 	

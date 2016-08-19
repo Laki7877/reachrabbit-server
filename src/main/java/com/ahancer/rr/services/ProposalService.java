@@ -1,6 +1,5 @@
 package com.ahancer.rr.services;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.ProposalDao;
@@ -50,7 +48,7 @@ public class ProposalService {
 	}
 	
 	public List<Proposal> findAllActiveByInfluencer(Long influencerId) {
-		return proposalDao.findByInfluencerIdAndCampaignStatusIn(influencerId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
+		return proposalDao.findByInfluencerId(influencerId);
 	}
 
 	public Page<Proposal> findAllByInfluencer(Long influencerId,Pageable pageable) {
