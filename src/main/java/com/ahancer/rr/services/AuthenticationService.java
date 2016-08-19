@@ -69,5 +69,18 @@ public class AuthenticationService {
 	public User getUserById(Long userId) {
 		return userDao.findOne(userId);
 	}
+	
+	public AuthenticationResponse influencerEmailAuthentication(String email, String password) {
+		User user = userDao.findByEmail(email);
+		if(null == user || !encrypt.checkPassword(password, user.getPassword()) || user.getRole() != Role.Influencer){
+			return null;
+		} else {
+			String token = jwt.generateToken(user.getUserId());
+			UserResponse userResponse = Util.getUserResponse(user);
+			CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+			AuthenticationResponse response = new AuthenticationResponse(token);
+			return response;
+		}
+	}
 
 }

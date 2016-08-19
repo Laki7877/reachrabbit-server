@@ -31,7 +31,6 @@ public class AuthenticationController {
 	private YoutubeService youtubeService;
 	@Autowired
 	private InstagramService instagramService;
-	
 	@Autowired
 	private AuthenticationService authenticationService;
 	
@@ -63,4 +62,15 @@ public class AuthenticationController {
 		return youtubeService.authentication(youtubeService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
 	}
 	
+	@RequestMapping(value = "/influencer" ,method = RequestMethod.POST)
+	@ResponseBody
+	public AuthenticationResponse influencerAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
+			throws Exception {
+		AuthenticationResponse authen = authenticationService.influencerEmailAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+		if(null == authen) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
+		}else {
+			return authen;
+		}
+	}
 }
