@@ -93,7 +93,11 @@ public class ProposalMessageService {
 		if(Role.Influencer == userRole){
 			updateCount = proposalDao.updateMessageUpdatedAtByInfluencer(proposalId, userId,new Date());
 		}else if(Role.Brand == userRole){
-			updateCount = proposalDao.updateMessageUpdatedAtByBrand(proposalId,userId,new Date());
+			int porposalCount = proposalDao.countByBrand(proposalId,userId);
+			if(0 >= porposalCount){
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+			}
+			updateCount = proposalDao.updateMessageUpdatedAtByBrand(proposalId,new Date());
 		}
 		if(0 >= updateCount) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
