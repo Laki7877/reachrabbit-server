@@ -1,6 +1,7 @@
 package com.ahancer.rr.services;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,10 @@ public class CampaignService {
 	
 	public Page<Campaign> findAllByBrand(Long brandId, Pageable pageable) {
 		return campaignDao.findByBrandId(brandId, pageable);
+	}
+	
+	public List<Campaign> findAllActiveByBrand(Long brandId) {
+		return campaignDao.findByBrandBrandIdAndStatusIn(brandId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
 	}
 	
 	public Page<Campaign> findAllOpen(String mediaFilter,Pageable pageable) {		

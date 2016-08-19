@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,17 +32,27 @@ public class ProposalController extends AbstractController {
 	private ProposalMessageService proposalMessageService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Page<Proposal> getAllProposal(Pageable pageRequest) throws Exception{
+	public Page<Proposal> getAllProposal(Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
+			if(campaignId != null){
+				return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), campaignId, pageRequest);
+			}
+			else {
+				return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
+			}
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
 			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);		
 		}
 		throw new Exception();
 	}
+	@RequestMapping(method=RequestMethod.GET, value="/active")
+	@Authorization(Role.Influencer)
+	public List<Proposal> getAllActiveProposal() {
+		return proposalService.findAllActiveByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
+	}
 	
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/proposalmessages")
-	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
+	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public ProposalMessage createProposalMessage(@PathVariable Long proposalId,@RequestBody ProposalMessage message) throws Exception {
 		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(),this.getUserRequest().getRole());
 		return message;

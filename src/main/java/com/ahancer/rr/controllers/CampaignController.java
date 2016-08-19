@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,13 @@ public class CampaignController extends AbstractController{
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
 			return campaignService.findAll(pageRequest);		
 		}	
+		throw new Exception();
+	}
+	@RequestMapping(value="/active", method=RequestMethod.GET)
+	public List<Campaign> getAllActiveCampaign() throws Exception {
+		if(this.getUserRequest().getRole() == Role.Brand) {
+			return campaignService.findAllActiveByBrand(this.getUserRequest().getBrand().getBrandId());
+		}
 		throw new Exception();
 	}
 	

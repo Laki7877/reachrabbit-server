@@ -1,6 +1,7 @@
 package com.ahancer.rr.daos;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,5 +15,6 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	Page<Campaign> findByStatusNotIn(Collection<CampaignStatus> statuses, Pageable pageable);
 	Page<Campaign> findByBrandId(Long brandId, Pageable pageable);	
 	Page<Campaign> findAll(Pageable pageable);
+	List<Campaign> findByBrandBrandIdAndStatusIn(Long brandId, Collection<CampaignStatus> statuses);
 	Campaign findByCampaignIdAndBrandId(Long campaignId, Long brandId);
 }

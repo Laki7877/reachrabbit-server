@@ -1,6 +1,8 @@
 package com.ahancer.rr.services;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.ProposalDao;
@@ -32,16 +35,22 @@ public class ProposalService {
 	@Autowired
 	private CampaignDao campaignDao;
 
+	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
+		return proposalDao.findByCampaignBrandIdAndCampaignCampaignId(brandId, campaignId, pageable);
+	}
 	public Page<Proposal> findAllByBrand(Long brandId,Pageable pageable) {
 		return proposalDao.findByCampaignBrandId(brandId, pageable);
 	}
-
 	public Proposal findOneByBrand(Long proposalId,Long brandId) {
 		return proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 	}
 
 	public Proposal findOneByInfluencer(Long proposalId,Long influencerId) {
 		return proposalDao.findByProposalIdAndInfluencerId(proposalId,influencerId);
+	}
+	
+	public List<Proposal> findAllActiveByInfluencer(Long influencerId) {
+		return proposalDao.findByInfluencerIdAndCampaignStatusIn(influencerId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
 	}
 
 	public Page<Proposal> findAllByInfluencer(Long influencerId,Pageable pageable) {

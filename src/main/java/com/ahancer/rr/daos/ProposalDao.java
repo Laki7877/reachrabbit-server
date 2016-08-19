@@ -1,6 +1,8 @@
 package com.ahancer.rr.daos;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.models.Proposal;
 
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
@@ -17,9 +20,11 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Proposal findByProposalIdAndCampaignBrandId(Long proposalId,Long brandId);
 
+	public List<Proposal> findByInfluencerIdAndCampaignStatusIn(Long influencerId, Collection<CampaignStatus> statuses);
 	public Page<Proposal> findByInfluencerId(Long influencerId,Pageable pageable);
 	
 	public Page<Proposal> findByCampaignBrandId(Long brandId,Pageable pageable);
+	public Page<Proposal> findByCampaignBrandIdAndCampaignCampaignId(Long brandId, Long campaignId, Pageable pageable);
 	
 	public Page<Proposal> findAll(Pageable pageable);
 
