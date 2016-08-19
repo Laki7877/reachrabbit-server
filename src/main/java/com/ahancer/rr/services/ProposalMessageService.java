@@ -1,7 +1,10 @@
 package com.ahancer.rr.services;
 
+import java.util.Collections;
 import java.util.Date;
-import java.util.Queue;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,24 +26,29 @@ import com.ahancer.rr.models.ProposalMessage;
 @Transactional(rollbackFor=Exception.class)
 public class ProposalMessageService {
 	
-	public static class DeferredProposalMessage extends DeferredResult<Page<ProposalMessage>> {
-		private Pageable pageable;
+	public static class DeferredProposalMessage extends DeferredResult<List<ProposalMessage>> {
+		private Date timestamp;
 		private Long proposalId;
-		public DeferredProposalMessage(Long proposalId, Pageable pageable) {
-			this.pageable = pageable;
+		private final static long timeout = 5000;
+		public DeferredProposalMessage(Long proposalId, Date timestamp) {
+			super(timeout, Collections.emptyList());
+			this.timestamp = timestamp;
 			this.proposalId = proposalId;
 		}
-		public Pageable getPageable() {
-			return pageable;
-		}
-		public void setPageable(Pageable pageable) {
-			this.pageable = pageable;
-		}
+		
 		public Long getProposalId() {
 			return proposalId;
 		}
 		public void setProposalId(Long proposalId) {
 			this.proposalId = proposalId;
+		}
+
+		public Date getTimestamp() {
+			return timestamp;
+		}
+
+		public void setTimestamp(Date timestamp) {
+			this.timestamp = timestamp;
 		}
 	}
 	
@@ -52,20 +60,31 @@ public class ProposalMessageService {
 	@Autowired
 	private ProposalDao proposalDao;
 	
-	private Queue<DeferredProposalMessage> pollingQueue;
+	private Map<Long,ConcurrentLinkedQueue<DeferredProposalMessage>> pollingQueue;
 	
 	public ProposalMessageService() {
-		pollingQueue = new ConcurrentLinkedQueue<>();
+		pollingQueue = new ConcurrentHashMap<>();
 	}
 	
-	public void addPollingQueue(DeferredProposalMessage p) {
-		pollingQueue.add(p);
+	public void addPollingQueue(Long proposalId, DeferredProposalMessage p) {
+		//TODO: optimize
+		if(pollingQueue.get(proposalId) == null) {
+			pollingQueue.put(proposalId, new ConcurrentLinkedQueue<>());
+		}
+		pollingQueue.get(proposalId).add(p);
+		
+		//Remove when done
+		p.onCompletion(new Runnable() {
+			public void run() {
+				pollingQueue.get(proposalId).remove(p);
+			}
+		});
 	}
 	
-	public void processPollingQueue() {
-		for(DeferredProposalMessage result: pollingQueue) {
-			result.setResult(findByProposal(result.getProposalId(), result.getPageable()));
-			pollingQueue.remove(result);
+	public void processPollingQueue(Long proposalId) {
+		//Force queue update
+		for(DeferredProposalMessage m : pollingQueue.get(proposalId)) {
+			m.setResult(proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, m.getTimestamp()));
 		}
 	}
 	
@@ -94,8 +113,14 @@ public class ProposalMessageService {
 		message.setUser(userDao.findOne(userId));
 		return message;
 	}
-	
-	public Page<ProposalMessage> findByProposal(Long proposalId,Pageable pageable) {
+	public Page<ProposalMessage> findByProposal(Long proposalId, Date before, Pageable pageable) {
+		if(before == null) {
+			return findByProposal(proposalId, pageable);
+		} else {
+			return proposalMessageDao.findByProposalProposalIdAndCreatedAtBefore(proposalId, before, pageable);
+		}
+	}
+	public Page<ProposalMessage> findByProposal(Long proposalId, Pageable pageable) {
 		Page<ProposalMessage> messages = proposalMessageDao.findByProposalProposalId(proposalId, pageable);
 		return messages;
 	}

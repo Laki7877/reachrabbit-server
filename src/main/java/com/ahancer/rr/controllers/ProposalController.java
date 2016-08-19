@@ -1,5 +1,6 @@
 package com.ahancer.rr.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,21 +63,17 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
-	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId,Pageable pageRequest) throws Exception {
-		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, pageRequest);
+	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) Date timestamp, Pageable pageRequest) throws Exception {
+		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, timestamp, pageRequest);
 		return messages;
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
-	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, Pageable pageRequest) {
-		DeferredProposalMessage result = new DeferredProposalMessage(proposalId, pageRequest);
-		proposalMessageService.addPollingQueue(result);
+	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) Date timestamp) {
+		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, timestamp);
+		proposalMessageService.addPollingQueue(proposalId, result);
 		return result;
-	}
-	@Scheduled(fixedRate=2000)
-	public void processPollingQueue() {
-		proposalMessageService.processPollingQueue();
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}")
