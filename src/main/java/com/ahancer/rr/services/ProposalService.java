@@ -54,6 +54,9 @@ public class ProposalService {
 	public Page<Proposal> findAllByInfluencer(Long influencerId,Pageable pageable) {
 		return proposalDao.findByInfluencerId(influencerId, pageable);
 	}
+	public Page<Proposal> findAllByInfluencer(Long influencerId, Long campaignId, Pageable pageable) {
+		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId, campaignId, pageable);
+	}
 
 	public Page<Proposal> findAll(Pageable pageable) {
 		return proposalDao.findAll(pageable);

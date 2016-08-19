@@ -41,7 +41,12 @@ public class ProposalController extends AbstractController {
 				return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
 			}
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);		
+			if(campaignId != null){
+				return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), campaignId, pageRequest);
+			}
+			else {
+				return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);
+			}		
 		}
 		throw new Exception();
 	}
