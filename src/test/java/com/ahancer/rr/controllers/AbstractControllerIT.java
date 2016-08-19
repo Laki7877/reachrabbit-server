@@ -37,21 +37,21 @@ import io.restassured.specification.RequestSpecification;
 @WebIntegrationTest
 public abstract class AbstractControllerIT {
 
-    @Value("${server.port}") 
-    private int port;
-	
+	@Value("${server.port}") 
+	private int port;
+
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private BrandDao brandDao;
-	
+
 	@Autowired
 	private InfluencerDao influencerDao;
-	
+
 	@Autowired
 	private EncryptionUtil encryptionUtil;
-	
+
 	protected String adminToken;
 	protected String brandToken;
 	protected String influencerToken;
@@ -59,18 +59,18 @@ public abstract class AbstractControllerIT {
 	protected User brand;
 	protected User admin;
 	protected User influencer;
-	
+
 	@Autowired
 	protected AuthenticationService authenticationService;
-	
+
 	public void setupRestAssured() {
 		LogConfig logConfig = LogConfig.logConfig().enableLoggingOfRequestAndResponseIfValidationFails(LogDetail.ALL).enablePrettyPrinting(true);
 		RestAssured.port = port;
 		RestAssured.config = RestAssured.config()
-			.logConfig(logConfig);
+				.logConfig(logConfig);
 		RestAssured.requestSpecification = new RequestSpecBuilder().setContentType(ContentType.JSON).build();
 	}
-	
+
 	public RequestSpecification givenAdmin() {
 		return RestAssured.given()
 				.header("X-Auth-Token", adminToken);
@@ -83,53 +83,52 @@ public abstract class AbstractControllerIT {
 		return RestAssured.given()
 				.header("X-Auth-Token", influencerToken);
 	}
-	
+
 	@Before()
 	@Transactional
 	public void before() {
 		//Setup test framework
 		setupRestAssured();
-		
 		try{
-		//Create admin
-		User admin = new User();
-		admin.setName("PLK THE ADMIN");
-		admin.setEmail("admin@reachrabbit.com");
-		admin.setPassword(encryptionUtil.hashPassword("1234"));
-		admin.setRole(Role.Admin);
-		admin = userDao.save(admin);
-		
-		User brand = new User();
-		Brand br = new Brand();
-		brand.setName("Nattamoto brand");
-		brand.setEmail("brand@reachrabbit.com");
-		brand.setPassword(encryptionUtil.hashPassword("1234"));
-		brand.setRole(Role.Brand);
-		brand.setBrand(null);
-		brand = userDao.save(brand);
-		br.setUser(null);
-		br.setBrandId(brand.getUserId());
-		brand.setBrand(brandDao.save(br));
-		
-		User influencer = new User();
-		Influencer inf = new Influencer();
-		influencer.setName("Influencer");
-		influencer.setEmail("influencer@reachrabbit.com");
-		influencer.setRole(Role.Influencer);
-		influencer.setInfluencer(null);
-		influencer = userDao.save(influencer);
-		inf.setUser(null);
-		inf.setInfluencerId(influencer.getUserId());
-		influencer.setInfluencer(influencerDao.save(inf));
-		
-		adminToken = authenticationService.generateTokenFromUser(admin).getToken();
-		influencerToken = authenticationService.generateTokenFromUser(influencer).getToken();
-		brandToken = authenticationService.generateTokenFromUser(brand).getToken();
+			//Create admin
+			User admin = new User();
+			admin.setName("PLK THE ADMIN");
+			admin.setEmail("admin@reachrabbit.com");
+			admin.setPassword(encryptionUtil.hashPassword("1234"));
+			admin.setRole(Role.Admin);
+			admin = userDao.save(admin);
 
-		this.admin = admin;
-		this.brand = brand;
-		this.influencer = influencer;
-		
+			User brand = new User();
+			Brand br = new Brand();
+			brand.setName("Nattamoto brand");
+			brand.setEmail("brand@reachrabbit.com");
+			brand.setPassword(encryptionUtil.hashPassword("1234"));
+			brand.setRole(Role.Brand);
+			brand.setBrand(null);
+			brand = userDao.save(brand);
+			br.setUser(null);
+			br.setBrandId(brand.getUserId());
+			brand.setBrand(brandDao.save(br));
+
+			User influencer = new User();
+			Influencer inf = new Influencer();
+			influencer.setName("Influencer");
+			influencer.setEmail("influencer@reachrabbit.com");
+			influencer.setRole(Role.Influencer);
+			influencer.setInfluencer(null);
+			influencer = userDao.save(influencer);
+			inf.setUser(null);
+			inf.setInfluencerId(influencer.getUserId());
+			influencer.setInfluencer(influencerDao.save(inf));
+
+			adminToken = authenticationService.generateTokenFromUser(admin).getToken();
+			influencerToken = authenticationService.generateTokenFromUser(influencer).getToken();
+			brandToken = authenticationService.generateTokenFromUser(brand).getToken();
+
+			this.admin = admin;
+			this.brand = brand;
+			this.influencer = influencer;
+
 		} catch(ConstraintViolationException e) {
 			System.err.println(e.getConstraintName());
 		}
