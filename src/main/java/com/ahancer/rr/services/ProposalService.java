@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
@@ -59,8 +60,8 @@ public class ProposalService {
 		}
 		proposal.setCampaign(campaign);
 		proposal.setInfluencerId(influencerId);
-		//proposal.setInfluencer(influencer);
 		proposal.setMessageUpdatedAt(new Date());
+		proposal.setStatus(ProposalStatus.Selection);
 		proposal = proposalDao.save(proposal);
 		//Insert first message
 		ProposalMessage firstMessage = new ProposalMessage();
@@ -69,9 +70,6 @@ public class ProposalService {
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
 		firstMessage.setUserId(influencerId);
-//		User user = new User();
-//		user.setUserId(influencerId);
-//		firstMessage.setUser(user);
 		firstMessage = proposalMessageDao.save(firstMessage);
 		return proposal;
 	}

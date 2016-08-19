@@ -29,7 +29,7 @@ public class ProposalController extends AbstractController {
 	private ProposalMessageService proposalMessageService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Page<Proposal> getAllCampaign(Pageable pageRequest) throws Exception{
+	public Page<Proposal> getAllProposal(Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
 			return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
@@ -41,7 +41,7 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/proposalmessages")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
 	public ProposalMessage createProposalMessage(@PathVariable Long proposalId,@RequestBody ProposalMessage message) throws Exception {
-		message = proposalMessageService.createProposalMessage(message, this.getUserRequest().getUserId());
+		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(),this.getUserRequest().getRole());
 		return message;
 	}
 	

@@ -1,10 +1,10 @@
 package com.ahancer.rr.custom.type;
 
 public enum ProposalStatus {
-	WaitForReview("Wait for Review"),
-	NeedRevision("Need Revision"),
-	Reject("Reject"),
-	Approve("Approve");
+	
+	Selection("Selection"),
+	Working("Need Revision"),
+	Complete("Reject");
 	
 	private String displayName;
 
