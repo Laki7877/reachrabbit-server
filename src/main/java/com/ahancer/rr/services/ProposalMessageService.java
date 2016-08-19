@@ -17,7 +17,6 @@ import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.ProposalMessage;
-import com.ahancer.rr.utils.DatabaseUtil;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -68,7 +67,7 @@ public class ProposalMessageService {
 	}
 	
 	public ProposalMessage createProposalMessage(Long proposalId, ProposalMessage messaage,Long userId,Role userRole) throws Exception {
-		int updateCount = proposalDao.updateMessageUpdatedAt(proposalId, userId,DatabaseUtil.getDateTime(new Date()));
+		int updateCount = proposalDao.updateMessageUpdatedAt(proposalId, userId,new Date());
 		if(0 >= updateCount) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
