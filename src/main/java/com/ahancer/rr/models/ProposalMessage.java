@@ -17,14 +17,16 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.Transient;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity(name="proposalMessage")
-public class ProposalMessage extends AbstractModel implements Serializable  {
+public class ProposalMessage implements Serializable  {
 
 	private static final long serialVersionUID = 2277636873977709793L;
 
@@ -61,13 +63,31 @@ public class ProposalMessage extends AbstractModel implements Serializable  {
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
 	private Set<Resource> resources = new HashSet<Resource>(0);
 	
-	@Transient
-	@JsonSerialize
-	@JsonDeserialize
-	private Date time;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "createdAt",updatable=false)
+	private Date createdAt;
+
+	@JsonIgnore
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "updatedAt")
+	private Date updatedAt;
 	
-	public ProposalMessage(){
-		this.setTime(this.getCreatedAt());
+	@JsonIgnore
+	@Column(name="createdBy")
+	private Long createdBy;
+	
+	@JsonIgnore
+	@Column(name="updatedBy")
+	private Long updatedBy;
+	
+	@PrePersist
+	protected void onCreate() {
+		updatedAt = createdAt = new Date();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedAt = new Date();
 	}
 
 	public Long getMessageId() {
@@ -134,13 +154,36 @@ public class ProposalMessage extends AbstractModel implements Serializable  {
 		this.proposal = proposal;
 	}
 
-	public Date getTime() {
-		return time;
+	public Date getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setTime(Date time) {
-		this.time = time;
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
-	
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Long getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(Long updatedBy) {
+		this.updatedBy = updatedBy;
+	}
 	
 }
