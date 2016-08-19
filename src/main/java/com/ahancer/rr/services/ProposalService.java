@@ -1,5 +1,7 @@
 package com.ahancer.rr.services;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -28,16 +30,20 @@ public class ProposalService {
 
 	@Autowired
 	private ProposalMessageDao proposalMessageDao;
-
+	private final int activeDay = 21;
 
 	@Autowired
 	private CampaignDao campaignDao;
 
 	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
-		return proposalDao.findByCampaignBrandIdAndCampaignCampaignId(brandId, campaignId, pageable);
+		if(campaignId != null) {
+			return proposalDao.findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(brandId, campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
+		} else {
+			return findAllByBrand(brandId, pageable);
+		}
 	}
 	public Page<Proposal> findAllByBrand(Long brandId,Pageable pageable) {
-		return proposalDao.findByCampaignBrandId(brandId, pageable);
+		return proposalDao.findByCampaignBrandIdAndMessageUpdatedAtAfter(brandId,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
 	public Proposal findOneByBrand(Long proposalId,Long brandId) {
 		return proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
@@ -52,10 +58,14 @@ public class ProposalService {
 	}
 
 	public Page<Proposal> findAllByInfluencer(Long influencerId,Pageable pageable) {
-		return proposalDao.findByInfluencerId(influencerId, pageable);
+		return proposalDao.findByInfluencerIdAndMessageUpdatedAtAfter(influencerId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
 	public Page<Proposal> findAllByInfluencer(Long influencerId, Long campaignId, Pageable pageable) {
-		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId, campaignId, pageable);
+		if(campaignId != null) {
+			return proposalDao.findByInfluencerIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(influencerId,  campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
+		} else {
+			return findAllByInfluencer(influencerId, pageable);
+		}
 	}
 
 	public Page<Proposal> findAll(Pageable pageable) {

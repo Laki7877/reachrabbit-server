@@ -34,19 +34,9 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Proposal> getAllProposal(Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			if(campaignId != null){
-				return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), campaignId, pageRequest);
-			}
-			else {
-				return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
-			}
+			return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			if(campaignId != null){
-				return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), campaignId, pageRequest);
-			}
-			else {
-				return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);
-			}		
+			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);	
 		}
 		throw new Exception();
 	}
