@@ -9,9 +9,11 @@
 --SET FOREIGN_KEY_CHECKS = 1;
 
 
-INSERT INTO user (email,password,name,role) VALUES ('laki7877@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Laki Sik','Admin');
-INSERT INTO user (email,password,name,role) VALUES ('brand@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Laki Sik','Brand');
+INSERT INTO user (email,password,name,role) VALUES ('admin@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am admin','Admin');
+INSERT INTO user (email,password,name,role) VALUES ('brand@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am brand','Brand');
+INSERT INTO user (email,password,name,role) VALUES ('influencer@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am influencer','Influencer');
 INSERT INTO brand (brandName, brandId) VALUES ('My Brand', 2);
+INSERT INTO influencer (influencerId) VALUES (3);
 INSERT INTO bank (bankId,bankName) VALUES ('002','ธนาคารกรุงเทพ จำกัด (มหาชน)');
 INSERT INTO bank (bankId,bankName) VALUES ('004','ธนาคารกสิกรไทย จำกัด (มหาชน)');
 INSERT INTO bank (bankId,bankName) VALUES ('005','ธนาคารเอบีเอ็น แอมโร เอ็น.วี.');
