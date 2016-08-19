@@ -69,9 +69,9 @@ public class ProposalMessageService {
 	public ProposalMessage createProposalMessage(Long proposalId, ProposalMessage messaage,Long userId,Role userRole) throws Exception {
 		int updateCount = 0;
 		if(Role.Influencer == userRole){
-			updateCount = proposalDao.updateMessageUpdatedAt(proposalId, userId, -1L,new Date());
+			updateCount = proposalDao.updateMessageUpdatedAtByInfluencer(proposalId, userId,new Date());
 		}else if(Role.Brand == userRole){
-			updateCount = proposalDao.updateMessageUpdatedAt(proposalId, -1L, userId,new Date());
+			updateCount = proposalDao.updateMessageUpdatedAtByBrand(proposalId,userId,new Date());
 		}
 		if(0 >= updateCount) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
