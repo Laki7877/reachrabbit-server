@@ -36,7 +36,7 @@ public class Util {
 	
 	public static Date parseJacksonDate(String utc) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        return formatter.parse(utc);
+        return formatter.parse(utc.replaceAll("Z$", "+0000"));
 	}
 	
 	public static UserResponse getUserResponse(User user){
