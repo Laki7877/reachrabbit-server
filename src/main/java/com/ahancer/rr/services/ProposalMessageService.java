@@ -82,6 +82,10 @@ public class ProposalMessageService {
 	}
 	
 	public void processPollingQueue(Long proposalId) {
+		
+		if(pollingQueue.get(proposalId) == null) {
+			return;
+		}
 		//Force queue update
 		for(DeferredProposalMessage m : pollingQueue.get(proposalId)) {
 			m.setResult(proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, m.getTimestamp()));

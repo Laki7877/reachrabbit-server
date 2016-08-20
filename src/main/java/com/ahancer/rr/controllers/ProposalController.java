@@ -51,6 +51,7 @@ public class ProposalController extends AbstractController {
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public ProposalMessage createProposalMessage(@PathVariable Long proposalId,@RequestBody ProposalMessage message) throws Exception {
 		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(),this.getUserRequest().getRole());
+		proposalMessageService.
 		return message;
 	}
 	
@@ -63,15 +64,15 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
-	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) Date timestamp, Pageable pageRequest) throws Exception {
-		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, timestamp, pageRequest);
+	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) Long timestamp, Pageable pageRequest) throws Exception {
+		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, new Date(timestamp), pageRequest);
 		return messages;
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
-	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) Date timestamp) {
-		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, timestamp);
+	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) Long timestamp) {
+		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, new Date(timestamp));
 		proposalMessageService.addPollingQueue(proposalId, result);
 		return result;
 	}
