@@ -29,7 +29,7 @@ public class ProposalMessageService {
 	public static class DeferredProposalMessage extends DeferredResult<List<ProposalMessage>> {
 		private Date timestamp;
 		private Long proposalId;
-		private final static long timeout = 5000;
+		private final static Long timeout = 10000L;
 		public DeferredProposalMessage(Long proposalId, Date timestamp) {
 			super(timeout, Collections.emptyList());
 			this.timestamp = timestamp;
