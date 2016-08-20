@@ -51,7 +51,7 @@ public class ProposalController extends AbstractController {
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public ProposalMessage createProposalMessage(@PathVariable Long proposalId,@RequestBody ProposalMessage message) throws Exception {
 		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(),this.getUserRequest().getRole());
-		proposalMessageService.
+		proposalMessageService.processPollingQueue(proposalId);
 		return message;
 	}
 	
