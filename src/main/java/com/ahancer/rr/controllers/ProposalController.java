@@ -1,12 +1,10 @@
 package com.ahancer.rr.controllers;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +20,7 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalMessageService.DeferredProposalMessage;
 import com.ahancer.rr.services.ProposalService;
+import com.ahancer.rr.utils.Util;
 
 @RestController
 @RequestMapping("/proposals")
@@ -64,15 +63,15 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
-	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) Date timestamp, Pageable pageRequest) throws Exception {
-		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, timestamp, pageRequest);
+	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
+		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, Util.parseJacksonDate(timestamp), pageRequest);
 		return messages;
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
-	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) Date timestamp) {
-		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, timestamp);
+	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) String timestamp) throws Exception {
+		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, Util.parseJacksonDate(timestamp));
 		proposalMessageService.addPollingQueue(proposalId, result);
 		return result;
 	}

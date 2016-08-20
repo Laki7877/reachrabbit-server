@@ -1,7 +1,10 @@
 package com.ahancer.rr.utils;
 
 import java.beans.FeatureDescriptor;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -29,6 +32,11 @@ public class Util {
 		set.addAll(Arrays.asList(ignoreProperties));
 		set.addAll(Arrays.asList(getNullPropertyNames(source)));
 		BeanUtils.copyProperties(source, target, set.toArray(new String[set.size()]));
+	}
+	
+	public static Date parseJacksonDate(String utc) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        return formatter.parse(utc);
 	}
 	
 	public static UserResponse getUserResponse(User user){
