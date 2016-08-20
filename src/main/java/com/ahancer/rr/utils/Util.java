@@ -38,7 +38,7 @@ public class Util {
 		if(utc == null) {
 			return null;
 		}
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         return formatter.parse(utc.replaceAll("Z$", "+0000"));
 	}
 	
