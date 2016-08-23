@@ -12,6 +12,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.models.Proposal;
 
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
@@ -48,5 +49,11 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	@Modifying
 	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId")
 	public int updateMessageUpdatedAtByBrand(@Param("proposalId") Long proposalId, @Param("messageUpdatedAt") Date messageUpdatedAt);
+	
+	@Modifying
+	@Query("UPDATE proposal cp SET status=:status WHERE cp.proposalId=:proposalId")
+	public int updateProposalStatus(@Param("proposalId") Long proposalId, @Param("status") ProposalStatus status);
+	
+	
 	
 }

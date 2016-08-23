@@ -2,7 +2,6 @@ package com.ahancer.rr.services;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -15,12 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.daos.CampaignDao;
-import com.ahancer.rr.daos.CompletionTimeDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
-import com.ahancer.rr.models.CompletionTime;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 
@@ -38,8 +35,8 @@ public class ProposalService {
 	@Autowired
 	private CampaignDao campaignDao;
 	
-	@Autowired
-	private CompletionTimeDao completionTimeDao;
+//	@Autowired
+//	private CompletionTimeDao completionTimeDao;
 
 	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
 		if(campaignId != null) {
@@ -51,6 +48,7 @@ public class ProposalService {
 	public Page<Proposal> findAllByBrand(Long brandId,Pageable pageable) {
 		return proposalDao.findByCampaignBrandIdAndMessageUpdatedAtAfter(brandId,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
+	
 	public Proposal findOneByBrand(Long proposalId,Long brandId) {
 		return proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 	}
@@ -110,6 +108,16 @@ public class ProposalService {
 		oldProposal.setPrice(proposal.getPrice());
 		oldProposal.setDescription(proposal.getDescription());
 		oldProposal = proposalDao.save(oldProposal);
+		return oldProposal;
+	}
+	
+	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId) throws Exception {
+		Proposal oldProposal = findOneByBrand(proposalId,brandId);
+		if(null == oldProposal){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+		}
+		proposalDao.updateProposalStatus(proposalId, status);
+		oldProposal.setStatus(status);
 		return oldProposal;
 	}
 

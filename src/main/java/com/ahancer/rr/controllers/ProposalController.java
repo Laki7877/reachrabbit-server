@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
@@ -86,6 +87,10 @@ public class ProposalController extends AbstractController {
 		throw new Exception();
 	}
 	
-	
+	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/status/{status}")
+	@Authorization(Role.Brand)
+	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status) throws Exception {
+		return proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId());
+	}
 
 }
