@@ -49,7 +49,7 @@ public class ProposalController extends AbstractController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/count/poll")
-	public DeferredProposal getAllUnreadProposal(@RequestParam(value="immediate", required=false) Boolean immediate) throws Exception {
+	public DeferredProposal getAllUnreadProposal(@RequestParam(name="immediate", required=false) Boolean immediate) throws Exception {
 		final DeferredProposal result = new DeferredProposal(this.getUserRequest().getRole());
 		proposalService.addInboxPolling(this.getUserRequest().getUserId(), result);
 		if(immediate == true) {
