@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
@@ -46,10 +47,30 @@ public class ProposalController extends AbstractController {
 		return proposalService.findAllActiveByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	
+	@RequestMapping(method=RequestMethod.GET, value="/count")
+	public Long getProposalCountByStatus(@RequestParam("status") ProposalStatus status) throws Exception {
+		if(this.getUserRequest().getRole() == Role.Brand) {
+			return proposalService.countByBrand(this.getUserRequest().getBrand().getBrandId(), status);
+		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+			return proposalService.countByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), status);
+		}
+		throw new Exception();
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/count")
+	public Long getUnreadProposalMessageCount(@PathVariable Long proposalId) throws Exception {
+		if(this.getUserRequest().getRole() == Role.Brand) {
+			return proposalService.countByUnreadProposalMessageForBrand(proposalId, this.getUserRequest().getBrand().getBrandId());			
+		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+			return proposalService.countByUnreadProposalMessageForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId());
+		}
+		throw new Exception();
+	}
+	
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/proposalmessages")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
-	public ProposalMessage createProposalMessage(@PathVariable Long proposalId,@RequestBody ProposalMessage message) throws Exception {
-		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(),this.getUserRequest().getRole());
+	public ProposalMessage createProposalMessage(@PathVariable Long proposalId, @RequestBody ProposalMessage message) throws Exception {
+		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(), this.getUserRequest().getRole());
 		proposalMessageService.processPollingQueue(proposalId);
 		return message;
 	}
@@ -64,14 +85,18 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
 	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
-		Page<ProposalMessage> messages = proposalMessageService.findByProposal(proposalId, Util.parseJacksonDate(timestamp), pageRequest);
-		return messages;
+		if(this.getUserRequest().getRole() == Role.Brand) {
+			return proposalMessageService.findByProposalForBrand(proposalId, this.getUserRequest().getBrand().getBrandId(), Util.parseJacksonDate(timestamp), pageRequest);
+		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+			return proposalMessageService.findByProposalForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId(), Util.parseJacksonDate(timestamp), pageRequest);
+		}
+		throw new Exception();
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
 	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) String timestamp) throws Exception {
-		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, Util.parseJacksonDate(timestamp));
+		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, Util.parseJacksonDate(timestamp), this.getUserRequest().getRole());
 		proposalMessageService.addPollingQueue(proposalId, result);
 		return result;
 	}

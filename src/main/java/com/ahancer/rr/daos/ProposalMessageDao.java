@@ -5,13 +5,21 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import com.ahancer.rr.models.ProposalMessage;
 
 public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long> {
 	
-	public Page<ProposalMessage> findByProposalProposalId(Long proposalId,Pageable pageable);
-	public Page<ProposalMessage> findByProposalProposalIdAndCreatedAtBefore(Long proposalId, Date createdAtBefore, Pageable pageable);
+	@Query("SELECT count(pm) FROM ProposalMessage pm WHERE pm.proposal.proposalId=:proposalId AND pm.isBrandRead=false AND pm.proposal.campaign.brandId=:brandId")
+	public Long countByUnreadProposalIdForBrand(@Param("proposalId") Long proposalId, @Param("brandId") Long brandId);
+	@Query("SELECT count(pm) FROM ProposalMessage pm WHERE pm.proposal.proposalId=:proposalId AND pm.isInfluencerRead=false AND pm.proposal.influencerId=:influencerId")
+	public Long countByUnreadProposalIdForInfluencer(@Param("proposalId") Long proposalId, @Param("influencerId") Long influencerId);
+	public Page<ProposalMessage> findByProposalProposalIdAndProposalCampaignBrandId(Long proposalId, Long brandId, Pageable pageable);
+	public Page<ProposalMessage> findByProposalProposalIdAndProposalInfluencerId(Long proposalId, Long influencerId, Pageable pageable);
+	public Page<ProposalMessage> findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(Long proposalId, Long influencerId, Date createdAtBefore, Pageable pageable);
+	public Page<ProposalMessage> findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtBefore(Long proposalId, Long brandId, Date createdAtBefore, Pageable pageable);
 	public List<ProposalMessage> findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(Long proposalId, Date createdAtAfter);
 }

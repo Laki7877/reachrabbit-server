@@ -12,6 +12,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.models.Proposal;
 
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
@@ -36,10 +37,16 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Page<Proposal> findAll(Pageable pageable);
 
 	@Query("SELECT COUNT(cp) FROM proposal cp WHERE cp.influencer.influencerId=:influencerId AND cp.campaign.campaignId=:campaignId")
-	public int countByInfluencerAndCampaign(@Param("influencerId") Long influencerId, @Param("campaignId") Long campaignId);
+	public Long countByInfluencerAndCampaign(@Param("influencerId") Long influencerId, @Param("campaignId") Long campaignId);
+	
+	@Query("SELECT COUNT(cp) FROM proposal cp WHERE cp.influencer.influencerId=:influencerId AND cp.status=:status")
+	public Long countByInfluencer(@Param("influencerId") Long influencerId, @Param("status") ProposalStatus status);
 	
 	@Query("SELECT COUNT(cp) FROM proposal cp WHERE proposalId=:proposalId AND cp.campaign.brandId=:brandId")
-	public int countByBrand(@Param("proposalId") Long proposalId,@Param("brandId") Long brandId);
+	public Long countByBrand(@Param("proposalId") Long proposalId,@Param("brandId") Long brandId);
+	
+	@Query("SELECT COUNT(cp) FROM proposal cp WHERE cp.campaign.brandId=:brandId AND cp.status=:status")
+	public Long countByBrand(@Param("brandId") Long brandId,  @Param("status") ProposalStatus status);
 	
 	@Modifying
 	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId AND cp.influencerId=:influencerId")

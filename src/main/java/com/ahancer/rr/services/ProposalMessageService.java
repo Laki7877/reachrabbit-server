@@ -21,6 +21,7 @@ import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.ProposalMessage;
+import com.google.common.collect.Lists;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -29,24 +30,29 @@ public class ProposalMessageService {
 	public static class DeferredProposalMessage extends DeferredResult<List<ProposalMessage>> {
 		private Date timestamp;
 		private Long proposalId;
+		private Role role;
 		private final static Long timeout = 10000L;
-		public DeferredProposalMessage(Long proposalId, Date timestamp) {
+		public DeferredProposalMessage(Long proposalId, Date timestamp, Role role) {
 			super(timeout, Collections.emptyList());
+			this.role = role;
 			this.timestamp = timestamp;
 			this.proposalId = proposalId;
 		}
-		
+		public Role getRole() {
+			return role;
+		}
+		public void setRole(Role role) {
+			this.role = role;
+		}
 		public Long getProposalId() {
 			return proposalId;
 		}
 		public void setProposalId(Long proposalId) {
 			this.proposalId = proposalId;
 		}
-
 		public Date getTimestamp() {
 			return timestamp;
 		}
-
 		public void setTimestamp(Date timestamp) {
 			this.timestamp = timestamp;
 		}
@@ -88,7 +94,15 @@ public class ProposalMessageService {
 		}
 		//Force queue update
 		for(DeferredProposalMessage m : pollingQueue.get(proposalId)) {
-			m.setResult(proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, m.getTimestamp()));
+			List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, m.getTimestamp());
+			for(ProposalMessage p : pm) {
+				if(m.getRole() == Role.Influencer) {
+					p.setIsInfluencerRead(true);
+				} else if(m.getRole() == Role.Brand){
+					p.setIsBrandRead(true);
+				}
+			}
+			m.setResult(Lists.newArrayList(proposalMessageDao.save(pm)));
 		}
 	}
 	
@@ -97,7 +111,7 @@ public class ProposalMessageService {
 		if(Role.Influencer == userRole){
 			updateCount = proposalDao.updateMessageUpdatedAtByInfluencer(proposalId, userId,new Date());
 		}else if(Role.Brand == userRole){
-			int porposalCount = proposalDao.countByBrand(proposalId,userId);
+			long porposalCount = proposalDao.countByBrand(proposalId,userId);
 			if(0 >= porposalCount){
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 			}
@@ -121,16 +135,36 @@ public class ProposalMessageService {
 		message.setUser(userDao.findOne(userId));
 		return message;
 	}
-	public Page<ProposalMessage> findByProposal(Long proposalId, Date before, Pageable pageable) {
+	public Page<ProposalMessage> findByProposalForBrand(Long proposalId, Long brandId, Date before, Pageable pageable) {
+		Page<ProposalMessage> page = null;
 		if(before == null) {
-			return findByProposal(proposalId, pageable);
+			page = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandId(proposalId, brandId, pageable);
 		} else {
-			return proposalMessageDao.findByProposalProposalIdAndCreatedAtBefore(proposalId, before, pageable);
+			page = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtBefore(proposalId, brandId, before, pageable);
 		}
+		
+		//Update reading message
+		List<ProposalMessage> pm = page.getContent();
+		for(ProposalMessage p : pm) {
+			p.setIsBrandRead(true);
+		}
+		proposalMessageDao.save(pm);
+		return page;
 	}
-	public Page<ProposalMessage> findByProposal(Long proposalId, Pageable pageable) {
-		Page<ProposalMessage> messages = proposalMessageDao.findByProposalProposalId(proposalId, pageable);
-		return messages;
+	public Page<ProposalMessage> findByProposalForInfluencer(Long proposalId, Long influencerId, Date before, Pageable pageable) {
+		Page<ProposalMessage> page = null;
+		if(before == null) {
+			page = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerId(proposalId, influencerId, pageable);
+		} else {
+			page = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(proposalId, influencerId, before, pageable);
+		}
+		
+		//Update reading message
+		List<ProposalMessage> pm = page.getContent();
+		for(ProposalMessage p : pm) {
+			p.setIsInfluencerRead(true);
+		}
+		proposalMessageDao.save(pm);
+		return page;
 	}
-
 }
