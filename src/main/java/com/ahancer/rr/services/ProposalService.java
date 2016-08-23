@@ -2,6 +2,7 @@ package com.ahancer.rr.services;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -14,10 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.daos.CampaignDao;
+import com.ahancer.rr.daos.CompletionTimeDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
+import com.ahancer.rr.models.CompletionTime;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 
@@ -34,6 +37,9 @@ public class ProposalService {
 
 	@Autowired
 	private CampaignDao campaignDao;
+	
+	@Autowired
+	private CompletionTimeDao completionTimeDao;
 
 	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
 		if(campaignId != null) {
@@ -82,6 +88,12 @@ public class ProposalService {
 		proposal.setInfluencerId(influencerId);
 		proposal.setMessageUpdatedAt(new Date());
 		proposal.setStatus(ProposalStatus.Selection);
+		if(null != proposal.getCompletionTime()){
+			CompletionTime completionTime = completionTimeDao.findOne(proposal.getCompletionTime().getCompletionId());
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DATE, completionTime.getDay());
+			proposal.setDueDate(cal.getTime());;
+		}
 		proposal = proposalDao.save(proposal);
 		//Insert first message
 		ProposalMessage firstMessage = new ProposalMessage();

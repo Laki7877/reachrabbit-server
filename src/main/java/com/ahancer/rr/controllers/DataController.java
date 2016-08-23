@@ -17,7 +17,6 @@ import com.ahancer.rr.models.Budget;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.CompletionTime;
 import com.ahancer.rr.models.Media;
-import com.google.api.client.util.Lists;
 
 @RestController
 @RequestMapping("/data")
@@ -45,22 +44,22 @@ public class DataController {
 	
 	@RequestMapping(value="/categories",method=RequestMethod.GET)
 	public List<Category> getAllCategories() throws Exception{
-		return Lists.newArrayList(categoryDao.findAll());
+		return categoryDao.findAllByOrderByCategoryId();
 	}
 	
 	@RequestMapping(value="/banks",method=RequestMethod.GET)
 	public List<Bank> getAllBanks() throws Exception{
-		return Lists.newArrayList(bankDao.findAll());
+		return bankDao.findAllByOrderByBankId();
 	}
 	
 	@RequestMapping(value="/budget",method=RequestMethod.GET)
 	public List<Budget> getBudget() throws Exception{
-		return Lists.newArrayList(budgetDao.findAll());
+		return budgetDao.findAllByOrderByBudgetId();
 	}
 	
 	@RequestMapping(value="/completiontime",method=RequestMethod.GET)
 	public List<CompletionTime> getCompletionTime() throws Exception{
-		return Lists.newArrayList(completionTimeDao.findAll());
+		return completionTimeDao.findAllByOrderByCompletionId();
 	}
 	
 }
