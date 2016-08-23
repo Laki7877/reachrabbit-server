@@ -45,7 +45,7 @@ public class User extends AbstractModel implements Serializable {
 	@Column(name="role", length=20)
 	@Enumerated(EnumType.STRING)
 	private Role role;
-
+	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="profilePictureId")
 	private Resource profilePicture;
@@ -163,6 +163,6 @@ public class User extends AbstractModel implements Serializable {
 
 	public void setInfluencer(Influencer influencer) {
 		this.influencer = influencer;
-	}	
+	}
 	
 }

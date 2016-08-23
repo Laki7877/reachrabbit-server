@@ -53,6 +53,7 @@ public class InfluencerService {
 			}
 		}
 		Util.copyProperties(newUser, oldUser);
+		oldUser.setProfilePicture(newUser.getProfilePicture());
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
 		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);
