@@ -21,6 +21,7 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Proposal findByProposalIdAndCampaignBrandId(Long proposalId,Long brandId);
 
+	
 	public List<Proposal> findByInfluencerIdAndCampaignStatusIn(Long influencerId, Collection<CampaignStatus> statuses);
 	public Page<Proposal> findByInfluencerId(Long influencerId,Pageable pageable);
 	public Page<Proposal> findByInfluencerIdAndCampaignCampaignId(Long influencerId, Long campaignId, Pageable pageable);
@@ -36,17 +37,10 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Page<Proposal> findAll(Pageable pageable);
 
-	@Query("SELECT COUNT(cp) FROM proposal cp WHERE cp.influencer.influencerId=:influencerId AND cp.campaign.campaignId=:campaignId")
-	public Long countByInfluencerAndCampaign(@Param("influencerId") Long influencerId, @Param("campaignId") Long campaignId);
-	
-	@Query("SELECT COUNT(cp) FROM proposal cp WHERE cp.influencer.influencerId=:influencerId AND cp.status=:status")
-	public Long countByInfluencer(@Param("influencerId") Long influencerId, @Param("status") ProposalStatus status);
-	
-	@Query("SELECT COUNT(cp) FROM proposal cp WHERE proposalId=:proposalId AND cp.campaign.brandId=:brandId")
-	public Long countByBrand(@Param("proposalId") Long proposalId,@Param("brandId") Long brandId);
-	
-	@Query("SELECT COUNT(cp) FROM proposal cp WHERE cp.campaign.brandId=:brandId AND cp.status=:status")
-	public Long countByBrand(@Param("brandId") Long brandId,  @Param("status") ProposalStatus status);
+	public Long countByInfluencerInfluencerIdAndCampaignCampaignId(Long influencerId, Long campaignId);
+	public Long countByProposalIdAndCampaignBrandId(@Param("proposalId") Long proposalId,@Param("brandId") Long brandId);
+	public Long countByInfluencerInfluencerIdAndStatus(Long influencerId, ProposalStatus status);
+	public Long countByCampaignBrandIdAndStatus(Long brandId, ProposalStatus status);
 	
 	@Modifying
 	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId AND cp.influencerId=:influencerId")

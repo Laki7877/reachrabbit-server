@@ -45,17 +45,23 @@ public class ProposalService {
 			return findAllByBrand(brandId, pageable);
 		}
 	}
+	public Long countByUnreadProposalForBrand(Long brandId) {
+		return proposalMessageDao.countByProposalCampaignBrandIdAndIsBrandReadFalse(brandId);
+	}
+	public Long countByUnreadProposalForInfluencer(Long influencerId) {
+		return proposalMessageDao.countByProposalInfluencerIdAndIsInfluencerReadFalse(influencerId);
+	}
 	public Long countByUnreadProposalMessageForBrand(Long proposalId, Long brandId) {
-		return proposalMessageDao.countByUnreadProposalIdForBrand(proposalId, brandId);
+		return proposalMessageDao.countByProposalProposalIdAndProposalCampaignBrandIdAndIsBrandReadFalse(proposalId, brandId);
 	}
 	public Long countByUnreadProposalMessageForInfluencer(Long proposalId, Long influencerId) {
-		return proposalMessageDao.countByUnreadProposalIdForInfluencer(proposalId, influencerId);
+		return proposalMessageDao.countByProposalProposalIdAndProposalInfluencerIdAndIsInfluencerReadFalse(proposalId, influencerId);
 	}
 	public Long countByBrand(Long brandId, ProposalStatus status) {
-		return proposalDao.countByBrand(brandId, status);
+		return proposalDao.countByCampaignBrandIdAndStatus(brandId, status);
 	}
 	public Long countByInfluencer(Long influencerId, ProposalStatus status) {
-		return proposalDao.countByInfluencer(influencerId, status);
+		return proposalDao.countByInfluencerInfluencerIdAndStatus(influencerId, status);
 	}
 	public Page<Proposal> findAllByBrand(Long brandId,Pageable pageable) {
 		return proposalDao.findByCampaignBrandIdAndMessageUpdatedAtAfter(brandId,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
@@ -90,7 +96,7 @@ public class ProposalService {
 
 	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,Long influencerId) throws Exception {
 		Campaign campaign = campaignDao.findOne(campaignId);
-		long count = proposalDao.countByInfluencerAndCampaign(influencerId, campaign.getCampaignId());
+		long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influencerId, campaign.getCampaignId());
 		if(0 < count){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.already.proposal");
 		}

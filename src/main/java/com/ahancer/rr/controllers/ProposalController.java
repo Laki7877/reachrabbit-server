@@ -47,6 +47,16 @@ public class ProposalController extends AbstractController {
 		return proposalService.findAllActiveByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	
+	@RequestMapping(method=RequestMethod.GET, value="/count/unread")
+	public Long getAllUnreadProposal() throws Exception {
+		if(this.getUserRequest().getRole() == Role.Brand) {
+			return proposalService.countByUnreadProposalForBrand(this.getUserRequest().getBrand().getBrandId());
+		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+			return proposalService.countByUnreadProposalForInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
+		}
+		throw new Exception();
+	}
+	
 	@RequestMapping(method=RequestMethod.GET, value="/count")
 	public Long getProposalCountByStatus(@RequestParam("status") ProposalStatus status) throws Exception {
 		if(this.getUserRequest().getRole() == Role.Brand) {
