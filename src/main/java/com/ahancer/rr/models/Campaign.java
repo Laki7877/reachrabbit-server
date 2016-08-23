@@ -86,9 +86,6 @@ public class Campaign extends AbstractModel implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date proposalDeadline;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date submissionDeadline;
-
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
 	private CampaignStatus status;
@@ -144,14 +141,6 @@ public class Campaign extends AbstractModel implements Serializable {
 
 	public void setProposalDeadline(Date proposalDeadline) {
 		this.proposalDeadline = proposalDeadline;
-	}
-
-	public Date getSubmissionDeadline() {
-		return submissionDeadline;
-	}
-
-	public void setSubmissionDeadline(Date submissionDeadline) {
-		this.submissionDeadline = submissionDeadline;
 	}
 
 	public Long getBrandId() {
