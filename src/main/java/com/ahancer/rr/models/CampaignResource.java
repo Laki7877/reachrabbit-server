@@ -71,5 +71,25 @@ public class CampaignResource implements java.io.Serializable {
 	public void setPosition(Integer position) {
 		this.position = position;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if ((this == other))
+			return true;
+		if ((other == null))
+			return false;
+		if (!(other instanceof CampaignResource))
+			return false;
+		CampaignResource castOther = (CampaignResource) other;
+
+		return (this.getResource().getResourceId() == castOther.getResource().getResourceId());
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result = 37 * result + (int) (long) this.getResource().getResourceId();
+		return result;
+	}
 
 }

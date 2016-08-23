@@ -41,7 +41,7 @@ public class Campaign extends AbstractModel implements Serializable {
 	private Long brandId;
 
 	@MapsId("brandId")
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
 	@JoinColumn(name="brandId")
 	private Brand brand;
 	
