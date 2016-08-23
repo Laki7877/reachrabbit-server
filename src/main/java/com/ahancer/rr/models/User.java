@@ -46,7 +46,7 @@ public class User extends AbstractModel implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	@OneToOne(fetch=FetchType.EAGER,cascade = CascadeType.ALL)
+	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="profilePictureId")
 	private Resource profilePicture;
 	
