@@ -54,6 +54,7 @@ public class Campaign extends AbstractModel implements Serializable {
 			name="campaignMedia",
 			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
+	@OrderBy("mediaId")
 	private Set<Media> media = new HashSet<Media>(0);
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign",cascade=CascadeType.ALL)
