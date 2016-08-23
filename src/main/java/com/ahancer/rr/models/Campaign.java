@@ -57,7 +57,7 @@ public class Campaign extends AbstractModel implements Serializable {
 	@OrderBy("mediaId")
 	private Set<Media> media = new HashSet<Media>(0);
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign",cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign")
 	@OrderBy("position")
 	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
 	
