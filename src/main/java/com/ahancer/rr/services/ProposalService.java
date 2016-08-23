@@ -88,12 +88,6 @@ public class ProposalService {
 		proposal.setInfluencerId(influencerId);
 		proposal.setMessageUpdatedAt(new Date());
 		proposal.setStatus(ProposalStatus.Selection);
-		if(null != proposal.getCompletionTime()){
-			CompletionTime completionTime = completionTimeDao.findOne(proposal.getCompletionTime().getCompletionId());
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.DATE, completionTime.getDay());
-			proposal.setDueDate(cal.getTime());;
-		}
 		proposal = proposalDao.save(proposal);
 		//Insert first message
 		ProposalMessage firstMessage = new ProposalMessage();
