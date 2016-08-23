@@ -34,6 +34,7 @@ public class CampaignService {
 		Set<CampaignResource> resources = campaign.getCampaignResources();
 		campaign.setCampaignResources(null);
 		campaign.setBrandId(brandId);
+		Brand brand = campaign.getBrand();
 		campaign.setBrand(null);
 		campaign = campaignDao.save(campaign);
 		for(CampaignResource resource : resources) {
@@ -45,7 +46,9 @@ public class CampaignService {
 			campaignResourceDao.save(resource);
 		}
 		campaign.setCampaignResources(resources);
-		return campaignDao.save(campaign);
+		campaign.setBrand(brand);
+		campaign = campaignDao.save(campaign);
+		return campaign;
 	}
 
 	public Campaign updateCampaignByBrand(Long campaignId, Campaign newCampaign, Long brandId) throws ResponseException {

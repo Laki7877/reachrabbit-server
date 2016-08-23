@@ -13,10 +13,10 @@ public class CampaignResourceId implements java.io.Serializable {
 	private static final long serialVersionUID = 6043666580459930750L;
 	
 	@Column(name = "campaignId", nullable = false)
-	private long campaignId;
+	private Long campaignId;
 	
 	@Column(name = "resourceId", nullable = false)
-	private long resourceId;
+	private Long resourceId;
 
 	public CampaignResourceId() {
 	}
@@ -26,23 +26,24 @@ public class CampaignResourceId implements java.io.Serializable {
 		this.resourceId = resourceId;
 	}
 	
-	public long getCampaignId() {
+	public Long getCampaignId() {
 		return this.campaignId;
 	}
 
-	public void setCampaignId(long campaignId) {
+	public void setCampaignId(Long campaignId) {
 		this.campaignId = campaignId;
 	}
 
 	
-	public long getResourceId() {
+	public Long getResourceId() {
 		return this.resourceId;
 	}
 
-	public void setResourceId(long resourceId) {
+	public void setResourceId(Long resourceId) {
 		this.resourceId = resourceId;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -56,11 +57,12 @@ public class CampaignResourceId implements java.io.Serializable {
 				&& (this.getResourceId() == castOther.getResourceId());
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + (int) this.getCampaignId();
-		result = 37 * result + (int) this.getResourceId();
+		result = 37 * result + (int) (long) this.getCampaignId();
+		result = 37 * result + (int) (long) this.getResourceId();
 		return result;
 	}
 

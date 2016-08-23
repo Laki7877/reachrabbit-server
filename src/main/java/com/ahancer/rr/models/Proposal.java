@@ -18,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -56,6 +57,7 @@ public class Proposal extends AbstractModel implements Serializable{
 			name="proposalMedia",
 			joinColumns=@JoinColumn(name="proposalId", referencedColumnName="proposalId"),
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
+	@OrderBy("mediaId")
 	private Set<Media> media = new HashSet<Media>(0);
 	
 	

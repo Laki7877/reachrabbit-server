@@ -105,6 +105,7 @@ public class BrandService {
 			}
 		}
 		Util.copyProperties(newUser, oldUser);
+		oldUser.setProfilePicture(newUser.getProfilePicture());
 		if(StringUtils.isNotEmpty(newUser.getPassword())) {
 			String hashPassword = encrypt.hashPassword(newUser.getPassword());
 			oldUser.setPassword(hashPassword);

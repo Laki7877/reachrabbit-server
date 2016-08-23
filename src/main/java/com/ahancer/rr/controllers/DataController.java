@@ -40,7 +40,7 @@ public class DataController {
 
 	@RequestMapping(value="/media",method=RequestMethod.GET)
 	public List<Media> getAllMedia() throws Exception{
-		return Lists.newArrayList(mediaDao.findAll());
+		return mediaDao.findAllByOrderByMediaId();
 	}
 	
 	@RequestMapping(value="/categories",method=RequestMethod.GET)

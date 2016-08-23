@@ -40,6 +40,7 @@ public class InfluencerMediaId implements java.io.Serializable {
 		this.mediaId = mediaId;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -54,6 +55,7 @@ public class InfluencerMediaId implements java.io.Serializable {
 						&& castOther.getMediaId() != null && this.getMediaId().equals(castOther.getMediaId())));
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 
