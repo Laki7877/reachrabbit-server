@@ -4,8 +4,7 @@ public enum ProposalStatus {
 	
 	Selection("Selection"),
 	Working("Working"),
-	Complete("Complete"),
-	Reject("Complete");
+	Complete("Complete");
 	
 	private String displayName;
 

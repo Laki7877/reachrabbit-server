@@ -13,9 +13,9 @@ import com.ahancer.rr.models.ProposalMessage;
 
 public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long> {
 	
-	@Query("SELECT count(pm) FROM ProposalMessage pm WHERE pm.proposal.proposalId=:proposalId AND pm.isBrandRead=false AND pm.proposal.campaign.brandId=:brandId")
+	@Query("SELECT count(pm) FROM proposalMessage pm WHERE pm.proposal.proposalId=:proposalId AND pm.isBrandRead=FALSE AND pm.proposal.campaign.brandId=:brandId")
 	public Long countByUnreadProposalIdForBrand(@Param("proposalId") Long proposalId, @Param("brandId") Long brandId);
-	@Query("SELECT count(pm) FROM ProposalMessage pm WHERE pm.proposal.proposalId=:proposalId AND pm.isInfluencerRead=false AND pm.proposal.influencerId=:influencerId")
+	@Query("SELECT count(pm) FROM proposalMessage pm WHERE pm.proposal.proposalId=:proposalId AND pm.isInfluencerRead=FALSE AND pm.proposal.influencerId=:influencerId")
 	public Long countByUnreadProposalIdForInfluencer(@Param("proposalId") Long proposalId, @Param("influencerId") Long influencerId);
 	public Page<ProposalMessage> findByProposalProposalIdAndProposalCampaignBrandId(Long proposalId, Long brandId, Pageable pageable);
 	public Page<ProposalMessage> findByProposalProposalIdAndProposalInfluencerId(Long proposalId, Long influencerId, Pageable pageable);
