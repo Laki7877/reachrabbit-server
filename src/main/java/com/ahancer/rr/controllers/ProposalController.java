@@ -21,6 +21,7 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalMessageService.DeferredProposalMessage;
 import com.ahancer.rr.services.ProposalService;
+import com.ahancer.rr.services.ProposalService.DeferredProposal;
 import com.ahancer.rr.utils.Util;
 
 @RestController
@@ -47,14 +48,19 @@ public class ProposalController extends AbstractController {
 		return proposalService.findAllActiveByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/count/unread")
-	public Long getAllUnreadProposal() throws Exception {
-		if(this.getUserRequest().getRole() == Role.Brand) {
+	@RequestMapping(method=RequestMethod.GET, value="/count/poll")
+	public DeferredProposal getAllUnreadProposal(@RequestParam(value="immediate", required=false) Boolean immediate) throws Exception {
+		final DeferredProposal result = new DeferredProposal(this.getUserRequest().getRole());
+		proposalService.addInboxPolling(this.getUserRequest().getUserId(), result);
+		if(immediate == true) {
+			proposalService.processInboxPolling(this.getUserRequest().getUserId());
+		}
+		return result;
+		/*if(this.getUserRequest().getRole() == Role.Brand) {
 			return proposalService.countByUnreadProposalForBrand(this.getUserRequest().getBrand().getBrandId());
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
 			return proposalService.countByUnreadProposalForInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
-		}
-		throw new Exception();
+		}*/
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/count")
@@ -81,7 +87,17 @@ public class ProposalController extends AbstractController {
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public ProposalMessage createProposalMessage(@PathVariable Long proposalId, @RequestBody ProposalMessage message) throws Exception {
 		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(), this.getUserRequest().getRole());
-		proposalMessageService.processPollingQueue(proposalId);
+		proposalMessageService.processMessagePolling(proposalId);
+		
+		//For brand, notify influencer
+		if(this.getUserRequest().getRole() == Role.Brand) {
+			proposalService.processInboxPolling(message.getProposal().getInfluencerId());
+		}
+		//For influencer, notify brand
+		else if(this.getUserRequest().getRole() == Role.Influencer) {
+			proposalService.processInboxPolling(message.getProposal().getCampaign().getBrandId());
+		}
+		
 		return message;
 	}
 	
@@ -107,7 +123,7 @@ public class ProposalController extends AbstractController {
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
 	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) String timestamp) throws Exception {
 		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, Util.parseJacksonDate(timestamp), this.getUserRequest().getRole());
-		proposalMessageService.addPollingQueue(proposalId, result);
+		proposalMessageService.addMessagePolling(proposalId, result);
 		return result;
 	}
 	

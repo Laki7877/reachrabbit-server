@@ -26,12 +26,11 @@ import com.google.common.collect.Lists;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class ProposalMessageService {
-	
+	private final static Long timeout = 20000L;
 	public static class DeferredProposalMessage extends DeferredResult<List<ProposalMessage>> {
 		private Date timestamp;
 		private Long proposalId;
 		private Role role;
-		private final static Long timeout = 10000L;
 		public DeferredProposalMessage(Long proposalId, Date timestamp, Role role) {
 			super(timeout, Collections.emptyList());
 			this.role = role;
@@ -66,34 +65,32 @@ public class ProposalMessageService {
 	@Autowired
 	private ProposalDao proposalDao;
 	
-	private Map<Long,ConcurrentLinkedQueue<DeferredProposalMessage>> pollingQueue;
+	private Map<Long,ConcurrentLinkedQueue<DeferredProposalMessage>> proposalMessagePollingMap;
 	
 	public ProposalMessageService() {
-		pollingQueue = new ConcurrentHashMap<>();
+		proposalMessagePollingMap = new ConcurrentHashMap<>();
 	}
-	
-	public void addPollingQueue(Long proposalId, DeferredProposalMessage p) {
+	public void addMessagePolling(Long proposalId, DeferredProposalMessage p) {
 		//TODO: optimize
-		if(pollingQueue.get(proposalId) == null) {
-			pollingQueue.put(proposalId, new ConcurrentLinkedQueue<>());
+		if(proposalMessagePollingMap.get(proposalId) == null) {
+			proposalMessagePollingMap.put(proposalId, new ConcurrentLinkedQueue<>());
 		}
-		pollingQueue.get(proposalId).add(p);
+		proposalMessagePollingMap.get(proposalId).add(p);
 		
 		//Remove when done
 		p.onCompletion(new Runnable() {
 			public void run() {
-				pollingQueue.get(proposalId).remove(p);
+				proposalMessagePollingMap.get(proposalId).remove(p);
 			}
 		});
 	}
-	
-	public void processPollingQueue(Long proposalId) {
+	public void processMessagePolling(Long proposalId) {
 		
-		if(pollingQueue.get(proposalId) == null) {
+		if(proposalMessagePollingMap.get(proposalId) == null) {
 			return;
 		}
 		//Force queue update
-		for(DeferredProposalMessage m : pollingQueue.get(proposalId)) {
+		for(DeferredProposalMessage m : proposalMessagePollingMap.get(proposalId)) {
 			List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, m.getTimestamp());
 			for(ProposalMessage p : pm) {
 				if(m.getRole() == Role.Influencer) {

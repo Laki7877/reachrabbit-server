@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,8 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
@@ -24,6 +29,7 @@ import com.ahancer.rr.models.ProposalMessage;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class ProposalService {
+	private final static Long timeout = 20000L;
 
 	@Autowired
 	private ProposalDao proposalDao;
@@ -34,10 +40,54 @@ public class ProposalService {
 
 	@Autowired
 	private CampaignDao campaignDao;
+	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
+
+	public static class DeferredProposal extends DeferredResult<Long> {
+		private Role role;
+		public DeferredProposal(Role role) {
+			super(timeout, null);
+			this.role = role;
+		}
+		public Role getRole() {
+			return role;
+		}
+		public void setRole(Role role) {
+			this.role = role;
+		}
+	}
 	
+	public ProposalService() {
+		proposalPollingMap =  new ConcurrentHashMap<>();
+	}
 //	@Autowired
 //	private CompletionTimeDao completionTimeDao;
 
+	public void addInboxPolling(Long userId, DeferredProposal p) {
+		if(proposalPollingMap.get(userId) == null) {
+			proposalPollingMap.put(userId, new ConcurrentLinkedQueue<>());
+		}
+		proposalPollingMap.get(userId).add(p);
+		
+		//Remove when done
+		p.onCompletion(new Runnable() {
+			public void run() {
+				proposalPollingMap.get(userId).remove(p);
+			}
+		});
+	}
+	public void processInboxPolling(Long userId) {
+		if(proposalPollingMap.get(userId) == null) {
+			return;
+		}
+		for(DeferredProposal m : proposalPollingMap.get(userId)) {
+			if(m.getRole() == Role.Brand) {
+				m.setResult(countByUnreadProposalForBrand(userId));
+			} else if(m.getRole() == Role.Influencer) {
+				m.setResult(countByUnreadProposalForInfluencer(userId));
+			}
+			
+		}
+	}
 	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
 		if(campaignId != null) {
 			return proposalDao.findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(brandId, campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
