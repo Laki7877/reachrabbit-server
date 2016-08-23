@@ -34,6 +34,9 @@ public class ProposalService {
 
 	@Autowired
 	private CampaignDao campaignDao;
+	
+//	@Autowired
+//	private CompletionTimeDao completionTimeDao;
 
 	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
 		if(campaignId != null) {
@@ -57,6 +60,7 @@ public class ProposalService {
 	public Page<Proposal> findAllByBrand(Long brandId,Pageable pageable) {
 		return proposalDao.findByCampaignBrandIdAndMessageUpdatedAtAfter(brandId,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
+	
 	public Proposal findOneByBrand(Long proposalId,Long brandId) {
 		return proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 	}
@@ -116,6 +120,16 @@ public class ProposalService {
 		oldProposal.setPrice(proposal.getPrice());
 		oldProposal.setDescription(proposal.getDescription());
 		oldProposal = proposalDao.save(oldProposal);
+		return oldProposal;
+	}
+	
+	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId) throws Exception {
+		Proposal oldProposal = findOneByBrand(proposalId,brandId);
+		if(null == oldProposal){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+		}
+		proposalDao.updateProposalStatus(proposalId, status);
+		oldProposal.setStatus(status);
 		return oldProposal;
 	}
 

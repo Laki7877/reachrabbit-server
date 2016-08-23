@@ -60,7 +60,6 @@ public class Proposal extends AbstractModel implements Serializable{
 	@OrderBy("mediaId")
 	private Set<Media> media = new HashSet<Media>(0);
 	
-	
 	@Transient
 	@JsonSerialize
 	@JsonDeserialize
@@ -79,6 +78,14 @@ public class Proposal extends AbstractModel implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "messageUpdatedAt")
 	private Date messageUpdatedAt;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "dueDate")
+	private Date dueDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "completeDate")
+	private Date completeDate;
 	
 	public Proposal() {
 		
@@ -170,6 +177,22 @@ public class Proposal extends AbstractModel implements Serializable{
 
 	public void setInfluencerId(Long influencerId) {
 		this.influencerId = influencerId;
+	}
+
+	public Date getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
+	}
+
+	public Date getCompleteDate() {
+		return completeDate;
+	}
+
+	public void setCompleteDate(Date completeDate) {
+		this.completeDate = completeDate;
 	}
 	
 }

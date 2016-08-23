@@ -3,7 +3,8 @@ package com.ahancer.rr.custom.type;
 public enum Role {
 	Admin("Admin"),
 	Brand("Brand"),
-	Influencer("Influencer");
+	Influencer("Influencer"),
+	Bot("Bot");
 
 	private String displayName;
 

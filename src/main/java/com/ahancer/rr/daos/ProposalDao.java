@@ -56,4 +56,10 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId")
 	public int updateMessageUpdatedAtByBrand(@Param("proposalId") Long proposalId, @Param("messageUpdatedAt") Date messageUpdatedAt);
 	
+	@Modifying
+	@Query("UPDATE proposal cp SET status=:status WHERE cp.proposalId=:proposalId")
+	public int updateProposalStatus(@Param("proposalId") Long proposalId, @Param("status") ProposalStatus status);
+	
+	
+	
 }

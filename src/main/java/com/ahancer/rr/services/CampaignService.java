@@ -19,17 +19,16 @@ import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.CampaignResource;
 import com.ahancer.rr.models.CampaignResourceId;
-import com.ahancer.rr.utils.Util;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class CampaignService {
 	@Autowired
 	private CampaignDao campaignDao;
-	
+
 	@Autowired
 	private CampaignResourceDao campaignResourceDao;
-	
+
 	public Campaign createCampaignByBrand(Campaign campaign, Long brandId) {
 		Set<CampaignResource> resources = campaign.getCampaignResources();
 		campaign.setCampaignResources(null);
@@ -56,30 +55,44 @@ public class CampaignService {
 		if(oldCampaign == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
 		}
-		Util.copyProperties(newCampaign, oldCampaign, "brand", "brandId", "campaignId");
+		oldCampaign.setTitle(newCampaign.getTitle());
+		oldCampaign.setMedia(newCampaign.getMedia());
+		oldCampaign.setCategory(newCampaign.getCategory());
+		oldCampaign.setDescription(newCampaign.getDescription());
+		oldCampaign.setKeyword(newCampaign.getKeyword());
+		oldCampaign.setWebsite(newCampaign.getWebsite());
+		oldCampaign.setFromBudget(newCampaign.getFromBudget());
+		oldCampaign.setToBudget(newCampaign.getToBudget());
+		oldCampaign.setProposalDeadline(newCampaign.getProposalDeadline());
+		Set<CampaignResource> oldResources = oldCampaign.getCampaignResources();
 		for(CampaignResource resource : newCampaign.getCampaignResources()) {
 			CampaignResourceId id = new CampaignResourceId();
 			id.setCampaignId(oldCampaign.getCampaignId());
 			id.setResourceId(resource.getResource().getResourceId());
 			resource.setId(id);
+			if(oldResources.contains(resource)){
+				campaignResourceDao.delete(resource);
+			}else {
+				campaignResourceDao.save(resource);
+			}
 		}
 		oldCampaign.setCampaignResources(newCampaign.getCampaignResources());
 		oldCampaign.setMedia(newCampaign.getMedia());
 		return campaignDao.save(oldCampaign);
 	}
-	
+
 	public Page<Campaign> findAll(Pageable pageable) {
 		return campaignDao.findAll(pageable);
 	}
-	
+
 	public Page<Campaign> findAllByBrand(Long brandId, Pageable pageable) {
 		return campaignDao.findByBrandId(brandId, pageable);
 	}
-	
+
 	public List<Campaign> findAllActiveByBrand(Long brandId) {
 		return campaignDao.findByBrandBrandIdAndStatusIn(brandId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
 	}
-	
+
 	public Page<Campaign> findAllOpen(String mediaFilter,Pageable pageable) {		
 		if(mediaFilter != null) {
 			return campaignDao.findByStatusNotInAndMediaMediaIdIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), Arrays.asList(mediaFilter), pageable);
@@ -87,11 +100,11 @@ public class CampaignService {
 			return campaignDao.findByStatusNotIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), pageable);
 		}		
 	}
-	
+
 	public Campaign findOne(Long id) {
 		return campaignDao.findOne(id);
 	}
-	
+
 	public Campaign findOneByBrand(Long id, Brand brand) {
 		return campaignDao.findByCampaignIdAndBrandId(id, brand.getBrandId());
 	}

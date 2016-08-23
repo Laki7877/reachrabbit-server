@@ -76,7 +76,7 @@ public class BrandService {
 		Campaign campaign = new Campaign();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, 5);
-		campaign.setSubmissionDeadline(cal.getTime());
+		campaign.setProposalDeadline(cal.getTime());
 		campaign.setFromBudget(null);
 		campaign.setToBudget(null);
 		campaign.setBrandId(brand.getBrandId());

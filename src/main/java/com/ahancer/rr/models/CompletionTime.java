@@ -19,6 +19,9 @@ public class CompletionTime implements Serializable {
 
 	@Column(name="completionTime",length=255)
 	private String completionTime;
+	
+	@Column(name="day")
+	private Integer day;
 
 	public CompletionTime() {
 
@@ -44,6 +47,14 @@ public class CompletionTime implements Serializable {
 
 	public void setCompletionTime(String completionTime) {
 		this.completionTime = completionTime;
+	}
+
+	public Integer getDay() {
+		return day;
+	}
+
+	public void setDay(Integer day) {
+		this.day = day;
 	}
 
 }

@@ -57,7 +57,7 @@ public class Campaign extends AbstractModel implements Serializable {
 	@OrderBy("mediaId")
 	private Set<Media> media = new HashSet<Media>(0);
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign",cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign")
 	@OrderBy("position")
 	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
 	
@@ -85,9 +85,6 @@ public class Campaign extends AbstractModel implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date proposalDeadline;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date submissionDeadline;
 
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
@@ -144,14 +141,6 @@ public class Campaign extends AbstractModel implements Serializable {
 
 	public void setProposalDeadline(Date proposalDeadline) {
 		this.proposalDeadline = proposalDeadline;
-	}
-
-	public Date getSubmissionDeadline() {
-		return submissionDeadline;
-	}
-
-	public void setSubmissionDeadline(Date submissionDeadline) {
-		this.submissionDeadline = submissionDeadline;
 	}
 
 	public Long getBrandId() {

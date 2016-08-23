@@ -111,6 +111,10 @@ public class ProposalController extends AbstractController {
 		throw new Exception();
 	}
 	
-	
+	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/status/{status}")
+	@Authorization(Role.Brand)
+	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status) throws Exception {
+		return proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId());
+	}
 
 }
