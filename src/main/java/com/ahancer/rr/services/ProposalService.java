@@ -200,7 +200,7 @@ public class ProposalService {
 		ProposalMessage rebotMessage = new ProposalMessage();
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
-		rebotMessage.setMessage(messageSource.getMessage("robot.proposal.message", null, local));
+		rebotMessage.setMessage(oldProposal.getInfluencer().getUser().getName() + " " + messageSource.getMessage("robot.proposal.message", null, local));
 		rebotMessage.setProposal(proposal);
 		rebotMessage.setUserId(robotService.getRobotUser().getUserId());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
