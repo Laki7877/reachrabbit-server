@@ -205,6 +205,7 @@ public class ProposalService {
 		rebotMessage.setUserId(robotService.getRobotUser().getUserId());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
+		
 		return oldProposal;
 	}
 
@@ -215,6 +216,7 @@ public class ProposalService {
 		}
 		proposalDao.updateProposalStatus(proposalId, status);
 		oldProposal.setStatus(status);
+		oldProposal = proposalDao.save(oldProposal);
 		return oldProposal;
 	}
 
