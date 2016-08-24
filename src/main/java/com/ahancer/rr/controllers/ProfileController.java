@@ -46,7 +46,7 @@ public class ProfileController extends AbstractController{
 
 	@RequestMapping(value="/{userId}",method=RequestMethod.GET)
 	public UserResponse getProfile(@PathVariable Long userId) throws Exception {
-		return userService.findUserById(userId,this.getUserRequest().getRole());
+		return userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
 	}
 
 

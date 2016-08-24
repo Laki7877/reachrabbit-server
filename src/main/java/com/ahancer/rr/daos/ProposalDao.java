@@ -43,6 +43,7 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Long countByProposalIdAndCampaignBrandId(@Param("proposalId") Long proposalId,@Param("brandId") Long brandId);
 	public Long countByInfluencerInfluencerIdAndStatus(Long influencerId, ProposalStatus status);
 	public Long countByCampaignBrandIdAndStatus(Long brandId, ProposalStatus status);
+	public Long countByCampaignBrandIdAndInfluencerId(Long brandId, Long influencerId);
 	
 	@Modifying
 	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId AND cp.influencerId=:influencerId")
