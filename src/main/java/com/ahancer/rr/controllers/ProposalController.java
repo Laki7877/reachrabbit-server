@@ -1,6 +1,7 @@
 package com.ahancer.rr.controllers;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -103,8 +104,12 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}")
 	@Authorization(Role.Influencer)
-	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal) throws Exception {
-		return proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId());
+	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal, Locale local) throws Exception {
+		proposal = proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId(),local);
+		proposalService.processInboxPolling(proposal.getInfluencerId());
+		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
+		proposalMessageService.processMessagePolling(proposal.getProposalId());
+		return proposal;
 	}
 	
 	
