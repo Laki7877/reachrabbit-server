@@ -36,10 +36,12 @@ public class ProposalService {
 
 	@Autowired
 	private ProposalMessageDao proposalMessageDao;
+	
 	private final int activeDay = 21;
 
 	@Autowired
 	private CampaignDao campaignDao;
+	
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
 
 	public static class DeferredProposal extends DeferredResult<Long> {
@@ -59,8 +61,6 @@ public class ProposalService {
 	public ProposalService() {
 		proposalPollingMap =  new ConcurrentHashMap<>();
 	}
-//	@Autowired
-//	private CompletionTimeDao completionTimeDao;
 
 	public void addInboxPolling(Long userId, DeferredProposal p) {
 		if(proposalPollingMap.get(userId) == null) {
@@ -75,6 +75,7 @@ public class ProposalService {
 			}
 		});
 	}
+	
 	public void processInboxPolling(Long userId) {
 		if(proposalPollingMap.get(userId) == null) {
 			return;
@@ -88,31 +89,42 @@ public class ProposalService {
 			
 		}
 	}
+	
 	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
-		if(campaignId != null) {
+		if ( null != campaignId ) {
 			return proposalDao.findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(brandId, campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 		} else {
 			return findAllByBrand(brandId, pageable);
 		}
 	}
+	
+	public List<Proposal> findAllByBrand(Long brandId, Long campaignId) {
+		return proposalDao.findByCampaignBrandIdAndCampaignCampaignId(brandId,campaignId);
+	}
+	
 	public Long countByUnreadProposalForBrand(Long brandId) {
 		return proposalMessageDao.countByProposalCampaignBrandIdAndIsBrandReadFalse(brandId);
 	}
+	
 	public Long countByUnreadProposalForInfluencer(Long influencerId) {
 		return proposalMessageDao.countByProposalInfluencerIdAndIsInfluencerReadFalse(influencerId);
 	}
+	
 	public Long countByUnreadProposalMessageForBrand(Long proposalId, Long brandId) {
 		return proposalMessageDao.countByProposalProposalIdAndProposalCampaignBrandIdAndIsBrandReadFalse(proposalId, brandId);
 	}
+	
 	public Long countByUnreadProposalMessageForInfluencer(Long proposalId, Long influencerId) {
 		return proposalMessageDao.countByProposalProposalIdAndProposalInfluencerIdAndIsInfluencerReadFalse(proposalId, influencerId);
 	}
+	
 	public Long countByBrand(Long brandId, ProposalStatus status) {
 		return proposalDao.countByCampaignBrandIdAndStatus(brandId, status);
 	}
 	public Long countByInfluencer(Long influencerId, ProposalStatus status) {
 		return proposalDao.countByInfluencerInfluencerIdAndStatus(influencerId, status);
 	}
+	
 	public Page<Proposal> findAllByBrand(Long brandId,Pageable pageable) {
 		return proposalDao.findByCampaignBrandIdAndMessageUpdatedAtAfter(brandId,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
@@ -132,8 +144,9 @@ public class ProposalService {
 	public Page<Proposal> findAllByInfluencer(Long influencerId,Pageable pageable) {
 		return proposalDao.findByInfluencerIdAndMessageUpdatedAtAfter(influencerId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
+	
 	public Page<Proposal> findAllByInfluencer(Long influencerId, Long campaignId, Pageable pageable) {
-		if(campaignId != null) {
+		if( null != campaignId ) {
 			return proposalDao.findByInfluencerIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(influencerId,  campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 		} else {
 			return findAllByInfluencer(influencerId, pageable);

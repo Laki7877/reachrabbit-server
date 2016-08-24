@@ -90,11 +90,11 @@ public class ProposalController extends AbstractController {
 		proposalMessageService.processMessagePolling(proposalId);
 		
 		//For brand, notify influencer
-		if(this.getUserRequest().getRole() == Role.Brand) {
+		if(Role.Brand.equals(this.getUserRequest().getRole())) {
 			proposalService.processInboxPolling(message.getProposal().getInfluencerId());
 		}
 		//For influencer, notify brand
-		else if(this.getUserRequest().getRole() == Role.Influencer) {
+		else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
 			proposalService.processInboxPolling(message.getProposal().getCampaign().getBrandId());
 		}
 		

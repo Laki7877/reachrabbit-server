@@ -34,6 +34,8 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Page<Proposal> findByCampaignBrandIdAndMessageUpdatedAtAfter(Long brandId, Date date, Pageable pageable);
 	public Page<Proposal> findByCampaignBrandIdAndCampaignCampaignId(Long brandId, Long campaignId, Pageable pageable);
 	public Page<Proposal> findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(Long brandId, Long campaignId, Date date, Pageable pageable);
+	public List<Proposal> findByCampaignBrandIdAndCampaignCampaignId(Long brandId, Long campaignId);
+	
 	
 	public Page<Proposal> findAll(Pageable pageable);
 
@@ -48,12 +50,10 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	@Modifying
 	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId")
-	public int updateMessageUpdatedAtByBrand(@Param("proposalId") Long proposalId, @Param("messageUpdatedAt") Date messageUpdatedAt);
+	public int updateMessageUpdatedAtByProposal(@Param("proposalId") Long proposalId, @Param("messageUpdatedAt") Date messageUpdatedAt);
 	
 	@Modifying
 	@Query("UPDATE proposal cp SET status=:status WHERE cp.proposalId=:proposalId")
 	public int updateProposalStatus(@Param("proposalId") Long proposalId, @Param("status") ProposalStatus status);
-	
-	
 	
 }

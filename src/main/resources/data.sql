@@ -8,12 +8,13 @@
 --TRUNCATE completiontime;
 --SET FOREIGN_KEY_CHECKS = 1;
 
-
+INSERT INTO user (email,password,name,role) VALUES ('bot@reachrabbitbot.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','ReachBot','Bot');
 INSERT INTO user (email,password,name,role) VALUES ('admin@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am admin','Admin');
 INSERT INTO user (email,password,name,role) VALUES ('brand@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am brand','Brand');
 INSERT INTO user (email,password,name,role) VALUES ('influencer@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am influencer','Influencer');
-INSERT INTO brand (brandName, brandId) VALUES ('My Brand', 2);
-INSERT INTO influencer (influencerId) VALUES (3);
+
+INSERT INTO brand (brandName, brandId) VALUES ('My Brand', 3);
+INSERT INTO influencer (influencerId) VALUES (4);
 INSERT INTO bank (bankId,bankName) VALUES ('002','ธนาคารกรุงเทพ จำกัด (มหาชน)');
 INSERT INTO bank (bankId,bankName) VALUES ('004','ธนาคารกสิกรไทย จำกัด (มหาชน)');
 INSERT INTO bank (bankId,bankName) VALUES ('005','ธนาคารเอบีเอ็น แอมโร เอ็น.วี.');
@@ -56,16 +57,17 @@ INSERT INTO category (categoryName,isActive) VALUES ('DIY',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Mom & Kid',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Gadget',true);
 INSERT INTO category (categoryName,isActive) VALUES ('Educational',true);
+
 INSERT INTO completionTime (completionTime,day) VALUES ('1 สัปดาห์',7);
 INSERT INTO completionTime (completionTime,day) VALUES ('2 สัปดาห์',14);
 INSERT INTO completionTime (completionTime,day) VALUES ('3 สัปดาห์',21);
 INSERT INTO completionTime (completionTime,day) VALUES ('4 สัปดาห์',28);
 
-
-INSERT INTO campaign (title, description, brandId, categoryId, status) VALUES ('My campaign', 'This is my campaign', 2, 1, 'Draft');
-
-
 INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (1, 0, 1000);
 INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (2, 1001, 2000);
 INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (3, 2001, 5000);
 INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (4, 5001, 10000);
+
+INSERT INTO campaign (title, description, brandId, categoryId, status) VALUES ('My campaign', 'This is my campaign', 3, 1, 'Draft');
+
+

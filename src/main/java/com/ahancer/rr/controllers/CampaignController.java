@@ -1,6 +1,7 @@
 package com.ahancer.rr.controllers;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -64,8 +65,8 @@ public class CampaignController extends AbstractController{
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign updateCampaign(@PathVariable Long campaignId,@RequestBody Campaign campaign) throws Exception{
-		return campaignService.updateCampaignByBrand(campaignId, campaign, this.getUserRequest().getBrand().getBrandId());
+	public Campaign updateCampaign(@PathVariable Long campaignId,@RequestBody Campaign campaign,Locale local) throws Exception{
+		return campaignService.updateCampaignByBrand(campaignId, campaign, this.getUserRequest().getBrand().getBrandId(), local);
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)

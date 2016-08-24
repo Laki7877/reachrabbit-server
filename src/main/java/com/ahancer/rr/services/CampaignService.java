@@ -3,8 +3,10 @@ package com.ahancer.rr.services;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,15 +21,30 @@ import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.CampaignResource;
 import com.ahancer.rr.models.CampaignResourceId;
+import com.ahancer.rr.models.Proposal;
+import com.ahancer.rr.models.ProposalMessage;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class CampaignService {
+	
 	@Autowired
 	private CampaignDao campaignDao;
+	
+	@Autowired
+	private ProposalService proposalService;
 
 	@Autowired
 	private CampaignResourceDao campaignResourceDao;
+	
+	@Autowired
+	private ProposalMessageService proposalMessageService;
+	
+	@Autowired
+	private RobotService robotService;
+	
+	@Autowired
+	private MessageSource messageSource;
 
 	public Campaign createCampaignByBrand(Campaign campaign, Long brandId) {
 		Set<CampaignResource> resources = campaign.getCampaignResources();
@@ -50,10 +67,15 @@ public class CampaignService {
 		return campaign;
 	}
 
-	public Campaign updateCampaignByBrand(Long campaignId, Campaign newCampaign, Long brandId) throws ResponseException {
+	public Campaign updateCampaignByBrand(Long campaignId, Campaign newCampaign, Long brandId, Locale local) throws Exception {
 		Campaign oldCampaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
-		if(oldCampaign == null) {
+		if(null == oldCampaign) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
+		}
+		if(CampaignStatus.Open.equals(oldCampaign.getStatus())){
+			if(CampaignStatus.Draft.equals(newCampaign.getStatus())){
+				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.invalid.status");
+			}
 		}
 		oldCampaign.setTitle(newCampaign.getTitle());
 		oldCampaign.setMedia(newCampaign.getMedia());
@@ -72,9 +94,24 @@ public class CampaignService {
 			id.setResourceId(resource.getResource().getResourceId());
 			resource.setId(id);
 			if(oldResources.contains(resource)){
-				campaignResourceDao.delete(resource);
+				campaignResourceDao.delete(resource.getId());
 			}else {
 				campaignResourceDao.save(resource);
+			}
+		}
+		if(CampaignStatus.Open.equals(oldCampaign.getStatus())){
+			List<Proposal> proposalList = proposalService.findAllByBrand(brandId, campaignId);
+			ProposalMessage message = new ProposalMessage();
+			message.setMessage(messageSource.getMessage("robot.campaign.message", null, local));
+			for(Proposal proposal : proposalList) {
+				message.setProposal(proposal);
+				proposalMessageService.createProposalMessage(proposal.getProposalId()
+						, message
+						, robotService.getRobotUser().getUserId()
+						, robotService.getRobotUser().getRole());
+				proposalService.processInboxPolling(proposal.getInfluencerId());
+				proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
+				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
 		oldCampaign.setCampaignResources(newCampaign.getCampaignResources());
