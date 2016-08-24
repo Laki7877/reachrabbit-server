@@ -209,13 +209,25 @@ public class ProposalService {
 		return oldProposal;
 	}
 
-	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId) throws Exception {
+	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale local) throws Exception {
 		Proposal oldProposal = findOneByBrand(proposalId,brandId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
 		proposalDao.updateProposalStatus(proposalId, status);
 		oldProposal.setStatus(status);
+		
+		ProposalMessage rebotMessage = new ProposalMessage();
+		rebotMessage.setIsBrandRead(true);
+		rebotMessage.setIsInfluencerRead(true);
+		if(ProposalStatus.Working.equals(oldProposal.getStatus())){
+			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.status.message", null, local));
+		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
+			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, local));
+		}
+		rebotMessage.setProposal(oldProposal);
+		rebotMessage.setUserId(robotService.getRobotUser().getUserId());
+		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
 		return oldProposal;
 	}

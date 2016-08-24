@@ -146,8 +146,12 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/status/{status}")
 	@Authorization(Role.Brand)
-	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status) throws Exception {
-		return proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId());
+	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status, Locale local) throws Exception {
+		Proposal proposal = proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId(),local);
+		proposalService.processInboxPolling(proposal.getInfluencerId());
+		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
+		proposalMessageService.processMessagePolling(proposal.getProposalId());
+		return proposal;
 	}
 
 }
