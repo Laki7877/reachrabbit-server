@@ -111,12 +111,14 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
 	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
+		Page<ProposalMessage> result = null;
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			return proposalMessageService.findByProposalForBrand(proposalId, this.getUserRequest().getBrand().getBrandId(), Util.parseJacksonDate(timestamp), pageRequest);
+			result = proposalMessageService.findByProposalForBrand(proposalId, this.getUserRequest().getBrand().getBrandId(), Util.parseJacksonDate(timestamp), pageRequest);
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			return proposalMessageService.findByProposalForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId(), Util.parseJacksonDate(timestamp), pageRequest);
+			result = proposalMessageService.findByProposalForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId(), Util.parseJacksonDate(timestamp), pageRequest);
 		}
-		throw new Exception();
+		proposalService.processInboxPolling(this.getUserRequest().getUserId());
+		return result;
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
