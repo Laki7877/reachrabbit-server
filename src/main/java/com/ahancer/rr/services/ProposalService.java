@@ -221,7 +221,7 @@ public class ProposalService {
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
 		if(ProposalStatus.Working.equals(oldProposal.getStatus())){
-			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.status.message", null, local));
+			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, local));
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
 			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, local));
 		}
