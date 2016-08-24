@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ahancer.rr.annotations.Authorization;
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BankDao;
 import com.ahancer.rr.daos.BudgetDao;
 import com.ahancer.rr.daos.CategoryDao;
@@ -17,6 +19,8 @@ import com.ahancer.rr.models.Budget;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.CompletionTime;
 import com.ahancer.rr.models.Media;
+import com.ahancer.rr.utils.S3Util;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 @RestController
 @RequestMapping("/data")
@@ -60,6 +64,23 @@ public class DataController {
 	@RequestMapping(value="/completiontime",method=RequestMethod.GET)
 	public List<CompletionTime> getCompletionTime() throws Exception{
 		return completionTimeDao.findAllByOrderByCompletionId();
+	}
+	
+	
+	@Autowired
+	private S3Util s3Util;
+	
+	@RequestMapping(value="/clear",method=RequestMethod.DELETE)
+	@Authorization(Role.Admin)
+	public int clearS3() throws Exception {
+		 List<S3ObjectSummary> list = s3Util.list();
+		 for(S3ObjectSummary obj : list){
+			 if("placeholder-profile-picture-bot.png".equals(obj.getKey())){
+				 continue;
+			 }
+			 s3Util.delete(obj.getKey());
+		 }
+		 return list.size();
 	}
 	
 }
