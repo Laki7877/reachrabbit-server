@@ -64,6 +64,7 @@ public class CampaignService {
 		oldCampaign.setFromBudget(newCampaign.getFromBudget());
 		oldCampaign.setToBudget(newCampaign.getToBudget());
 		oldCampaign.setProposalDeadline(newCampaign.getProposalDeadline());
+		oldCampaign.setStatus(newCampaign.getStatus());
 		Set<CampaignResource> oldResources = oldCampaign.getCampaignResources();
 		for(CampaignResource resource : newCampaign.getCampaignResources()) {
 			CampaignResourceId id = new CampaignResourceId();
