@@ -32,10 +32,7 @@ public class User extends AbstractModel implements Serializable {
 	@Column(name="name",length=255)
 	private String name;
 
-	//@NotNull(message="error.email.require")
-	//@Size(min=3,max=255,message="error.email.length")
-	//@Email(message="error.email.invalid")
-	@Column(name="email",length=255)
+	@Column(name="email",length=100)
 	private String email;
 
 	//@NotNull(message="error.password.require")	

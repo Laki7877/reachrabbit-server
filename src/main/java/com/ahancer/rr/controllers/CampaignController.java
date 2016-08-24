@@ -19,6 +19,7 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.services.CampaignService;
+import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalService;
 
 @RestController
@@ -29,6 +30,9 @@ public class CampaignController extends AbstractController{
 	
 	@Autowired
 	private ProposalService proposalService;
+	
+	@Autowired
+	private ProposalMessageService proposalMessageService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Campaign> getAllCampaign(Pageable pageRequest) throws Exception{
@@ -77,9 +81,10 @@ public class CampaignController extends AbstractController{
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
 	@Authorization(Role.Influencer)
 	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal) throws Exception {
-		return proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest().getInfluencer().getInfluencerId());
+		proposal = proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest().getInfluencer().getInfluencerId());
+		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
+		proposalMessageService.processMessagePolling(proposal.getProposalId());
+		return proposal;
 	}
-	
-	
 	
 }

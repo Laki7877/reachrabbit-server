@@ -12,10 +12,11 @@ public class AuthenticationRequest implements Serializable {
 	private static final long serialVersionUID = -1109021554580568494L;
 	
 	@NotNull(message="error.email.require")
-	@Size(min=3,max=255,message="error.email.length")
+	@Size(min=3,max=100,message="error.email.length")
 	@Email(message="error.email.invalid")
 	private String email;
 	
+	@Size(min=8,max=100,message="error.password.length")
 	@NotNull(message="error.password.require")
 	private String password;
 
