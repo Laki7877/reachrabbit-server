@@ -203,6 +203,7 @@ public class ProposalService {
 		rebotMessage.setMessage(messageSource.getMessage("robot.proposal.message", null, local));
 		rebotMessage.setProposal(proposal);
 		rebotMessage.setUserId(robotService.getRobotUser().getUserId());
+		rebotMessage.setUser(robotService.getRobotUser());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
 		return oldProposal;
