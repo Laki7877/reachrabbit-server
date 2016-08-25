@@ -24,6 +24,7 @@ import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.request.BrandSignUpRequest;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.EncryptionUtil;
@@ -39,46 +40,45 @@ public class BrandService {
 
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private CampaignDao campaignDao;
-	
+
 	@Autowired
 	private MediaDao mediaDao;
 
 	@Autowired
 	private EncryptionUtil encrypt;
 
-	
+
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
 
-	public User signUpBrand(User user) throws ResponseException {
-		Brand brand = user.getBrand();
-		if(null == brand){
-			brand = new Brand();
-		}
+	public User signUpBrand(BrandSignUpRequest request) throws ResponseException {
 		//Validate duplicate Email
-		int emailCount = userDao.countByEmail(user.getEmail());
-		if(emailCount > 0) {
+		int emailCount = userDao.countByEmail(request.getEmail());
+		if(0 < emailCount) {
 			throw new ResponseException(HttpStatus.INTERNAL_SERVER_ERROR,"error.email.duplicate");
 		}
-		String hashPassword = encrypt.hashPassword(user.getPassword());
+		//Setup user object
+		User user = new User();
+		user.setEmail(request.getEmail());
+		user.setName(request.getName());
+		user.setPhoneNumber(request.getPhoneNumber());
+		String hashPassword = encrypt.hashPassword(request.getPassword());
 		user.setPassword(hashPassword);
 		user.setRole(Role.Brand);
-		user.setBrand(null);
-		userDao.save(user);
-		brand.setUser(null);
+		user = userDao.save(user);
+		//Setup brand object
+		Brand brand = new Brand();
+		brand.setBrandName(request.getBrandName());
 		brand.setBrandId(user.getUserId());
 		brand = brandDao.save(brand);
-		user.setBrand(brand);
-		//Create campaign
+		//Setup campaign object
 		Campaign campaign = new Campaign();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, 5);
 		campaign.setProposalDeadline(cal.getTime());
-		campaign.setFromBudget(null);
-		campaign.setToBudget(null);
 		campaign.setBrandId(brand.getBrandId());
 		campaign.setTitle("Campaign แรกของคุณ");
 		campaign.setCategory(null);
@@ -87,10 +87,12 @@ public class BrandService {
 		Set<Media> allMedia = new HashSet<Media>();
 		mediaDao.findAll().forEach(allMedia::add);
 		campaign.setMedia(allMedia);	
-		campaignDao.save(campaign);
+		campaign = campaignDao.save(campaign);
+		
+		user.setBrand(brand);
 		return user;
 	}
-	
+
 	public UserResponse updateBrandUser(Long userId, User newUser,String token) throws ResponseException {
 		User oldUser = userDao.findOne(userId);
 		if(null == oldUser) {
@@ -117,7 +119,7 @@ public class BrandService {
 		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);
 		return userResponse;
 	}
-	
+
 	public Brand getBrand(Long brandId) throws ResponseException {
 		Brand brand = brandDao.findOne(brandId);
 		if(null == brand){

@@ -16,6 +16,7 @@ import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.request.InfluencerSignUpRequest;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.Util;
@@ -25,16 +26,16 @@ import com.ahancer.rr.utils.Util;
 public class InfluencerService {
 	@Autowired
 	private InfluencerDao influencerDao;
-	
+
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
-	
+
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
-	
+
 	public UserResponse updateInfluencerUser(Long userId, User newUser, String token) throws ResponseException {
 		User oldUser = userDao.findOne(userId);
 		if(oldUser == null) {
@@ -59,39 +60,40 @@ public class InfluencerService {
 		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);
 		return userResponse;
 	}
-	
-	public User signupInfluencer(User user) throws ResponseException {
-		Influencer influencer = user.getInfluencer();
-		//Check for influencer object
-		if(null == influencer) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.signup.no.influencer");
+
+	public User signupInfluencer(InfluencerSignUpRequest request) throws ResponseException {
+		//Validate duplicate Email
+		int emailCount = userDao.countByEmail(request.getEmail());
+		if(0 < emailCount) {
+			throw new ResponseException(HttpStatus.INTERNAL_SERVER_ERROR,"error.email.duplicate");
 		}
 		//Check for social media linkage
-		if(influencer.getInfluencerMedias() == null || 
-				influencer.getInfluencerMedias().size() == 0) {
+		if(request.getInfluencerMedia() == null || 
+				request.getInfluencerMedia().size() == 0) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.signup.no.media");
 		}
+
+		//Setup user object
+		User user = new User();
+		user.setEmail(request.getEmail());
+		user.setName(request.getName());
+		user.setPhoneNumber(request.getPhoneNumber());
+		user.setRole(Role.Influencer);
+		user = userDao.save(user);
+		//Setup user object
+		Influencer influencer = new Influencer();
+		influencer.setInfluencerId(user.getUserId());
+		influencer.setInfluencerMedias(request.getInfluencerMedia());
 		//Check if media link exists
 		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
 			if(influencerMediaDao.countByMediaIdAndSocialId(link.getMedia().getMediaId(), link.getSocialId()) > 0) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.already.exist");
 			}
-		}
-		//Validate duplicate Email
-		int countEmail = userDao.countByEmail(user.getEmail());
-		if(0 < countEmail){
-			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
-		}
-		user.setRole(Role.Influencer);
-		user.setInfluencer(null);
-		userDao.save(user);
-		influencer.setUser(null);
-		influencer.setInfluencerId(user.getUserId());
-		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
 			link.setInfluencer(influencer);
 			link.setInfluencerMediaId(new InfluencerMediaId(influencer.getInfluencerId(), link.getMedia().getMediaId()));
 		}
-		user.setInfluencer(influencerDao.save(influencer));
+		influencer = influencerDao.save(influencer);
+		user.setInfluencer(influencer);
 		return user;
 	}
 
