@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +29,12 @@ public class SignUpController {
 	private InfluencerService influencerService;
 	
 	@RequestMapping(value="/brand", method=RequestMethod.POST)
-	public AuthenticationResponse signUpBrand(@RequestBody BrandSignUpRequest request) throws Exception {
+	public AuthenticationResponse signUpBrand(@Valid @RequestBody BrandSignUpRequest request) throws Exception {
 		User newUser = brandService.signUpBrand(request);
 		return authenticationService.generateTokenFromUser(newUser);
 	}
 	@RequestMapping(value="/influencer", method=RequestMethod.POST)
-	public AuthenticationResponse signUpInfluencer(@RequestBody InfluencerSignUpRequest request) throws Exception {
+	public AuthenticationResponse signUpInfluencer(@Valid @RequestBody InfluencerSignUpRequest request) throws Exception {
 		User newUser = influencerService.signupInfluencer(request);
 		return authenticationService.generateTokenFromUser(newUser);
 	}

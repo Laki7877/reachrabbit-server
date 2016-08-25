@@ -72,7 +72,6 @@ public class InfluencerService {
 				request.getInfluencerMedia().size() == 0) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.signup.no.media");
 		}
-
 		//Setup user object
 		User user = new User();
 		user.setEmail(request.getEmail());
