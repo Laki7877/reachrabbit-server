@@ -92,11 +92,12 @@ public class CampaignService {
 		campaign.setToBudget(request.getToBudget());
 		campaign.setWebsite(request.getWebsite());
 		campaign = campaignDao.save(campaign);
-		
+		//Setup resources
 		campaignResourceDao.deleteByIdCampaignId(campaignId);
 		for(CampaignResource resource : request.getCampaignResources()) {
 			campaignResourceDao.insertResource(campaignId, resource.getResource().getResourceId(), resource.getPosition());
 		}
+		//Setup proposal message
 		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			List<Proposal> proposalList = proposalService.findAllByBrand(brandId, campaignId);
 			ProposalMessage message = new ProposalMessage();
@@ -112,14 +113,8 @@ public class CampaignService {
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
-		
 		return findOneByBrand(campaign.getCampaignId(),brandId);
 	}
-
-	
-	
-	
-	
 	
 	public Page<Campaign> findAll(Pageable pageable) {
 		return campaignDao.findAll(pageable);
