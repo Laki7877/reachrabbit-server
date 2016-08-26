@@ -2,6 +2,7 @@ package com.ahancer.rr.services;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -220,16 +221,26 @@ public class ProposalService {
 		ProposalMessage rebotMessage = new ProposalMessage();
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
+		Calendar cal = Calendar.getInstance();
 		if(ProposalStatus.Working.equals(oldProposal.getStatus())){
 			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, local));
+			Integer days = oldProposal.getCompletionTime().getDay();
+			cal.add(Calendar.DATE, days);
+			oldProposal.setDueDate(cal.getTime());
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
 			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, local));
+			oldProposal.setCompleteDate(cal.getTime());
 		}
 		rebotMessage.setProposal(oldProposal);
 		rebotMessage.setUserId(robotService.getRobotUser().getUserId());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
 		return oldProposal;
+	}
+	
+	public Boolean isPropose(Long influencerId, Long campaignId){
+		Long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influencerId, campaignId);
+		return count != 0;
 	}
 
 }
