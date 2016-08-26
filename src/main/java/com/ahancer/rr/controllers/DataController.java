@@ -56,7 +56,7 @@ public class DataController {
 		return bankDao.findAllByOrderByBankId();
 	}
 	
-	@RequestMapping(value="/budget",method=RequestMethod.GET)
+	@RequestMapping(value="/budgets",method=RequestMethod.GET)
 	public List<Budget> getBudget() throws Exception{
 		return budgetDao.findAllByOrderByBudgetId();
 	}

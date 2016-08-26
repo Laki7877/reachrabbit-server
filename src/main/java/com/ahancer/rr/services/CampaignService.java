@@ -51,15 +51,14 @@ public class CampaignService {
 		campaign.setBrandId(brandId);
 		campaign.setCategory(request.getCategory());
 		campaign.setDescription(request.getDescription());
-		campaign.setFromBudget(request.getFromBudget());
+		campaign.setBudget(request.getBudget());
 		campaign.setKeyword(request.getKeyword());
 		campaign.setMedia(request.getMedia());
 		campaign.setProposalDeadline(request.getProposalDeadline());
 		campaign.setStatus(request.getStatus());
 		campaign.setTitle(request.getTitle());
-		campaign.setToBudget(request.getToBudget());
 		campaign.setWebsite(request.getWebsite());
-		campaign.setCampaignResources(request.getCampaignResources());
+		campaign.setMainResource(request.getMainResource());
 		campaign = campaignDao.save(campaign);
 		//Setup resources
 		Set<CampaignResource> resources = request.getCampaignResources();
@@ -84,15 +83,14 @@ public class CampaignService {
 		campaign.setBrandId(brandId);
 		campaign.setCategory(request.getCategory());
 		campaign.setDescription(request.getDescription());
-		campaign.setFromBudget(request.getFromBudget());
+		campaign.setBudget(request.getBudget());
 		campaign.setKeyword(request.getKeyword());
 		campaign.setMedia(request.getMedia());
 		campaign.setProposalDeadline(request.getProposalDeadline());
 		campaign.setStatus(request.getStatus());
 		campaign.setTitle(request.getTitle());
-		campaign.setToBudget(request.getToBudget());
 		campaign.setWebsite(request.getWebsite());
-		campaign.setCampaignResources(request.getCampaignResources());
+		campaign.setMainResource(request.getMainResource());
 		campaign = campaignDao.save(campaign);
 		//Setup resources
 		campaignResourceDao.deleteByIdCampaignId(campaignId);

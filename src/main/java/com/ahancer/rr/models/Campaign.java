@@ -49,6 +49,10 @@ public class Campaign extends AbstractModel implements Serializable {
 	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
 	@JoinColumn(name="categoryId")
 	private Category category;
+	
+	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@JoinColumn(name="budgetId")
+	private Budget budget;
 
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
@@ -76,12 +80,6 @@ public class Campaign extends AbstractModel implements Serializable {
 	@Column(name="description")
 	private String description;
 	
-	@Column(name="fromBudget",scale=10,precision=3)
-	private Double fromBudget;
-	
-	@Column(name="toBudget",scale=10,precision=3)
-	private Double toBudget;
-
 	@Column(name="website",length=255)
 	private String website;
 
@@ -169,22 +167,6 @@ public class Campaign extends AbstractModel implements Serializable {
 		this.status = status;
 	}
 
-	public Double getFromBudget() {
-		return fromBudget;
-	}
-
-	public void setFromBudget(Double fromBudget) {
-		this.fromBudget = fromBudget;
-	}
-
-	public Double getToBudget() {
-		return toBudget;
-	}
-
-	public void setToBudget(Double toBudget) {
-		this.toBudget = toBudget;
-	}
-
 	public String getWebsite() {
 		return website;
 	}
@@ -215,5 +197,13 @@ public class Campaign extends AbstractModel implements Serializable {
 
 	public void setMainResource(Resource mainResource) {
 		this.mainResource = mainResource;
+	}
+
+	public Budget getBudget() {
+		return budget;
+	}
+
+	public void setBudget(Budget budget) {
+		this.budget = budget;
 	}
 }
