@@ -68,13 +68,15 @@ public class CampaignController extends AbstractController{
 	
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
-	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request) throws Exception{
-		return campaignService.createCampaignByBrand(request, this.getUserRequest().getBrand().getBrandId());
+	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request) throws Exception {
+		Campaign campaign = campaignService.createCampaignByBrand(request, this.getUserRequest().getBrand().getBrandId());
+		return getOneCampaign(campaign.getCampaignId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request,Locale local) throws Exception{
-		return campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest().getBrand().getBrandId(), local);
+	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request,Locale local) throws Exception {
+		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest().getBrand().getBrandId(), local);
+		return getOneCampaign(campaign.getCampaignId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)

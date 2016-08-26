@@ -67,7 +67,7 @@ public class CampaignService {
 					, resource.getResource().getResourceId()
 					, resource.getPosition());
 		}
-		return findOneByBrand(campaign.getCampaignId(),brandId);
+		return campaign;
 	}
 
 	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, Long brandId, Locale local) throws Exception {
@@ -113,7 +113,7 @@ public class CampaignService {
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
-		return findOneByBrand(campaign.getCampaignId(),brandId);
+		return campaign;
 	}
 	
 	public Page<Campaign> findAll(Pageable pageable) {
