@@ -9,6 +9,7 @@ import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.models.CampaignResource;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.Media;
+import com.ahancer.rr.models.Resource;
 
 public class CampaignRequest implements Serializable {
 	private static final long serialVersionUID = 1164567255480906846L;
@@ -22,12 +23,13 @@ public class CampaignRequest implements Serializable {
 	private String keyword;
 	private Category category;
 	private Set<Media> media = new HashSet<Media>(0);
+	private Resource mainResource;
 	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
 	public CampaignRequest() {
 	}
 	public CampaignRequest(Double fromBudget, Double toBudget, String website, Date proposalDeadline,
 			CampaignStatus status, String description, String title, String keyword, Category category,
-			Set<Media> media, Set<CampaignResource> campaignResources) {
+			Set<Media> media, Set<CampaignResource> campaignResources,Resource mainResource) {
 		super();
 		this.fromBudget = fromBudget;
 		this.toBudget = toBudget;
@@ -40,6 +42,7 @@ public class CampaignRequest implements Serializable {
 		this.category = category;
 		this.media = media;
 		this.campaignResources = campaignResources;
+		this.mainResource = mainResource;
 	}
 	public Double getFromBudget() {
 		return fromBudget;
@@ -106,5 +109,11 @@ public class CampaignRequest implements Serializable {
 	}
 	public void setCampaignResources(Set<CampaignResource> campaignResources) {
 		this.campaignResources = campaignResources;
+	}
+	public Resource getMainResource() {
+		return mainResource;
+	}
+	public void setMainResource(Resource mainResource) {
+		this.mainResource = mainResource;
 	}
 }

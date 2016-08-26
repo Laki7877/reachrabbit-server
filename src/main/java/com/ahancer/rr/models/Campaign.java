@@ -21,6 +21,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -56,13 +57,14 @@ public class Campaign extends AbstractModel implements Serializable {
 			inverseJoinColumns=@JoinColumn(name="mediaId", referencedColumnName="mediaId"))
 	@OrderBy("mediaId")
 	private Set<Media> media = new HashSet<Media>(0);
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="mainResourceId")
+	private Resource mainResource;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign")
 	@OrderBy("position")
 	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
-	
-//	@OneToMany(fetch=FetchType.EAGER,mappedBy="campaign",cascade=CascadeType.ALL)
-//	private Set<CampaignKeyword> keywords = new HashSet<CampaignKeyword>(0);
 	
 	@Column(name="keyword",length=255)
 	private String keyword;
@@ -206,5 +208,12 @@ public class Campaign extends AbstractModel implements Serializable {
 	public void setCampaignResources(Set<CampaignResource> campaignResources) {
 		this.campaignResources = campaignResources;
 	}
-	
+
+	public Resource getMainResource() {
+		return mainResource;
+	}
+
+	public void setMainResource(Resource mainResource) {
+		this.mainResource = mainResource;
+	}
 }

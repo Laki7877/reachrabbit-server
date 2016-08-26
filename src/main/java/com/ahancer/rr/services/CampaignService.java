@@ -59,6 +59,7 @@ public class CampaignService {
 		campaign.setTitle(request.getTitle());
 		campaign.setToBudget(request.getToBudget());
 		campaign.setWebsite(request.getWebsite());
+		campaign.setCampaignResources(request.getCampaignResources());
 		campaign = campaignDao.save(campaign);
 		//Setup resources
 		Set<CampaignResource> resources = request.getCampaignResources();
@@ -91,6 +92,7 @@ public class CampaignService {
 		campaign.setTitle(request.getTitle());
 		campaign.setToBudget(request.getToBudget());
 		campaign.setWebsite(request.getWebsite());
+		campaign.setCampaignResources(request.getCampaignResources());
 		campaign = campaignDao.save(campaign);
 		//Setup resources
 		campaignResourceDao.deleteByIdCampaignId(campaignId);
