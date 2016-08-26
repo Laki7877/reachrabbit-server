@@ -2,8 +2,8 @@ package com.ahancer.rr.services;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.Locale;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -17,12 +17,11 @@ import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.CampaignResourceDao;
 import com.ahancer.rr.exception.ResponseException;
-import com.ahancer.rr.models.Brand;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.CampaignResource;
-import com.ahancer.rr.models.CampaignResourceId;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.request.CampaignRequest;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -46,60 +45,59 @@ public class CampaignService {
 	@Autowired
 	private MessageSource messageSource;
 
-	public Campaign createCampaignByBrand(Campaign campaign, Long brandId) {
-		Set<CampaignResource> resources = campaign.getCampaignResources();
-		campaign.setCampaignResources(null);
+	public Campaign createCampaignByBrand(CampaignRequest request, Long brandId) {
+		//Setup campaign
+		Campaign campaign = new Campaign();
 		campaign.setBrandId(brandId);
-		Brand brand = campaign.getBrand();
-		campaign.setBrand(null);
+		campaign.setCategory(request.getCategory());
+		campaign.setDescription(request.getDescription());
+		campaign.setFromBudget(request.getFromBudget());
+		campaign.setKeyword(request.getKeyword());
+		campaign.setMedia(request.getMedia());
+		campaign.setProposalDeadline(request.getProposalDeadline());
+		campaign.setStatus(request.getStatus());
+		campaign.setTitle(request.getTitle());
+		campaign.setToBudget(request.getToBudget());
+		campaign.setWebsite(request.getWebsite());
 		campaign = campaignDao.save(campaign);
+		//Setup resources
+		Set<CampaignResource> resources = request.getCampaignResources();
 		for(CampaignResource resource : resources) {
-			resource.setCampaign(campaign);
-			CampaignResourceId id = new CampaignResourceId();
-			id.setResourceId(resource.getResource().getResourceId());
-			id.setCampaignId(campaign.getCampaignId());
-			resource.setId(id);
-			campaignResourceDao.save(resource);
+			campaignResourceDao.insertResource(campaign.getCampaignId()
+					, resource.getResource().getResourceId()
+					, resource.getPosition());
 		}
-		campaign.setCampaignResources(resources);
-		campaign.setBrand(brand);
-		campaign = campaignDao.save(campaign);
-		return campaign;
+		return findOneByBrand(campaign.getCampaignId(),brandId);
 	}
 
-	public Campaign updateCampaignByBrand(Long campaignId, Campaign newCampaign, Long brandId, Locale local) throws Exception {
-		Campaign oldCampaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
-		if(null == oldCampaign) {
+	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, Long brandId, Locale local) throws Exception {
+		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
+		if(null == campaign) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
 		}
-		if(CampaignStatus.Open.equals(oldCampaign.getStatus())){
-			if(CampaignStatus.Draft.equals(newCampaign.getStatus())){
+		if(CampaignStatus.Open.equals(campaign.getStatus())){
+			if(CampaignStatus.Draft.equals(request.getStatus())){
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.invalid.status");
 			}
 		}
-		oldCampaign.setTitle(newCampaign.getTitle());
-		oldCampaign.setMedia(newCampaign.getMedia());
-		oldCampaign.setCategory(newCampaign.getCategory());
-		oldCampaign.setDescription(newCampaign.getDescription());
-		oldCampaign.setKeyword(newCampaign.getKeyword());
-		oldCampaign.setWebsite(newCampaign.getWebsite());
-		oldCampaign.setFromBudget(newCampaign.getFromBudget());
-		oldCampaign.setToBudget(newCampaign.getToBudget());
-		oldCampaign.setProposalDeadline(newCampaign.getProposalDeadline());
-		oldCampaign.setStatus(newCampaign.getStatus());
-		Set<CampaignResource> oldResources = oldCampaign.getCampaignResources();
-		for(CampaignResource resource : newCampaign.getCampaignResources()) {
-			CampaignResourceId id = new CampaignResourceId();
-			id.setCampaignId(oldCampaign.getCampaignId());
-			id.setResourceId(resource.getResource().getResourceId());
-			resource.setId(id);
-			if(oldResources.contains(resource)){
-				campaignResourceDao.delete(resource.getId());
-			}else {
-				campaignResourceDao.save(resource);
-			}
+		campaign.setBrandId(brandId);
+		campaign.setCategory(request.getCategory());
+		campaign.setDescription(request.getDescription());
+		campaign.setFromBudget(request.getFromBudget());
+		campaign.setKeyword(request.getKeyword());
+		campaign.setMedia(request.getMedia());
+		campaign.setProposalDeadline(request.getProposalDeadline());
+		campaign.setStatus(request.getStatus());
+		campaign.setTitle(request.getTitle());
+		campaign.setToBudget(request.getToBudget());
+		campaign.setWebsite(request.getWebsite());
+		campaign = campaignDao.save(campaign);
+		
+		campaignResourceDao.deleteByIdCampaignId(campaignId);
+		for(CampaignResource resource : request.getCampaignResources()) {
+			campaignResourceDao.insertResource(campaignId, resource.getResource().getResourceId(), resource.getPosition());
 		}
-		if(CampaignStatus.Open.equals(oldCampaign.getStatus())){
+		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			List<Proposal> proposalList = proposalService.findAllByBrand(brandId, campaignId);
 			ProposalMessage message = new ProposalMessage();
 			message.setMessage(messageSource.getMessage("robot.campaign.message", null, local));
@@ -114,11 +112,15 @@ public class CampaignService {
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
-		oldCampaign.setCampaignResources(newCampaign.getCampaignResources());
-		oldCampaign.setMedia(newCampaign.getMedia());
-		return campaignDao.save(oldCampaign);
+		
+		return findOneByBrand(campaign.getCampaignId(),brandId);
 	}
 
+	
+	
+	
+	
+	
 	public Page<Campaign> findAll(Pageable pageable) {
 		return campaignDao.findAll(pageable);
 	}
@@ -139,11 +141,11 @@ public class CampaignService {
 		}		
 	}
 
-	public Campaign findOne(Long id) {
-		return campaignDao.findOne(id);
+	public Campaign findOne(Long campaignId) {
+		return campaignDao.findOne(campaignId);
 	}
 
-	public Campaign findOneByBrand(Long id, Brand brand) {
-		return campaignDao.findByCampaignIdAndBrandId(id, brand.getBrandId());
+	public Campaign findOneByBrand(Long campaignId, Long brandId) {
+		return campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
 	}
 }

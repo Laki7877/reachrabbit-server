@@ -3,6 +3,8 @@ package com.ahancer.rr.controllers;
 import java.util.List;
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
+import com.ahancer.rr.request.CampaignRequest;
 import com.ahancer.rr.services.CampaignService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalService;
@@ -64,13 +67,13 @@ public class CampaignController extends AbstractController{
 	
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
-	public Campaign createCampaign(@RequestBody Campaign campaign) throws Exception{
-		return campaignService.createCampaignByBrand(campaign, this.getUserRequest().getBrand().getBrandId());
+	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request) throws Exception{
+		return campaignService.createCampaignByBrand(request, this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign updateCampaign(@PathVariable Long campaignId,@RequestBody Campaign campaign,Locale local) throws Exception{
-		return campaignService.updateCampaignByBrand(campaignId, campaign, this.getUserRequest().getBrand().getBrandId(), local);
+	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request,Locale local) throws Exception{
+		return campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest().getBrand().getBrandId(), local);
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
