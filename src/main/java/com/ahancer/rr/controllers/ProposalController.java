@@ -35,11 +35,11 @@ public class ProposalController extends AbstractController {
 	private ProposalMessageService proposalMessageService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Page<Proposal> getAllProposal(Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
+	public Page<Proposal> getAllProposal( @RequestParam(name="status", required=true) ProposalStatus status,Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
 		if(this.getUserRequest().getRole() == Role.Brand) {
-			return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
+			return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(),status, pageRequest);
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
-			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);	
+			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(),status, pageRequest);	
 		}
 		throw new Exception();
 	}

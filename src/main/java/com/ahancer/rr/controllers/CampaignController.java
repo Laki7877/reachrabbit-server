@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
-import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.CampaignRequest;
+import com.ahancer.rr.response.IsProposeResponse;
 import com.ahancer.rr.services.CampaignService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalService;
@@ -93,7 +93,7 @@ public class CampaignController extends AbstractController{
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{campaignId}/ispropose")
 	@Authorization(Role.Influencer)
-	public Boolean isPropose(@PathVariable Long campaignId,@PathVariable ProposalStatus status, Locale local) throws Exception {
+	public IsProposeResponse isPropose(@PathVariable Long campaignId) throws Exception {
 		return proposalService.isPropose(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}
 	

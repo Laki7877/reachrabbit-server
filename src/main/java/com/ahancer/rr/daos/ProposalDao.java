@@ -26,12 +26,12 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Page<Proposal> findByInfluencerId(Long influencerId,Pageable pageable);
 	public Page<Proposal> findByInfluencerIdAndCampaignCampaignId(Long influencerId, Long campaignId, Pageable pageable);
 	public Page<Proposal> findByInfluencerIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(Long influencerId, Long campaignId, Date date, Pageable pageable);
-	public Page<Proposal> findByInfluencerIdAndMessageUpdatedAtAfter(Long influencerId, Date date, Pageable pageable);
+	public Page<Proposal> findByInfluencerIdAndStatusAndMessageUpdatedAtAfter(Long influencerId,ProposalStatus status, Date date, Pageable pageable);
 	
 	public List<Proposal> findByInfluencerId(Long influencerId);
 	
 	public Page<Proposal> findByCampaignBrandId(Long brandId,Pageable pageable);
-	public Page<Proposal> findByCampaignBrandIdAndMessageUpdatedAtAfter(Long brandId, Date date, Pageable pageable);
+	public Page<Proposal> findByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(Long brandId,ProposalStatus status, Date date, Pageable pageable);
 	public Page<Proposal> findByCampaignBrandIdAndCampaignCampaignId(Long brandId, Long campaignId, Pageable pageable);
 	public Page<Proposal> findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(Long brandId, Long campaignId, Date date, Pageable pageable);
 	public List<Proposal> findByCampaignBrandIdAndCampaignCampaignId(Long brandId, Long campaignId);

@@ -28,6 +28,7 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.response.IsProposeResponse;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -99,13 +100,13 @@ public class ProposalService {
 		}
 	}
 
-	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
-		if ( null != campaignId ) {
-			return proposalDao.findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(brandId, campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
-		} else {
-			return findAllByBrand(brandId, pageable);
-		}
-	}
+//	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
+//		if ( null != campaignId ) {
+//			return proposalDao.findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(brandId, campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
+//		} else {
+//			return findAllByBrand(brandId, pageable);
+//		}
+//	}
 
 	public List<Proposal> findAllByBrand(Long brandId, Long campaignId) {
 		return proposalDao.findByCampaignBrandIdAndCampaignCampaignId(brandId,campaignId);
@@ -134,8 +135,8 @@ public class ProposalService {
 		return proposalDao.countByInfluencerInfluencerIdAndStatus(influencerId, status);
 	}
 
-	public Page<Proposal> findAllByBrand(Long brandId,Pageable pageable) {
-		return proposalDao.findByCampaignBrandIdAndMessageUpdatedAtAfter(brandId,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
+	public Page<Proposal> findAllByBrand(Long brandId,ProposalStatus status,Pageable pageable) {
+		return proposalDao.findByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(brandId, status,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
 
 	public Proposal findOneByBrand(Long proposalId,Long brandId) {
@@ -150,17 +151,17 @@ public class ProposalService {
 		return proposalDao.findByInfluencerId(influencerId);
 	}
 
-	public Page<Proposal> findAllByInfluencer(Long influencerId,Pageable pageable) {
-		return proposalDao.findByInfluencerIdAndMessageUpdatedAtAfter(influencerId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
+	public Page<Proposal> findAllByInfluencer(Long influencerId,ProposalStatus status,Pageable pageable) {
+		return proposalDao.findByInfluencerIdAndStatusAndMessageUpdatedAtAfter(influencerId,status, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
 
-	public Page<Proposal> findAllByInfluencer(Long influencerId, Long campaignId, Pageable pageable) {
-		if( null != campaignId ) {
-			return proposalDao.findByInfluencerIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(influencerId,  campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
-		} else {
-			return findAllByInfluencer(influencerId, pageable);
-		}
-	}
+//	public Page<Proposal> findAllByInfluencer(Long influencerId, Long campaignId, Pageable pageable) {
+//		if( null != campaignId ) {
+//			return proposalDao.findByInfluencerIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(influencerId,  campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
+//		} else {
+//			return findAllByInfluencer(influencerId, pageable);
+//		}
+//	}
 
 	public Page<Proposal> findAll(Pageable pageable) {
 		return proposalDao.findAll(pageable);
@@ -238,9 +239,11 @@ public class ProposalService {
 		return oldProposal;
 	}
 	
-	public Boolean isPropose(Long influencerId, Long campaignId){
+	public IsProposeResponse isPropose(Long influencerId, Long campaignId){
 		Long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influencerId, campaignId);
-		return count != 0;
+		IsProposeResponse isPropose = new IsProposeResponse();
+		isPropose.setIsPropose(count != 0);
+		return isPropose;
 	}
 
 }
