@@ -24,7 +24,6 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.request.CampaignRequest;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
 public class CampaignService {
 	
 	@Autowired
@@ -69,7 +68,8 @@ public class CampaignService {
 		}
 		return campaign;
 	}
-
+	
+	@Transactional(rollbackFor=Exception.class)
 	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, Long brandId, Locale local) throws Exception {
 		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
 		if(null == campaign) {

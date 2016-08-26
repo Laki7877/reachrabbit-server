@@ -28,7 +28,6 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
-import com.ahancer.rr.response.IsProposeResponse;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -239,11 +238,8 @@ public class ProposalService {
 		return oldProposal;
 	}
 	
-	public IsProposeResponse isPropose(Long influencerId, Long campaignId){
-		Long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influencerId, campaignId);
-		IsProposeResponse isPropose = new IsProposeResponse();
-		isPropose.setIsPropose(count != 0);
-		return isPropose;
+	public Proposal getAppliedProposal(Long influencerId, Long campaignId) {
+		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId,campaignId);
 	}
 
 }

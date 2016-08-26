@@ -21,10 +21,11 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.CampaignRequest;
-import com.ahancer.rr.response.IsProposeResponse;
 import com.ahancer.rr.services.CampaignService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalService;
+
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/campaigns")
@@ -47,6 +48,8 @@ public class CampaignController extends AbstractController{
 		}	
 		throw new Exception();
 	}
+	
+	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/active", method=RequestMethod.GET)
 	public List<Campaign> getAllActiveCampaign() throws Exception {
 		if(this.getUserRequest().getRole() == Role.Brand) {
@@ -60,12 +63,15 @@ public class CampaignController extends AbstractController{
 		return campaignService.findAllOpen(mediaId, pageRequest);
 	}
 	
+	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
 	public Campaign getOneCampaign(@PathVariable Long campaignId) throws Exception{
 		Campaign campaign = campaignService.findOne(campaignId);
 		return campaign;
 	}
 	
+	
+	@ApiOperation(value = "Create new campaign")
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
 	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request) throws Exception {
@@ -93,10 +99,10 @@ public class CampaignController extends AbstractController{
 		return proposal;
 	}
 	
-	@RequestMapping(method=RequestMethod.GET,value="/{campaignId}/ispropose")
+	@RequestMapping(method=RequestMethod.GET,value="/{campaignId}/applied")
 	@Authorization(Role.Influencer)
-	public IsProposeResponse isPropose(@PathVariable Long campaignId) throws Exception {
-		return proposalService.isPropose(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
+	public Proposal getAppliedProposal(@PathVariable Long campaignId) throws Exception {
+		return proposalService.getAppliedProposal(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}
 	
 }
