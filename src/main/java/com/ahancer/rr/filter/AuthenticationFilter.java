@@ -64,7 +64,8 @@ public class AuthenticationFilter implements Filter {
 				|| path.startsWith("/swagger-ui") 
 				|| path.startsWith("/swagger-resources") 
 				|| path.startsWith("/configuration") 
-				|| path.startsWith("/v2")) {
+				|| path.startsWith("/v2")
+				|| path.startsWith("/subscription")) {
 			chain.doFilter(req, res);
 		} else {
 			try {
