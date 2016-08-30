@@ -38,8 +38,9 @@ public class CartService {
 			cart = new Cart();
 			cart.setStatus(CartStatus.Incart);
 		}
-		cart.getProposals().add(proposal);
 		cart = cartDao.save(cart);
+		proposal.setCartId(cart.getCartId());
+		proposal = proposalDao.save(proposal);
 		return cart;
 	}
 
