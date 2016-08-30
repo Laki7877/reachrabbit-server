@@ -44,5 +44,15 @@ public class CartService {
 		proposal = proposalDao.save(proposal);
 		return cart;
 	}
+	
+	
+	public void deleteProposalToCart(Long proposalId,Long brandId) throws Exception{
+		Proposal proposal = proposalDao.findByProposalIdAndCampaignBrandId(proposalId, brandId);
+		if(null == proposal){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+		}
+		proposal.setCartId(null);
+		proposal = proposalDao.save(proposal);
+	}
 
 }

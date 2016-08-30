@@ -161,9 +161,18 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/cart")
 	@Authorization(Role.Brand)
-	public Cart addToCaert(@PathVariable Long proposalId) throws Exception {
+	public Cart addProposalToCaert(@PathVariable Long proposalId) throws Exception {
 		Cart cart = cartService.addProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
 		return cart;
 	}
+	
+	
+	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/cart")
+	@Authorization(Role.Brand)
+	public void deleteProposalToCaert(@PathVariable Long proposalId) throws Exception {
+		cartService.addProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
+	}
+	
+	
 
 }
