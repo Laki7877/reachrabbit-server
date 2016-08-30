@@ -30,7 +30,7 @@ public class CartService {
 		if(null == proposal){
 			throw new ResponseException("error.proposal.not.exist");
 		}
-		if(null == proposal.getCartId() || 0 == proposal.getCartId()){
+		if(null != proposal.getCartId()){
 			throw new ResponseException("error.proposal.already.in.cart");
 		}
 		Cart cart = cartDao.findByProposalsCampaignBrandIdAndStatus(brandId, CartStatus.Incart);
