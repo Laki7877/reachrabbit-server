@@ -61,7 +61,18 @@ public class AuthenticationController {
 	public OAuthenticationResponse youtubeAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception {
 		return youtubeService.authentication(youtubeService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
 	}
-	
+
+	@RequestMapping(value = "/admin" ,method = RequestMethod.POST)
+	@ResponseBody
+	public AuthenticationResponse adminAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
+			throws Exception {
+		AuthenticationResponse authen = authenticationService.adminAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+		if(null == authen) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
+		}else {
+			return authen;
+		}
+	}
 	@RequestMapping(value = "/influencer" ,method = RequestMethod.POST)
 	@ResponseBody
 	public AuthenticationResponse influencerAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
