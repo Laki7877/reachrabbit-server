@@ -1,8 +1,6 @@
 package com.ahancer.rr.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,16 +14,13 @@ import com.ahancer.rr.services.CartService;
 @RequestMapping("/carts")
 public class CartController extends AbstractController {
 	
-	
 	@Autowired
 	private CartService cartService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization(Role.Brand)
-	public Page<Cart> getAllCart(Pageable pageRequest) throws Exception {
-		return cartService.getAllCartByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);
-		
+	public Cart getInCart() throws Exception {
+		return cartService.getInCartByBrand(this.getUserRequest().getBrand().getBrandId());
 	}
-	
 
 }

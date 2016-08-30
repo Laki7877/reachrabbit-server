@@ -1,8 +1,6 @@
 package com.ahancer.rr.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +21,8 @@ public class CartService {
 	@Autowired
 	private ProposalDao proposalDao;
 	
-	public Page<Cart> getAllCartByBrand(Long brandId, Pageable pageable){
-		return cartDao.findByProposalsCampaignBrandId(brandId,pageable);
+	public Cart getInCartByBrand(Long brandId){
+		return cartDao.findByProposalsCampaignBrandId(brandId);
 	}
 	
 	public Cart addProposalToCart(Long proposalId,Long brandId) throws Exception{
