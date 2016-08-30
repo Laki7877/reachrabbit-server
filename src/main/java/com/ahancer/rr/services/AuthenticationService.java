@@ -45,7 +45,18 @@ public class AuthenticationService {
 			return response;
 		}
 	}
-	
+	public AuthenticationResponse adminAuthentication(String email, String password) {
+		User user = userDao.findByEmail(email);
+		if(null == user || !encrypt.checkPassword(password, user.getPassword()) || user.getRole() != Role.Admin){
+			return null;
+		} else {
+			String token = jwt.generateToken(user.getUserId());
+			UserResponse userResponse = Util.getUserResponse(user);
+			CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+			AuthenticationResponse response = new AuthenticationResponse(token);
+			return response;
+		}
+	}
 	public AuthenticationResponse influencerAuthentication(String socialId, String providerName) {
 		User user = userDao.findBySocialIdAndMediaId(providerName, socialId);
 		if(user == null) {
