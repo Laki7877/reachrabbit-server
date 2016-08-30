@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/campaigns")
-public class CampaignController extends AbstractController{
+public class CampaignController extends AbstractController {
 	@Autowired
 	private CampaignService campaignService;
 	

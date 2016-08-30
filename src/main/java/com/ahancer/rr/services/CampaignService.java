@@ -21,6 +21,7 @@ import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.CampaignResource;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.CampaignRequest;
 
 @Service
@@ -103,14 +104,15 @@ public class CampaignService {
 			List<Proposal> proposalList = proposalService.findAllByBrand(brandId, campaignId);
 			ProposalMessage message = new ProposalMessage();
 			message.setMessage(messageSource.getMessage("robot.campaign.message", null, local));
+			User robotUser = robotService.getRobotUser();
 			for(Proposal proposal : proposalList) {
 				message.setProposal(proposal);
 				proposalMessageService.createProposalMessage(proposal.getProposalId()
 						, message
-						, robotService.getRobotUser().getUserId()
-						, robotService.getRobotUser().getRole());
-				proposalService.processInboxPolling(proposal.getInfluencerId());
-				proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
+						, robotUser.getUserId()
+						, robotUser.getRole());
+				proposalService.processInboxPollingByOne(proposal.getInfluencerId());
+				proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
