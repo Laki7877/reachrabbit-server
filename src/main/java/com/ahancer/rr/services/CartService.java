@@ -1,6 +1,7 @@
 package com.ahancer.rr.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ public class CartService {
 	public Cart addProposalToCart(Long proposalId,Long brandId) throws Exception{
 		Proposal proposal = proposalDao.findByProposalIdAndCampaignBrandId(proposalId, brandId);
 		if(null == proposal){
-			throw new ResponseException("error.proposal.not.exist");
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
 		if(null != proposal.getCartId()){
 			throw new ResponseException("error.proposal.already.in.cart");
