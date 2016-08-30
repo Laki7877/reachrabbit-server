@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 @Transactional(rollbackFor=Exception.class)
 public class ProposalMessageService {
 
-	private final static Long timeout = 20000L;
+	private final static Long timeout = 60000L;
 
 	public static class DeferredProposalMessage extends DeferredResult<List<ProposalMessage>> {
 		private Date timestamp;

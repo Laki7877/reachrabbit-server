@@ -28,11 +28,12 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.models.User;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class ProposalService {
-	private final static Long timeout = 20000L;
+	private final static Long timeout = 60000L;
 
 	@Autowired
 	private ProposalDao proposalDao;
@@ -91,21 +92,32 @@ public class ProposalService {
 		}
 		for(DeferredProposal m : proposalPollingMap.get(userId)) {
 			if(m.getRole() == Role.Brand) {
-				m.setResult(countByUnreadProposalForBrand(userId));
+				Long count = countByUnreadProposalForBrand(userId);
+				m.setResult(count);
 			} else if(m.getRole() == Role.Influencer) {
-				m.setResult(countByUnreadProposalForInfluencer(userId));
+				Long count = countByUnreadProposalForInfluencer(userId);
+				m.setResult(count);
 			}
 
 		}
 	}
+	
+	public void processInboxPollingByOne(Long userId) {
+		if(proposalPollingMap.get(userId) == null) {
+			return;
+		}
+		for(DeferredProposal m : proposalPollingMap.get(userId)) {
+			if(m.getRole() == Role.Brand) {
+				Long count = countByUnreadProposalForBrand(userId) + 1;
+				m.setResult(count);
+			} else if(m.getRole() == Role.Influencer) {
+				Long count = countByUnreadProposalForInfluencer(userId) + 1;
+				m.setResult(count);
+			}
 
-//	public Page<Proposal> findAllByBrand(Long brandId, Long campaignId, Pageable pageable) {
-//		if ( null != campaignId ) {
-//			return proposalDao.findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(brandId, campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
-//		} else {
-//			return findAllByBrand(brandId, pageable);
-//		}
-//	}
+		}
+	}
+	
 
 	public List<Proposal> findAllByBrand(Long brandId, Long campaignId) {
 		return proposalDao.findByCampaignBrandIdAndCampaignCampaignId(brandId,campaignId);
@@ -203,10 +215,11 @@ public class ProposalService {
 		rebotMessage.setIsInfluencerRead(true);
 		rebotMessage.setMessage(oldProposal.getInfluencer().getUser().getName() + " " + messageSource.getMessage("robot.proposal.message", null, local));
 		rebotMessage.setProposal(proposal);
-		rebotMessage.setUserId(robotService.getRobotUser().getUserId());
+		User robotUser = robotService.getRobotUser();
+		rebotMessage.setUserId(robotUser.getUserId());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
-		
+		rebotMessage.setUser(robotUser);
 		return oldProposal;
 	}
 
