@@ -148,8 +148,8 @@ public class ProposalController extends AbstractController {
 	@Authorization(Role.Brand)
 	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status, Locale local) throws Exception {
 		Proposal proposal = proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId(),local);
-		proposalService.processInboxPolling(proposal.getInfluencerId());
-		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
+		proposalService.processInboxPollingByOne(proposal.getInfluencerId());
+		proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
 	}
