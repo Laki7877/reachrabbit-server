@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.models.Cart;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.services.CartService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalMessageService.DeferredProposalMessage;
 import com.ahancer.rr.services.ProposalService;
@@ -33,6 +35,9 @@ public class ProposalController extends AbstractController {
 	
 	@Autowired
 	private ProposalMessageService proposalMessageService;
+	
+	@Autowired
+	private CartService cartService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Proposal> getAllProposal( @RequestParam(name="status", required=true) ProposalStatus status,Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
@@ -154,8 +159,11 @@ public class ProposalController extends AbstractController {
 		return proposal;
 	}
 	
-	
-	
-	
+	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/cart")
+	@Authorization(Role.Brand)
+	public Cart addToCaert(@PathVariable Long proposalId) throws Exception {
+		Cart cart = cartService.addProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
+		return cart;
+	}
 
 }

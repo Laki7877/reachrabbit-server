@@ -37,7 +37,6 @@ public class Influencer extends AbstractModel implements Serializable{
 	@MapsId("influencerId")
 	@OneToOne
     @JoinColumn(name = "influencerId")
-//	@JsonBackReference
 	@JsonManagedReference(value="user-influencer")
 	private User user;
 

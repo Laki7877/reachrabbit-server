@@ -24,6 +24,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -86,6 +87,15 @@ public class Proposal extends AbstractModel implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "completeDate")
 	private Date completeDate;
+	
+	@Column(name="cartId")
+	private Long cartId;
+	
+	@JsonIgnore
+	@MapsId("cartId")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cartId")
+	private Cart cart;
 	
 	public Proposal() {
 		
@@ -193,6 +203,22 @@ public class Proposal extends AbstractModel implements Serializable{
 
 	public void setCompleteDate(Date completeDate) {
 		this.completeDate = completeDate;
+	}
+
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
+	}
+
+	public Long getCartId() {
+		return cartId;
+	}
+
+	public void setCartId(Long cartId) {
+		this.cartId = cartId;
 	}
 	
 }

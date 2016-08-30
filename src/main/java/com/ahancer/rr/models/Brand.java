@@ -24,7 +24,6 @@ public class Brand extends AbstractModel implements Serializable {
 	@MapsId("brandId")
 	@OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "brandId")
-//	@JsonBackReference
 	@JsonManagedReference(value="user-brand")
 	private User user;
 
