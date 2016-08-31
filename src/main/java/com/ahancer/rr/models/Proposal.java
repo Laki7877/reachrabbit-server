@@ -97,6 +97,16 @@ public class Proposal extends AbstractModel implements Serializable{
 	@JoinColumn(name = "cartId")
 	private Cart cart;
 	
+	@Column(name="walletId")
+	private Long walletId;
+	
+	@JsonIgnore
+	@MapsId("walletId")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "walletId")
+	private Wallet wallet;
+	
+	
 	public Proposal() {
 		
 	}
@@ -219,6 +229,22 @@ public class Proposal extends AbstractModel implements Serializable{
 
 	public void setCartId(Long cartId) {
 		this.cartId = cartId;
+	}
+
+	public Long getWalletId() {
+		return walletId;
+	}
+
+	public void setWalletId(Long walletId) {
+		this.walletId = walletId;
+	}
+
+	public Wallet getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(Wallet wallet) {
+		this.wallet = wallet;
 	}
 	
 }

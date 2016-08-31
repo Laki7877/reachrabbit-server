@@ -61,13 +61,11 @@ public class User extends AbstractModel implements Serializable {
 
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
-//	@JsonManagedReference
 	@JsonBackReference(value="user-brand")
 	private Brand brand;
 	
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
-//	@JsonManagedReference
 	@JsonBackReference(value="user-influencer")
 	private Influencer influencer;
 

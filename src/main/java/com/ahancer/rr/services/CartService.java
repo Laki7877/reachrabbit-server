@@ -34,10 +34,11 @@ public class CartService {
 		if(null != proposal.getCartId()){
 			throw new ResponseException("error.proposal.already.in.cart");
 		}
-		Cart cart = cartDao.findByProposalsCampaignBrandIdAndStatus(brandId, CartStatus.Incart);
+		Cart cart = cartDao.findByBrandIdAndStatus(brandId, CartStatus.Incart);
 		if(null == cart){
 			cart = new Cart();
 			cart.setStatus(CartStatus.Incart);
+			cart.setBrandId(brandId);
 		}
 		cart = cartDao.save(cart);
 		proposal.setCartId(cart.getCartId());

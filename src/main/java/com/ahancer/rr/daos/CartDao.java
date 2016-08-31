@@ -7,6 +7,6 @@ import com.ahancer.rr.models.Cart;
 
 public interface CartDao extends CrudRepository<Cart, Long> {
 	
-	public Cart findByProposalsCampaignBrandIdAndStatus(Long brandId, CartStatus status);
+	public Cart findByBrandIdAndStatus(Long brandId, CartStatus status);
 	public Cart findByProposalsCampaignBrandId(Long brandId);
 }

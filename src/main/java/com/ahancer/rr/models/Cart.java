@@ -13,6 +13,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 
 import com.ahancer.rr.custom.type.CartStatus;
@@ -25,6 +28,14 @@ public class Cart extends AbstractModel implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long cartId;
+	
+	@Column(name="brandId",nullable=false)
+	private Long brandId;
+
+	@MapsId("brandId")
+	@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.MERGE)
+	@JoinColumn(name="brandId")
+	private Brand brand;
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "cart",cascade=CascadeType.ALL)
 	private Set<Proposal> proposals = new HashSet<Proposal>(0);
@@ -61,4 +72,21 @@ public class Cart extends AbstractModel implements Serializable {
 		this.status = status;
 	}
 
+	public Long getBrandId() {
+		return brandId;
+	}
+
+	public void setBrandId(Long brandId) {
+		this.brandId = brandId;
+	}
+
+	public Brand getBrand() {
+		return brand;
+	}
+
+	public void setBrand(Brand brand) {
+		this.brand = brand;
+	}
+	
+	
 }

@@ -25,5 +25,4 @@ public class EncryptionUtil {
 		password_verified = BCrypt.checkpw(password_plaintext, stored_hash);
 		return password_verified;
 	}
-
 }
