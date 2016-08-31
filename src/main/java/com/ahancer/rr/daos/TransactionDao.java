@@ -8,5 +8,5 @@ import com.ahancer.rr.models.Transaction;
 public interface TransactionDao extends CrudRepository<Transaction, Long> {
 
 	public Transaction findByTransactionIdAndUserId(@Param("transactionId") Long transactionId,@Param("userId") Long userId);
-
+	public Transaction findByBrandTransactionDocumentCartIdAndUserId(Long cartId, Long userId);
 }

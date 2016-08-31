@@ -66,6 +66,10 @@ public class TransactionService {
 		return transaction;
 	}
 	
+	public Transaction findOneTransactionFromCart(Long cartId,Long brandId){
+		return transactionDao.findByBrandTransactionDocumentCartIdAndUserId(cartId, brandId);
+	}
+	
 	public Transaction findOneTransaction(Long transactioId,Long brandId) throws Exception {
 		return transactionDao.findByTransactionIdAndUserId(transactioId,brandId);
 	}
