@@ -20,6 +20,7 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Cart;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.services.CartService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalMessageService.DeferredProposalMessage;
@@ -140,7 +141,7 @@ public class ProposalController extends AbstractController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}")
-	public Proposal getOneProposal(@PathVariable Long proposalId) throws Exception {
+	public ProposalResponse getOneProposal(@PathVariable Long proposalId) throws Exception {
 		if(this.getUserRequest().getRole() == Role.Brand) {
 			return proposalService.findOneByBrand(proposalId,this.getUserRequest().getBrand().getBrandId());
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {

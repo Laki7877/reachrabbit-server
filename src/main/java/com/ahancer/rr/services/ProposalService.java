@@ -29,6 +29,8 @@ import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.CartResponse;
+import com.ahancer.rr.response.ProposalResponse;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -150,12 +152,65 @@ public class ProposalService {
 		return proposalDao.findByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(brandId, status,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
 	}
 
-	public Proposal findOneByBrand(Long proposalId,Long brandId) {
-		return proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
+	public ProposalResponse findOneByBrand(Long proposalId,Long brandId) throws Exception{
+		Proposal proposal =  proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
+		
+		if(null == proposal){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+		}
+		
+		ProposalResponse response = new ProposalResponse();
+		response.setCampaign(proposal.getCampaign());
+		if(null != proposal.getCart()){
+			response.setCartId(proposal.getCartId());
+			response.setCart(new CartResponse(proposal.getCart()));
+		}
+		response.setCompleteDate(proposal.getCompleteDate());
+		response.setCompletionTime(proposal.getCompletionTime());
+		response.setDueDate(proposal.getDueDate());
+		response.setFee(proposal.getFee());
+		response.setInfluencer(proposal.getInfluencer());
+		response.setInfluencerId(proposal.getInfluencerId());
+		response.setMedia(proposal.getMedia());
+		response.setMessageUpdatedAt(proposal.getMessageUpdatedAt());
+		response.setPrice(proposal.getPrice());
+		response.setProposalId(proposal.getProposalId());
+		response.setStatus(proposal.getStatus());
+		//response.setWallet(proposal.getWallet());
+		//response.setWalletId(proposal.getWalletId());
+		
+		return response;
 	}
 
-	public Proposal findOneByInfluencer(Long proposalId,Long influencerId) {
-		return proposalDao.findByProposalIdAndInfluencerId(proposalId,influencerId);
+	public ProposalResponse findOneByInfluencer(Long proposalId,Long influencerId) throws Exception {
+		Proposal proposal =  proposalDao.findByProposalIdAndInfluencerId(proposalId,influencerId);
+		if(null == proposal){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+		}
+		
+		ProposalResponse response = new ProposalResponse();
+		response.setCampaign(proposal.getCampaign());
+		if(null != proposal.getCart()){
+			response.setCartId(proposal.getCartId());
+			response.setCart(new CartResponse(proposal.getCart()));
+		}
+		response.setCompleteDate(proposal.getCompleteDate());
+		response.setCompletionTime(proposal.getCompletionTime());
+		response.setDueDate(proposal.getDueDate());
+		response.setFee(proposal.getFee());
+		response.setInfluencer(proposal.getInfluencer());
+		response.setInfluencerId(proposal.getInfluencerId());
+		response.setMedia(proposal.getMedia());
+		response.setMessageUpdatedAt(proposal.getMessageUpdatedAt());
+		response.setPrice(proposal.getPrice());
+		response.setProposalId(proposal.getProposalId());
+		response.setStatus(proposal.getStatus());
+		//response.setWallet(proposal.getWallet());
+		//response.setWalletId(proposal.getWalletId());
+		
+		return response;
+		
+		
 	}
 
 	public List<Proposal> findAllActiveByInfluencer(Long influencerId) {
@@ -201,7 +256,7 @@ public class ProposalService {
 	}
 
 	public Proposal updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,Long influencerId, Locale local) throws Exception {
-		Proposal oldProposal = findOneByInfluencer(proposalId,influencerId);
+		Proposal oldProposal = proposalDao.findByProposalIdAndInfluencerId(proposalId,influencerId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
@@ -224,7 +279,7 @@ public class ProposalService {
 	}
 
 	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale local) throws Exception {
-		Proposal oldProposal = findOneByBrand(proposalId,brandId);
+		Proposal oldProposal = proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}

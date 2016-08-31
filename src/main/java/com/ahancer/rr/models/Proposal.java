@@ -93,7 +93,7 @@ public class Proposal extends AbstractModel implements Serializable{
 	
 	@JsonIgnore
 	@MapsId("cartId")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "cartId")
 	private Cart cart;
 	
