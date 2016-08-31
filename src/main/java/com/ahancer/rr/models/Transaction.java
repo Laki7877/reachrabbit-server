@@ -27,7 +27,7 @@ public class Transaction extends AbstractModel implements Serializable {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="transactionSeq")
 	private Long transactionId;
 	
-	@Column(name="transactionNumber",length=6,unique=true,updatable=false,nullable=false)
+	@Column(name="transactionNumber",length=6,unique=true,updatable=false)
 	private String transactionNumber;
 	
 	@Column(name="userId", nullable = false)
