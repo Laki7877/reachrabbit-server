@@ -235,11 +235,9 @@ public class ProposalService {
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
 		Calendar cal = Calendar.getInstance();
-		if(ProposalStatus.Working.equals(oldProposal.getStatus())){
-			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, local));
-			Integer days = oldProposal.getCompletionTime().getDay();
-			cal.add(Calendar.DATE, days);
-			oldProposal.setDueDate(cal.getTime());
+		if(ProposalStatus.Working.equals(oldProposal.getStatus())
+				|| ProposalStatus.Selection.equals(oldProposal.getStatus())){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.invalid.status");
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
 			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, local));
 			oldProposal.setCompleteDate(cal.getTime());

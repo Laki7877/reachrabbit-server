@@ -31,4 +31,13 @@ public class TransactionController extends AbstractController {
 		Transaction transaction = transactionService.findOneTransaction(transactionId,this.getUserRequest().getBrand().getBrandId());
 		return transaction;
 	}
+	
+	
+	@RequestMapping(value="/{transactionId}/confirm",method=RequestMethod.PUT)
+	@Authorization(Role.Admin)
+	public Transaction confirmTransaction(@PathVariable Long transactionId) throws Exception {
+		Transaction transaction = transactionService.confirmTransaction(transactionId);
+		return transaction;
+	}
+	
 }

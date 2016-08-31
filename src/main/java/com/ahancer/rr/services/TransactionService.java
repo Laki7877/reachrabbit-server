@@ -1,18 +1,23 @@
 package com.ahancer.rr.services;
 
+import java.util.Calendar;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.custom.type.CartStatus;
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.TransactionStatus;
 import com.ahancer.rr.daos.BrandTransactionDocumentDao;
 import com.ahancer.rr.daos.CartDao;
+import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.TransactionDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.BrandTransactionDocument;
 import com.ahancer.rr.models.Cart;
+import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.utils.EncodeUtil;
 
@@ -25,6 +30,9 @@ public class TransactionService {
 	
 	@Autowired
 	private CartDao cartDao;
+	
+	@Autowired
+	private ProposalDao proposalDao;
 	
 	@Autowired
 	private BrandTransactionDocumentDao brandTransactionDocumentDao;
@@ -60,6 +68,32 @@ public class TransactionService {
 	
 	public Transaction findOneTransaction(Long transactioId,Long brandId) throws Exception {
 		return transactionDao.findByTransactionIdAndUserId(transactioId,brandId);
+	}
+	
+	public Transaction confirmTransaction(Long transactioId) throws Exception {
+		Transaction transaction = transactionDao.findOne(transactioId);
+		if(null == transaction){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.not.exist");
+		}
+		if(!TransactionStatus.Pending.equals(transaction.getStatus())){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.invalid.status");
+		}
+		//update transaction status
+		transaction.setStatus(TransactionStatus.Complete);
+		transaction = transactionDao.save(transaction);
+		
+		//update proposal status
+		Calendar cal = Calendar.getInstance();
+		for(Proposal proposal : transaction.getBrandTransactionDocument().getCart().getProposals()){
+			proposal.setStatus(ProposalStatus.Working);
+			Integer days = proposal.getCompletionTime().getDay();
+			cal.add(Calendar.DATE, days);
+			proposal.setDueDate(cal.getTime());
+			proposalDao.save(proposal);
+		}
+		
+		
+		return transaction;
 	}
 	
 }
