@@ -23,7 +23,7 @@ public class CartService {
 	private ProposalDao proposalDao;
 	
 	public Cart getInCartByBrand(Long brandId){
-		return cartDao.findByProposalsCampaignBrandId(brandId);
+		return cartDao.findByBrandIdAndStatus(brandId, CartStatus.Incart);
 	}
 	
 	public Cart addProposalToCart(Long proposalId,Long brandId) throws Exception{
