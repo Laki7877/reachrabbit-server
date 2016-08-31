@@ -17,6 +17,7 @@ import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.InfluencerSignUpRequest;
+import com.ahancer.rr.request.ProfileRequest;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.Util;
@@ -36,7 +37,7 @@ public class InfluencerService {
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
 
-	public UserResponse updateInfluencerUser(Long userId, User newUser, String token) throws ResponseException {
+	public UserResponse updateInfluencerUser(Long userId, ProfileRequest newUser, String token) throws ResponseException {
 		User oldUser = userDao.findOne(userId);
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");

@@ -24,7 +24,7 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 	private Long transactionId;
 
 	@MapsId("transactionId")
-	@OneToOne(fetch=FetchType.EAGER)
+	@OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "transactionId")
 	@JsonManagedReference(value="transaction-influencer")
 	private Transaction transaction;

@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity(name="brandTransactionDocument")
 public class BrandTransactionDocument extends AbstractModel implements Serializable {
@@ -26,14 +26,14 @@ public class BrandTransactionDocument extends AbstractModel implements Serializa
 	@MapsId("transactionId")
 	@OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "transactionId")
-	@JsonManagedReference(value="transaction-brand")
+	@JsonBackReference(value="transaction-brand")
 	private Transaction transaction;
 	
 	@Column(name="cartId",nullable=false)
 	private Long cartId;
 
 	@MapsId("cartId")
-	@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
 	@JoinColumn(name="cartId")
 	private Cart cart;
 	

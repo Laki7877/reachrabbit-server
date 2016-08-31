@@ -44,8 +44,6 @@ public class Util {
 	
 	public static UserResponse getUserResponse(User user){
 		UserResponse userResponse = new UserResponse();
-		userResponse.setBank(user.getBank());
-		userResponse.setBankAccount(user.getBankAccount());
 		userResponse.setEmail(user.getEmail());
 		userResponse.setName(user.getName());
 		userResponse.setPhoneNumber(user.getPhoneNumber());

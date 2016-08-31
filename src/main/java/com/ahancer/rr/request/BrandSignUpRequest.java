@@ -1,6 +1,9 @@
 package com.ahancer.rr.request;
 
-public class BrandSignUpRequest {
+import java.io.Serializable;
+
+public class BrandSignUpRequest implements Serializable {
+	private static final long serialVersionUID = -167686710519896452L;
 	private String email;
 	private String name;
 	private String phoneNumber;

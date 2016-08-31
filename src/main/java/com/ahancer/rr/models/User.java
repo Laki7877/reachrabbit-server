@@ -12,13 +12,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.Pattern;
 
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="user")
 public class User extends AbstractModel implements Serializable {
@@ -35,7 +35,7 @@ public class User extends AbstractModel implements Serializable {
 	@Column(name="email",length=100)
 	private String email;
 
-	//@NotNull(message="error.password.require")	
+	@JsonIgnore
 	@Column(name="password",length=255)
 	private String password;
 	
@@ -47,12 +47,12 @@ public class User extends AbstractModel implements Serializable {
 	@JoinColumn(name="profilePictureId")
 	private Resource profilePicture;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="bankId")
-	private Bank bank;
-	
-	@Column(name="bankAccount",length=255)
-	private String bankAccount;
+//	@ManyToOne(fetch=FetchType.EAGER)
+//	@JoinColumn(name="bankId")
+//	private Bank bank;
+//	
+//	@Column(name="bankAccount",length=255)
+//	private String bankAccount;
 	
 	@Column(name="phoneNumber",length=255)
 	@Pattern(regexp="[0-9]*", message="error.phone")
@@ -118,22 +118,6 @@ public class User extends AbstractModel implements Serializable {
 
 	public void setProfilePicture(Resource profilePicture) {
 		this.profilePicture = profilePicture;
-	}
-
-	public Bank getBank() {
-		return bank;
-	}
-
-	public void setBank(Bank bank) {
-		this.bank = bank;
-	}
-
-	public String getBankAccount() {
-		return bankAccount;
-	}
-
-	public void setBankAccount(String bankAccount) {
-		this.bankAccount = bankAccount;
 	}
 
 	public String getPhoneNumber() {

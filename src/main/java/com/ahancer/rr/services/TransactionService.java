@@ -34,7 +34,7 @@ public class TransactionService {
 		if(null == cart){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.cart.not.exist");
 		}
-		
+		//create transaction
 		Transaction transaction = new Transaction();
 		Double sum = cart.getProposals().stream().mapToDouble(o -> o.getPrice()).sum();
 		transaction.setAmount(sum);
@@ -43,16 +43,23 @@ public class TransactionService {
 		transaction = transactionDao.save(transaction);
 		transaction.setTransactionNumber(EncodeUtil.encode(transaction.getTransactionId()));
 		transaction = transactionDao.save(transaction);
-		
+		//create document
 		BrandTransactionDocument document = new BrandTransactionDocument();
 		document.setCartId(cart.getCartId());
 		document.setTransactionId(transaction.getTransactionId());
 		brandTransactionDocumentDao.save(document);
-		
+		//update cart status
 		cart.setStatus(CartStatus.Checkout);
 		cartDao.save(cart);
 		
+//		document.setCart(cart);
+//		document.setTransaction(transaction);
+//		transaction.setBrandTransactionDocument(document);
 		return transaction;
+	}
+	
+	public Transaction findOneTransaction(Long transactioId,Long brandId) throws Exception {
+		return transactionDao.findByTransactionIdAndUserId(transactioId,brandId);
 	}
 	
 }

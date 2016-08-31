@@ -19,6 +19,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 
 import com.ahancer.rr.custom.type.CartStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="cart")
 public class Cart extends AbstractModel implements Serializable {
@@ -32,6 +33,7 @@ public class Cart extends AbstractModel implements Serializable {
 	@Column(name="brandId",nullable=false)
 	private Long brandId;
 
+	@JsonIgnore
 	@MapsId("brandId")
 	@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.MERGE)
 	@JoinColumn(name="brandId")

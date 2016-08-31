@@ -3,7 +3,6 @@ package com.ahancer.rr.response;
 import java.io.Serializable;
 
 import com.ahancer.rr.custom.type.Role;
-import com.ahancer.rr.models.Bank;
 import com.ahancer.rr.models.Resource;
 
 public class UserResponse implements Serializable {
@@ -13,8 +12,6 @@ public class UserResponse implements Serializable {
 	private String name;
 	private String email;
 	private Resource profilePicture;
-	private Bank bank;
-	private String bankAccount;
 	private String phoneNumber;
 	private InfluencerResponse influencer;
 	private BrandResponse brand;
@@ -54,22 +51,6 @@ public class UserResponse implements Serializable {
 
 	public void setProfilePicture(Resource profilePicture) {
 		this.profilePicture = profilePicture;
-	}
-
-	public Bank getBank() {
-		return bank;
-	}
-
-	public void setBank(Bank bank) {
-		this.bank = bank;
-	}
-
-	public String getBankAccount() {
-		return bankAccount;
-	}
-
-	public void setBankAccount(String bankAccount) {
-		this.bankAccount = bankAccount;
 	}
 
 	public String getPhoneNumber() {

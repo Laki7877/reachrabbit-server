@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name="media")
 public class Media implements Serializable{
 
@@ -18,6 +20,7 @@ public class Media implements Serializable{
 	@Column(name="mediaName",length=255)
 	private String mediaName;
 	
+	@JsonIgnore
 	@Column(name="isActive")
 	private boolean isActive;
 
@@ -33,11 +36,11 @@ public class Media implements Serializable{
 		this.mediaId = mediaId;
 	}
 
-	public boolean isActive() {
+	public boolean getIsActive() {
 		return isActive;
 	}
 
-	public void setActive(boolean isActive) {
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 
