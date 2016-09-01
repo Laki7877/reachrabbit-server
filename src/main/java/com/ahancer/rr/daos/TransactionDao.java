@@ -11,4 +11,5 @@ public interface TransactionDao extends CrudRepository<Transaction, Long> {
 	public Transaction findByTransactionIdAndUserId(Long transactionId,Long userId);
 	public Transaction findByBrandTransactionDocumentCartIdAndUserId(Long cartId, Long userId);
 	public Page<Transaction> findByUserId(Long userId,Pageable pageable); 
+	public Transaction findByBrandTransactionDocumentCartId(Long cartId);
 }

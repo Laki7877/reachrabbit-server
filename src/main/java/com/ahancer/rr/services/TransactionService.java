@@ -80,7 +80,13 @@ public class TransactionService {
 	public Page<Transaction> findAllTransactions(Pageable pageable) {
 		return transactionDao.findAll(pageable);
 	}
-	public Transaction findOneTransactionFromCart(Long cartId,Long brandId){
+	
+	public Transaction findOneTransactionFromCartByAdmin(Long cartId){
+		return transactionDao.findByBrandTransactionDocumentCartId(cartId);
+	}
+	
+	
+	public Transaction findOneTransactionFromCartByBrand(Long cartId,Long brandId){
 		return transactionDao.findByBrandTransactionDocumentCartIdAndUserId(cartId, brandId);
 	}
 	

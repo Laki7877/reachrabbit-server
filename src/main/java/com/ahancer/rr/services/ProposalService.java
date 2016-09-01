@@ -21,16 +21,20 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.custom.type.WalletStatus;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
+import com.ahancer.rr.daos.WalletDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.response.CartResponse;
 import com.ahancer.rr.response.ProposalResponse;
+import com.ahancer.rr.response.WalletResponse;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -53,6 +57,9 @@ public class ProposalService {
 	
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private WalletDao walletDao;
 
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
 
@@ -165,6 +172,11 @@ public class ProposalService {
 			response.setCartId(proposal.getCartId());
 			response.setCart(new CartResponse(proposal.getCart()));
 		}
+		if(null != proposal.getWallet()){
+			response.setWalletId(proposal.getWalletId());
+			response.setWallet(new WalletResponse(proposal.getWallet()));
+		}
+		
 		response.setCompleteDate(proposal.getCompleteDate());
 		response.setCompletionTime(proposal.getCompletionTime());
 		response.setDueDate(proposal.getDueDate());
@@ -194,6 +206,11 @@ public class ProposalService {
 			response.setCartId(proposal.getCartId());
 			response.setCart(new CartResponse(proposal.getCart()));
 		}
+		if(null != proposal.getWallet()){
+			response.setWalletId(proposal.getWalletId());
+			response.setWallet(new WalletResponse(proposal.getWallet()));
+		}
+		
 		response.setCompleteDate(proposal.getCompleteDate());
 		response.setCompletionTime(proposal.getCompletionTime());
 		response.setDueDate(proposal.getDueDate());
@@ -283,7 +300,6 @@ public class ProposalService {
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
-		proposalDao.updateProposalStatus(proposalId, status);
 		oldProposal.setStatus(status);
 		
 		ProposalMessage rebotMessage = new ProposalMessage();
@@ -294,8 +310,16 @@ public class ProposalService {
 				|| ProposalStatus.Selection.equals(oldProposal.getStatus())){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.invalid.status");
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
+			//set robot message
 			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, local));
 			oldProposal.setCompleteDate(cal.getTime());
+			
+			//add wallet
+			Wallet wallet = new Wallet();
+			wallet.setInfluencerId(oldProposal.getInfluencerId());
+			wallet.setStatus(WalletStatus.Pending);
+			wallet = walletDao.save(wallet);
+			oldProposal.setWalletId(wallet.getWalletId());
 		}
 		rebotMessage.setProposal(oldProposal);
 		rebotMessage.setUserId(robotService.getRobotUser().getUserId());

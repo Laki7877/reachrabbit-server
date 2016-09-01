@@ -9,7 +9,6 @@ import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.CompletionTime;
 import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.Media;
-import com.ahancer.rr.models.Wallet;
 
 public class ProposalResponse {
 	
@@ -28,7 +27,7 @@ public class ProposalResponse {
 	private Long cartId;
 	private CartResponse cart;
 	private Long walletId;
-	private Wallet wallet;
+	private WalletResponse wallet;
 	
 	public ProposalResponse(){
 		
@@ -154,11 +153,11 @@ public class ProposalResponse {
 		this.walletId = walletId;
 	}
 
-	public Wallet getWallet() {
+	public WalletResponse getWallet() {
 		return wallet;
 	}
 
-	public void setWallet(Wallet wallet) {
+	public void setWallet(WalletResponse wallet) {
 		this.wallet = wallet;
 	}
 	
