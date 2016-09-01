@@ -28,7 +28,7 @@ public class WalletController extends AbstractController {
 		return walletService.findPendingByIndluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	
-	@RequestMapping(value="payout",method=RequestMethod.POST)
+	@RequestMapping(value="/payout",method=RequestMethod.POST)
 	@Authorization(Role.Influencer)
 	public Transaction payoutWallet(@Valid @RequestBody PayoutRequest request) throws Exception {
 		return walletService.payoutWallet(request,this.getUserRequest().getInfluencer().getInfluencerId());
