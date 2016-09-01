@@ -73,6 +73,10 @@ public class TransactionService {
 		return transaction;
 	}
 	
+	public Page<Transaction> findAllByUserTransaction(Long userId,Pageable pageable) {
+		return transactionDao.findByUserId(userId, pageable);
+	}
+	
 	public Page<Transaction> findAllTransactions(Pageable pageable) {
 		return transactionDao.findAll(pageable);
 	}

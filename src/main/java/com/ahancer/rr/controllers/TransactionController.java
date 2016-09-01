@@ -3,6 +3,7 @@ package com.ahancer.rr.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.services.TransactionService;
 
@@ -22,8 +24,14 @@ public class TransactionController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Admin, Role.Influencer, Role.Brand})
-	public Page<Transaction> getAllTransaction(Pageable pageable) {
-		return transactionService.findAllTransactions(pageable);
+	public Page<Transaction> getAllTransaction(Pageable pageable) throws Exception {
+		if(Role.Admin.equals(this.getUserRequest().getRole())){
+			return transactionService.findAllTransactions(pageable);
+		}else if(Role.Brand.equals(this.getUserRequest().getRole())
+				|| Role.Influencer.equals(this.getUserRequest().getRole())){
+			return transactionService.findAllByUserTransaction(this.getUserRequest().getUserId(), pageable);
+		}
+		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
