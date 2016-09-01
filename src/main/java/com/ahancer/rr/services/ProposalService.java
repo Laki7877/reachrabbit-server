@@ -280,6 +280,7 @@ public class ProposalService {
 		oldProposal.setMedia(proposal.getMedia());
 		oldProposal.setCompletionTime(proposal.getCompletionTime());
 		oldProposal.setPrice(proposal.getPrice());
+		oldProposal.setFee(Math.floor(oldProposal.getPrice()*0.18));
 		oldProposal.setDescription(proposal.getDescription());
 		//Insert robot message
 		ProposalMessage rebotMessage = new ProposalMessage();
