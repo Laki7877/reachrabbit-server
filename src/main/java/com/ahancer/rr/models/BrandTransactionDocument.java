@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
 
 import com.ahancer.rr.custom.type.DocumentType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -32,7 +31,7 @@ public class BrandTransactionDocument extends AbstractModel implements Serializa
 	private Long transactionId;
 
 	@MapsId("transactionId")
-	@OneToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "transactionId")
 	@JsonBackReference(value="transaction-brand")
 	private Transaction transaction;
