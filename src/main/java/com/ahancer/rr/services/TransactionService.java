@@ -137,6 +137,7 @@ public class TransactionService {
 			Integer days = proposal.getCompletionTime().getDay();
 			cal.add(Calendar.DATE, days);
 			proposal.setDueDate(cal.getTime());
+			message.setProposal(proposal);
 			proposalMessageService.createProposalMessage(proposal.getProposalId()
 					, message
 					, robotUser.getUserId()
