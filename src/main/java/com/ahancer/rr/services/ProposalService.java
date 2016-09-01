@@ -260,6 +260,7 @@ public class ProposalService {
 		proposal.setInfluencerId(influencerId);
 		proposal.setMessageUpdatedAt(new Date());
 		proposal.setStatus(ProposalStatus.Selection);
+		proposal.setFee(Math.floor(proposal.getPrice()*0.18));
 		proposal = proposalDao.save(proposal);
 		//Insert first message
 		ProposalMessage firstMessage = new ProposalMessage();
