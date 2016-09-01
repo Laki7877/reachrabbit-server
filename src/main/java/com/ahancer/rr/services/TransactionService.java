@@ -124,6 +124,7 @@ public class TransactionService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.expired");
 		}
 		//update transaction status
+		transaction.setCompletedAt(new Date());
 		transaction.setStatus(TransactionStatus.Complete);
 		transaction = transactionDao.save(transaction);
 		

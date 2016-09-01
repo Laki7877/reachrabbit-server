@@ -66,6 +66,10 @@ public class Transaction implements Serializable {
 	@Column(name = "expiredAt",updatable=false)
 	private Date expiredAt;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "completedAt")
+	private Date completedAt;
+	
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
 	@PrimaryKeyJoinColumn
 	@JsonManagedReference(value="transaction-brand")
@@ -209,6 +213,14 @@ public class Transaction implements Serializable {
 
 	public void setUpdatedBy(Long updatedBy) {
 		this.updatedBy = updatedBy;
+	}
+	
+	public Date getCompletedAt() {
+		return completedAt;
+	}
+
+	public void setCompletedAt(Date completedAt) {
+		this.completedAt = completedAt;
 	}
 
 	@PrePersist
