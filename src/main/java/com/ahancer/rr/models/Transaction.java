@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
@@ -29,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name="transaction")
 @SequenceGenerator(name="transactionSeq", initialValue=10000000, allocationSize=1)
-public class Transaction extends AbstractModel implements Serializable {
+public class Transaction implements Serializable {
 	
 	private static final long serialVersionUID = 7564704836479151058L;
 	
@@ -73,6 +75,23 @@ public class Transaction extends AbstractModel implements Serializable {
 	@PrimaryKeyJoinColumn
 	@JsonBackReference(value="transaction-influencer")
 	private InfluencerTransactionDocument influencerTransactionDocument;
+	
+	@JsonIgnore
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "createdAt",updatable=false)
+	private Date createdAt;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "updatedAt")
+	private Date updatedAt;
+	
+	@JsonIgnore
+	@Column(name="createdBy")
+	private Long createdBy;
+	
+	@JsonIgnore
+	@Column(name="updatedBy")
+	private Long updatedBy;
 	
 	public Transaction(){
 		
@@ -156,6 +175,16 @@ public class Transaction extends AbstractModel implements Serializable {
 
 	public void setType(TransactionType type) {
 		this.type = type;
+	}
+	
+	@PrePersist
+	protected void onCreate() {
+		updatedAt = createdAt = new Date();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedAt = new Date();
 	}
 	
 }
