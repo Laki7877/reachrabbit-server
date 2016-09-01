@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.custom.type.CartStatus;
+import com.ahancer.rr.custom.type.DocumentType;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.TransactionStatus;
 import com.ahancer.rr.custom.type.TransactionType;
@@ -79,6 +80,8 @@ public class TransactionService {
 		BrandTransactionDocument document = new BrandTransactionDocument();
 		document.setCartId(cart.getCartId());
 		document.setTransactionId(transaction.getTransactionId());
+		document.setAmount(sum);
+		document.setType(DocumentType.Base);
 		brandTransactionDocumentDao.save(document);
 		//update cart status
 		cart.setStatus(CartStatus.Checkout);
