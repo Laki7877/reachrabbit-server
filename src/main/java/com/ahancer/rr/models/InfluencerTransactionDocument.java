@@ -41,7 +41,7 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 	private Long walletId;
 
 	@MapsId("walletId")
-	@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
 	@JoinColumn(name="walletId")
 	private Wallet wallet;
 	
