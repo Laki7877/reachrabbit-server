@@ -1,8 +1,11 @@
 package com.ahancer.rr.services;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -21,7 +24,9 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.BrandTransactionDocument;
 import com.ahancer.rr.models.Cart;
 import com.ahancer.rr.models.Proposal;
+import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.Transaction;
+import com.ahancer.rr.models.User;
 import com.ahancer.rr.utils.EncodeUtil;
 
 @Service
@@ -39,6 +44,18 @@ public class TransactionService {
 	
 	@Autowired
 	private BrandTransactionDocumentDao brandTransactionDocumentDao;
+	
+	@Autowired
+	private ProposalMessageService proposalMessageService;
+	
+	@Autowired
+	private RobotService robotService;
+	
+	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
+	private ProposalService proposalService;
 	
 	public Transaction createTransactionByBrand(Long brandId) throws Exception {
 		Cart cart = cartDao.findByBrandIdAndStatus(brandId, CartStatus.Incart);
@@ -94,7 +111,7 @@ public class TransactionService {
 		return transactionDao.findByTransactionIdAndUserId(transactioId,brandId);
 	}
 	
-	public Transaction confirmTransaction(Long transactioId) throws Exception {
+	public Transaction confirmTransaction(Long transactioId, Locale local) throws Exception {
 		Transaction transaction = transactionDao.findOne(transactioId);
 		if(null == transaction){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.not.exist");
@@ -102,20 +119,33 @@ public class TransactionService {
 		if(!TransactionStatus.Pending.equals(transaction.getStatus())){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.invalid.status");
 		}
+		Date now = new Date();
+		if(now.after(transaction.getExpiredAt())){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.expired");
+		}
 		//update transaction status
 		transaction.setStatus(TransactionStatus.Complete);
 		transaction = transactionDao.save(transaction);
 		
 		//update proposal status
 		Calendar cal = Calendar.getInstance();
+		ProposalMessage message = new ProposalMessage();
+		message.setMessage(messageSource.getMessage("robot.campaign.message", null, local));
+		User robotUser = robotService.getRobotUser();
 		for(Proposal proposal : transaction.getBrandTransactionDocument().getCart().getProposals()){
 			proposal.setStatus(ProposalStatus.Working);
 			Integer days = proposal.getCompletionTime().getDay();
 			cal.add(Calendar.DATE, days);
 			proposal.setDueDate(cal.getTime());
+			proposalMessageService.createProposalMessage(proposal.getProposalId()
+					, message
+					, robotUser.getUserId()
+					, robotUser.getRole());
+			proposalService.processInboxPollingByOne(proposal.getInfluencerId());
+			proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
+			proposalMessageService.processMessagePolling(proposal.getProposalId());
 			proposalDao.save(proposal);
 		}
-		
 		
 		return transaction;
 	}

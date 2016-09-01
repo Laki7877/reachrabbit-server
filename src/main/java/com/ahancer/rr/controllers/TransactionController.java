@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,8 +52,8 @@ public class TransactionController extends AbstractController {
 	
 	@RequestMapping(value="/{transactionId}/confirm",method=RequestMethod.PUT)
 	@Authorization(Role.Admin)
-	public Transaction confirmTransaction(@PathVariable Long transactionId) throws Exception {
-		Transaction transaction = transactionService.confirmTransaction(transactionId);
+	public Transaction confirmTransaction(@PathVariable Long transactionId, Locale local) throws Exception {
+		Transaction transaction = transactionService.confirmTransaction(transactionId,local);
 		return transaction;
 	}
 	
