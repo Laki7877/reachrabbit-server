@@ -93,12 +93,12 @@ public class TransactionService {
 		return transaction;
 	}
 	
-	public Page<Transaction> findAllByUserTransaction(Long userId,Pageable pageable) {
-		return transactionDao.findByUserId(userId, pageable);
+	public Page<Transaction> findAllByUserTransaction(TransactionType type,Long userId,Pageable pageable) {
+		return transactionDao.findByTypeAndUserId(type,userId, pageable);
 	}
 	
-	public Page<Transaction> findAllTransactions(Pageable pageable) {
-		return transactionDao.findAll(pageable);
+	public Page<Transaction> findAllTransactions(TransactionType type,Pageable pageable) {
+		return transactionDao.findByType(type,pageable);
 	}
 	
 	public Transaction findOneTransactionFromCartByAdmin(Long cartId){
