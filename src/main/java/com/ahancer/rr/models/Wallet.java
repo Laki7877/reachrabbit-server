@@ -37,7 +37,7 @@ public class Wallet extends AbstractModel implements Serializable {
 	@JoinColumn(name="influencerId")
 	private Influencer influencer;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "cart",cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "wallet",cascade=CascadeType.ALL)
 	private Set<Proposal> proposals = new HashSet<Proposal>(0);
 	
 	@Column(name="status", length=20)
