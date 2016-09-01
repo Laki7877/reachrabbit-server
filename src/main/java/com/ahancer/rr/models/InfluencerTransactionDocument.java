@@ -17,7 +17,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 import com.ahancer.rr.custom.type.DocumentType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity(name="influencerTransactionDocument")
 public class InfluencerTransactionDocument extends AbstractModel implements Serializable {
@@ -34,7 +34,7 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 	@MapsId("transactionId")
 	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "transactionId")
-	@JsonManagedReference(value="transaction-influencer")
+	@JsonBackReference(value="transaction-influencer")
 	private Transaction transaction;
 	
 	@Column(name="walletId",nullable=false)

@@ -28,7 +28,6 @@ import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.TransactionStatus;
 import com.ahancer.rr.custom.type.TransactionType;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -80,7 +79,7 @@ public class Transaction implements Serializable {
 	
 	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
 	@PrimaryKeyJoinColumn
-	@JsonBackReference(value="transaction-influencer")
+	@JsonManagedReference(value="transaction-influencer")
 	private Set<InfluencerTransactionDocument> influencerTransactionDocument = new HashSet<InfluencerTransactionDocument>(0);
 	
 	@JsonIgnore
