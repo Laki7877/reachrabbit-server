@@ -1,6 +1,7 @@
 package com.ahancer.rr.models;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,8 +18,11 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.TransactionStatus;
+import com.ahancer.rr.custom.type.TransactionType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -52,6 +56,13 @@ public class Transaction extends AbstractModel implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TransactionStatus status;
 	
+	@Column(name="type",length=20)
+	@Enumerated(EnumType.STRING)
+	private TransactionType type;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "expiredAt",updatable=false)
+	private Date expiredAt;
 	
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
 	@PrimaryKeyJoinColumn
@@ -129,6 +140,22 @@ public class Transaction extends AbstractModel implements Serializable {
 
 	public void setInfluencerTransactionDocument(InfluencerTransactionDocument influencerTransactionDocument) {
 		this.influencerTransactionDocument = influencerTransactionDocument;
+	}
+
+	public Date getExpiredAt() {
+		return expiredAt;
+	}
+
+	public void setExpiredAt(Date expiredAt) {
+		this.expiredAt = expiredAt;
+	}
+
+	public TransactionType getType() {
+		return type;
+	}
+
+	public void setType(TransactionType type) {
+		this.type = type;
 	}
 	
 }

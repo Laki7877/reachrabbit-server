@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ahancer.rr.custom.type.CartStatus;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.TransactionStatus;
+import com.ahancer.rr.custom.type.TransactionType;
 import com.ahancer.rr.daos.BrandTransactionDocumentDao;
 import com.ahancer.rr.daos.CartDao;
 import com.ahancer.rr.daos.ProposalDao;
@@ -51,6 +52,10 @@ public class TransactionService {
 		transaction = transactionDao.save(transaction);
 		transaction.setTransactionNumber(EncodeUtil.encode(transaction.getTransactionId()));
 		transaction = transactionDao.save(transaction);
+		transaction.setType(TransactionType.Payin);
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DATE, 5);
+		transaction.setExpiredAt(cal.getTime());
 		//create document
 		BrandTransactionDocument document = new BrandTransactionDocument();
 		document.setCartId(cart.getCartId());
