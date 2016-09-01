@@ -130,7 +130,7 @@ public class TransactionService {
 		//update proposal status
 		Calendar cal = Calendar.getInstance();
 		ProposalMessage message = new ProposalMessage();
-		message.setMessage(messageSource.getMessage("robot.campaign.message", null, local));
+		message.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, local));
 		User robotUser = robotService.getRobotUser();
 		for(Proposal proposal : transaction.getBrandTransactionDocument().getCart().getProposals()){
 			proposal.setStatus(ProposalStatus.Working);
