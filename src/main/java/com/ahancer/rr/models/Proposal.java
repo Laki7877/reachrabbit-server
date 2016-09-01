@@ -24,10 +24,13 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="proposal")
 public class Proposal extends AbstractModel implements Serializable{
 	
@@ -91,7 +94,6 @@ public class Proposal extends AbstractModel implements Serializable{
 	@Column(name="cartId")
 	private Long cartId;
 	
-	@JsonIgnore
 	@MapsId("cartId")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "cartId")
@@ -100,7 +102,6 @@ public class Proposal extends AbstractModel implements Serializable{
 	@Column(name="walletId")
 	private Long walletId;
 	
-	@JsonIgnore
 	@MapsId("walletId")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "walletId")

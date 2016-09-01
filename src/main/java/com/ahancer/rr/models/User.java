@@ -18,8 +18,11 @@ import javax.validation.constraints.Pattern;
 
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="user")
 public class User extends AbstractModel implements Serializable {
 	
@@ -61,12 +64,10 @@ public class User extends AbstractModel implements Serializable {
 
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
-	@JsonBackReference(value="user-brand")
 	private Brand brand;
 	
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
-	@JsonBackReference(value="user-influencer")
 	private Influencer influencer;
 
 	public User() {

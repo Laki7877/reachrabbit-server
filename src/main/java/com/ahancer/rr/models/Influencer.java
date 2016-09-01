@@ -23,8 +23,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.Gender;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="influencer")
 public class Influencer extends AbstractModel implements Serializable{
 
@@ -37,7 +40,6 @@ public class Influencer extends AbstractModel implements Serializable{
 	@MapsId("influencerId")
 	@OneToOne
     @JoinColumn(name = "influencerId")
-	@JsonManagedReference(value="user-influencer")
 	private User user;
 
 	@Enumerated(EnumType.STRING)

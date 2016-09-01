@@ -24,7 +24,11 @@ public class UserService {
 	private ProposalDao proposalDao;
 	
 	
-	public UserResponse findUserById(Long requestUserId,Long userId, Role userRole) throws Exception {
+	public User findUserById(Long userId) {
+		return userDao.findOne(userId);
+	}
+	
+	public User findUserById(Long requestUserId, Long userId, Role userRole) throws Exception {
 		Long proposalCount = 0L;
 		if(Role.Brand.equals(userRole)){
 			proposalCount = proposalDao.countByCampaignBrandIdAndInfluencerId(requestUserId, userId);
@@ -41,7 +45,7 @@ public class UserService {
 				|| userRole.equals(user.getRole())){
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
 		}
-		return Util.getUserResponse(user);
+		return user;
 	}
 	
 

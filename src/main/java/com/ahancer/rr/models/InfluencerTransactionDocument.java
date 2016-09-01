@@ -12,8 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="influencerTransactionDocument")
 public class InfluencerTransactionDocument extends AbstractModel implements Serializable {
 

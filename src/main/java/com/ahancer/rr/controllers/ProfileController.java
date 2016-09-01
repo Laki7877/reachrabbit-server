@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.ProfileRequest;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.services.BrandService;
@@ -29,8 +30,8 @@ public class ProfileController extends AbstractController{
 	private UserService userService;
 
 	@RequestMapping(method=RequestMethod.GET)
-	public UserResponse getMyProfile() {
-		return this.getUserRequest();
+	public User getMyProfile() {
+		return userService.findUserById(this.getUserRequest().getUserId());
 	}
 
 	@RequestMapping(method=RequestMethod.PUT)
@@ -45,7 +46,7 @@ public class ProfileController extends AbstractController{
 	}
 
 	@RequestMapping(value="/{userId}",method=RequestMethod.GET)
-	public UserResponse getProfile(@PathVariable Long userId) throws Exception {
+	public User getProfile(@PathVariable Long userId) throws Exception {
 		return userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
 	}
 

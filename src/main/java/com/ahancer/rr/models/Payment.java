@@ -14,7 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import com.ahancer.rr.custom.type.PaymentStatus;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="payment")
 public class Payment extends AbstractModel implements Serializable{
 	

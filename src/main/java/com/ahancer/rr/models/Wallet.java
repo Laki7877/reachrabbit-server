@@ -19,7 +19,10 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 
 import com.ahancer.rr.custom.type.WalletStatus;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="wallet")
 public class Wallet extends AbstractModel implements Serializable {
 	

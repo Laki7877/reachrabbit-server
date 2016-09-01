@@ -27,8 +27,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
-
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="campaign")
 public class Campaign extends AbstractModel implements Serializable {
 

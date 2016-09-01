@@ -10,8 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="brand")
 public class Brand extends AbstractModel implements Serializable {
 
@@ -24,7 +27,6 @@ public class Brand extends AbstractModel implements Serializable {
 	@MapsId("brandId")
 	@OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "brandId")
-	@JsonManagedReference(value="user-brand")
 	private User user;
 
 	@Column(name="brandName",length=255)

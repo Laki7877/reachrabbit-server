@@ -19,8 +19,11 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 
 import com.ahancer.rr.custom.type.CartStatus;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="cart")
 public class Cart extends AbstractModel implements Serializable {
 	

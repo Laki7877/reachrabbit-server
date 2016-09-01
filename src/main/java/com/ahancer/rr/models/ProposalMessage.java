@@ -22,9 +22,11 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
-
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="proposalMessage")
 public class ProposalMessage implements Serializable  {
 

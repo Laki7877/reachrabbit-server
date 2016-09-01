@@ -13,7 +13,10 @@ import javax.persistence.Id;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.ahancer.rr.custom.type.ResourceType;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="resource")
 @Configurable
 public class Resource extends AbstractModel implements Serializable{

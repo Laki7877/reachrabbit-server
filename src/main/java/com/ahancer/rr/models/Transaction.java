@@ -20,9 +20,12 @@ import javax.persistence.SequenceGenerator;
 
 import com.ahancer.rr.custom.type.TransactionStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.voodoodyne.jackson.jsog.JSOGGenerator;
 
+@JsonIdentityInfo(generator=JSOGGenerator.class)
 @Entity(name="transaction")
 @SequenceGenerator(name="transactionSeq", initialValue=10000000, allocationSize=1)
 public class Transaction extends AbstractModel implements Serializable {
