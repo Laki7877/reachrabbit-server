@@ -2,6 +2,8 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -75,10 +78,10 @@ public class Transaction implements Serializable {
 	@JsonManagedReference(value="transaction-brand")
 	private BrandTransactionDocument brandTransactionDocument;
 	
-	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
 	@PrimaryKeyJoinColumn
 	@JsonBackReference(value="transaction-influencer")
-	private InfluencerTransactionDocument influencerTransactionDocument;
+	private Set<InfluencerTransactionDocument> influencerTransactionDocument = new HashSet<InfluencerTransactionDocument>(0);
 	
 	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
@@ -156,12 +159,12 @@ public class Transaction implements Serializable {
 	public void setBrandTransactionDocument(BrandTransactionDocument brandTransactionDocument) {
 		this.brandTransactionDocument = brandTransactionDocument;
 	}
-
-	public InfluencerTransactionDocument getInfluencerTransactionDocument() {
+	
+	public Set<InfluencerTransactionDocument> getInfluencerTransactionDocument() {
 		return influencerTransactionDocument;
 	}
 
-	public void setInfluencerTransactionDocument(InfluencerTransactionDocument influencerTransactionDocument) {
+	public void setInfluencerTransactionDocument(Set<InfluencerTransactionDocument> influencerTransactionDocument) {
 		this.influencerTransactionDocument = influencerTransactionDocument;
 	}
 
