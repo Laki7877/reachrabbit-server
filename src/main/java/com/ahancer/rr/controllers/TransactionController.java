@@ -1,6 +1,8 @@
 package com.ahancer.rr.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +19,12 @@ public class TransactionController extends AbstractController {
 	
 	@Autowired
 	private TransactionService transactionService;
+	
+	@RequestMapping(method=RequestMethod.GET)
+	@Authorization({Role.Admin, Role.Influencer, Role.Brand})
+	public Page<Transaction> getAllTransaction(PageRequest pageable) {
+		return transactionService.findAllTransactions(pageable);
+	}
 	
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
