@@ -313,12 +313,14 @@ public class ProposalService {
 			//set robot message
 			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, local));
 			oldProposal.setCompleteDate(cal.getTime());
-			
 			//add wallet
-			Wallet wallet = new Wallet();
-			wallet.setInfluencerId(oldProposal.getInfluencerId());
-			wallet.setStatus(WalletStatus.Pending);
-			wallet = walletDao.save(wallet);
+			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.Pending);
+			if(null == wallet){
+				wallet = new Wallet();
+				wallet.setStatus(WalletStatus.Pending);
+				wallet.setInfluencerId(oldProposal.getInfluencerId());
+				wallet = walletDao.save(wallet);
+			}
 			oldProposal.setWalletId(wallet.getWalletId());
 		}
 		rebotMessage.setProposal(oldProposal);
