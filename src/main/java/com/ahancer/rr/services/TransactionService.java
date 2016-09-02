@@ -26,6 +26,7 @@ import com.ahancer.rr.models.BrandTransactionDocument;
 import com.ahancer.rr.models.Cart;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.utils.EncodeUtil;
@@ -158,6 +159,29 @@ public class TransactionService {
 			proposalMessageService.processMessagePolling(proposal.getProposalId());
 			proposalDao.save(proposal);
 		}
+		
+		return transaction;
+	}
+	
+	
+	public Transaction payTransaction(Long transactioId,  Resource resource) throws Exception {
+		Transaction transaction = transactionDao.findOne(transactioId);
+		if(null == transaction){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.not.exist");
+		}
+		if(!TransactionStatus.Pending.equals(transaction.getStatus())){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.invalid.status");
+		}
+		Date now = new Date();
+		if(now.after(transaction.getExpiredAt())){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.expired");
+		}
+		//update transaction status
+		transaction.setCompletedAt(new Date());
+		transaction.setStatus(TransactionStatus.Complete);
+		transaction.setSlip(resource);
+		transaction = transactionDao.save(transaction);
+		
 		
 		return transaction;
 	}

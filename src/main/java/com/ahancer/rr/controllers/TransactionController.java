@@ -2,11 +2,14 @@ package com.ahancer.rr.controllers;
 
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +19,7 @@ import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.custom.type.TransactionType;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.services.TransactionService;
 
@@ -56,6 +60,13 @@ public class TransactionController extends AbstractController {
 	@Authorization(Role.Admin)
 	public Transaction confirmTransaction(@PathVariable Long transactionId, Locale local) throws Exception {
 		Transaction transaction = transactionService.confirmTransaction(transactionId,local);
+		return transaction;
+	}
+	
+	@RequestMapping(value="/{transactionId}/paid",method=RequestMethod.PUT)
+	@Authorization(Role.Admin)
+	public Transaction payTransaction(@PathVariable Long transactionId,@Valid @RequestBody Resource resource, Locale local) throws Exception {
+		Transaction transaction = transactionService.payTransaction(transactionId,resource);
 		return transaction;
 	}
 	

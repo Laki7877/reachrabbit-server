@@ -82,6 +82,10 @@ public class Transaction implements Serializable {
 	@JsonManagedReference(value="transaction-influencer")
 	private Set<InfluencerTransactionDocument> influencerTransactionDocument = new HashSet<InfluencerTransactionDocument>(0);
 	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="slipId")
+	private Resource slip;
+	
 	@JsonIgnore
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "createdAt",updatable=false)
@@ -225,6 +229,14 @@ public class Transaction implements Serializable {
 		this.completedAt = completedAt;
 	}
 
+	public Resource getSlip() {
+		return slip;
+	}
+
+	public void setSlip(Resource slip) {
+		this.slip = slip;
+	}
+
 	@PrePersist
 	protected void onCreate() {
 		updatedAt = createdAt = new Date();
@@ -234,5 +246,6 @@ public class Transaction implements Serializable {
 	protected void onUpdate() {
 		updatedAt = new Date();
 	}
+	
 	
 }

@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
 
 import com.ahancer.rr.custom.type.DocumentType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -45,9 +44,6 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 	@JoinColumn(name="walletId")
 	private Wallet wallet;
 	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="slipId")
-	private Resource slip;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="bankId")
@@ -100,14 +96,6 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 
 	public void setWallet(Wallet wallet) {
 		this.wallet = wallet;
-	}
-
-	public Resource getSlip() {
-		return slip;
-	}
-
-	public void setSlip(Resource slip) {
-		this.slip = slip;
 	}
 
 	public Bank getBank() {
