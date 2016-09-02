@@ -105,6 +105,13 @@ public class TransactionService {
 		return transactionDao.findByBrandTransactionDocumentCartId(cartId);
 	}
 	
+	public Transaction findOneTransactionFromWalletByAdmin(Long walletId){
+		return transactionDao.findByBrandTransactionDocumentCartId(walletId);
+	}
+	
+	public Transaction findOneTransactionFromWalletByInfluencer(Long walletId,Long influencerId){
+		return transactionDao.findByInfluencerTransactionDocumentWalletIdAndUserId(walletId, influencerId);
+	}
 	
 	public Transaction findOneTransactionFromCartByBrand(Long cartId,Long brandId){
 		return transactionDao.findByBrandTransactionDocumentCartIdAndUserId(cartId, brandId);
