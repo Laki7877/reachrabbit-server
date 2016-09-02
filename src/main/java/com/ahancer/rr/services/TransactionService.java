@@ -118,9 +118,14 @@ public class TransactionService {
 		return transactionDao.findByBrandTransactionDocumentCartIdAndUserId(cartId, brandId);
 	}
 	
-	public Transaction findOneTransaction(Long transactioId,Long brandId) throws Exception {
-		return transactionDao.findByTransactionIdAndUserId(transactioId,brandId);
+	public Transaction findOneTransaction(Long transactionId,Long uerId){
+		return transactionDao.findByTransactionIdAndUserId(transactionId,uerId);
 	}
+	
+	public Transaction findOneTransactionByAdmin(Long transactionId){
+		return transactionDao.findOne(transactionId);
+	}
+
 	
 	public Transaction confirmTransaction(Long transactioId, Locale local) throws Exception {
 		Transaction transaction = transactionDao.findOne(transactioId);

@@ -52,8 +52,15 @@ public class TransactionController extends AbstractController {
 	@RequestMapping(value="/{transactionId}",method=RequestMethod.GET)
 	@Authorization(Role.Brand)
 	public Transaction getTransaction(@PathVariable Long transactionId) throws Exception {
-		Transaction transaction = transactionService.findOneTransaction(transactionId,this.getUserRequest().getBrand().getBrandId());
-		return transaction;
+		
+		if(Role.Brand.equals(this.getUserRequest().getRole())){
+			return transactionService.findOneTransaction(transactionId,this.getUserRequest().getBrand().getBrandId());
+		}else if(Role.Influencer.equals(this.getUserRequest().getRole())){
+			return transactionService.findOneTransaction(transactionId,this.getUserRequest().getInfluencer().getInfluencerId());
+		}else if(Role.Admin.equals(this.getUserRequest().getRole())){
+			return transactionService.findOneTransactionByAdmin(transactionId);
+		}
+		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
 	}
 	
 	@RequestMapping(value="/{transactionId}/confirm",method=RequestMethod.PUT)
