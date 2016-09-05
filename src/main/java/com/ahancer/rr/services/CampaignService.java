@@ -77,25 +77,22 @@ public class CampaignService {
 	private void validateCampaign(Campaign campaign) throws Exception {
 		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			if(StringUtils.isEmpty(campaign.getTitle())) {
-				
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.title.require");
 			}
 			if(StringUtils.isEmpty(campaign.getDescription())){
-				
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.description.require");
 			}
 			if(null == campaign.getMainResource() || null == campaign.getMainResource().getResourceId()){
-				
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.main.resource.require");
 			}
 			if(null == campaign.getCategory() || null == campaign.getCategory().getCategoryId()){
-				
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.category.require");
 			}
 			if(null == campaign.getMedia() || campaign.getMedia().size() == 0){
-				
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.media.require");
 			}
 			if(null == campaign.getBudget() || null == campaign.getBudget().getBudgetId()){
-				
-			}
-			if(null == campaign.getProposalDeadline()){
-				
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.budget.require");
 			}
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DATE, 1);
@@ -104,7 +101,7 @@ public class CampaignService {
 			cal.set(Calendar.SECOND,0);
 			cal.set(Calendar.MILLISECOND,0);
 			if(null == campaign.getProposalDeadline() || cal.getTime().before(campaign.getProposalDeadline())){
-				
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.deadline.require");
 			}
 		}
 	}
