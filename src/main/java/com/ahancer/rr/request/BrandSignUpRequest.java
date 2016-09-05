@@ -22,7 +22,6 @@ public class BrandSignUpRequest implements Serializable {
 	
 	@NotNull(message="error.phonenumber.require")
 	@Size(min=1,max=20,message="error.phonenumber.length")
-	@Pattern(regexp="(^$|[0-9]{10})",message="error.phonenumber.number.only")
 	private String phoneNumber;
 	
 	@NotNull(message="error.password.require")
