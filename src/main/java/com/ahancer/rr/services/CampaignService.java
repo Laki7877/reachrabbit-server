@@ -95,7 +95,6 @@ public class CampaignService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.budget.require");
 			}
 			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.DATE, 1);
 			cal.set(Calendar.HOUR, 0);
 			cal.set(Calendar.MINUTE,0);
 			cal.set(Calendar.SECOND,0);
