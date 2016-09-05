@@ -2,13 +2,37 @@ package com.ahancer.rr.request;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+
 public class BrandSignUpRequest implements Serializable {
 	private static final long serialVersionUID = -167686710519896452L;
+	
+	@NotNull(message="error.email.require")
+	@Size(min=3,max=100,message="error.email.length")
+	@Email(message="error.email.invalid")
 	private String email;
+	
+	@NotNull(message="error.name.require")
+	@Size(min=1,max=100,message="error.name.length")
 	private String name;
+	
+	@NotNull(message="error.phonenumber.require")
+	@Size(min=1,max=20,message="error.phonenumber.length")
+	@Pattern(regexp="[\\d]{20}",message="error.phonenumber.number.only")
 	private String phoneNumber;
+	
+	@NotNull(message="error.password.require")
+	@Size(min=8,max=100,message="error.password.length")
 	private String password;
+	
+	@NotNull(message="error.brand.name.require")
+	@Size(min=1,max=100,message="error.brand.name.length")
 	private String brandName;
+	
 	public BrandSignUpRequest(String email, String name, String brandName, String phoneNumber, String password) {
 		super();
 		this.email = email;
