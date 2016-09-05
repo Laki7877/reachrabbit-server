@@ -72,7 +72,7 @@ public class TransactionService {
 		transaction.setUserId(brandId);
 		transaction.setType(TransactionType.Payin);
 		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DATE, 5);
+		cal.add(Calendar.DATE, 5);
 		transaction.setExpiredAt(cal.getTime());
 		transaction = transactionDao.save(transaction);
 		transaction.setTransactionNumber(EncodeUtil.encode(transaction.getTransactionId()));
