@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Size;
+
 import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.models.Budget;
 import com.ahancer.rr.models.CampaignResource;
@@ -14,17 +16,33 @@ import com.ahancer.rr.models.Resource;
 
 public class CampaignRequest implements Serializable {
 	private static final long serialVersionUID = 1164567255480906846L;
+	
 	private Budget budget;
+	
+	@Size(max=200,message="error.campaign.website.length")
 	private String website;
+	
 	private Date proposalDeadline;
+	
 	private CampaignStatus status;
+	
+	@Size(max=5000,message="error.campaign.website.length")
 	private String description;
+	
+	@Size(max=100,message="error.campaign.title.length")
 	private String title;
+	
+	@Size(max=100,message="error.campaign.keyword.length=")
 	private String keyword;
+	
 	private Category category;
+	
 	private Set<Media> media = new HashSet<Media>(0);
+	
 	private Resource mainResource;
+	
 	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
+	
 	public CampaignRequest() {
 	}
 	public CampaignRequest(Budget budget, String website, Date proposalDeadline,

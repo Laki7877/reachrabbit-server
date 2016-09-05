@@ -325,9 +325,11 @@ public class ProposalService {
 			}
 			oldProposal.setWalletId(wallet.getWalletId());
 		}
+		User robotUser = robotService.getRobotUser();
 		rebotMessage.setProposal(oldProposal);
-		rebotMessage.setUserId(robotService.getRobotUser().getUserId());
+		rebotMessage.setUserId(robotUser.getUserId());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
+		rebotMessage.setUser(robotUser);
 		oldProposal = proposalDao.save(oldProposal);
 		return oldProposal;
 	}

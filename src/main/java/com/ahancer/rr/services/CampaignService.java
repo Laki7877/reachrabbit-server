@@ -1,10 +1,12 @@
 package com.ahancer.rr.services;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -46,7 +48,7 @@ public class CampaignService {
 	@Autowired
 	private MessageSource messageSource;
 
-	public Campaign createCampaignByBrand(CampaignRequest request, Long brandId) {
+	public Campaign createCampaignByBrand(CampaignRequest request, Long brandId) throws Exception {
 		//Setup campaign
 		Campaign campaign = new Campaign();
 		campaign.setBrandId(brandId);
@@ -68,9 +70,44 @@ public class CampaignService {
 					, resource.getResource().getResourceId()
 					, resource.getPosition());
 		}
+		validateCampaign(campaign);
 		return campaign;
 	}
 	
+	private void validateCampaign(Campaign campaign) throws Exception {
+		if(CampaignStatus.Open.equals(campaign.getStatus())){
+			if(StringUtils.isEmpty(campaign.getTitle())) {
+				
+			}
+			if(StringUtils.isEmpty(campaign.getDescription())){
+				
+			}
+			if(null == campaign.getMainResource() || null == campaign.getMainResource().getResourceId()){
+				
+			}
+			if(null == campaign.getCategory() || null == campaign.getCategory().getCategoryId()){
+				
+			}
+			if(null == campaign.getMedia() || campaign.getMedia().size() == 0){
+				
+			}
+			if(null == campaign.getBudget() || null == campaign.getBudget().getBudgetId()){
+				
+			}
+			if(null == campaign.getProposalDeadline()){
+				
+			}
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DATE, 1);
+			cal.set(Calendar.HOUR, 0);
+			cal.set(Calendar.MINUTE,0);
+			cal.set(Calendar.SECOND,0);
+			cal.set(Calendar.MILLISECOND,0);
+			if(null == campaign.getProposalDeadline() || cal.getTime().before(campaign.getProposalDeadline())){
+				
+			}
+		}
+	}
 	
 	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, Long brandId, Locale local) throws Exception {
 		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
@@ -116,6 +153,7 @@ public class CampaignService {
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
+		validateCampaign(campaign);
 		return campaign;
 	}
 	
