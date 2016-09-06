@@ -66,8 +66,11 @@ SET FOREIGN_KEY_CHECKS = 1;
 --INSERT INTO completionTime (completionTime,day) VALUES ('4 สัปดาห์',28);
 --
 --INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (1, 0, 1000);
---INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (2, 1001, 2000);
---INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (3, 2001, 5000);
---INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (4, 5001, 10000);
+--INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (2, 1000, 2000);
+--INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (3, 2000, 5000);
+--INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (4, 5000, 10000);
+--INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (5, 10000, 50000);
+--INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (6, 50000, 100000);
+--INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (7, 100000, 500000);
 --
 --INSERT INTO campaign (title, description, brandId, categoryId, status) VALUES ('My campaign', 'This is my campaign', 3, 1, 'Draft');
