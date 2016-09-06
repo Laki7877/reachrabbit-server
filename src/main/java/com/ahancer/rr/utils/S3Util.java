@@ -56,9 +56,6 @@ public class S3Util {
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
 		PutObjectResult putObjectResult = amazonS3Client.putObject(putObjectRequest);
 		IOUtils.closeQuietly(inputStream, null);
-
-		System.out.println(getUrl(uploadKey));
-		
 		return putObjectResult;
 	}
 
