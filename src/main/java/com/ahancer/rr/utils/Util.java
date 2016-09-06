@@ -66,6 +66,9 @@ public class Util {
 			influencer.setInfluencerId(user.getInfluencer().getInfluencerId());
 			influencer.setInfluencerMedias(user.getInfluencer().getInfluencerMedias());
 			influencer.setWeb(user.getInfluencer().getWeb());
+			influencer.setAccountName(user.getInfluencer().getAccountName());
+			influencer.setAccountNumber(user.getInfluencer().getAccountNumber());
+			influencer.setBank(user.getInfluencer().getBank());
 			userResponse.setInfluencer(influencer);
 		}
 		return userResponse;

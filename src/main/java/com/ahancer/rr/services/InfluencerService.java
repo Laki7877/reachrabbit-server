@@ -17,6 +17,7 @@ import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.InfluencerSignUpRequest;
+import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.CacheUtil;
@@ -37,7 +38,7 @@ public class InfluencerService {
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
 
-	public UserResponse updateInfluencerUser(Long userId, ProfileRequest newUser, String token) throws ResponseException {
+	public UserResponse updateInfluencerUser(Long userId, ProfileRequest newUser, String token) throws Exception {
 		User oldUser = userDao.findOne(userId);
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
@@ -56,6 +57,20 @@ public class InfluencerService {
 		}
 		Util.copyProperties(newUser, oldUser);
 		oldUser.setProfilePicture(newUser.getProfilePicture());
+		User user = userDao.save(oldUser);
+		UserResponse userResponse = Util.getUserResponse(user);
+		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);
+		return userResponse;
+	}
+	
+	public UserResponse updateBankDetail(PayoutRequest request,Long influencerId, String token) throws Exception{
+		User oldUser = userDao.findOne(influencerId);
+		if(null == oldUser) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
+		}
+		oldUser.getInfluencer().setBank(request.getBank());
+		oldUser.getInfluencer().setAccountName(request.getAccountName());
+		oldUser.getInfluencer().setAccountNumber(request.getAccountNumber());
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
 		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);

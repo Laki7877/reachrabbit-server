@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.ahancer.rr.custom.type.Gender;
+import com.ahancer.rr.models.Bank;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.InfluencerMedia;
 
@@ -19,6 +20,9 @@ public class InfluencerResponse implements Serializable {
 	private Date birthday;
 	private Set<InfluencerMedia> influencerMedias = new HashSet<InfluencerMedia>(0);
 	private Set<Category> categories = new HashSet<Category>(0);
+	private Bank bank;
+	private String accountNumber;
+	private String accountName;
 	
 	public InfluencerResponse(){
 		
@@ -78,6 +82,30 @@ public class InfluencerResponse implements Serializable {
 
 	public void setCategories(Set<Category> categories) {
 		this.categories = categories;
+	}
+
+	public Bank getBank() {
+		return bank;
+	}
+
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 	
 }

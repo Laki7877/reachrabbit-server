@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -63,6 +64,16 @@ public class Influencer extends AbstractModel implements Serializable{
 			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
 			inverseJoinColumns=@JoinColumn(name="categoryId", referencedColumnName="categoryId"))
 	private Set<Category> categories = new HashSet<Category>(0);
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="bankId")
+	private Bank bank;
+	
+	@Column(name="accountNumber",length=100)
+	private String accountNumber;
+	
+	@Column(name="accountName",length=100)
+	private String accountName;
 
 	public Influencer() {
 
@@ -130,6 +141,30 @@ public class Influencer extends AbstractModel implements Serializable{
 
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
+	}
+
+	public Bank getBank() {
+		return bank;
+	}
+
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 
 }
