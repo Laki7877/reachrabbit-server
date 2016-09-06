@@ -63,6 +63,9 @@ public class ProposalMessage implements Serializable  {
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
 	private Set<Resource> resources = new HashSet<Resource>(0);
 	
+	@Column(name="referenceId",length=8)
+	private String referenceId;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "createdAt",updatable=false)
 	private Date createdAt;
@@ -184,6 +187,14 @@ public class ProposalMessage implements Serializable  {
 
 	public void setUpdatedBy(Long updatedBy) {
 		this.updatedBy = updatedBy;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
 	}
 	
 }
