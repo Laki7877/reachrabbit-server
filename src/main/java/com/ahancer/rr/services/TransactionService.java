@@ -64,6 +64,9 @@ public class TransactionService {
 		if(null == cart){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.cart.not.exist");
 		}
+		if(0 == cart.getProposals().size()){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.cart.empty.proposal");
+		}
 		//create transaction
 		Transaction transaction = new Transaction();
 		Double sum = cart.getProposals().stream().mapToDouble(o -> o.getPrice()).sum();

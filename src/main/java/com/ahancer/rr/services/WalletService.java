@@ -45,6 +45,9 @@ public class WalletService {
 		if(null == wallet){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.not.exist");
 		}
+		if(0 == wallet.getProposals().size()){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.empty.proposal");
+		}
 		wallet.setStatus(WalletStatus.Paid);
 		wallet = walletDao.save(wallet);
 		//setup transaction
