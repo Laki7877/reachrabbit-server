@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -159,6 +160,13 @@ public class TransactionService {
 		ProposalMessage message = new ProposalMessage();
 		message.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, locale));
 		User robotUser = robotService.getRobotUser();
+		String to = StringUtils.EMPTY;
+		String subject = StringUtils.EMPTY;
+		String body = StringUtils.EMPTY;
+		
+		String superSubject = messageSource.getMessage("email.influencer.admin.confirm.checkout.subject",null,locale);
+		String superBody = messageSource.getMessage("email.influencer.admin.confirm.checkout.message",null,locale);
+		
 		for(Proposal proposal : transaction.getBrandTransactionDocument().getCart().getProposals()){
 			proposal.setStatus(ProposalStatus.Working);
 			Integer days = proposal.getCompletionTime().getDay();
@@ -173,11 +181,20 @@ public class TransactionService {
 			proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
 			proposalMessageService.processMessagePolling(proposal.getProposalId());
 			proposalDao.save(proposal);
+			
+			//send email to influencer
+			to = proposal.getInfluencer().getUser().getEmail();
+			subject = superSubject;
+			body = superBody
+					.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
+					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle());
+			emailService.send(to, subject, body);
 		}
 		
-		String to = transaction.getUser().getEmail();
-		String subject = messageSource.getMessage("email.brand.admin.confirt.checkout.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.admin.confirt.checkout.message",null,locale).replace("{{Transaction ID}}", transaction.getTransactionNumber());
+		//send email to brand
+		to = transaction.getUser().getEmail();
+		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale);
+		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale).replace("{{Transaction ID}}", transaction.getTransactionNumber());
 		emailService.send(to, subject, body);
 		
 		return transaction;
