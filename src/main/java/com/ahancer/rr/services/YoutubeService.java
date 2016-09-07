@@ -60,7 +60,7 @@ public class YoutubeService {
 	public String getAccessToken(String authorizationCode, String redirectUri) throws IOException {
 		return authorizationCodeFlow.newTokenRequest(authorizationCode).setRedirectUri(redirectUri).execute().getAccessToken();
 	}
-	public static YouTube getInstance(String accessToken) throws GeneralSecurityException, IOException {
+	public YouTube getInstance(String accessToken) throws GeneralSecurityException, IOException {
 		Credential credential = new GoogleCredential().setAccessToken(accessToken);
 		return new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).build();
 	}
