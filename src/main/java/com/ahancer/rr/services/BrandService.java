@@ -97,9 +97,10 @@ public class BrandService {
 		campaign.setMedia(allMedia);	
 		campaign = campaignDao.save(campaign);
 		user.setBrand(brand);
+		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.brand.signup.subject",null,locale);
 		String body = messageSource.getMessage("email.brand.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
-		emailService.send(user.getEmail(),subject, body);
+		emailService.send(to,subject, body);
 		return user;
 	}
 

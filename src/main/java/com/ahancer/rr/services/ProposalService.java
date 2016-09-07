@@ -34,6 +34,7 @@ import com.ahancer.rr.models.User;
 import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.response.CartResponse;
 import com.ahancer.rr.response.ProposalResponse;
+import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.response.WalletResponse;
 
 @Service
@@ -60,6 +61,10 @@ public class ProposalService {
 	
 	@Autowired
 	private WalletDao walletDao;
+	
+	@Autowired
+	private EmailService emailService;
+	
 
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
 
@@ -250,14 +255,15 @@ public class ProposalService {
 		return proposalDao.findAll(pageable);
 	}
 
-	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,Long influencerId) throws Exception {
+	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,UserResponse user,Locale locale) throws Exception {
 		Campaign campaign = campaignDao.findOne(campaignId);
-		long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influencerId, campaign.getCampaignId());
+		Long influecnerId = user.getInfluencer().getInfluencerId();
+		long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influecnerId, campaign.getCampaignId());
 		if(0 < count){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.already.proposal");
 		}
 		proposal.setCampaign(campaign);
-		proposal.setInfluencerId(influencerId);
+		proposal.setInfluencerId(influecnerId);
 		proposal.setMessageUpdatedAt(new Date());
 		proposal.setStatus(ProposalStatus.Selection);
 		proposal.setFee(Math.floor(proposal.getPrice()*0.18));
@@ -268,8 +274,12 @@ public class ProposalService {
 		firstMessage.setIsInfluencerRead(true);
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
-		firstMessage.setUserId(influencerId);
+		firstMessage.setUserId(influecnerId);
 		firstMessage = proposalMessageDao.save(firstMessage);
+		String to = campaign.getBrand().getUser().getEmail();
+		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
+		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale).replace("{{Influencer Name}}", user.getName());
+		emailService.send(to, subject, body);
 		return proposal;
 	}
 
