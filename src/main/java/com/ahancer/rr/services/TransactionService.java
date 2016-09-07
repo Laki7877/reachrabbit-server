@@ -25,6 +25,7 @@ import com.ahancer.rr.daos.TransactionDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.BrandTransactionDocument;
 import com.ahancer.rr.models.Cart;
+import com.ahancer.rr.models.InfluencerTransactionDocument;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.Resource;
@@ -201,7 +202,7 @@ public class TransactionService {
 	}
 	
 	
-	public Transaction payTransaction(Long transactioId,  Resource resource) throws Exception {
+	public Transaction payTransaction(Long transactioId,  Resource resource, Locale locale) throws Exception {
 		Transaction transaction = transactionDao.findOne(transactioId);
 		if(null == transaction){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.not.exist");
@@ -216,6 +217,17 @@ public class TransactionService {
 		transaction.setSlip(resource);
 		transaction = transactionDao.save(transaction);
 		
+		InfluencerTransactionDocument doc = transaction.getInfluencerTransactionDocument().iterator().next();
+		
+		//send mail to influencer
+		String to = transaction.getUser().getEmail();
+		String subject = messageSource.getMessage("email.influencer.admin.confirm.payout.subject",null,locale);
+		String body = messageSource.getMessage("email.influencer.admin.confirm.payout.message",null,locale)
+				.replace("{{Payout Amount}}", transaction.getAmount().toString())
+				.replace("{{Bank Name}}", doc.getBank().getBankName())
+				.replace("{{Bank Account Number}}", doc.getAccountNumber())
+				.replace("{{Bank Account Name}}", doc.getAccountName());
+		emailService.send(to, subject, body);
 		
 		return transaction;
 	}
