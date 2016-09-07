@@ -94,7 +94,8 @@ public class BrandService {
 		campaign.setStatus(CampaignStatus.Draft);
 		Set<Media> allMedia = new HashSet<Media>();
 		mediaDao.findAll().forEach(allMedia::add);
-		campaign.setMedia(allMedia);	
+		campaign.setMedia(allMedia);
+		campaign.setRabbitFlag(false);
 		campaign = campaignDao.save(campaign);
 		user.setBrand(brand);
 		String to = user.getEmail();
