@@ -49,9 +49,6 @@ public class FacebookService {
 	@Autowired
 	private AuthenticationService authenticationService;
 	
-	@Autowired
-	private UserService userService;
-	
 	@PostConstruct
 	public void init() {
 		connectionFactory = new FacebookConnectionFactory(appKey, appSecret);
@@ -72,25 +69,6 @@ public class FacebookService {
 	public String getAppAccessToken() {
 		return appKey + "|" + appSecret;
 	}
-	
-	public FacebookProfileResponse getProfileByUserId(Long userId) throws ResponseException {
-		if(!Role.Influencer.equals(user.getRole())) {
-			return null;
-		}
-		
-		InfluencerMedia media = null;
-		for(InfluencerMedia element : user.getInfluencer().getInfluencerMedias()) {
-			if(element.getSocialId() == "facebook") {
-				media = element;
-			}
-		}
-		
-		if(media == null) {
-			return null;
-		}
-		return getProfile(media.getPageId());		
-	}
-	
 	public FacebookProfileResponse getProfile(String pageId) throws ResponseException {
 		Gson gson = new Gson();
 		Facebook fb = getInstance(getAppAccessToken());
@@ -120,18 +98,18 @@ public class FacebookService {
 
 			//set everyhing
 			if(o.has("full_picture")) {
-				post.setPicture(o.get("full_picture").getAsString());
+				post.setPicture(o.getAsJsonPrimitive("full_picture").getAsString());
 			}
 			if(o.has("source")) {
 				String videoId = o.get("id").getAsString().split("_")[1];
 				Video video = fb.fetchObject(videoId, Video.class, "embed_html");
-				post.setVideo(o.get("source").getAsString());
+				post.setVideo(o.getAsJsonPrimitive("source").getAsString());
 				post.setVideoEmbedded(video.getEmbedHtml());
 			}
 			post.setLink(o.get("link").getAsString());
 			
 			if(o.has("message")) {
-				post.setMessage(o.get("message").getAsString());
+				post.setMessage(o.getAsJsonPrimitive("message").getAsString());
 			}
 			post.setLikes(o.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsBigInteger());
 			post.setComments(o.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsBigInteger());

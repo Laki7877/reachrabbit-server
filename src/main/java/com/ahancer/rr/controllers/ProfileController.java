@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
-import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
 import com.ahancer.rr.response.FacebookProfileResponse;
@@ -49,7 +48,10 @@ public class ProfileController extends AbstractController{
 		if(!Role.Influencer.equals(user.getRole())) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
 		}
-		return facebookService.getProfile(user.getPageId("facebook"));
+		String pageId = user.getPageId("facebook");
+		
+		
+		return facebookService.getProfile(pageId);
 	}
 	
 	@RequestMapping(value="/bank",method=RequestMethod.PUT)
