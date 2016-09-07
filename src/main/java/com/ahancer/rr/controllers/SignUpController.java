@@ -37,10 +37,11 @@ public class SignUpController {
 		User newUser = brandService.signUpBrand(request,locale);
 		return authenticationService.generateTokenFromUser(newUser);
 	}
+	
 	@RequestMapping(value="/influencer", method=RequestMethod.POST)
 	public AuthenticationResponse signUpInfluencer(@Valid @RequestBody InfluencerSignUpRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		User newUser = influencerService.signupInfluencer(request);
+		User newUser = influencerService.signupInfluencer(request,locale);
 		return authenticationService.generateTokenFromUser(newUser);
 	}
 

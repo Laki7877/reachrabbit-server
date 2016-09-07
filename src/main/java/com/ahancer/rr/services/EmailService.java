@@ -29,7 +29,7 @@ public class EmailService {
     
     
     @Async
-    public Future<Boolean> send(String to,String subject, String html) {
+    public Future<Boolean> send(String to,String subject, String body) {
     	
     	Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api", mailgunApiKey));
@@ -40,7 +40,7 @@ public class EmailService {
         formData.add("from", mailgunFrom);
         formData.add("to", to);
         formData.add("subject", subject);
-        formData.add("html", html);
+        formData.add("html", body);
 
         ClientResponse clientResponse = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
         if(200 != clientResponse.getStatus()) {

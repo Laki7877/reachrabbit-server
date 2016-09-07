@@ -1,8 +1,11 @@
 package com.ahancer.rr.services;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,12 @@ public class InfluencerService {
 
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
+	private MessageSource messageSource;
 
 	public UserResponse updateInfluencerUser(Long userId, ProfileRequest newUser, String token) throws Exception {
 		User oldUser = userDao.findOne(userId);
@@ -77,7 +86,7 @@ public class InfluencerService {
 		return userResponse;
 	}
 
-	public User signupInfluencer(InfluencerSignUpRequest request) throws ResponseException {
+	public User signupInfluencer(InfluencerSignUpRequest request,Locale locale) throws ResponseException {
 		//Validate duplicate Email
 		int emailCount = userDao.countByEmail(request.getEmail());
 		if(0 < emailCount) {
@@ -109,6 +118,12 @@ public class InfluencerService {
 		}
 		influencer = influencerDao.save(influencer);
 		user.setInfluencer(influencer);
+		
+		String to = user.getEmail();
+		String subject = messageSource.getMessage("email.influencer.signup.subject",null,locale);
+		String body = messageSource.getMessage("email.influencer.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
+		emailService.send(to, subject, body);
+		
 		return user;
 	}
 
