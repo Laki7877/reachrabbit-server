@@ -26,6 +26,9 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
+import com.google.api.services.youtube.model.PlaylistItem;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import com.google.api.services.youtube.model.PlaylistListResponse;
 
 @Service
 public class YoutubeService {
@@ -33,6 +36,8 @@ public class YoutubeService {
 	private String appKey;
 	@Value("${youtube.appSecret}")
 	private String appSecret;
+	@Value("${youtube.apiKey}")
+	private String apiKey;
 	
 	@Autowired
 	private AuthenticationService authenticationService;
@@ -55,9 +60,35 @@ public class YoutubeService {
 	public String getAccessToken(String authorizationCode, String redirectUri) throws IOException {
 		return authorizationCodeFlow.newTokenRequest(authorizationCode).setRedirectUri(redirectUri).execute().getAccessToken();
 	}
-	public YouTube getInstance(String accessToken) throws GeneralSecurityException, IOException {
+	public static YouTube getInstance(String accessToken) throws GeneralSecurityException, IOException {
 		Credential credential = new GoogleCredential().setAccessToken(accessToken);
 		return new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).build();
+	}
+
+	public List<PlaylistItem> getVideoFeed() throws GeneralSecurityException, IOException{
+		Credential credential = new GoogleCredential();
+		
+		YouTube youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).setApplicationName("Reachrabbit-Server/1.05R").build();
+		
+		YouTube.Channels.List chanlist = youtube.channels().list("snippet,contentDetails");
+		chanlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId("UCQ0-okjX18v85QlCAr1GBwQ");
+		ChannelListResponse chanResult = chanlist.execute();
+		
+		List<PlaylistItem> pl = new ArrayList<>();
+		
+		for(Object value : chanResult.getItems().get(0).getContentDetails().getRelatedPlaylists().values()){
+			String playlistId = (String)value;
+			YouTube.PlaylistItems.List ypllist = youtube.playlistItems().list("snippet");
+			ypllist.setPart("snippet,contentDetails");
+			ypllist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setPlaylistId(playlistId);
+
+			PlaylistItemListResponse result = ypllist.execute();
+			pl.addAll(result.getItems());
+		}
+		
+		return pl;
+				
+		
 	}
 	
 	public OAuthenticationResponse authentication(String accessToken) throws Exception {
