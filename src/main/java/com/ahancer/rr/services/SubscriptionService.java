@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.daos.SubscriptionDao;
 import com.ahancer.rr.models.Subscription;
-import com.ahancer.rr.utils.EmailUtil;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -16,9 +15,8 @@ public class SubscriptionService {
 	@Autowired
 	private SubscriptionDao subscriptionDao;
 	
-	
-	private String email = "ahancercompany@gmail.com";
-	private String passord = "Ahancer123!";
+	@Autowired
+	private EmailService emailService;
 	
 	public Subscription createSubscription(Subscription subscription){
 		if(StringUtils.isEmpty(subscription.getEmail())){
@@ -33,7 +31,11 @@ public class SubscriptionService {
 		String body = "Name: " + subscription.getName() 
 		            + "\nEmail: "  + subscription.getEmail() 
 		            + "\nSubscribed from http://www.reachrabbit.com";
-		EmailUtil.sendFromGMail(email, passord, receipts , "New Subscription", body);
+		String subject = "New Subscription";
+		for(String to : receipts){
+			emailService.send(to, subject, body);
+		}
+		
 		return subscription;
 	}
 
