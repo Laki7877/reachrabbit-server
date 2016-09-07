@@ -22,7 +22,7 @@ public class UserResponse implements Serializable {
 		
 	}
 	
-	public String getPageId(String socialId) throws Exception {
+	public String getPageId(String mediaId) throws Exception {
 		InfluencerMedia media = null;
 		
 		if(getInfluencer() == null) {
@@ -30,7 +30,7 @@ public class UserResponse implements Serializable {
 		}
 		
 		for(InfluencerMedia element : getInfluencer().getInfluencerMedias()) {
-			if(element.getSocialId() == "facebook") {
+			if(element.getMedia().getMediaId() == mediaId) {
 				media = element;
 			}
 		}
