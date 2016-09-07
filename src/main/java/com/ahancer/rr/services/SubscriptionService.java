@@ -29,8 +29,8 @@ public class SubscriptionService {
 		subscription = subscriptionDao.save(subscription);
 		String[] receipts = { "plawooth.c@gmail.com","nattphenjati@gmail.com","jdumnern@gmail.com","laki7877@gmail.com" };
 		String body = "Name: " + subscription.getName() 
-		            + "\nEmail: "  + subscription.getEmail() 
-		            + "\nSubscribed from http://www.reachrabbit.com";
+		            + "<br>Email: "  + subscription.getEmail() 
+		            + "<br>Subscribed from http://www.reachrabbit.com";
 		String subject = "New Subscription";
 		for(String to : receipts){
 			emailService.send(to, subject, body);
