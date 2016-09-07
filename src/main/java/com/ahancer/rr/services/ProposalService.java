@@ -308,7 +308,7 @@ public class ProposalService {
 		return oldProposal;
 	}
 
-	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale local) throws Exception {
+	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale locale) throws Exception {
 		Proposal oldProposal = proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
@@ -324,7 +324,7 @@ public class ProposalService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.invalid.status");
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
 			//set robot message
-			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, local));
+			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, locale));
 			oldProposal.setCompleteDate(cal.getTime());
 			//add wallet
 			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.Pending);
@@ -335,6 +335,12 @@ public class ProposalService {
 				wallet = walletDao.save(wallet);
 			}
 			oldProposal.setWalletId(wallet.getWalletId());
+			
+			//send email to influencer
+			String to = wallet.getInfluencer().getUser().getEmail();
+			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
+			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale).replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
+			emailService.send(to, subject, body);
 		}
 		User robotUser = robotService.getRobotUser();
 		rebotMessage.setProposal(oldProposal);
