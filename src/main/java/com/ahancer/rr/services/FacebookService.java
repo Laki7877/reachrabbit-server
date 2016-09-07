@@ -49,9 +49,6 @@ public class FacebookService {
 	@Autowired
 	private AuthenticationService authenticationService;
 	
-	@Autowired
-	private UserService userService;
-	
 	@PostConstruct
 	public void init() {
 		connectionFactory = new FacebookConnectionFactory(appKey, appSecret);
@@ -101,18 +98,18 @@ public class FacebookService {
 
 			//set everyhing
 			if(o.has("full_picture")) {
-				post.setPicture(o.get("full_picture").getAsString());
+				post.setPicture(o.getAsJsonPrimitive("full_picture").getAsString());
 			}
 			if(o.has("source")) {
 				String videoId = o.get("id").getAsString().split("_")[1];
 				Video video = fb.fetchObject(videoId, Video.class, "embed_html");
-				post.setVideo(o.get("source").getAsString());
+				post.setVideo(o.getAsJsonPrimitive("source").getAsString());
 				post.setVideoEmbedded(video.getEmbedHtml());
 			}
 			post.setLink(o.get("link").getAsString());
 			
 			if(o.has("message")) {
-				post.setMessage(o.get("message").getAsString());
+				post.setMessage(o.getAsJsonPrimitive("message").getAsString());
 			}
 			post.setLikes(o.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsBigInteger());
 			post.setComments(o.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsBigInteger());

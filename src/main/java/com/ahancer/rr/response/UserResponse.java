@@ -30,9 +30,6 @@ public class UserResponse implements Serializable {
 		}
 		
 		for(InfluencerMedia element : getInfluencer().getInfluencerMedias()) {
-			System.out.println(mediaId);
-			System.out.println(element.getMedia().getMediaId());
-			System.out.println(element.getMedia().getMediaId().length());
 			if(element.getMedia().getMediaId().equals(mediaId)) {
 				media = element;
 			}
