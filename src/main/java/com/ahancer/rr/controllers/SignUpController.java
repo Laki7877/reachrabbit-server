@@ -1,9 +1,12 @@
 package com.ahancer.rr.controllers;
 
+import java.util.Locale;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,12 +32,14 @@ public class SignUpController {
 	private InfluencerService influencerService;
 	
 	@RequestMapping(value="/brand", method=RequestMethod.POST)
-	public AuthenticationResponse signUpBrand(@Valid @RequestBody BrandSignUpRequest request) throws Exception {
-		User newUser = brandService.signUpBrand(request);
+	public AuthenticationResponse signUpBrand(@Valid @RequestBody BrandSignUpRequest request
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		User newUser = brandService.signUpBrand(request,locale);
 		return authenticationService.generateTokenFromUser(newUser);
 	}
 	@RequestMapping(value="/influencer", method=RequestMethod.POST)
-	public AuthenticationResponse signUpInfluencer(@Valid @RequestBody InfluencerSignUpRequest request) throws Exception {
+	public AuthenticationResponse signUpInfluencer(@Valid @RequestBody InfluencerSignUpRequest request
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		User newUser = influencerService.signupInfluencer(request);
 		return authenticationService.generateTokenFromUser(newUser);
 	}

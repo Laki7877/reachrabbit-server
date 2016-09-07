@@ -11,9 +11,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 --
 --INSERT INTO resource (resourcePath) VALUES ('placeholder-profile-picture-bot.png');
 --INSERT INTO user (email,password,name,role,profilePictureId) VALUES ('bot@reachrabbitbot.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Rabbit Bot','Bot',1);
---INSERT INTO user (email,password,name,role) VALUES ('admin@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am admin','Admin');
---INSERT INTO user (email,password,name,role) VALUES ('brand@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am brand','Brand');
---INSERT INTO user (email,password,name,role) VALUES ('influencer@gmail.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am influencer','Influencer');
+--INSERT INTO user (email,password,name,role) VALUES ('admin@reachrabbit.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am admin','Admin');
+--INSERT INTO user (email,password,name,role) VALUES ('brand@reachrabbit.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am brand','Brand');
+--INSERT INTO user (email,password,name,role) VALUES ('influencer@reachrabbit.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am influencer','Influencer');
 --
 --INSERT INTO brand (brandName, brandId) VALUES ('My Brand', 3);
 --INSERT INTO influencer (influencerId) VALUES (4);
@@ -73,4 +73,4 @@ SET FOREIGN_KEY_CHECKS = 1;
 --INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (6, 50000, 100000);
 --INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (7, 100000, 500000);
 --
---INSERT INTO campaign (title, description, brandId, categoryId, status) VALUES ('My campaign', 'This is my campaign', 3, 1, 'Draft');
+--INSERT INTO campaign (title, description, brandId, categoryId, rabbitFlag, status) VALUES ('My campaign', 'This is my campaign', 3, 1, 0, 'Draft');

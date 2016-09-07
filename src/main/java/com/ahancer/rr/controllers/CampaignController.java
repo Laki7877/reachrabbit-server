@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -92,8 +93,9 @@ public class CampaignController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
 	@Authorization(Role.Influencer)
-	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal) throws Exception {
-		proposal = proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest().getInfluencer().getInfluencerId());
+	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		proposal = proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest(),locale);
 		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;

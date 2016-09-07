@@ -106,6 +106,8 @@ public class Proposal extends AbstractModel implements Serializable{
 	@JoinColumn(name = "walletId")
 	private Wallet wallet;
 	
+	@Column(name="rabbitFlag")
+	private Boolean rabbitFlag;
 	
 	public Proposal() {
 		
@@ -245,6 +247,14 @@ public class Proposal extends AbstractModel implements Serializable{
 
 	public void setWallet(Wallet wallet) {
 		this.wallet = wallet;
+	}
+
+	public Boolean getRabbitFlag() {
+		return rabbitFlag;
+	}
+
+	public void setRabbitFlag(Boolean rabbitFlag) {
+		this.rabbitFlag = rabbitFlag;
 	}
 	
 }

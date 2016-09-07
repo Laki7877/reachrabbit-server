@@ -89,7 +89,9 @@ public class Campaign extends AbstractModel implements Serializable {
 	@Column(name="status",length=20)
 	@Enumerated(EnumType.STRING)
 	private CampaignStatus status;
-
+	
+	@Column(name="rabbitFlag")
+	private Boolean rabbitFlag;
 
 	public Campaign() {
 
@@ -206,4 +208,13 @@ public class Campaign extends AbstractModel implements Serializable {
 	public void setBudget(Budget budget) {
 		this.budget = budget;
 	}
+
+	public Boolean getRabbitFlag() {
+		return rabbitFlag;
+	}
+
+	public void setRabbitFlag(Boolean rabbitFlag) {
+		this.rabbitFlag = rabbitFlag;
+	}
+	
 }
