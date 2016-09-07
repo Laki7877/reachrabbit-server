@@ -21,11 +21,14 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.FacebookProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
+import com.ahancer.rr.response.UserResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -46,6 +49,9 @@ public class FacebookService {
 	@Autowired
 	private AuthenticationService authenticationService;
 	
+	@Autowired
+	private UserService userService;
+	
 	@PostConstruct
 	public void init() {
 		connectionFactory = new FacebookConnectionFactory(appKey, appSecret);
@@ -65,6 +71,24 @@ public class FacebookService {
 	
 	public String getAppAccessToken() {
 		return appKey + "|" + appSecret;
+	}
+	
+	public FacebookProfileResponse getProfileByUserId(Long userId) throws ResponseException {
+		if(!Role.Influencer.equals(user.getRole())) {
+			return null;
+		}
+		
+		InfluencerMedia media = null;
+		for(InfluencerMedia element : user.getInfluencer().getInfluencerMedias()) {
+			if(element.getSocialId() == "facebook") {
+				media = element;
+			}
+		}
+		
+		if(media == null) {
+			return null;
+		}
+		return getProfile(media.getPageId());		
 	}
 	
 	public FacebookProfileResponse getProfile(String pageId) throws ResponseException {

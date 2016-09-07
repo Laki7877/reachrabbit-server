@@ -3,6 +3,7 @@ package com.ahancer.rr.response;
 import java.io.Serializable;
 
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.Resource;
 
 public class UserResponse implements Serializable {
@@ -19,6 +20,26 @@ public class UserResponse implements Serializable {
 	
 	public UserResponse(){
 		
+	}
+	
+	public String getPageId(String socialId) throws Exception {
+		InfluencerMedia media = null;
+		
+		if(getInfluencer() == null) {
+			throw new Exception();
+		}
+		
+		for(InfluencerMedia element : getInfluencer().getInfluencerMedias()) {
+			if(element.getSocialId() == "facebook") {
+				media = element;
+			}
+		}
+		
+		if(media == null) {
+			throw new Exception();
+		}
+		
+		return media.getPageId();
 	}
 
 	public Long getUserId() {
