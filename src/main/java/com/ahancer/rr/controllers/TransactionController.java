@@ -73,8 +73,9 @@ public class TransactionController extends AbstractController {
 	
 	@RequestMapping(value="/{transactionId}/paid",method=RequestMethod.PUT)
 	@Authorization(Role.Admin)
-	public Transaction payTransaction(@PathVariable Long transactionId,@Valid @RequestBody Resource resource, Locale local) throws Exception {
-		Transaction transaction = transactionService.payTransaction(transactionId,resource);
+	public Transaction payTransaction(@PathVariable Long transactionId,@Valid @RequestBody Resource resource
+			, @RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		Transaction transaction = transactionService.payTransaction(transactionId,resource,locale);
 		return transaction;
 	}
 	

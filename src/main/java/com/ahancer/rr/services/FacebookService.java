@@ -101,10 +101,7 @@ public class FacebookService {
 				post.setPicture(o.getAsJsonPrimitive("full_picture").getAsString());
 			}
 			if(o.has("source")) {
-				String videoId = o.get("id").getAsString().split("_")[1];
-				Video video = fb.fetchObject(videoId, Video.class, "embed_html");
 				post.setVideo(o.getAsJsonPrimitive("source").getAsString());
-				post.setVideoEmbedded(video.getEmbedHtml());
 			}
 			
 			if(o.has("message")) {
