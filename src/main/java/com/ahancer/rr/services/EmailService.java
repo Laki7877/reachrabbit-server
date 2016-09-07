@@ -23,7 +23,7 @@ public class EmailService {
     @Value("${email.mailgun.from}")
     private String mailgunFrom;
     
-    public boolean send(String to,String subject, String html) throws Exception {
+    public boolean send(String to,String subject, String html) {
     	    	
     	Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api", mailgunApiKey));
@@ -39,7 +39,8 @@ public class EmailService {
         ClientResponse clientResponse = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
         if(200 != clientResponse.getStatus()) {
         	String output = clientResponse.getEntity(String.class);
-        	throw new Exception(output);
+        	System.out.println(output);
+        	return false;
         }
 
         return true;

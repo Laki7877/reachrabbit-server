@@ -4,11 +4,13 @@ package com.ahancer.rr.services;
 
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,11 +53,16 @@ public class BrandService {
 	@Autowired
 	private EncryptionUtil encrypt;
 
-
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
+	
+	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
+	private EmailService emailService;
 
-	public User signUpBrand(BrandSignUpRequest request) throws ResponseException {
+	public User signUpBrand(BrandSignUpRequest request,Locale locale) throws Exception {
 		//Validate duplicate Email
 		int emailCount = userDao.countByEmail(request.getEmail());
 		if(0 < emailCount) {
@@ -89,12 +96,14 @@ public class BrandService {
 		mediaDao.findAll().forEach(allMedia::add);
 		campaign.setMedia(allMedia);	
 		campaign = campaignDao.save(campaign);
-		
 		user.setBrand(brand);
+		String subject = messageSource.getMessage("email.brand.signup.subject",null,locale);
+		String body = messageSource.getMessage("email.brand.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
+		emailService.send(user.getEmail(),subject, body);
 		return user;
 	}
 
-	public UserResponse updateBrandUser(Long userId, ProfileRequest newUser,String token) throws ResponseException {
+	public UserResponse updateBrandUser(Long userId, ProfileRequest newUser,String token) throws Exception {
 		User oldUser = userDao.findOne(userId);
 		if(null == oldUser) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.brand.not.found");
