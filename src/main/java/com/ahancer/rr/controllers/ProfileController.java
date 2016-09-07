@@ -42,6 +42,15 @@ public class ProfileController extends AbstractController{
 	public UserResponse getMyProfile() {
 		return this.getUserRequest();
 	}
+	@RequestMapping(value="/facebook", method=RequestMethod.GET)
+	public FacebookProfileResponse getFacebookProfile() throws Exception {
+		UserResponse user = this.getUserRequest();
+		
+		if(!Role.Influencer.equals(user.getRole())) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
+		}
+		return facebookService.getProfile(user.getPageId("facebook"));
+	}
 	
 	@RequestMapping(value="/bank",method=RequestMethod.PUT)
 	@Authorization(Role.Influencer)
@@ -66,24 +75,10 @@ public class ProfileController extends AbstractController{
 	}
 	
 	@RequestMapping(value="/{userId}/facebook", method=RequestMethod.GET)
-	public FacebookProfileResponse getFacebookProfile(@PathVariable Long userId) throws Exception {
+	public FacebookProfileResponse getFacebook(@PathVariable Long userId) throws Exception {
 		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
 		
-		if(!Role.Influencer.equals(user.getRole())) {
-			return null;
-		}
-		
-		InfluencerMedia media = null;
-		for(InfluencerMedia element : user.getInfluencer().getInfluencerMedias()) {
-			if(element.getSocialId() == "facebook") {
-				media = element;
-			}
-		}
-		
-		if(media == null) {
-			return null;
-		}
-		return facebookService.getProfile(media.getPageId());
+		return facebookService.getProfile(user.getPageId("facebook"));
 	}
 
 }
