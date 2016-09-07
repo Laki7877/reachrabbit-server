@@ -33,6 +33,7 @@ public class UserResponse implements Serializable {
 			if(element.getMedia().getMediaId() == mediaId) {
 				media = element;
 			}
+			System.out.println(element.getMedia().getMediaId());
 		}
 		
 		if(media == null) {
