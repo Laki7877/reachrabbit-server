@@ -18,7 +18,7 @@ public class SubscriptionService {
 	@Autowired
 	private EmailService emailService;
 	
-	public Subscription createSubscription(Subscription subscription){
+	public Subscription createSubscription(Subscription subscription) throws Exception{
 		if(StringUtils.isEmpty(subscription.getEmail())){
 			return subscription;
 		}

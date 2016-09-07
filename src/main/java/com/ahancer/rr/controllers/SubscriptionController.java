@@ -20,7 +20,7 @@ public class SubscriptionController {
 	
 	@ApiOperation(value = "Create new subscription")
 	@RequestMapping(method=RequestMethod.POST)
-	public Subscription createSubscription(@RequestBody Subscription subscription){
+	public Subscription createSubscription(@RequestBody Subscription subscription) throws Exception{
 		subscription = subscriptionService.createSubscription(subscription);
 		return subscription;
 	}
