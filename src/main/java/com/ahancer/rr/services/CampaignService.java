@@ -62,6 +62,7 @@ public class CampaignService {
 		campaign.setTitle(request.getTitle());
 		campaign.setWebsite(request.getWebsite());
 		campaign.setMainResource(request.getMainResource());
+		campaign.setRabbitFlag(false);
 		campaign = campaignDao.save(campaign);
 		//Setup resources
 		Set<CampaignResource> resources = request.getCampaignResources();

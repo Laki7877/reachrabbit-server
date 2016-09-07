@@ -267,6 +267,7 @@ public class ProposalService {
 		proposal.setMessageUpdatedAt(new Date());
 		proposal.setStatus(ProposalStatus.Selection);
 		proposal.setFee(Math.floor(proposal.getPrice()*0.18));
+		proposal.setRabbitFlag(false);
 		proposal = proposalDao.save(proposal);
 		//Insert first message
 		ProposalMessage firstMessage = new ProposalMessage();
