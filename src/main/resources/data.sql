@@ -73,4 +73,4 @@ SET FOREIGN_KEY_CHECKS = 1;
 --INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (6, 50000, 100000);
 --INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (7, 100000, 500000);
 --
---INSERT INTO campaign (title, description, brandId, categoryId, status) VALUES ('My campaign', 'This is my campaign', 3, 1, 'Draft');
+--INSERT INTO campaign (title, description, brandId, categoryId, rabbitFlag, status) VALUES ('My campaign', 'This is my campaign', 3, 1, 0, 'Draft');
