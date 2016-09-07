@@ -30,14 +30,13 @@ public class UserResponse implements Serializable {
 		}
 		
 		for(InfluencerMedia element : getInfluencer().getInfluencerMedias()) {
-			if(element.getMedia().getMediaId() == mediaId) {
+			System.out.println(mediaId);
+			System.out.println(element.getMedia().getMediaId());
+			System.out.println(element.getMedia().getMediaId().length());
+			if(element.getMedia().getMediaId().equals(mediaId)) {
 				media = element;
-				System.out.println("yo");
-				System.out.println(media);
 			}
 		}
-		System.out.println("o");
-		System.out.println(media);
 		
 		return media.getPageId();
 	}
