@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @ComponentScan
 @EntityScan("com.ahancer.rr.models")
 @EnableAsync
+@EnableScheduling
 public class ReachrabbitServerApplication extends AsyncConfigurerSupport {
 	public static void main(String[] args) {
 		SpringApplication.run(ReachrabbitServerApplication.class, args);
