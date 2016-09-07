@@ -1,6 +1,7 @@
 package com.ahancer.rr;
 
 import java.util.Locale;
+import java.util.concurrent.Executor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -9,6 +10,9 @@ import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -16,7 +20,8 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @EnableAutoConfiguration
 @ComponentScan
 @EntityScan("com.ahancer.rr.models")
-public class ReachrabbitServerApplication {
+@EnableAsync
+public class ReachrabbitServerApplication extends AsyncConfigurerSupport {
 	public static void main(String[] args) {
 		SpringApplication.run(ReachrabbitServerApplication.class, args);
 	}
@@ -35,5 +40,16 @@ public class ReachrabbitServerApplication {
 		source.setUseCodeAsDefaultMessage(true);
 		return source;
 	}
+	
+	@Override
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("ReachRabbit-");
+        executor.initialize();
+        return executor;
+    }
 
 }

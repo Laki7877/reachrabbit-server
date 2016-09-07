@@ -1,8 +1,12 @@
 package com.ahancer.rr.services;
 
+import java.util.concurrent.Future;
+
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import com.sun.jersey.api.client.Client;
@@ -23,8 +27,10 @@ public class EmailService {
     @Value("${email.mailgun.from}")
     private String mailgunFrom;
     
-    public boolean send(String to,String subject, String html) {
-    	    	
+    
+    @Async
+    public Future<Boolean> send(String to,String subject, String html) {
+    	
     	Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api", mailgunApiKey));
 
@@ -40,10 +46,10 @@ public class EmailService {
         if(200 != clientResponse.getStatus()) {
         	String output = clientResponse.getEntity(String.class);
         	System.out.println(output);
-        	return false;
+        	return new AsyncResult<>(false);
         }
 
-        return true;
+        return new AsyncResult<>(true);
 
     }
 
