@@ -29,6 +29,7 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.EncodeUtil;
 
 @Service
@@ -59,7 +60,11 @@ public class TransactionService {
 	@Autowired
 	private ProposalService proposalService;
 	
-	public Transaction createTransactionByBrand(Long brandId) throws Exception {
+	@Autowired
+	private EmailService emailService;
+	
+	public Transaction createTransactionByBrand(UserResponse user,Locale locale) throws Exception {
+		Long brandId = user.getBrand().getBrandId();
 		Cart cart = cartDao.findByBrandIdAndStatus(brandId, CartStatus.Incart);
 		if(null == cart){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.cart.not.exist");
@@ -91,9 +96,11 @@ public class TransactionService {
 		cart.setStatus(CartStatus.Checkout);
 		cartDao.save(cart);
 		
-//		document.setCart(cart);
-//		document.setTransaction(transaction);
-//		transaction.setBrandTransactionDocument(document);
+		String to = user.getEmail();
+		String subject = messageSource.getMessage("email.brand.cart.checkout.subject",null,locale);
+		String body = messageSource.getMessage("email.brand.cart.checkout.message",null,locale);
+		emailService.send(to, subject, body);
+		
 		return transaction;
 	}
 	
@@ -130,7 +137,7 @@ public class TransactionService {
 	}
 
 	
-	public Transaction confirmTransaction(Long transactioId, Locale local) throws Exception {
+	public Transaction confirmTransaction(Long transactioId, Locale locale) throws Exception {
 		Transaction transaction = transactionDao.findOne(transactioId);
 		if(null == transaction){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.not.exist");
@@ -150,7 +157,7 @@ public class TransactionService {
 		//update proposal status
 		Calendar cal = Calendar.getInstance();
 		ProposalMessage message = new ProposalMessage();
-		message.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, local));
+		message.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, locale));
 		User robotUser = robotService.getRobotUser();
 		for(Proposal proposal : transaction.getBrandTransactionDocument().getCart().getProposals()){
 			proposal.setStatus(ProposalStatus.Working);
@@ -167,6 +174,11 @@ public class TransactionService {
 			proposalMessageService.processMessagePolling(proposal.getProposalId());
 			proposalDao.save(proposal);
 		}
+		
+		String to = transaction.getUser().getEmail();
+		String subject = messageSource.getMessage("email.brand.admin.confirt.checkout.subject",null,locale);
+		String body = messageSource.getMessage("email.brand.admin.confirt.checkout.message",null,locale).replace("{{Transaction ID}}", transaction.getTransactionNumber());
+		emailService.send(to, subject, body);
 		
 		return transaction;
 	}
