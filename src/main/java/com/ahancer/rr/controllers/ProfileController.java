@@ -1,6 +1,7 @@
 package com.ahancer.rr.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,10 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
+import com.ahancer.rr.response.FacebookProfileResponse;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.services.BrandService;
+import com.ahancer.rr.services.FacebookService;
 import com.ahancer.rr.services.InfluencerService;
 import com.ahancer.rr.services.UserService;
 import com.mysql.jdbc.NotImplemented;
@@ -29,6 +34,9 @@ public class ProfileController extends AbstractController{
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private FacebookService facebookService;
 
 	@RequestMapping(method=RequestMethod.GET)
 	public UserResponse getMyProfile() {
@@ -57,8 +65,25 @@ public class ProfileController extends AbstractController{
 		return userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
 	}
 	
-	
-
-
+	@RequestMapping(value="/{userId}/facebook", method=RequestMethod.GET)
+	public FacebookProfileResponse getFacebookProfile(@PathVariable Long userId) throws Exception {
+		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
+		
+		if(!Role.Influencer.equals(user.getRole())) {
+			return null;
+		}
+		
+		InfluencerMedia media = null;
+		for(InfluencerMedia element : user.getInfluencer().getInfluencerMedias()) {
+			if(element.getSocialId() == "facebook") {
+				media = element;
+			}
+		}
+		
+		if(media == null) {
+			return null;
+		}
+		return facebookService.getProfile(media.getPageId());
+	}
 
 }
