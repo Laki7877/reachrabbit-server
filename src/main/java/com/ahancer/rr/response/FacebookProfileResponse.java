@@ -17,7 +17,6 @@ public class FacebookProfileResponse implements Serializable{
 		private String picture;
 		private String video;
 		private String videoEmbedded;
-		private String link;
 		private String message;
 		
 		private BigInteger likes;
@@ -43,12 +42,6 @@ public class FacebookProfileResponse implements Serializable{
 		public void setVideoEmbedded(String videoEmbedded) {
 			this.videoEmbedded = videoEmbedded;
 		}
-		public String getLink() {
-			return link;
-		}
-		public void setLink(String link) {
-			this.link = link;
-		}
 		public String getMessage() {
 			return message;
 		}
@@ -73,7 +66,6 @@ public class FacebookProfileResponse implements Serializable{
 		public void setComments(BigInteger comments) {
 			this.comments = comments;
 		}
-		
 		
 	}
 	private static final long serialVersionUID = 1L;

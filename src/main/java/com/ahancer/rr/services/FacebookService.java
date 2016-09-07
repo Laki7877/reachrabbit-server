@@ -106,7 +106,6 @@ public class FacebookService {
 				post.setVideo(o.getAsJsonPrimitive("source").getAsString());
 				post.setVideoEmbedded(video.getEmbedHtml());
 			}
-			post.setLink(o.get("link").getAsString());
 			
 			if(o.has("message")) {
 				post.setMessage(o.getAsJsonPrimitive("message").getAsString());
