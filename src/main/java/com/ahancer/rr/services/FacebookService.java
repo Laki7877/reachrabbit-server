@@ -72,25 +72,6 @@ public class FacebookService {
 	public String getAppAccessToken() {
 		return appKey + "|" + appSecret;
 	}
-	
-	public FacebookProfileResponse getProfileByUserId(Long userId) throws ResponseException {
-		if(!Role.Influencer.equals(user.getRole())) {
-			return null;
-		}
-		
-		InfluencerMedia media = null;
-		for(InfluencerMedia element : user.getInfluencer().getInfluencerMedias()) {
-			if(element.getSocialId() == "facebook") {
-				media = element;
-			}
-		}
-		
-		if(media == null) {
-			return null;
-		}
-		return getProfile(media.getPageId());		
-	}
-	
 	public FacebookProfileResponse getProfile(String pageId) throws ResponseException {
 		Gson gson = new Gson();
 		Facebook fb = getInstance(getAppAccessToken());
