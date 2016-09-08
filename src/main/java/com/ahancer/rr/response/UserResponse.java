@@ -37,6 +37,23 @@ public class UserResponse implements Serializable {
 		
 		return media.getPageId();
 	}
+	
+	public String getSocialId(String mediaId) throws Exception {
+		InfluencerMedia media = null;
+		
+		if(getInfluencer() == null) {
+			throw new Exception();
+		}
+		
+		for(InfluencerMedia element : getInfluencer().getInfluencerMedias()) {
+			if(element.getMedia().getMediaId().equals(mediaId)) {
+				media = element;
+			}
+		}
+		
+		return media.getSocialId();
+	}
+
 
 	public Long getUserId() {
 		return userId;

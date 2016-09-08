@@ -14,11 +14,13 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
 import com.ahancer.rr.response.FacebookProfileResponse;
+import com.ahancer.rr.response.InstagramProfileResponse;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.response.YouTubeProfileResponse;
 import com.ahancer.rr.services.BrandService;
 import com.ahancer.rr.services.FacebookService;
 import com.ahancer.rr.services.InfluencerService;
+import com.ahancer.rr.services.InstagramService;
 import com.ahancer.rr.services.UserService;
 import com.ahancer.rr.services.YoutubeService;
 import com.mysql.jdbc.NotImplemented;
@@ -41,6 +43,9 @@ public class ProfileController extends AbstractController{
 	
 	@Autowired
 	private YoutubeService ytService;
+
+	@Autowired
+	private InstagramService instagramService;
 
 	@RequestMapping(method=RequestMethod.GET)
 	public UserResponse getMyProfile() {
@@ -68,6 +73,18 @@ public class ProfileController extends AbstractController{
 		
 		
 		return facebookService.getProfile(pageId);
+	}
+	
+	@RequestMapping(value="instagram", method=RequestMethod.GET)
+	public InstagramProfileResponse getInstagramProfile() throws Exception {
+		UserResponse user = this.getUserRequest();
+		
+		if(!Role.Influencer.equals(user.getRole())) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
+		}
+		String socialId = user.getSocialId("instagram");
+		
+		return instagramService.getProfile(socialId);
 	}
 	
 	@RequestMapping(value="/bank",method=RequestMethod.PUT)

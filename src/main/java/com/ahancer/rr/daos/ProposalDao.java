@@ -18,9 +18,7 @@ import com.ahancer.rr.models.Proposal;
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Proposal findByProposalIdAndInfluencerId(Long proposalId,Long influencerId);
-	
 	public Proposal findByProposalIdAndCampaignBrandId(Long proposalId,Long brandId);
-	
 	public Proposal findByInfluencerIdAndCampaignCampaignId(Long influencerId, Long campaignId);
 
 	
