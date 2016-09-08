@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -83,13 +84,14 @@ public class YoutubeService {
 			String playlistId = (String)value;
 			YouTube.PlaylistItems.List ypllist = youtube.playlistItems().list("snippet");
 			ypllist.setPart("snippet,contentDetails");
+			ypllist.setMaxResults(30L);
 			ypllist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setPlaylistId(playlistId);
 
 			PlaylistItemListResponse result = ypllist.execute();
 			pl.addAll(result.getItems());
 		}
 		
-		List<String> videoIds = new ArrayList<String>();
+		HashSet<String> videoIds = new HashSet<String>();
 		
 		for(PlaylistItem pitem: pl){
 			String videoId = pitem.getContentDetails().getVideoId();
