@@ -193,6 +193,7 @@ public class ProposalService {
 		response.setPrice(proposal.getPrice());
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
 		//response.setWallet(proposal.getWallet());
 		//response.setWalletId(proposal.getWalletId());
 		
@@ -227,6 +228,7 @@ public class ProposalService {
 		response.setPrice(proposal.getPrice());
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
 		//response.setWallet(proposal.getWallet());
 		//response.setWalletId(proposal.getWalletId());
 		
@@ -353,6 +355,10 @@ public class ProposalService {
 	
 	public Proposal getAppliedProposal(Long influencerId, Long campaignId) {
 		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId,campaignId);
+	}
+	
+	public void dismissProposalNotification(Long proposalId, Long influencerId){
+		proposalDao.updateRabbitFlag(true,proposalId, influencerId);
 	}
 
 }
