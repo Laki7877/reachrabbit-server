@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
@@ -49,9 +50,12 @@ public class ProfileController extends AbstractController{
 	
 	
 	@RequestMapping(value="/google", method=RequestMethod.GET)
-	public YouTubeProfileResponse getYouTubeProfile() throws Exception{
-				
-		return ytService.getVideoFeed();
+	public YouTubeProfileResponse getYouTubeProfile(@RequestParam(value = "channel_id", required=false) String channelId) throws Exception{
+		String defaultId = "UCi8e0iOVk1fEOogdfu4YgfA";
+		if(channelId == null){
+			channelId = defaultId;
+		}
+		return ytService.getVideoFeed(channelId);
 	}
 	
 	@RequestMapping(value="/facebook", method=RequestMethod.GET)
