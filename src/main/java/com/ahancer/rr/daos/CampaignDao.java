@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,7 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	public List<Campaign> findByBrandBrandIdAndStatusIn(Long brandId, Collection<CampaignStatus> statuses);
 	public Campaign findByCampaignIdAndBrandId(Long campaignId, Long brandId);
 	
+	@Modifying
 	@Query("UPDATE campaign c SET c.rabbitFlag=:rabbitFlag WHERE c.campaignId=:campaignId AND c.brandId=:brandId")
 	public int updateRabbitFlag(@Param("rabbitFlag") Boolean rabbitFlag, @Param("campaignId") Long campaignId,@Param("brandId") Long brandId);
 

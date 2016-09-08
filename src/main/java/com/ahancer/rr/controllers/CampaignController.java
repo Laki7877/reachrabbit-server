@@ -82,13 +82,14 @@ public class CampaignController extends AbstractController {
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request,Locale local) throws Exception {
-		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), local);
+	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
 		return getOneCampaign(campaign.getCampaignId());
 	}
 	
 	@RequestMapping(value="/{campaignId}/dismiss",method=RequestMethod.PUT)
-	public void dismissCampaignNotification(@PathVariable Long campaignId,Locale local) throws Exception {
+	public void dismissCampaignNotification(@PathVariable Long campaignId) throws Exception {
 		campaignService.dismissCampaignNotification(campaignId, this.getUserRequest().getBrand().getBrandId());
 	}
 	
