@@ -27,7 +27,7 @@ public class ScheduledTask {
 	private MessageSource messageSource;
 	
 	//@Scheduled(fixedRate = 60000)
-	@Scheduled(fixedRate = 30000)
+	@Scheduled(fixedRate = 180000)
     public void reportCurrentTime() {
 		Calendar cal = Calendar.getInstance();
 		//cal.add(Calendar.HOUR, -1);
