@@ -1,8 +1,10 @@
 package com.ahancer.rr.services;
 
 import java.util.Date;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,11 +37,17 @@ public class WalletService {
 	@Autowired
 	private InfluencerTransactionDocumentDao influencerTransactionDocumentDao;
 	
+	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
+	private EmailService emailService;
+	
 	public Wallet findPendingByIndluencer(Long influencerId) {
 		return walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.Pending);
 	}
 	
-	public Transaction payoutWallet(PayoutRequest request, Long influencerId) throws Exception{
+	public Transaction payoutWallet(PayoutRequest request, Long influencerId,Locale locale) throws Exception{
 		
 		Wallet wallet = walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.Pending);
 		if(null == wallet){
@@ -97,6 +105,17 @@ public class WalletService {
 		transaction.setAmount(sum);
 		transaction.setTransactionNumber(EncodeUtil.encode(transaction.getTransactionId()));
 		transaction = transactionDao.save(transaction);
+		
+		//send email to admin
+		String to = "admin@reachrabbit.com";
+		String subject = messageSource.getMessage("email.admin.influencer.payout.subject",null,locale);
+		String body = messageSource.getMessage("email.admin.influencer.payout.message",null,locale)
+				.replace("{{Influencer Name}}", wallet.getInfluencer().getUser().getName())
+				.replace("{{Payout Amount}}", transaction.getAmount().toString())
+				.replace("{{Bank Name}}", request.getBank().getBankName())
+				.replace("{{Bank Account Number}}", request.getAccountNumber())
+				.replace("{{Bank Account Name}}", request.getAccountName());
+		emailService.send(to, subject, body);
 		
 		return transaction;
 	}
