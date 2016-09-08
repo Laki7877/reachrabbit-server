@@ -2,16 +2,26 @@ package com.ahancer.rr.response;
 
 import java.util.List;
 
+import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.PlaylistItem;
+import com.google.api.services.youtube.model.Video;
 
 public class YouTubeProfileResponse {
-	private List<PlaylistItem> posts;
-
-	public List<PlaylistItem> getPosts() {
-		return posts;
+	private List<Video> videos;
+	private Channel channel;
+	public Channel getChannel() {
+		return channel;
 	}
 
-	public void setPosts(List<PlaylistItem> posts) {
-		this.posts = posts;
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
+
+	public List<Video> getVideos() {
+		return videos;
+	}
+
+	public void setVideos(List<Video> videos) {
+		this.videos = videos;
 	}
 }

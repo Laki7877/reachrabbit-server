@@ -50,11 +50,8 @@ public class ProfileController extends AbstractController{
 	
 	@RequestMapping(value="/google", method=RequestMethod.GET)
 	public YouTubeProfileResponse getYouTubeProfile() throws Exception{
-		
-		YouTubeProfileResponse ytres = new YouTubeProfileResponse();
-		ytres.setPosts(ytService.getVideoFeed());
-		
-		return ytres;
+				
+		return ytService.getVideoFeed();
 	}
 	
 	@RequestMapping(value="/facebook", method=RequestMethod.GET)
