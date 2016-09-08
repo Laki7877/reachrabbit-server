@@ -84,7 +84,6 @@ public class YoutubeService {
 			String playlistId = (String)value;
 			YouTube.PlaylistItems.List ypllist = youtube.playlistItems().list("snippet");
 			ypllist.setPart("snippet,contentDetails");
-			ypllist.setMaxResults(30L);
 			ypllist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setPlaylistId(playlistId);
 
 			PlaylistItemListResponse result = ypllist.execute();
