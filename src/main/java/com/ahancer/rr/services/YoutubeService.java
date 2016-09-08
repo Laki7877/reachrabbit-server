@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
+import com.ahancer.rr.response.YouTubeProfileResponse;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -29,6 +31,7 @@ import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.PlaylistListResponse;
+import com.google.api.services.youtube.model.VideoListResponse;
 
 @Service
 public class YoutubeService {
@@ -65,14 +68,15 @@ public class YoutubeService {
 		return new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).build();
 	}
 
-	public List<PlaylistItem> getVideoFeed() throws GeneralSecurityException, IOException{
+	public YouTubeProfileResponse getVideoFeed(String channelId) throws GeneralSecurityException, IOException{
 		Credential credential = new GoogleCredential();
-		
+		YouTubeProfileResponse ytres = new YouTubeProfileResponse();
 		YouTube youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).setApplicationName("Reachrabbit-Server/1.05R").build();
 		
-		YouTube.Channels.List chanlist = youtube.channels().list("snippet,contentDetails");
-		chanlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId("UCQ0-okjX18v85QlCAr1GBwQ");
+		YouTube.Channels.List chanlist = youtube.channels().list("snippet,contentDetails,statistics");
+		chanlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId(channelId);
 		ChannelListResponse chanResult = chanlist.execute();
+		Channel chan = chanResult.getItems().get(0);
 		
 		List<PlaylistItem> pl = new ArrayList<>();
 		
@@ -86,8 +90,22 @@ public class YoutubeService {
 			pl.addAll(result.getItems());
 		}
 		
-		return pl;
-				
+		HashSet<String> videoIds = new HashSet<String>();
+		
+		for(PlaylistItem pitem: pl){
+			String videoId = pitem.getContentDetails().getVideoId();
+			videoIds.add(videoId);
+		}
+		
+		String videoQuery =  String.join(",", videoIds);
+		YouTube.Videos.List yvlist = youtube.videos().list("snippet,statistics");
+		yvlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId(videoQuery);
+		VideoListResponse result = yvlist.execute();
+		
+		ytres.setVideos(result.getItems());
+		ytres.setChannel(chan);
+		
+		return ytres;
 		
 	}
 	
