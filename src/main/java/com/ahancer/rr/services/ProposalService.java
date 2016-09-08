@@ -354,5 +354,9 @@ public class ProposalService {
 	public Proposal getAppliedProposal(Long influencerId, Long campaignId) {
 		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId,campaignId);
 	}
+	
+	public void dismissProposalNotification(Long proposalId, Long influencerId){
+		proposalDao.updateRabbitFlag(true,proposalId, influencerId);
+	}
 
 }
