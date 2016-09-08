@@ -25,6 +25,7 @@ import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.CampaignRequest;
+import com.ahancer.rr.response.UserResponse;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -47,8 +48,12 @@ public class CampaignService {
 	
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private EmailService emailService;
 
-	public Campaign createCampaignByBrand(CampaignRequest request, Long brandId) throws Exception {
+	public Campaign createCampaignByBrand(CampaignRequest request, UserResponse user, Locale locale) throws Exception {
+		Long brandId = user.getBrand().getBrandId();
 		//Setup campaign
 		Campaign campaign = new Campaign();
 		campaign.setBrandId(brandId);
@@ -71,11 +76,11 @@ public class CampaignService {
 					, resource.getResource().getResourceId()
 					, resource.getPosition());
 		}
-		validateCampaign(campaign);
+		validateCampaign(campaign,user,locale);
 		return campaign;
 	}
 	
-	private void validateCampaign(Campaign campaign) throws Exception {
+	private void validateCampaign(Campaign campaign, UserResponse user, Locale locale) throws Exception {
 		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			if(StringUtils.isEmpty(campaign.getTitle())) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.title.require");
@@ -103,10 +108,19 @@ public class CampaignService {
 			if(null == campaign.getProposalDeadline() || cal.getTime().after(campaign.getProposalDeadline())){
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.deadline.require");
 			}
+			//send email to admin
+			String to = "admin@reachrabbit.com";
+			String subject = messageSource.getMessage("email.admin.brand.publish.campaign.subject",null,locale);
+			String body = messageSource.getMessage("email.admin.brand.publish.campaign.message",null,locale)
+					.replace("{{Brand Name}}", user.getBrand().getBrandName())
+					.replace("{{Campaign Name}}", campaign.getTitle())
+					.replace("{{Category}}", campaign.getCategory().getCategoryName());
+			emailService.send(to, subject, body);
 		}
 	}
 	
-	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, Long brandId, Locale local) throws Exception {
+	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, UserResponse user, Locale locale) throws Exception {
+		Long brandId = user.getBrand().getBrandId();
 		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
 		if(null == campaign) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
@@ -137,7 +151,7 @@ public class CampaignService {
 		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			List<Proposal> proposalList = proposalService.findAllByBrand(brandId, campaignId);
 			ProposalMessage message = new ProposalMessage();
-			message.setMessage(messageSource.getMessage("robot.campaign.message", null, local));
+			message.setMessage(messageSource.getMessage("robot.campaign.message", null, locale));
 			User robotUser = robotService.getRobotUser();
 			for(Proposal proposal : proposalList) {
 				message.setProposal(proposal);
@@ -150,7 +164,7 @@ public class CampaignService {
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
-		validateCampaign(campaign);
+		validateCampaign(campaign,user,locale);
 		return campaign;
 	}
 	
@@ -180,5 +194,9 @@ public class CampaignService {
 
 	public Campaign findOneByBrand(Long campaignId, Long brandId) {
 		return campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
+	}
+	
+	public void dismissCampaignNotification(Long campaignId, Long brandId){
+		campaignDao.updateRabbitFlag(true, campaignId, brandId);
 	}
 }

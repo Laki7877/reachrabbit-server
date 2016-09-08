@@ -26,10 +26,12 @@ public class ScheduledTask {
 	@Autowired
 	private MessageSource messageSource;
 	
-	@Scheduled(fixedRate = 60000)
+	//@Scheduled(fixedRate = 60000)
+	@Scheduled(fixedRate = 180000)
     public void reportCurrentTime() {
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.HOUR, -1);
+		//cal.add(Calendar.HOUR, -1);
+		cal.add(Calendar.MINUTE, -3);
 		Date now = new Date();
 		List<MessageCountResponse> list = proposalMessageDao.findBrandMessageCount(false, cal.getTime(),now);
 		list.addAll(proposalMessageDao.findInfluencerMessageCount(false,cal.getTime(),now));

@@ -28,6 +28,7 @@ public class ProposalResponse {
 	private CartResponse cart;
 	private Long walletId;
 	private WalletResponse wallet;
+	private Boolean rabbitFlag;
 	
 	public ProposalResponse(){
 		
@@ -160,6 +161,12 @@ public class ProposalResponse {
 	public void setWallet(WalletResponse wallet) {
 		this.wallet = wallet;
 	}
-	
 
+	public Boolean getRabbitFlag() {
+		return rabbitFlag;
+	}
+
+	public void setRabbitFlag(Boolean rabbitFlag) {
+		this.rabbitFlag = rabbitFlag;
+	}
 }

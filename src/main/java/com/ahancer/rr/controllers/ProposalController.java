@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -110,12 +111,19 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}")
 	@Authorization(Role.Influencer)
-	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal, Locale local) throws Exception {
-		proposal = proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId(),local);
+	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		proposal = proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId(),locale);
 		proposalService.processInboxPolling(proposal.getInfluencerId());
 		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
+	}
+	
+	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/dismiss")
+	@Authorization(Role.Influencer)
+	public void dismissNotification(@PathVariable Long proposalId) throws Exception {
+		proposalService.dismissProposalNotification(proposalId,this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	
 	
@@ -152,8 +160,9 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/status/{status}")
 	@Authorization(Role.Brand)
-	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status, Locale local) throws Exception {
-		Proposal proposal = proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId(),local);
+	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		Proposal proposal = proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId(), locale);
 		proposalService.processInboxPollingByOne(proposal.getInfluencerId());
 		proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
 		proposalMessageService.processMessagePolling(proposal.getProposalId());

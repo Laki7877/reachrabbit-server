@@ -33,7 +33,7 @@ public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long
 			+ "HAVING COUNT(pm) > 0")
 	public List<MessageCountResponse> findBrandMessageCount(@Param("isBrandRead") Boolean isBrandRead,@Param("from") Date from,@Param("to") Date to);
 	
-	@Query("SELECT new com.ahancer.rr.response.MessageCountResponse(pm.proposal.campaign.brand.user.email, COUNT(pm)) "
+	@Query("SELECT new com.ahancer.rr.response.MessageCountResponse(pm.proposal.influencer.user.email, COUNT(pm)) "
 			+ "FROM proposalMessage pm "
 			+ "WHERE pm.isInfluencerRead=:isInfluencerRead AND pm.createdAt>=:from AND pm.createdAt<=:to "
 			+ "GROUP BY pm.proposal.influencer.user.email "

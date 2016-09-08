@@ -193,6 +193,7 @@ public class ProposalService {
 		response.setPrice(proposal.getPrice());
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
 		//response.setWallet(proposal.getWallet());
 		//response.setWalletId(proposal.getWalletId());
 		
@@ -227,6 +228,7 @@ public class ProposalService {
 		response.setPrice(proposal.getPrice());
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
 		//response.setWallet(proposal.getWallet());
 		//response.setWalletId(proposal.getWalletId());
 		
@@ -337,7 +339,7 @@ public class ProposalService {
 			oldProposal.setWalletId(wallet.getWalletId());
 			
 			//send email to influencer
-			String to = wallet.getInfluencer().getUser().getEmail();
+			String to = oldProposal.getInfluencer().getUser().getEmail();
 			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
 			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale).replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
 			emailService.send(to, subject, body);
@@ -353,6 +355,10 @@ public class ProposalService {
 	
 	public Proposal getAppliedProposal(Long influencerId, Long campaignId) {
 		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId,campaignId);
+	}
+	
+	public void dismissProposalNotification(Long proposalId, Long influencerId){
+		proposalDao.updateRabbitFlag(true,proposalId, influencerId);
 	}
 
 }

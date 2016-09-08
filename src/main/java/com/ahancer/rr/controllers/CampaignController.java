@@ -75,15 +75,22 @@ public class CampaignController extends AbstractController {
 	@ApiOperation(value = "Create new campaign")
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
-	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request) throws Exception {
-		Campaign campaign = campaignService.createCampaignByBrand(request, this.getUserRequest().getBrand().getBrandId());
+	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		Campaign campaign = campaignService.createCampaignByBrand(request, this.getUserRequest(),locale);
 		return getOneCampaign(campaign.getCampaignId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request,Locale local) throws Exception {
-		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest().getBrand().getBrandId(), local);
+	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
 		return getOneCampaign(campaign.getCampaignId());
+	}
+	
+	@RequestMapping(value="/{campaignId}/dismiss",method=RequestMethod.PUT)
+	public void dismissCampaignNotification(@PathVariable Long campaignId) throws Exception {
+		campaignService.dismissCampaignNotification(campaignId, this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
@@ -106,5 +113,7 @@ public class CampaignController extends AbstractController {
 	public Proposal getAppliedProposal(@PathVariable Long campaignId) throws Exception {
 		return proposalService.getAppliedProposal(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}
+	
+	
 	
 }
