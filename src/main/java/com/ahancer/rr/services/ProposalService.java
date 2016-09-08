@@ -337,7 +337,7 @@ public class ProposalService {
 			oldProposal.setWalletId(wallet.getWalletId());
 			
 			//send email to influencer
-			String to = wallet.getInfluencer().getUser().getEmail();
+			String to = oldProposal.getInfluencer().getUser().getEmail();
 			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
 			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale).replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
 			emailService.send(to, subject, body);
