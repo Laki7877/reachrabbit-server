@@ -67,13 +67,13 @@ public class YoutubeService {
 		return new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).build();
 	}
 
-	public YouTubeProfileResponse getVideoFeed() throws GeneralSecurityException, IOException{
+	public YouTubeProfileResponse getVideoFeed(String channelId) throws GeneralSecurityException, IOException{
 		Credential credential = new GoogleCredential();
 		YouTubeProfileResponse ytres = new YouTubeProfileResponse();
 		YouTube youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).setApplicationName("Reachrabbit-Server/1.05R").build();
 		
 		YouTube.Channels.List chanlist = youtube.channels().list("snippet,contentDetails,statistics");
-		chanlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId("UCQ0-okjX18v85QlCAr1GBwQ");
+		chanlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId(channelId);
 		ChannelListResponse chanResult = chanlist.execute();
 		Channel chan = chanResult.getItems().get(0);
 		
