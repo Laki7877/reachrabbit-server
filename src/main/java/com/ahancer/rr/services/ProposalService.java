@@ -193,6 +193,7 @@ public class ProposalService {
 		response.setPrice(proposal.getPrice());
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
 		//response.setWallet(proposal.getWallet());
 		//response.setWalletId(proposal.getWalletId());
 		
@@ -227,6 +228,7 @@ public class ProposalService {
 		response.setPrice(proposal.getPrice());
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
 		//response.setWallet(proposal.getWallet());
 		//response.setWalletId(proposal.getWalletId());
 		
