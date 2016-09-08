@@ -1,7 +1,5 @@
 package com.ahancer.rr;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
@@ -18,8 +16,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
-import com.ahancer.rr.services.YoutubeService;
 
 @SpringBootApplication
 @EnableAutoConfiguration

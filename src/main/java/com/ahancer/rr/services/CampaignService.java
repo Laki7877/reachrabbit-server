@@ -195,4 +195,8 @@ public class CampaignService {
 	public Campaign findOneByBrand(Long campaignId, Long brandId) {
 		return campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
 	}
+	
+	public void dismissCampaignNotification(Long campaignId, Long brandId){
+		campaignDao.updateRabbitFlag(true, campaignId, brandId);
+	}
 }

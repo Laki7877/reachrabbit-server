@@ -87,6 +87,11 @@ public class CampaignController extends AbstractController {
 		return getOneCampaign(campaign.getCampaignId());
 	}
 	
+	@RequestMapping(value="/{campaignId}/dismiss",method=RequestMethod.PUT)
+	public void dismissCampaignNotification(@PathVariable Long campaignId,Locale local) throws Exception {
+		campaignService.dismissCampaignNotification(campaignId, this.getUserRequest().getBrand().getBrandId());
+	}
+	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
 	public void deleteCampaign(@PathVariable Long campaignId) throws Exception{
 		throw new ResponseException("error.notimplement");
@@ -107,5 +112,7 @@ public class CampaignController extends AbstractController {
 	public Proposal getAppliedProposal(@PathVariable Long campaignId) throws Exception {
 		return proposalService.getAppliedProposal(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}
+	
+	
 	
 }
