@@ -15,10 +15,12 @@ import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
 import com.ahancer.rr.response.FacebookProfileResponse;
 import com.ahancer.rr.response.UserResponse;
+import com.ahancer.rr.response.YouTubeProfileResponse;
 import com.ahancer.rr.services.BrandService;
 import com.ahancer.rr.services.FacebookService;
 import com.ahancer.rr.services.InfluencerService;
 import com.ahancer.rr.services.UserService;
+import com.ahancer.rr.services.YoutubeService;
 import com.mysql.jdbc.NotImplemented;
 
 @RestController
@@ -36,11 +38,25 @@ public class ProfileController extends AbstractController{
 	
 	@Autowired
 	private FacebookService facebookService;
+	
+	@Autowired
+	private YoutubeService ytService;
 
 	@RequestMapping(method=RequestMethod.GET)
 	public UserResponse getMyProfile() {
 		return this.getUserRequest();
 	}
+	
+	
+	@RequestMapping(value="/google", method=RequestMethod.GET)
+	public YouTubeProfileResponse getYouTubeProfile() throws Exception{
+		
+		YouTubeProfileResponse ytres = new YouTubeProfileResponse();
+		ytres.setPosts(ytService.getVideoFeed());
+		
+		return ytres;
+	}
+	
 	@RequestMapping(value="/facebook", method=RequestMethod.GET)
 	public FacebookProfileResponse getFacebookProfile() throws Exception {
 		UserResponse user = this.getUserRequest();
