@@ -120,7 +120,7 @@ public class ProfileController extends AbstractController{
 	@RequestMapping(value="/{userId}/instagram", method=RequestMethod.GET)
 	public InstagramProfileResponse getInstagram(@PathVariable Long userId) throws Exception {
 		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
-		return instagramService.getProfile(user.getPageId("facebook"));
+		return instagramService.getProfile(user.getSocialId("instagram"));
 	}
 
 	@RequestMapping(value="/{userId}/google", method=RequestMethod.GET)
