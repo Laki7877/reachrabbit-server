@@ -42,11 +42,13 @@ public class CampaignController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Campaign> getAllCampaign(Pageable pageRequest) throws Exception{
-		if(this.getUserRequest().getRole() == Role.Brand) {
+		if(this.getUserRequest().getRole().equals(Role.Brand)) {
 			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);	
-		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+		} else if(this.getUserRequest().getRole().equals(Role.Influencer)) {
 			return campaignService.findAll(pageRequest);		
-		}	
+		} else if(this.getUserRequest().getRole().equals(Role.Admin)) {
+			return campaignService.findAll(pageRequest);
+		}
 		throw new Exception();
 	}
 	
