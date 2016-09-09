@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
@@ -55,12 +54,15 @@ public class ProfileController extends AbstractController{
 	
 	
 	@RequestMapping(value="/google", method=RequestMethod.GET)
-	public YouTubeProfileResponse getYouTubeProfile(@RequestParam(value = "channel_id", required=false) String channelId) throws Exception{
-		String defaultId = "UCi8e0iOVk1fEOogdfu4YgfA";
-		if(channelId == null){
-			channelId = defaultId;
+	public YouTubeProfileResponse getYouTubeProfile() throws Exception{
+		UserResponse user = this.getUserRequest();
+		
+		if(!Role.Influencer.equals(user.getRole())) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
 		}
-		return ytService.getVideoFeed(channelId);
+		String socialId = user.getSocialId("google");
+		
+		return ytService.getVideoFeed(socialId);
 	}
 	
 	@RequestMapping(value="/facebook", method=RequestMethod.GET)
@@ -113,8 +115,19 @@ public class ProfileController extends AbstractController{
 	@RequestMapping(value="/{userId}/facebook", method=RequestMethod.GET)
 	public FacebookProfileResponse getFacebook(@PathVariable Long userId) throws Exception {
 		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
-		
 		return facebookService.getProfile(user.getPageId("facebook"));
 	}
+	@RequestMapping(value="/{userId}/instagram", method=RequestMethod.GET)
+	public InstagramProfileResponse getInstagram(@PathVariable Long userId) throws Exception {
+		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
+		return instagramService.getProfile(user.getPageId("facebook"));
+	}
+
+	@RequestMapping(value="/{userId}/google", method=RequestMethod.GET)
+	public YouTubeProfileResponse getYoutube(@PathVariable Long userId) throws Exception {
+		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
+		return ytService.getVideoFeed(user.getSocialId("google"));
+	}
+
 
 }
