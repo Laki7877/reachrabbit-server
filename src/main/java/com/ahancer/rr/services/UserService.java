@@ -23,7 +23,9 @@ public class UserService {
 	@Autowired
 	private ProposalDao proposalDao;
 	
-	
+	public User findOne(Long userId) {
+		return userDao.findOne(userId);
+	}
 	public UserResponse findUserById(Long requestUserId,Long userId, Role userRole) throws Exception {
 		Long proposalCount = 0L;
 		if(Role.Brand.equals(userRole)){

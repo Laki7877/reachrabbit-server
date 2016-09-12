@@ -1,11 +1,14 @@
 package com.ahancer.rr.controllers;
 
+import java.util.Locale;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,8 +40,9 @@ public class WalletController extends AbstractController {
 	
 	@RequestMapping(value="/payout",method=RequestMethod.POST)
 	@Authorization(Role.Influencer)
-	public Transaction payoutWallet(@Valid @RequestBody PayoutRequest request) throws Exception {
-		return walletService.payoutWallet(request,this.getUserRequest().getInfluencer().getInfluencerId());
+	public Transaction payoutWallet(@Valid @RequestBody PayoutRequest request
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		return walletService.payoutWallet(request,this.getUserRequest().getInfluencer().getInfluencerId(),locale);
 	}
 	
 	@RequestMapping(value="/{walletId}/transaction",method=RequestMethod.GET)

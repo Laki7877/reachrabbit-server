@@ -34,6 +34,7 @@ import com.ahancer.rr.models.User;
 import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.response.CartResponse;
 import com.ahancer.rr.response.ProposalResponse;
+import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.response.WalletResponse;
 
 @Service
@@ -60,6 +61,10 @@ public class ProposalService {
 	
 	@Autowired
 	private WalletDao walletDao;
+	
+	@Autowired
+	private EmailService emailService;
+	
 
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
 
@@ -188,6 +193,7 @@ public class ProposalService {
 		response.setPrice(proposal.getPrice());
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
 		//response.setWallet(proposal.getWallet());
 		//response.setWalletId(proposal.getWalletId());
 		
@@ -222,6 +228,7 @@ public class ProposalService {
 		response.setPrice(proposal.getPrice());
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
 		//response.setWallet(proposal.getWallet());
 		//response.setWalletId(proposal.getWalletId());
 		
@@ -250,17 +257,19 @@ public class ProposalService {
 		return proposalDao.findAll(pageable);
 	}
 
-	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,Long influencerId) throws Exception {
+	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,UserResponse user,Locale locale) throws Exception {
 		Campaign campaign = campaignDao.findOne(campaignId);
-		long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influencerId, campaign.getCampaignId());
+		Long influecnerId = user.getInfluencer().getInfluencerId();
+		long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influecnerId, campaign.getCampaignId());
 		if(0 < count){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.already.proposal");
 		}
 		proposal.setCampaign(campaign);
-		proposal.setInfluencerId(influencerId);
+		proposal.setInfluencerId(influecnerId);
 		proposal.setMessageUpdatedAt(new Date());
 		proposal.setStatus(ProposalStatus.Selection);
 		proposal.setFee(Math.floor(proposal.getPrice()*0.18));
+		proposal.setRabbitFlag(false);
 		proposal = proposalDao.save(proposal);
 		//Insert first message
 		ProposalMessage firstMessage = new ProposalMessage();
@@ -268,8 +277,12 @@ public class ProposalService {
 		firstMessage.setIsInfluencerRead(true);
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
-		firstMessage.setUserId(influencerId);
+		firstMessage.setUserId(influecnerId);
 		firstMessage = proposalMessageDao.save(firstMessage);
+		String to = campaign.getBrand().getUser().getEmail();
+		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
+		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale).replace("{{Influencer Name}}", user.getName());
+		emailService.send(to, subject, body);
 		return proposal;
 	}
 
@@ -297,7 +310,7 @@ public class ProposalService {
 		return oldProposal;
 	}
 
-	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale local) throws Exception {
+	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale locale) throws Exception {
 		Proposal oldProposal = proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
@@ -313,7 +326,7 @@ public class ProposalService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.invalid.status");
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
 			//set robot message
-			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, local));
+			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, locale));
 			oldProposal.setCompleteDate(cal.getTime());
 			//add wallet
 			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.Pending);
@@ -324,6 +337,12 @@ public class ProposalService {
 				wallet = walletDao.save(wallet);
 			}
 			oldProposal.setWalletId(wallet.getWalletId());
+			
+			//send email to influencer
+			String to = oldProposal.getInfluencer().getUser().getEmail();
+			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
+			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale).replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
+			emailService.send(to, subject, body);
 		}
 		User robotUser = robotService.getRobotUser();
 		rebotMessage.setProposal(oldProposal);
@@ -336,6 +355,10 @@ public class ProposalService {
 	
 	public Proposal getAppliedProposal(Long influencerId, Long campaignId) {
 		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId,campaignId);
+	}
+	
+	public void dismissProposalNotification(Long proposalId, Long influencerId){
+		proposalDao.updateRabbitFlag(true,proposalId, influencerId);
 	}
 
 }

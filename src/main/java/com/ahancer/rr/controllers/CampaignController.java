@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,11 +42,13 @@ public class CampaignController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public Page<Campaign> getAllCampaign(Pageable pageRequest) throws Exception{
-		if(this.getUserRequest().getRole() == Role.Brand) {
+		if(this.getUserRequest().getRole().equals(Role.Brand)) {
 			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);	
-		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+		} else if(this.getUserRequest().getRole().equals(Role.Influencer)) {
 			return campaignService.findAll(pageRequest);		
-		}	
+		} else if(this.getUserRequest().getRole().equals(Role.Admin)) {
+			return campaignService.findAll(pageRequest);
+		}
 		throw new Exception();
 	}
 	
@@ -74,15 +77,22 @@ public class CampaignController extends AbstractController {
 	@ApiOperation(value = "Create new campaign")
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
-	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request) throws Exception {
-		Campaign campaign = campaignService.createCampaignByBrand(request, this.getUserRequest().getBrand().getBrandId());
+	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		Campaign campaign = campaignService.createCampaignByBrand(request, this.getUserRequest(),locale);
 		return getOneCampaign(campaign.getCampaignId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request,Locale local) throws Exception {
-		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest().getBrand().getBrandId(), local);
+	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
 		return getOneCampaign(campaign.getCampaignId());
+	}
+	
+	@RequestMapping(value="/{campaignId}/dismiss",method=RequestMethod.PUT)
+	public void dismissCampaignNotification(@PathVariable Long campaignId) throws Exception {
+		campaignService.dismissCampaignNotification(campaignId, this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
@@ -92,8 +102,9 @@ public class CampaignController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
 	@Authorization(Role.Influencer)
-	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal) throws Exception {
-		proposal = proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest().getInfluencer().getInfluencerId());
+	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal
+			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
+		proposal = proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest(),locale);
 		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
@@ -104,5 +115,7 @@ public class CampaignController extends AbstractController {
 	public Proposal getAppliedProposal(@PathVariable Long campaignId) throws Exception {
 		return proposalService.getAppliedProposal(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}
+	
+	
 	
 }

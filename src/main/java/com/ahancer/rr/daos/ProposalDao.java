@@ -18,9 +18,7 @@ import com.ahancer.rr.models.Proposal;
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Proposal findByProposalIdAndInfluencerId(Long proposalId,Long influencerId);
-	
 	public Proposal findByProposalIdAndCampaignBrandId(Long proposalId,Long brandId);
-	
 	public Proposal findByInfluencerIdAndCampaignCampaignId(Long influencerId, Long campaignId);
 
 	
@@ -59,4 +57,8 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	@Query("UPDATE proposal cp SET status=:status WHERE cp.proposalId=:proposalId")
 	public int updateProposalStatus(@Param("proposalId") Long proposalId, @Param("status") ProposalStatus status);
 	
+	
+	@Modifying
+	@Query("UPDATE proposal p SET p.rabbitFlag=:rabbitFlag WHERE p.proposalId=:proposalId AND p.influencerId=:influencerId")
+	public int updateRabbitFlag(@Param("rabbitFlag") Boolean rabbitFlag, @Param("proposalId") Long proposalId,@Param("influencerId") Long influencerId);
 }

@@ -49,7 +49,7 @@ public class Transaction implements Serializable {
 	
 	@JsonIgnore
 	@MapsId("userId")
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="userId")
 	private User user;
 	

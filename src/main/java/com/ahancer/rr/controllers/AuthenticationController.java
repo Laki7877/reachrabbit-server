@@ -55,8 +55,16 @@ public class AuthenticationController {
 	@RequestMapping(value = "/instagram" ,method = RequestMethod.POST)
 	public OAuthenticationResponse instagramAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException, InstagramException {
 		return instagramService.authenticate(instagramService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
+	}		
+	@RequestMapping(value = "/instagram/check" ,method = RequestMethod.GET)
+	public Boolean instagramCheck() throws ResponseException, InstagramException {
+		return instagramService.checkAdminToken();
 	}	
 	
+	@RequestMapping(value = "/instagram/refresh" ,method = RequestMethod.POST)
+	public void instagramRefresh(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException, InstagramException {
+		instagramService.refreshAdminToken(instagramService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
+	}	
 	@RequestMapping(value = "/google" ,method = RequestMethod.POST)
 	public OAuthenticationResponse youtubeAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception {
 		return youtubeService.authentication(youtubeService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
