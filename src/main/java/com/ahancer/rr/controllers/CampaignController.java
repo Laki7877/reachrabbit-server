@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
-import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.CampaignRequest;
@@ -86,7 +85,17 @@ public class CampaignController extends AbstractController {
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
 	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+		
+				
+		Campaign campaign = null;
+
+		//Admin powered
+		if(this.getUserRequest().getRole().equals(Role.Admin)) {
+			campaign = campaignService.updateCampaign(campaignId, request);
+		} else {
+			campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+		}
+		
 		return getOneCampaign(campaign.getCampaignId());
 	}
 	
