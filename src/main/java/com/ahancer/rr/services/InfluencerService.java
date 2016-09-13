@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
+import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Influencer;
@@ -37,6 +38,9 @@ public class InfluencerService {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private ProposalDao proposalDao;
 
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
@@ -52,9 +56,22 @@ public class InfluencerService {
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
-		for(InfluencerMedia link : newUser.getInfluencer().getInfluencerMedias()) {
-			InfluencerMediaId id = new InfluencerMediaId(userId, link.getMedia().getMediaId());
-			link.setInfluencerMediaId(id);
+
+		for(InfluencerMedia link2 : oldUser.getInfluencer().getInfluencerMedias()) {
+			boolean has = false;
+			for(InfluencerMedia link: newUser.getInfluencer().getInfluencerMedias()) {
+				InfluencerMediaId id = new InfluencerMediaId(userId, link.getMedia().getMediaId());
+				link.setInfluencerMediaId(id);
+				if(link.getMedia().getMediaId().equals(link2.getMedia().getMediaId())) {
+					has = true;
+					break;
+				}
+			}
+			if(!has) {
+				if(proposalDao.countByInfluencerIdAndMediaMediaId(userId, link2.getMedia().getMediaId()) > 0) {
+					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.has.proposals");
+				}
+			}
 		}
 		//Validate duplicate Email
 		if(StringUtils.isNotEmpty(oldUser.getEmail()) 

@@ -87,7 +87,17 @@ public class CampaignController extends AbstractController {
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
 	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+		
+				
+		Campaign campaign = null;
+
+		//Admin powered
+		if(this.getUserRequest().getRole().equals(Role.Admin)) {
+			campaign = campaignService.updateCampaign(campaignId, request);
+		} else {
+			campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+		}
+		
 		return getOneCampaign(campaign.getCampaignId());
 	}
 	

@@ -120,6 +120,13 @@ public class CampaignService {
 		}
 	}
 	
+	public Campaign updateCampaign(Long campaignId, CampaignRequest request) {
+		Campaign campaign = campaignDao.findOne(campaignId);
+		
+		campaign.setStatus(request.getStatus());
+		
+		return campaignDao.save(campaign);
+	}
 	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, UserResponse user, Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
 		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
