@@ -202,7 +202,7 @@ public class CampaignService {
 	}
 
 	public List<CampaignResponse> findAllActiveByBrand(Long brandId) {
-		return campaignDao.findByBrandIdAndStatus(brandId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
+		return campaignDao.findByBrandIdAndStatus(brandId, Arrays.asList(CampaignStatus.Open));
 	}
 
 	public Page<CampaignResponse> findAllOpen(String mediaFilter,Pageable pageable) {		
