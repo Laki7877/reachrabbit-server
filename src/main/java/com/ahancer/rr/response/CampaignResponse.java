@@ -37,7 +37,7 @@ public class CampaignResponse implements Serializable {
 	private Integer countProposalSelection;
 	private Integer countProposalWorking;
 	private Integer countProposalComplete;
-	private Date updateAt;
+	private Date updatedAt;
 	private Boolean isApply;
 	
 	public CampaignResponse() {
@@ -48,7 +48,7 @@ public class CampaignResponse implements Serializable {
 		Role role = Role.valueOf(roleValue);
 		switch (role) {
 			case Admin:
-				updateAt = campaign.getUpdatedAt();
+				updatedAt = campaign.getUpdatedAt();
 				Iterator<Proposal> iterate = campaign.getProposals().iterator();
 				this.countProposalSelection = 0;
 				this.countProposalWorking = 0;
@@ -242,11 +242,11 @@ public class CampaignResponse implements Serializable {
 	}
 
 	public Date getUpdateAt() {
-		return updateAt;
+		return updatedAt;
 	}
 
 	public void setUpdateAt(Date updateAt) {
-		this.updateAt = updateAt;
+		this.updatedAt = updateAt;
 	}
 
 	public Boolean getIsApply() {
