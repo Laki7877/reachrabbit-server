@@ -120,6 +120,18 @@ public class CampaignService {
 		}
 	}
 	
+	public void deleteCampaign(Long campaignId, UserResponse user) throws Exception {
+		Long brandId = user.getBrand().getBrandId();
+		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
+		if(null == campaign) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
+		}
+		if(campaign.getProposals().size() > 0){
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.has.proposal");
+		}
+		campaignDao.delete(campaignId);
+	}
+
 	public Campaign updateCampaign(Long campaignId, CampaignRequest request) {
 		Campaign campaign = campaignDao.findOne(campaignId);
 		
@@ -127,6 +139,7 @@ public class CampaignService {
 		
 		return campaignDao.save(campaign);
 	}
+
 	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, UserResponse user, Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
 		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
@@ -188,8 +201,8 @@ public class CampaignService {
 		return campaignDao.findByBrandId(brandId, pageable);
 	}
 
-	public List<Campaign> findAllActiveByBrand(Long brandId) {
-		return campaignDao.findByBrandBrandIdAndStatusIn(brandId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
+	public List<CampaignResponse> findAllActiveByBrand(Long brandId) {
+		return campaignDao.findByBrandIdAndStatus(brandId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
 	}
 
 	public Page<CampaignResponse> findAllOpen(String mediaFilter,Pageable pageable) {		
