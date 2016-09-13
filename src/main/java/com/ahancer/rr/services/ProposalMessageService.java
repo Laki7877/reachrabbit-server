@@ -1,6 +1,5 @@
 package com.ahancer.rr.services;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,7 @@ import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.ProposalMessage;
-import com.google.common.collect.Lists;
+import com.google.api.client.util.Lists;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -29,12 +28,12 @@ public class ProposalMessageService {
 
 	private final static Long timeout = 60000L;
 
-	public static class DeferredProposalMessage extends DeferredResult<List<ProposalMessage>> {
+	public static class DeferredProposalMessage extends DeferredResult<Date> {
 		private Date timestamp;
 		private Long proposalId;
 		private Role role;
 		public DeferredProposalMessage(Long proposalId, Date timestamp, Role role) {
-			super(timeout, Collections.emptyList());
+			super(timeout, null);
 			this.role = role;
 			this.timestamp = timestamp;
 			this.proposalId = proposalId;
@@ -93,16 +92,20 @@ public class ProposalMessageService {
 		}
 		//Force queue update
 		for(DeferredProposalMessage m : proposalMessagePollingMap.get(proposalId)) {
-			List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, m.getTimestamp());
-			for(ProposalMessage p : pm) {
-				if(m.getRole() == Role.Influencer) {
-					p.setIsInfluencerRead(true);
-				} else if(m.getRole() == Role.Brand){
-					p.setIsBrandRead(true);
-				}
-			}
-			m.setResult(Lists.newArrayList(proposalMessageDao.save(pm)));
+			m.setResult(m.getTimestamp());
 		}
+	}
+	
+	public List<ProposalMessage> getNewProposalMessage(Long proposalId, Role role, Date timestamp) {
+		List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, timestamp);
+		for(ProposalMessage p : pm) {
+			if(role.equals(Role.Influencer)) {
+				p.setIsInfluencerRead(true);
+			} else if(role.equals(Role.Brand)){
+				p.setIsBrandRead(true);
+			}
+		}
+		return Lists.newArrayList(proposalMessageDao.save(pm));
 	}
 
 	public ProposalMessage createProposalMessage(Long proposalId, ProposalMessage message,Long userId,Role userRole) throws Exception {

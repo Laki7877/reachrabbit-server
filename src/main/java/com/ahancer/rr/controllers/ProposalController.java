@@ -1,5 +1,6 @@
 package com.ahancer.rr.controllers;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Locale;
 
@@ -139,6 +140,11 @@ public class ProposalController extends AbstractController {
 		}
 		proposalService.processInboxPolling(this.getUserRequest().getUserId());
 		return result;
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/new")
+	public List<ProposalMessage> getNewProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp") String timestamp) throws Exception {
+		return proposalMessageService.getNewProposalMessage(proposalId,this.getUserRequest().getRole() ,Util.parseJacksonDate(timestamp));
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
