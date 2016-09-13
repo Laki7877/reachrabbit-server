@@ -33,6 +33,7 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.response.CartResponse;
+import com.ahancer.rr.response.ProposalCountResponse;
 import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.response.WalletResponse;
@@ -153,11 +154,15 @@ public class ProposalService {
 		return proposalMessageDao.countByProposalProposalIdAndProposalInfluencerIdAndIsInfluencerReadFalse(proposalId, influencerId);
 	}
 
-	public Long countByBrand(Long brandId, ProposalStatus status) {
-		return proposalDao.countByCampaignBrandIdAndStatus(brandId, status);
+	public ProposalCountResponse countByBrand(Long brandId, ProposalStatus status) {
+		Long proposalCount = proposalDao.countByCampaignBrandIdAndStatus(brandId, status);
+		Long unreadBrand = proposalMessageDao.countByProposalCampaignBrandIdAndIsBrandReadFalseAndProposalStatus(brandId, status);
+		return new ProposalCountResponse(proposalCount,unreadBrand);
 	}
-	public Long countByInfluencer(Long influencerId, ProposalStatus status) {
-		return proposalDao.countByInfluencerInfluencerIdAndStatus(influencerId, status);
+	public ProposalCountResponse countByInfluencer(Long influencerId, ProposalStatus status) {
+		Long proposalCount = proposalDao.countByInfluencerInfluencerIdAndStatus(influencerId, status);
+		Long unreadInfluencer = proposalMessageDao.countByProposalInfluencerIdAndIsInfluencerReadFalseAndProposalStatus(influencerId,status);
+		return new ProposalCountResponse(proposalCount,unreadInfluencer);
 	}
 
 	public Page<Proposal> findAllByBrand(Long brandId,ProposalStatus status,Pageable pageable) {

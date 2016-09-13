@@ -21,6 +21,7 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Cart;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.response.ProposalCountResponse;
 import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.services.CartService;
 import com.ahancer.rr.services.ProposalMessageService;
@@ -72,7 +73,7 @@ public class ProposalController extends AbstractController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/count")
-	public Long getProposalCountByStatus(@RequestParam("status") ProposalStatus status) throws Exception {
+	public ProposalCountResponse getProposalCountByStatus(@RequestParam("status") ProposalStatus status) throws Exception {
 		if(this.getUserRequest().getRole() == Role.Brand) {
 			return proposalService.countByBrand(this.getUserRequest().getBrand().getBrandId(), status);
 		} else if(this.getUserRequest().getRole() == Role.Influencer) {
