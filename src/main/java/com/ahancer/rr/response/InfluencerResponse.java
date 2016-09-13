@@ -6,8 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.ahancer.rr.custom.type.Gender;
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Bank;
 import com.ahancer.rr.models.Category;
+import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 
 public class InfluencerResponse implements Serializable {
@@ -23,9 +25,40 @@ public class InfluencerResponse implements Serializable {
 	private Bank bank;
 	private String accountNumber;
 	private String accountName;
+	private UserResponse user;
 	
 	public InfluencerResponse(){
 		
+	}
+	
+	public InfluencerResponse(Influencer influencer,String roleValue){
+		Role role = Role.valueOf(roleValue);
+		user = new UserResponse();
+		user.setName(influencer.getUser().getName());
+		user.setProfilePicture(influencer.getUser().getProfilePicture());
+		user.setUserId(influencer.getUser().getUserId());
+		switch (role) {
+			case Admin:
+				break;
+			case Brand:
+				break;
+			case Influencer:
+				user.setEmail(influencer.getUser().getEmail());
+				user.setPhoneNumber(influencer.getUser().getPhoneNumber());
+				break;
+			default:
+				break;
+		}
+		this.influencerId = influencer.getInfluencerId();
+		this.about = influencer.getAbout();
+		this.web = influencer.getWeb();
+		this.about = influencer.getAbout();
+		this.birthday = influencer.getBirthday();
+		this.influencerMedias = influencer.getInfluencerMedias();
+		this.categories = influencer.getCategories();
+		this.bank = influencer.getBank();
+		this.accountNumber = influencer.getAccountNumber();
+		this.accountName = influencer.getAccountName();
 	}
 
 	public Long getInfluencerId() {

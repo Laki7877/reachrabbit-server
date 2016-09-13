@@ -27,6 +27,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity(name="campaign")
@@ -92,6 +93,10 @@ public class Campaign extends AbstractModel implements Serializable {
 	
 	@Column(name="rabbitFlag")
 	private Boolean rabbitFlag;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy="campaign",fetch=FetchType.EAGER)
+	private Set<Proposal> proposals = new HashSet<Proposal>(0);
 
 	public Campaign() {
 
@@ -215,6 +220,14 @@ public class Campaign extends AbstractModel implements Serializable {
 
 	public void setRabbitFlag(Boolean rabbitFlag) {
 		this.rabbitFlag = rabbitFlag;
+	}
+
+	public Set<Proposal> getProposals() {
+		return proposals;
+	}
+
+	public void setProposals(Set<Proposal> proposals) {
+		this.proposals = proposals;
 	}
 	
 }

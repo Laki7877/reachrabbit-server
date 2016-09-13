@@ -22,6 +22,7 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.CampaignRequest;
+import com.ahancer.rr.response.CampaignResponse;
 import com.ahancer.rr.services.CampaignService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalService;
@@ -41,33 +42,33 @@ public class CampaignController extends AbstractController {
 	private ProposalMessageService proposalMessageService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Page<Campaign> getAllCampaign(Pageable pageRequest) throws Exception{
+	public Page<CampaignResponse> getAllCampaign(Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole().equals(Role.Brand)) {
 			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);	
 		} else if(this.getUserRequest().getRole().equals(Role.Influencer)) {
 			return campaignService.findAll(pageRequest);		
 		} else if(this.getUserRequest().getRole().equals(Role.Admin)) {
-			return campaignService.findAll(pageRequest);
+			return campaignService.findAllByAdmin(pageRequest);
 		}
 		throw new Exception();
 	}
 	
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/active", method=RequestMethod.GET)
+	@Authorization(Role.Brand)
 	public List<Campaign> getAllActiveCampaign() throws Exception {
-		if(this.getUserRequest().getRole() == Role.Brand) {
-			return campaignService.findAllActiveByBrand(this.getUserRequest().getBrand().getBrandId());
-		}
-		throw new Exception();
+		return campaignService.findAllActiveByBrand(this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/open", method=RequestMethod.GET)
-	public Page<Campaign> getOpenCampaign(@RequestParam(name = "mediaId", required=false) String mediaId, Pageable pageRequest) throws Exception {
+	@Authorization(Role.Influencer)
+	public Page<CampaignResponse> getOpenCampaign(@RequestParam(name = "mediaId", required=false) String mediaId, Pageable pageRequest) throws Exception {
 		return campaignService.findAllOpen(mediaId, pageRequest);
 	}
 	
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
+	
 	public Campaign getOneCampaign(@PathVariable Long campaignId) throws Exception{
 		Campaign campaign = campaignService.findOne(campaignId);
 		return campaign;

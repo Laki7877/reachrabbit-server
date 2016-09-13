@@ -51,24 +51,10 @@ public class Util {
 		userResponse.setRole(user.getRole());
 		userResponse.setUserId(user.getUserId());
 		if(Role.Brand == user.getRole()){
-			BrandResponse brand = new BrandResponse();
-			brand.setAbout(user.getBrand().getAbout());
-			brand.setBrandId(user.getBrand().getBrandId());
-			brand.setBrandName(user.getBrand().getBrandName());
-			brand.setWebsite(user.getBrand().getWebsite());
+			BrandResponse brand = new BrandResponse(user.getBrand(),"Brand");
 			userResponse.setBrand(brand);
 		}else if(Role.Influencer == user.getRole()){
-			InfluencerResponse influencer = new InfluencerResponse();
-			influencer.setAbout(user.getInfluencer().getAbout());
-			influencer.setBirthday(user.getInfluencer().getBirthday());
-			influencer.setCategories(user.getInfluencer().getCategories());
-			influencer.setGender(user.getInfluencer().getGender());
-			influencer.setInfluencerId(user.getInfluencer().getInfluencerId());
-			influencer.setInfluencerMedias(user.getInfluencer().getInfluencerMedias());
-			influencer.setWeb(user.getInfluencer().getWeb());
-			influencer.setAccountName(user.getInfluencer().getAccountName());
-			influencer.setAccountNumber(user.getInfluencer().getAccountNumber());
-			influencer.setBank(user.getInfluencer().getBank());
+			InfluencerResponse influencer = new InfluencerResponse(user.getInfluencer(),"Influencer");
 			userResponse.setInfluencer(influencer);
 		}
 		return userResponse;

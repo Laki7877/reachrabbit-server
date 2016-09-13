@@ -25,6 +25,7 @@ import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.CampaignRequest;
+import com.ahancer.rr.response.CampaignResponse;
 import com.ahancer.rr.response.UserResponse;
 
 @Service
@@ -168,11 +169,15 @@ public class CampaignService {
 		return campaign;
 	}
 	
-	public Page<Campaign> findAll(Pageable pageable) {
-		return campaignDao.findAll(pageable);
+	public Page<CampaignResponse> findAll(Pageable pageable) {
+		return campaignDao.findCampaignByAdmin(pageable);
+	}
+	
+	public Page<CampaignResponse> findAllByAdmin(Pageable pageable) {
+		return campaignDao.findCampaignByAdmin(pageable);
 	}
 
-	public Page<Campaign> findAllByBrand(Long brandId, Pageable pageable) {
+	public Page<CampaignResponse> findAllByBrand(Long brandId, Pageable pageable) {
 		return campaignDao.findByBrandId(brandId, pageable);
 	}
 
@@ -180,11 +185,11 @@ public class CampaignService {
 		return campaignDao.findByBrandBrandIdAndStatusIn(brandId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
 	}
 
-	public Page<Campaign> findAllOpen(String mediaFilter,Pageable pageable) {		
-		if(mediaFilter != null) {
-			return campaignDao.findByStatusNotInAndMediaMediaIdIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), Arrays.asList(mediaFilter), pageable);
+	public Page<CampaignResponse> findAllOpen(String mediaFilter,Pageable pageable) {		
+		if(StringUtils.isNotEmpty(mediaFilter)) {
+			return campaignDao.findByStatusAndMedia(Arrays.asList(CampaignStatus.Open), Arrays.asList(mediaFilter), pageable);
 		} else {
-			return campaignDao.findByStatusNotIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), pageable);
+			return campaignDao.findByStatus(Arrays.asList(CampaignStatus.Open), pageable);
 		}		
 	}
 

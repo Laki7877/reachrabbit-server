@@ -12,11 +12,21 @@ import org.springframework.data.repository.query.Param;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.models.Campaign;
+import com.ahancer.rr.response.CampaignResponse;
 
 public interface CampaignDao extends CrudRepository<Campaign, Long> {
-	public Page<Campaign> findByStatusNotInAndMediaMediaIdIn(Collection<CampaignStatus> statuses, Collection<String> mediaIds, Pageable pageable);
-	public Page<Campaign> findByStatusNotIn(Collection<CampaignStatus> statuses, Pageable pageable);
-	public Page<Campaign> findByBrandId(Long brandId, Pageable pageable);	
+	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Influencer') FROM campaign c JOIN c.media cm WHERE c.status IN :statuses AND cm.mediaId IN :mediaIds")
+	public Page<CampaignResponse> findByStatusAndMedia(@Param("statuses") Collection<CampaignStatus> statuses,@Param("mediaIds") Collection<String> mediaIds, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Influencer') FROM campaign c WHERE c.status IN :statuses ")
+	public Page<CampaignResponse> findByStatus(@Param("statuses") Collection<CampaignStatus> statuses, Pageable pageable);
+	
+	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId")
+	public Page<CampaignResponse> findByBrandId(@Param("brandId") Long brandId, Pageable pageable);	
+	
+	
 	public Page<Campaign> findAll(Pageable pageable);
 	public List<Campaign> findByBrandBrandIdAndStatusIn(Long brandId, Collection<CampaignStatus> statuses);
 	public Campaign findByCampaignIdAndBrandId(Long campaignId, Long brandId);
@@ -25,4 +35,8 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	@Query("UPDATE campaign c SET c.rabbitFlag=:rabbitFlag WHERE c.campaignId=:campaignId AND c.brandId=:brandId")
 	public int updateRabbitFlag(@Param("rabbitFlag") Boolean rabbitFlag, @Param("campaignId") Long campaignId,@Param("brandId") Long brandId);
 
+	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Admin') FROM campaign c")
+	public Page<CampaignResponse> findCampaignByAdmin(Pageable pageable);
+	
 }

@@ -46,6 +46,18 @@ public abstract class AbstractModel {
 	public Long getUpdatedBy() {
 		return updatedBy;
 	}
+	
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 
 	public void setUpdatedBy(Long updatedBy) {
 		this.updatedBy = updatedBy;
