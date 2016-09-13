@@ -96,6 +96,10 @@ public class ProposalMessageService {
 		}
 	}
 	
+	public Long countNewProposalMessage(Long proposalId, Date timestamp) {
+		return proposalMessageDao.countByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, timestamp);
+	}
+	
 	public List<ProposalMessage> getNewProposalMessage(Long proposalId, Role role, Date timestamp) {
 		List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, timestamp);
 		for(ProposalMessage p : pm) {

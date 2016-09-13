@@ -1,6 +1,6 @@
 package com.ahancer.rr.controllers;
 
-import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -150,8 +150,13 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization(value={Role.Admin,Role.Brand,Role.Influencer})
 	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) String timestamp) throws Exception {
-		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, Util.parseJacksonDate(timestamp), this.getUserRequest().getRole());
-		proposalMessageService.addMessagePolling(proposalId, result);
+		final Date date = Util.parseJacksonDate(timestamp);
+		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, date, this.getUserRequest().getRole());
+		if(proposalMessageService.countNewProposalMessage(proposalId, date) > 0L) {
+			result.setResult(date);
+		} else {
+			proposalMessageService.addMessagePolling(proposalId, result);
+		}
 		return result;
 	}
 	
