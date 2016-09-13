@@ -197,8 +197,13 @@ public class CampaignService {
 		return campaignDao.findCampaignByAdmin(pageable);
 	}
 
-	public Page<CampaignResponse> findAllByBrand(Long brandId, Pageable pageable) {
-		return campaignDao.findByBrandId(brandId, pageable);
+	public Page<CampaignResponse> findAllByBrand(Long brandId, String statusValue, Pageable pageable) {
+		if(StringUtils.isNotEmpty(statusValue)) {
+			CampaignStatus status = CampaignStatus.valueOf(statusValue);
+			return campaignDao.findByBrandIdAndStatus(brandId, status, pageable);
+		} else {
+			return campaignDao.findByBrandId(brandId, pageable);
+		}
 	}
 
 	public List<CampaignResponse> findAllActiveByBrand(Long brandId) {

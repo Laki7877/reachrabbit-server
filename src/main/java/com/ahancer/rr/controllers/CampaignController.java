@@ -41,9 +41,9 @@ public class CampaignController extends AbstractController {
 	private ProposalMessageService proposalMessageService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Page<CampaignResponse> getAllCampaign(Pageable pageRequest) throws Exception{
+	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status,Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole().equals(Role.Brand)) {
-			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);	
+			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, pageRequest);	
 		} else if(this.getUserRequest().getRole().equals(Role.Influencer)) {
 			return campaignService.findAll(pageRequest);		
 		} else if(this.getUserRequest().getRole().equals(Role.Admin)) {

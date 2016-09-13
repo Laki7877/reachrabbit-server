@@ -26,6 +26,8 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId")
 	public Page<CampaignResponse> findByBrandId(@Param("brandId") Long brandId, Pageable pageable);	
 	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status ")
+	public Page<CampaignResponse> findByBrandIdAndStatus(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, Pageable pageable);
 	
 	public Page<Campaign> findAll(Pageable pageable);
 	
