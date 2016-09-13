@@ -172,7 +172,7 @@ public class CampaignService {
 		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			List<Proposal> proposalList = proposalService.findAllByBrand(brandId, campaignId);
 			ProposalMessage message = new ProposalMessage();
-			message.setMessage(messageSource.getMessage("robot.campaign.message", null, locale));
+			message.setMessage(user.getBrand().getBrandName() + " " + messageSource.getMessage("robot.campaign.message", null, locale));
 			User robotUser = robotService.getRobotUser();
 			for(Proposal proposal : proposalList) {
 				message.setProposal(proposal);
