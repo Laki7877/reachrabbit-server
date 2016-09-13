@@ -56,7 +56,7 @@ public class CampaignController extends AbstractController {
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/active", method=RequestMethod.GET)
 	@Authorization(Role.Brand)
-	public List<Campaign> getAllActiveCampaign() throws Exception {
+	public List<CampaignResponse> getAllActiveCampaign() throws Exception {
 		return campaignService.findAllActiveByBrand(this.getUserRequest().getBrand().getBrandId());
 	}
 	
@@ -68,7 +68,6 @@ public class CampaignController extends AbstractController {
 	
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
-	
 	public Campaign getOneCampaign(@PathVariable Long campaignId) throws Exception{
 		Campaign campaign = campaignService.findOne(campaignId);
 		return campaign;
@@ -91,14 +90,15 @@ public class CampaignController extends AbstractController {
 		return getOneCampaign(campaign.getCampaignId());
 	}
 	
+	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
+	@Authorization(Role.Brand)
+	public void deleteCampaignByBrand(@PathVariable Long campaignId) throws Exception {
+		campaignService.deleteCampaign(campaignId, this.getUserRequest());
+	}
+	
 	@RequestMapping(value="/{campaignId}/dismiss",method=RequestMethod.PUT)
 	public void dismissCampaignNotification(@PathVariable Long campaignId) throws Exception {
 		campaignService.dismissCampaignNotification(campaignId, this.getUserRequest().getBrand().getBrandId());
-	}
-	
-	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
-	public void deleteCampaign(@PathVariable Long campaignId) throws Exception{
-		throw new ResponseException("error.notimplement");
 	}
 	
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
