@@ -203,6 +203,9 @@ public class TransactionService {
 	
 	
 	public Transaction payTransaction(Long transactioId,  Resource resource, Locale locale) throws Exception {
+		if(resource == null){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.slip.require");
+		}
 		Transaction transaction = transactionDao.findOne(transactioId);
 		if(null == transaction){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.not.exist");
