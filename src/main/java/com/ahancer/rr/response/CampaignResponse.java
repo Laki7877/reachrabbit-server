@@ -241,12 +241,12 @@ public class CampaignResponse implements Serializable {
 		this.countProposalComplete = countProposalComplete;
 	}
 
-	public Date getUpdateAt() {
+	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdateAt(Date updateAt) {
-		this.updatedAt = updateAt;
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public Boolean getIsApply() {
