@@ -113,9 +113,9 @@ public class CampaignService {
 			String to = "admin@reachrabbit.com";
 			String subject = messageSource.getMessage("email.admin.brand.publish.campaign.subject",null,locale);
 			String body = messageSource.getMessage("email.admin.brand.publish.campaign.message",null,locale)
-					.replace("{{Brand Name}}", user.getBrand().getBrandName())
-					.replace("{{Campaign Name}}", campaign.getTitle())
-					.replace("{{Category}}", campaign.getCategory().getCategoryName());
+					.replaceAll("{{Brand Name}}", user.getBrand().getBrandName())
+					.replaceAll("{{Campaign Name}}", campaign.getTitle())
+					.replaceAll("{{Category}}", campaign.getCategory().getCategoryName());
 			emailService.send(to, subject, body);
 		}
 	}
@@ -171,13 +171,14 @@ public class CampaignService {
 		//Setup proposal message
 		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			List<Proposal> proposalList = proposalService.findAllByBrand(brandId, campaignId);
-			ProposalMessage message = new ProposalMessage();
-			message.setMessage(user.getBrand().getBrandName() + " " + messageSource.getMessage("robot.campaign.message", null, locale));
+			ProposalMessage robotMessage = new ProposalMessage();
+			String message = messageSource.getMessage("robot.campaign.message", null, locale).replaceAll("{{Brand Name}}", user.getBrand().getBrandName());
+			robotMessage.setMessage(message);
 			User robotUser = robotService.getRobotUser();
 			for(Proposal proposal : proposalList) {
-				message.setProposal(proposal);
+				robotMessage.setProposal(proposal);
 				proposalMessageService.createProposalMessage(proposal.getProposalId()
-						, message
+						, robotMessage
 						, robotUser.getUserId()
 						, robotUser.getRole());
 				proposalService.processInboxPollingByOne(proposal.getInfluencerId());

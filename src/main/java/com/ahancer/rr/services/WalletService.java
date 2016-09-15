@@ -110,11 +110,11 @@ public class WalletService {
 		String to = "admin@reachrabbit.com";
 		String subject = messageSource.getMessage("email.admin.influencer.payout.subject",null,locale);
 		String body = messageSource.getMessage("email.admin.influencer.payout.message",null,locale)
-				.replace("{{Influencer Name}}", wallet.getInfluencer().getUser().getName())
-				.replace("{{Payout Amount}}", transaction.getAmount().toString())
-				.replace("{{Bank Name}}", request.getBank().getBankName())
-				.replace("{{Bank Account Number}}", request.getAccountNumber())
-				.replace("{{Bank Account Name}}", request.getAccountName());
+				.replaceAll("{{Influencer Name}}", wallet.getInfluencer().getUser().getName())
+				.replaceAll("{{Payout Amount}}", transaction.getAmount().toString())
+				.replaceAll("{{Bank Name}}", request.getBank().getBankName())
+				.replaceAll("{{Bank Account Number}}", request.getAccountNumber())
+				.replaceAll("{{Bank Account Name}}", request.getAccountName());
 		emailService.send(to, subject, body);
 		
 		return transaction;

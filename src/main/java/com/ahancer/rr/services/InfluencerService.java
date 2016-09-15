@@ -138,7 +138,7 @@ public class InfluencerService {
 		
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.influencer.signup.subject",null,locale);
-		String body = messageSource.getMessage("email.influencer.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
+		String body = messageSource.getMessage("email.influencer.signup.message",null,locale).replaceAll("{{Registered Name}}", user.getName());
 		emailService.send(to, subject, body);
 		
 		return user;

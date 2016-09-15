@@ -99,7 +99,7 @@ public class BrandService {
 		user.setBrand(brand);
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.brand.signup.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
+		String body = messageSource.getMessage("email.brand.signup.message",null,locale).replaceAll("{{Registered Name}}", user.getName());
 		emailService.send(to,subject, body);
 		return user;
 	}

@@ -158,8 +158,8 @@ public class TransactionService {
 		
 		//update proposal status
 		Calendar cal = Calendar.getInstance();
-		ProposalMessage message = new ProposalMessage();
-		message.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, locale));
+		ProposalMessage robotMessage = new ProposalMessage();
+		String message = messageSource.getMessage("robot.proposal.working.status.message", null, locale);
 		User robotUser = robotService.getRobotUser();
 		String to = StringUtils.EMPTY;
 		String subject = StringUtils.EMPTY;
@@ -173,9 +173,16 @@ public class TransactionService {
 			Integer days = proposal.getCompletionTime().getDay();
 			cal.add(Calendar.DATE, days);
 			proposal.setDueDate(cal.getTime());
-			message.setProposal(proposal);
+			
+			//setup robot message
+			robotMessage.setMessage(message
+					.replaceAll("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
+					.replaceAll("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName()));
+			robotMessage.setProposal(proposal);
+			
+			//long polling
 			proposalMessageService.createProposalMessage(proposal.getProposalId()
-					, message
+					, robotMessage
 					, robotUser.getUserId()
 					, robotUser.getRole());
 			proposalService.processInboxPollingByOne(proposal.getInfluencerId());
@@ -187,15 +194,15 @@ public class TransactionService {
 			to = proposal.getInfluencer().getUser().getEmail();
 			subject = superSubject;
 			body = superBody
-					.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
-					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle());
+					.replaceAll("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
+					.replaceAll("{{Campaign Name}}", proposal.getCampaign().getTitle());
 			emailService.send(to, subject, body);
 		}
 		
 		//send email to brand
 		to = transaction.getUser().getEmail();
 		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale);
-		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale).replace("{{Transaction ID}}", transaction.getTransactionNumber());
+		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale).replaceAll("{{Transaction ID}}", transaction.getTransactionNumber());
 		emailService.send(to, subject, body);
 		
 		return transaction;
@@ -226,10 +233,10 @@ public class TransactionService {
 		String to = transaction.getUser().getEmail();
 		String subject = messageSource.getMessage("email.influencer.admin.confirm.payout.subject",null,locale);
 		String body = messageSource.getMessage("email.influencer.admin.confirm.payout.message",null,locale)
-				.replace("{{Payout Amount}}", transaction.getAmount().toString())
-				.replace("{{Bank Name}}", doc.getBank().getBankName())
-				.replace("{{Bank Account Number}}", doc.getAccountNumber())
-				.replace("{{Bank Account Name}}", doc.getAccountName());
+				.replaceAll("{{Payout Amount}}", transaction.getAmount().toString())
+				.replaceAll("{{Bank Name}}", doc.getBank().getBankName())
+				.replaceAll("{{Bank Account Number}}", doc.getAccountNumber())
+				.replaceAll("{{Bank Account Name}}", doc.getAccountName());
 		emailService.send(to, subject, body);
 		
 		return transaction;

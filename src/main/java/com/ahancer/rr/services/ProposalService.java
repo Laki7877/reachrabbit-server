@@ -286,7 +286,7 @@ public class ProposalService {
 		firstMessage = proposalMessageDao.save(firstMessage);
 		String to = campaign.getBrand().getUser().getEmail();
 		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale).replace("{{Influencer Name}}", user.getName());
+		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale).replaceAll("{{Influencer Name}}", user.getName());
 		emailService.send(to, subject, body);
 		return proposal;
 	}
@@ -305,7 +305,8 @@ public class ProposalService {
 		ProposalMessage rebotMessage = new ProposalMessage();
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
-		rebotMessage.setMessage(oldProposal.getInfluencer().getUser().getName() + " " + messageSource.getMessage("robot.proposal.message", null, local));
+		String message = messageSource.getMessage("robot.proposal.message", null, local).replaceAll("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
+		rebotMessage.setMessage(message);
 		rebotMessage.setProposal(proposal);
 		User robotUser = robotService.getRobotUser();
 		rebotMessage.setUserId(robotUser.getUserId());
@@ -331,7 +332,9 @@ public class ProposalService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.invalid.status");
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
 			//set robot message
-			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, locale));
+			String message = messageSource.getMessage("robot.proposal.complete.status.message", null, locale);
+			rebotMessage.setMessage(message.replaceAll("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName())
+					.replaceAll("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName()));
 			oldProposal.setCompleteDate(cal.getTime());
 			//add wallet
 			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.Pending);
@@ -346,7 +349,7 @@ public class ProposalService {
 			//send email to influencer
 			String to = oldProposal.getInfluencer().getUser().getEmail();
 			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
-			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale).replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
+			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale).replaceAll("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
 			emailService.send(to, subject, body);
 		}
 		User robotUser = robotService.getRobotUser();
