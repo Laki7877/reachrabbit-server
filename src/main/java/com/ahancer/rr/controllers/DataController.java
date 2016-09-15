@@ -53,7 +53,7 @@ public class DataController {
 	
 	@RequestMapping(value="/banks",method=RequestMethod.GET)
 	public List<Bank> getAllBanks() throws Exception{
-		return bankDao.findAllByOrderByBankId();
+		return bankDao.findAllByIsActiveTrueOrderByBankId();
 	}
 	
 	@RequestMapping(value="/budgets",method=RequestMethod.GET)

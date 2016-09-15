@@ -18,6 +18,8 @@ public class Bank implements Serializable{
 	@Column(name="bankName",length=255)
 	private String bankName;
 	
+	@Column(name="isActive")
+	private Boolean isActive;
 
 	public Bank() {
 		
@@ -38,6 +40,13 @@ public class Bank implements Serializable{
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
 	}
-	
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
 	
 }

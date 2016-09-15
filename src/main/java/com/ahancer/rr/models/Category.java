@@ -20,7 +20,7 @@ public class Category implements Serializable{
 	@Column(name="categoryName",length=255,nullable=false)
 	private String categoryName;
 	
-	@Column(name="isActive",nullable=false)
+	@Column(name="isActive")
 	private Boolean isActive;
 	
 	public Category() {
