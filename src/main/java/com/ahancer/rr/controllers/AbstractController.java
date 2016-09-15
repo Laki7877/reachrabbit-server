@@ -31,6 +31,9 @@ public abstract class AbstractController {
 	
 	final public String getTokenRequest() {
 		Object token = request.getAttribute(tokenAttribute);
-		return (String)token;
+		if(null != token){
+			return (String)token;
+		}
+		return null;
 	}
 }

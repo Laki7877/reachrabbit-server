@@ -18,6 +18,7 @@ import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
+import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.response.YouTubeProfileResponse;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -108,7 +109,7 @@ public class YoutubeService {
 		
 	}
 	
-	public OAuthenticationResponse authentication(String accessToken) throws Exception {
+	public OAuthenticationResponse authentication(String accessToken, UserResponse user) throws Exception {
 		YouTube youtube = getInstance(accessToken);
 		YouTube.Channels.List channelRequest = youtube.channels().list("contentDetails");
 		channelRequest.setMine(true);
@@ -136,8 +137,10 @@ public class YoutubeService {
 			oauth.setProfilePicture(channel.getSnippet().getThumbnails().getHigh().getUrl());
 			oauth.setPages(pages);
 			return oauth;
-		} else {
+		} else if (null == user) {
 			return new OAuthenticationResponse(auth.getToken());
+		}else {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.sync.already");
 		}
 	}
 }

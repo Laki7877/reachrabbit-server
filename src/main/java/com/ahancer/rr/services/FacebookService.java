@@ -25,6 +25,7 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.FacebookProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
+import com.ahancer.rr.response.UserResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -131,7 +132,7 @@ public class FacebookService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public OAuthenticationResponse authenticate(String accessToken) throws ResponseException {
+	public OAuthenticationResponse authenticate(String accessToken, UserResponse user) throws ResponseException {
 		Facebook fb = getInstance(accessToken);
 		org.springframework.social.facebook.api.User fbUser = fb.userOperations().getUserProfile();
 		List<Account> accounts = fb.pageOperations().getAccounts();
@@ -153,8 +154,10 @@ public class FacebookService {
 			oauth.setMedia(mediaDao.findByMediaId("facebook"));
 			oauth.setPages(pages);
 			return oauth;
-		} else {
+		} else if (null == user) {
 			return new OAuthenticationResponse(auth.getToken());
+		} else {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.sync.already");
 		}
 	}
 }

@@ -24,7 +24,7 @@ import com.ahancer.rr.services.YoutubeService;
 
 @RestController
 @RequestMapping("/auth")
-public class AuthenticationController {
+public class AuthenticationController extends AbstractController {
 	@Autowired
 	private FacebookService facebookService;
 	@Autowired
@@ -48,13 +48,19 @@ public class AuthenticationController {
 	
 	@RequestMapping(value = "/facebook" ,method = RequestMethod.POST)
 	public OAuthenticationResponse facebookAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException {
-		return facebookService.authenticate(facebookService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
+		return facebookService.authenticate(
+				facebookService.getAccessToken(oauthenticationRequest.getCode()
+						, oauthenticationRequest.getRedirectUri())
+				, this.getUserRequest());
 	}	
 
 	
 	@RequestMapping(value = "/instagram" ,method = RequestMethod.POST)
-	public OAuthenticationResponse instagramAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException, InstagramException {
-		return instagramService.authenticate(instagramService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
+	public OAuthenticationResponse instagramAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception{
+		return instagramService.authenticate(
+				instagramService.getAccessToken(oauthenticationRequest.getCode()
+						, oauthenticationRequest.getRedirectUri())
+				, this.getUserRequest());
 	}		
 	@RequestMapping(value = "/instagram/check" ,method = RequestMethod.GET)
 	public Boolean instagramCheck() throws ResponseException, InstagramException {
@@ -67,7 +73,10 @@ public class AuthenticationController {
 	}	
 	@RequestMapping(value = "/google" ,method = RequestMethod.POST)
 	public OAuthenticationResponse youtubeAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception {
-		return youtubeService.authentication(youtubeService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
+		return youtubeService.authentication(
+				youtubeService.getAccessToken(oauthenticationRequest.getCode()
+						, oauthenticationRequest.getRedirectUri())
+				, this.getUserRequest());
 	}
 
 	@RequestMapping(value = "/admin" ,method = RequestMethod.POST)
