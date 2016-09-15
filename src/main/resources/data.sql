@@ -62,7 +62,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 --INSERT INTO completionTime (completionTime,day) VALUES ('3 สัปดาห์',21);
 --INSERT INTO completionTime (completionTime,day) VALUES ('4 สัปดาห์',28);
 --
---INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (1, 0, 1000);
+--INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (1, 500, 1000);
 --INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (2, 1000, 2000);
 --INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (3, 2000, 5000);
 --INSERT INTO budget (budgetId, fromBudget, toBudget) VALUES (4, 5000, 10000);
