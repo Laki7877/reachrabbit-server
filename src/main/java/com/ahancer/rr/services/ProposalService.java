@@ -286,7 +286,7 @@ public class ProposalService {
 		firstMessage = proposalMessageDao.save(firstMessage);
 		String to = campaign.getBrand().getUser().getEmail();
 		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale).replaceAll("{{Influencer Name}}", user.getName());
+		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale).replace("{{Influencer Name}}", user.getName());
 		emailService.send(to, subject, body);
 		return proposal;
 	}
@@ -305,7 +305,7 @@ public class ProposalService {
 		ProposalMessage rebotMessage = new ProposalMessage();
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
-		String message = messageSource.getMessage("robot.proposal.message", null, local).replaceAll("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
+		String message = messageSource.getMessage("robot.proposal.message", null, local).replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
 		rebotMessage.setMessage(message);
 		rebotMessage.setProposal(proposal);
 		User robotUser = robotService.getRobotUser();
@@ -333,8 +333,9 @@ public class ProposalService {
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
 			//set robot message
 			String message = messageSource.getMessage("robot.proposal.complete.status.message", null, locale);
-			rebotMessage.setMessage(message.replaceAll("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName())
-					.replaceAll("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName()));
+			rebotMessage.setMessage(message
+					.replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName())
+					.replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName()));
 			oldProposal.setCompleteDate(cal.getTime());
 			//add wallet
 			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.Pending);

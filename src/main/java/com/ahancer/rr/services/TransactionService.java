@@ -176,8 +176,8 @@ public class TransactionService {
 			
 			//setup robot message
 			robotMessage.setMessage(message
-					.replaceAll("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
-					.replaceAll("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName()));
+					.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
+					.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName()));
 			robotMessage.setProposal(proposal);
 			
 			//long polling
@@ -233,10 +233,10 @@ public class TransactionService {
 		String to = transaction.getUser().getEmail();
 		String subject = messageSource.getMessage("email.influencer.admin.confirm.payout.subject",null,locale);
 		String body = messageSource.getMessage("email.influencer.admin.confirm.payout.message",null,locale)
-				.replaceAll("{{Payout Amount}}", transaction.getAmount().toString())
-				.replaceAll("{{Bank Name}}", doc.getBank().getBankName())
-				.replaceAll("{{Bank Account Number}}", doc.getAccountNumber())
-				.replaceAll("{{Bank Account Name}}", doc.getAccountName());
+				.replace("{{Payout Amount}}", transaction.getAmount().toString())
+				.replace("{{Bank Name}}", doc.getBank().getBankName())
+				.replace("{{Bank Account Number}}", doc.getAccountNumber())
+				.replace("{{Bank Account Name}}", doc.getAccountName());
 		emailService.send(to, subject, body);
 		
 		return transaction;
