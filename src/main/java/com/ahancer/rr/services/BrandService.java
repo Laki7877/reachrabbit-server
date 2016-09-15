@@ -88,9 +88,9 @@ public class BrandService {
 		cal.add(Calendar.DAY_OF_MONTH, 5);
 		campaign.setProposalDeadline(cal.getTime());
 		campaign.setBrandId(brand.getBrandId());
-		campaign.setTitle("Campaign แรกของคุณ");
+		campaign.setTitle(null);
 		campaign.setCategory(null);
-		campaign.setDescription("นี่คือคำอธิบาย");
+		campaign.setDescription(null);
 		campaign.setStatus(CampaignStatus.Draft);
 		Set<Media> allMedia = new HashSet<Media>();
 		mediaDao.findAll().forEach(allMedia::add);
