@@ -51,9 +51,11 @@ public class Util {
 		userResponse.setRole(user.getRole());
 		userResponse.setUserId(user.getUserId());
 		if(Role.Brand == user.getRole()){
+			user.getBrand().setUser(user);
 			BrandResponse brand = new BrandResponse(user.getBrand(),"Brand");
 			userResponse.setBrand(brand);
 		}else if(Role.Influencer == user.getRole()){
+			user.getInfluencer().setUser(user);
 			InfluencerResponse influencer = new InfluencerResponse(user.getInfluencer(),"Influencer");
 			userResponse.setInfluencer(influencer);
 		}
