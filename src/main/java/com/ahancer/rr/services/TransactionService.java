@@ -18,10 +18,12 @@ import com.ahancer.rr.custom.type.DocumentType;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.TransactionStatus;
 import com.ahancer.rr.custom.type.TransactionType;
+import com.ahancer.rr.custom.type.WalletStatus;
 import com.ahancer.rr.daos.BrandTransactionDocumentDao;
 import com.ahancer.rr.daos.CartDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.TransactionDao;
+import com.ahancer.rr.daos.WalletDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.BrandTransactionDocument;
 import com.ahancer.rr.models.Cart;
@@ -31,6 +33,7 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.EncodeUtil;
 
@@ -64,6 +67,9 @@ public class TransactionService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private WalletDao walletDao;
 	
 	public Transaction createTransactionByBrand(UserResponse user,Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
@@ -119,7 +125,7 @@ public class TransactionService {
 	}
 	
 	public Transaction findOneTransactionFromWalletByAdmin(Long walletId){
-		return transactionDao.findByBrandTransactionDocumentCartId(walletId);
+		return transactionDao.findByInfluencerTransactionDocumentWalletId(walletId);
 	}
 	
 	public Transaction findOneTransactionFromWalletByInfluencer(Long walletId,Long influencerId){
@@ -228,16 +234,19 @@ public class TransactionService {
 		transaction.setSlip(resource);
 		transaction = transactionDao.save(transaction);
 		
-		InfluencerTransactionDocument doc = transaction.getInfluencerTransactionDocument().iterator().next();
+		InfluencerTransactionDocument document = transaction.getInfluencerTransactionDocument().iterator().next();
+		Wallet wallet = document.getWallet();
+		wallet.setStatus(WalletStatus.Paid);
+		wallet = walletDao.save(wallet);
 		
 		//send mail to influencer
 		String to = transaction.getUser().getEmail();
 		String subject = messageSource.getMessage("email.influencer.admin.confirm.payout.subject",null,locale);
 		String body = messageSource.getMessage("email.influencer.admin.confirm.payout.message",null,locale)
 				.replace("{{Payout Amount}}", transaction.getAmount().toString())
-				.replace("{{Bank Name}}", doc.getBank().getBankName())
-				.replace("{{Bank Account Number}}", doc.getAccountNumber())
-				.replace("{{Bank Account Name}}", doc.getAccountName());
+				.replace("{{Bank Name}}", document.getBank().getBankName())
+				.replace("{{Bank Account Number}}", document.getAccountNumber())
+				.replace("{{Bank Account Name}}", document.getAccountName());
 		emailService.send(to, subject, body);
 		
 		return transaction;

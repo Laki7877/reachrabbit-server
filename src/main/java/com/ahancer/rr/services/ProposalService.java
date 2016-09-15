@@ -338,10 +338,10 @@ public class ProposalService {
 					.replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName()));
 			oldProposal.setCompleteDate(cal.getTime());
 			//add wallet
-			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.Pending);
+			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.WaitForPayout);
 			if(null == wallet){
 				wallet = new Wallet();
-				wallet.setStatus(WalletStatus.Pending);
+				wallet.setStatus(WalletStatus.WaitForPayout);
 				wallet.setInfluencerId(oldProposal.getInfluencerId());
 				wallet = walletDao.save(wallet);
 			}

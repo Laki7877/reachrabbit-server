@@ -44,19 +44,19 @@ public class WalletService {
 	private EmailService emailService;
 	
 	public Wallet findPendingByIndluencer(Long influencerId) {
-		return walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.Pending);
+		return walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.WaitForPayout);
 	}
 	
 	public Transaction payoutWallet(PayoutRequest request, Long influencerId,Locale locale) throws Exception{
 		
-		Wallet wallet = walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.Pending);
+		Wallet wallet = walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.WaitForPayout);
 		if(null == wallet){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.not.exist");
 		}
 		if(0 == wallet.getProposals().size()){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.empty.proposal");
 		}
-		wallet.setStatus(WalletStatus.Paid);
+		wallet.setStatus(WalletStatus.Pending);
 		wallet = walletDao.save(wallet);
 		//setup transaction
 		Transaction transaction = new Transaction();
