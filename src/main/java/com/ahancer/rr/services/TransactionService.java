@@ -202,7 +202,8 @@ public class TransactionService {
 		//send email to brand
 		to = transaction.getUser().getEmail();
 		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale);
-		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale).replaceAll("{{Transaction ID}}", transaction.getTransactionNumber());
+		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale)
+				.replace("{{Transaction ID}}", transaction.getTransactionNumber());
 		emailService.send(to, subject, body);
 		
 		return transaction;
