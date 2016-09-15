@@ -350,7 +350,8 @@ public class ProposalService {
 			//send email to influencer
 			String to = oldProposal.getInfluencer().getUser().getEmail();
 			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
-			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale).replaceAll("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
+			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale)
+					.replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
 			emailService.send(to, subject, body);
 		}
 		User robotUser = robotService.getRobotUser();

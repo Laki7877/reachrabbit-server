@@ -42,7 +42,7 @@ public class ScheduledTask {
 			String to = message.getEmail();
 			emailService.send(to
 					, superSubject
-					, superBody.replaceAll("{{Message Count}}", message.getMessageCount().toString()));
+					, superBody.replace("{{Message Count}}", message.getMessageCount().toString()));
 		}
 		
     }

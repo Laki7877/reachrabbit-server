@@ -59,6 +59,7 @@ public class InfluencerResponse implements Serializable {
 		this.bank = influencer.getBank();
 		this.accountNumber = influencer.getAccountNumber();
 		this.accountName = influencer.getAccountName();
+		this.gender = influencer.getGender();
 	}
 
 	public Long getInfluencerId() {

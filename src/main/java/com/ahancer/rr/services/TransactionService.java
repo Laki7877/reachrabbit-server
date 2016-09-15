@@ -194,8 +194,8 @@ public class TransactionService {
 			to = proposal.getInfluencer().getUser().getEmail();
 			subject = superSubject;
 			body = superBody
-					.replaceAll("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
-					.replaceAll("{{Campaign Name}}", proposal.getCampaign().getTitle());
+					.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
+					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle());
 			emailService.send(to, subject, body);
 		}
 		
