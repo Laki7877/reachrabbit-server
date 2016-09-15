@@ -2,7 +2,6 @@ package com.ahancer.rr.services;
 
 
 
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -84,9 +83,9 @@ public class BrandService {
 		brand = brandDao.save(brand);
 		//Setup campaign object
 		Campaign campaign = new Campaign();
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, 5);
-		campaign.setProposalDeadline(cal.getTime());
+//		Calendar cal = Calendar.getInstance();
+//		cal.add(Calendar.DAY_OF_MONTH, 5);
+		campaign.setProposalDeadline(null);
 		campaign.setBrandId(brand.getBrandId());
 		campaign.setTitle(null);
 		campaign.setCategory(null);
