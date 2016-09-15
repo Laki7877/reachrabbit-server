@@ -56,7 +56,6 @@ public class InfluencerService {
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
-
 		for(InfluencerMedia link2 : oldUser.getInfluencer().getInfluencerMedias()) {
 			boolean has = false;
 			for(InfluencerMedia link: newUser.getInfluencer().getInfluencerMedias()) {
@@ -72,6 +71,15 @@ public class InfluencerService {
 					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.has.proposals");
 				}
 			}
+		}
+		if(newUser.getInfluencer().getInfluencerMedias().size() == 0){
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.atlest.one");
+		}
+		influencerMediaDao.deleteByInfluencerId(userId);
+		for(InfluencerMedia link: newUser.getInfluencer().getInfluencerMedias()) {
+			influencerMediaDao.insertInfluencerMedia(userId,link.getMedia().getMediaId(),link.getFollowerCount(), link.getPageId(), link.getSocialId());
+			InfluencerMediaId id = new InfluencerMediaId(userId,link.getMedia().getMediaId());
+			link.setInfluencerMediaId(id);
 		}
 		//Validate duplicate Email
 		if(StringUtils.isNotEmpty(oldUser.getEmail()) 
