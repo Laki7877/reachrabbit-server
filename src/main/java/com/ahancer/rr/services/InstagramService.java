@@ -13,15 +13,12 @@ import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ahancer.rr.daos.MediaDao;
-import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.InstagramProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
-import com.ahancer.rr.response.UserResponse;
 
 @Service
 public class InstagramService {
@@ -112,7 +109,7 @@ public class InstagramService {
 	public Instagram getInstance(String accessToken) {
 		return new Instagram(new Token(accessToken, appSecret));
 	}
-	public OAuthenticationResponse authenticate(String accessToken, UserResponse user) throws Exception {
+	public OAuthenticationResponse authenticate(String accessToken) throws Exception {
 		Instagram instagram = getInstance(accessToken);
 		UserInfoData userInfo = instagram.getCurrentUserInfo().getData();
 		
@@ -128,10 +125,8 @@ public class InstagramService {
 			oauth.setProfilePicture(userInfo.getProfilePicture());
 			oauth.setPages(pages);
 			return oauth;
-		} else if (null == user) {
-			return new OAuthenticationResponse(auth.getToken());
 		} else {
-			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.sync.already");
+			return new OAuthenticationResponse(auth.getToken());
 		}
 	}
 }

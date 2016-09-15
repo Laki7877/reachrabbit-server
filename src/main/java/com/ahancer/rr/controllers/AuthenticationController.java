@@ -50,8 +50,7 @@ public class AuthenticationController extends AbstractController {
 	public OAuthenticationResponse facebookAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException {
 		return facebookService.authenticate(
 				facebookService.getAccessToken(oauthenticationRequest.getCode()
-						, oauthenticationRequest.getRedirectUri())
-				, this.getUserRequest());
+						, oauthenticationRequest.getRedirectUri()));
 	}	
 
 	
@@ -59,8 +58,7 @@ public class AuthenticationController extends AbstractController {
 	public OAuthenticationResponse instagramAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception{
 		return instagramService.authenticate(
 				instagramService.getAccessToken(oauthenticationRequest.getCode()
-						, oauthenticationRequest.getRedirectUri())
-				, this.getUserRequest());
+						, oauthenticationRequest.getRedirectUri()));
 	}		
 	@RequestMapping(value = "/instagram/check" ,method = RequestMethod.GET)
 	public Boolean instagramCheck() throws ResponseException, InstagramException {
@@ -75,8 +73,7 @@ public class AuthenticationController extends AbstractController {
 	public OAuthenticationResponse youtubeAuthenticationRequest(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception {
 		return youtubeService.authentication(
 				youtubeService.getAccessToken(oauthenticationRequest.getCode()
-						, oauthenticationRequest.getRedirectUri())
-				, this.getUserRequest());
+						, oauthenticationRequest.getRedirectUri()));
 	}
 
 	@RequestMapping(value = "/admin" ,method = RequestMethod.POST)

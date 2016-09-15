@@ -56,7 +56,7 @@ public class AuthenticationFilter implements Filter {
 		if("options".equals(method)){
 			return;
 		}
-		else if (path.startsWith("/auth/") 
+		else if (path.startsWith("/auth") 
 				|| path.startsWith("/signup")
 				|| path.startsWith("/webjar") 
 				|| path.startsWith("/images") 
