@@ -104,7 +104,7 @@ public class BrandService {
 		String subject = messageSource.getMessage("email.brand.signup.subject",null,locale);
 		String body = messageSource.getMessage("email.brand.signup.message",null,locale)
 				.replace("{{Brand Name}}", brand.getBrandName())
-				.replace("{{Registered Name}}", user.getName())
+				.replace("{{Registered Email}}", user.getEmail())
 				.replace("{{Host}}", uiHost);
 		emailService.send(to,subject, body);
 		return user;

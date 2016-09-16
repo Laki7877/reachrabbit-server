@@ -50,6 +50,9 @@ public class InfluencerService {
 	
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Value("${ui.host}")
+	private String uiHost;
 
 	public UserResponse updateInfluencerUser(Long userId, ProfileRequest newUser, String token) throws Exception {
 		User oldUser = userDao.findOne(userId);
@@ -146,7 +149,9 @@ public class InfluencerService {
 		
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.influencer.signup.subject",null,locale);
-		String body = messageSource.getMessage("email.influencer.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
+		String body = messageSource.getMessage("email.influencer.signup.message",null,locale)
+				.replace("{{Infuencer Name}}", user.getName())
+				.replace("{{Host}}", uiHost);
 		emailService.send(to, subject, body);
 		
 		return user;
