@@ -55,6 +55,9 @@ public class BrandService {
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
 	
+	@Value("${ui.host}")
+	private String uiHost;
+	
 	@Autowired
 	private MessageSource messageSource;
 	
@@ -99,7 +102,10 @@ public class BrandService {
 		user.setBrand(brand);
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.brand.signup.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
+		String body = messageSource.getMessage("email.brand.signup.message",null,locale)
+				.replace("{{Brand Name}}", brand.getBrandName())
+				.replace("{{Registered Name}}", user.getName())
+				.replace("{{Host}}", uiHost);
 		emailService.send(to,subject, body);
 		return user;
 	}
