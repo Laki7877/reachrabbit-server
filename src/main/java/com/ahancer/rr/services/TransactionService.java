@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -71,6 +72,9 @@ public class TransactionService {
 	@Autowired
 	private WalletDao walletDao;
 	
+	@Value("${ui.host}")
+	private String uiHost;
+	
 	public Transaction createTransactionByBrand(UserResponse user,Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
 		Cart cart = cartDao.findByBrandIdAndStatus(brandId, CartStatus.Incart);
@@ -105,8 +109,13 @@ public class TransactionService {
 		cartDao.save(cart);
 		
 		String to = user.getEmail();
-		String subject = messageSource.getMessage("email.brand.cart.checkout.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.cart.checkout.message",null,locale);
+		String subject = messageSource.getMessage("email.brand.cart.checkout.subject",null,locale)
+				.replace("{{transaction id}}", transaction.getTransactionNumber());
+		String body = messageSource.getMessage("email.brand.cart.checkout.message",null,locale)
+				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
+				.replace("{{Total Price}}", String.valueOf(transaction.getAmount()))
+				.replace("{{Host}}", uiHost)
+				.replace("{{CartId}}", String.valueOf(cart.getCartId()));
 		emailService.send(to, subject, body);
 		
 		return transaction;
@@ -171,8 +180,11 @@ public class TransactionService {
 		String subject = StringUtils.EMPTY;
 		String body = StringUtils.EMPTY;
 		
-		String superSubject = messageSource.getMessage("email.influencer.admin.confirm.checkout.subject",null,locale);
-		String superBody = messageSource.getMessage("email.influencer.admin.confirm.checkout.message",null,locale);
+		String superSubject = messageSource.getMessage("email.influencer.admin.confirm.checkout.subject",null,locale)
+				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName());
+		String superBody = messageSource.getMessage("email.influencer.admin.confirm.checkout.message",null,locale)
+				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName())
+				.replace("{{Host}}", uiHost);
 		
 		for(Proposal proposal : transaction.getBrandTransactionDocument().getCart().getProposals()){
 			proposal.setStatus(ProposalStatus.Working);
@@ -183,7 +195,8 @@ public class TransactionService {
 			//setup robot message
 			robotMessage.setMessage(message
 					.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
-					.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName()));
+					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
+					.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId())));
 			robotMessage.setProposal(proposal);
 			
 			//long polling
@@ -207,9 +220,13 @@ public class TransactionService {
 		
 		//send email to brand
 		to = transaction.getUser().getEmail();
-		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale);
-		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale)
+		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale)
 				.replace("{{Transaction ID}}", transaction.getTransactionNumber());
+		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale)
+				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
+				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName())
+				.replace("{{Total Price}}", String.valueOf(transaction.getAmount()))
+				.replace("{{Host}}", uiHost);
 		emailService.send(to, subject, body);
 		
 		return transaction;
@@ -246,7 +263,8 @@ public class TransactionService {
 				.replace("{{Payout Amount}}", transaction.getAmount().toString())
 				.replace("{{Bank Name}}", document.getBank().getBankName())
 				.replace("{{Bank Account Number}}", document.getAccountNumber())
-				.replace("{{Bank Account Name}}", document.getAccountName());
+				.replace("{{Bank Account Name}}", document.getAccountName())
+				.replace("{{Host}}", uiHost);
 		emailService.send(to, subject, body);
 		
 		return transaction;

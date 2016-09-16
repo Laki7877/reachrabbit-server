@@ -112,10 +112,12 @@ public class WalletService {
 		
 		//send email to admin
 		String to = adminEmail;
-		String subject = messageSource.getMessage("email.admin.influencer.payout.subject",null,locale);
+		String subject = messageSource.getMessage("email.admin.influencer.payout.subject",null,locale)
+				.replace("{{Influencer Name}}", wallet.getInfluencer().getUser().getName());
 		String body = messageSource.getMessage("email.admin.influencer.payout.message",null,locale)
 				.replace("{{Influencer Name}}", wallet.getInfluencer().getUser().getName())
 				.replace("{{Payout Amount}}", transaction.getAmount().toString())
+				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
 				.replace("{{Bank Name}}", request.getBank().getBankName())
 				.replace("{{Bank Account Number}}", request.getAccountNumber())
 				.replace("{{Bank Account Name}}", request.getAccountName());

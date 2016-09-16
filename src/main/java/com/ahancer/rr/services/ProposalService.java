@@ -354,11 +354,19 @@ public class ProposalService {
 			}
 			oldProposal.setWalletId(wallet.getWalletId());
 			
+			Double sum = oldProposal.getPrice()-oldProposal.getFee();
+			for(Proposal proposal : wallet.getProposals()){
+				sum = sum + proposal.getPrice() - proposal.getFee();
+			}
+			
+			
 			//send email to influencer
 			String to = oldProposal.getInfluencer().getUser().getEmail();
 			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
 			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale)
-					.replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
+					.replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName())
+					.replace("{{Outstanding Wallet Money}}", String.valueOf(sum))
+					.replace("{{Host}}", uiHost);
 			emailService.send(to, subject, body);
 		}
 		User robotUser = robotService.getRobotUser();
