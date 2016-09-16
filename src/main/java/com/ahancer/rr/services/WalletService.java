@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public class WalletService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Value("${email.admin}")
+	private String adminEmail;
 	
 	public Wallet findPendingByIndluencer(Long influencerId) {
 		return walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.WaitForPayout);
@@ -107,7 +111,7 @@ public class WalletService {
 		transaction = transactionDao.save(transaction);
 		
 		//send email to admin
-		String to = "admin@reachrabbit.com";
+		String to = adminEmail;
 		String subject = messageSource.getMessage("email.admin.influencer.payout.subject",null,locale);
 		String body = messageSource.getMessage("email.admin.influencer.payout.message",null,locale)
 				.replace("{{Influencer Name}}", wallet.getInfluencer().getUser().getName())

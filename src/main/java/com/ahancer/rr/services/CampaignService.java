@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +53,9 @@ public class CampaignService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Value("${email.admin}")
+	private String adminEmail;
 
 	public Campaign createCampaignByBrand(CampaignRequest request, UserResponse user, Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
@@ -110,8 +114,10 @@ public class CampaignService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.deadline.require");
 			}
 			//send email to admin
-			String to = "admin@reachrabbit.com";
-			String subject = messageSource.getMessage("email.admin.brand.publish.campaign.subject",null,locale);
+			String to = adminEmail;
+			String subject = messageSource.getMessage("email.admin.brand.publish.campaign.subject",null,locale)
+					.replace("{{Category}}", campaign.getCategory().getCategoryName())
+					.replace("{{Brand Name}}", user.getBrand().getBrandName());
 			String body = messageSource.getMessage("email.admin.brand.publish.campaign.message",null,locale)
 					.replace("{{Brand Name}}", user.getBrand().getBrandName())
 					.replace("{{Campaign Name}}", campaign.getTitle())
