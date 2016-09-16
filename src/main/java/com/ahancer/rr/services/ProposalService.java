@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,6 +67,8 @@ public class ProposalService {
 	@Autowired
 	private EmailService emailService;
 	
+	@Value("${ui.host}")
+	private String uiHost;
 
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
 
@@ -286,7 +289,11 @@ public class ProposalService {
 		firstMessage = proposalMessageDao.save(firstMessage);
 		String to = campaign.getBrand().getUser().getEmail();
 		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale).replace("{{Influencer Name}}", user.getName());
+		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale)
+				.replace("{{Influencer Name}}", user.getName())
+				.replace("{{Campaign Name}}", campaign.getTitle())
+				.replace("{{Host}}", uiHost)
+				.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId()));
 		emailService.send(to, subject, body);
 		return proposal;
 	}
