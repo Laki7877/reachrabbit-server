@@ -62,7 +62,7 @@ public class CampaignController extends AbstractController {
 	@RequestMapping(value="/open", method=RequestMethod.GET)
 	@Authorization(Role.Influencer)
 	public Page<CampaignResponse> getOpenCampaign(@RequestParam(name = "mediaId", required=false) String mediaId, Pageable pageRequest) throws Exception {
-		return campaignService.findAllOpen(mediaId, pageRequest);
+		return campaignService.findAllOpen(mediaId,this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);
 	}
 	
 	@ApiOperation(value = "Get campaign by campaign id")

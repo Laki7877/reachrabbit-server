@@ -217,12 +217,22 @@ public class CampaignService {
 		return campaignDao.findByBrandIdAndStatus(brandId, Arrays.asList(CampaignStatus.Open));
 	}
 
-	public Page<CampaignResponse> findAllOpen(String mediaFilter,Pageable pageable) {		
+	public Page<CampaignResponse> findAllOpen(String mediaFilter,Long influencerId,Pageable pageable) {		
+		Page<CampaignResponse> response = null;
 		if(StringUtils.isNotEmpty(mediaFilter)) {
-			return campaignDao.findByStatusAndMedia(Arrays.asList(CampaignStatus.Open), Arrays.asList(mediaFilter), pageable);
+			response =  campaignDao.findByStatusAndMedia(Arrays.asList(CampaignStatus.Open), Arrays.asList(mediaFilter), pageable);
 		} else {
-			return campaignDao.findByStatus(Arrays.asList(CampaignStatus.Open), pageable);
-		}		
+			response = campaignDao.findByStatus(Arrays.asList(CampaignStatus.Open), pageable);
+		}
+		for(CampaignResponse campaign : response.getContent()){
+			for(Proposal proposal : campaign.getProposals()){
+				if(proposal.getInfluencerId() == influencerId){
+					campaign.setIsApply(true);
+					break;
+				}
+			}
+		}
+		return response;
 	}
 
 	public Campaign findOne(Long campaignId) {

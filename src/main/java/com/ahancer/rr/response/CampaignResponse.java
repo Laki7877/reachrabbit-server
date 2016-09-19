@@ -15,6 +15,7 @@ import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.Resource;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class CampaignResponse implements Serializable {
 
@@ -39,7 +40,17 @@ public class CampaignResponse implements Serializable {
 	private Integer countProposalComplete;
 	private Date updatedAt;
 	private Boolean isApply;
+	@JsonIgnore
+	private Set<Proposal> proposals = new HashSet<Proposal>(0);
 	
+	public Set<Proposal> getProposals() {
+		return proposals;
+	}
+
+	public void setProposals(Set<Proposal> proposals) {
+		this.proposals = proposals;
+	}
+
 	public CampaignResponse() {
 		
 	}
@@ -72,10 +83,7 @@ public class CampaignResponse implements Serializable {
 			case Brand:
 				break;
 			case Influencer:
-				isApply = false;
-				if(campaign.getProposals().size() != 0){
-					isApply = true;
-				}
+				this.proposals = campaign.getProposals();
 				break;
 			default:
 				break;
