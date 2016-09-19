@@ -104,7 +104,7 @@ public class ProposalMessageService {
 	public List<ProposalMessage> getNewProposalMessage(Long proposalId, Role role, Date timestamp) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(timestamp);
-		cal.add(Calendar.MILLISECOND, -10);
+		cal.add(Calendar.HOUR, 7);
 		List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, cal.getTime());
 		for(ProposalMessage p : pm) {
 			if(role.equals(Role.Influencer)) {
