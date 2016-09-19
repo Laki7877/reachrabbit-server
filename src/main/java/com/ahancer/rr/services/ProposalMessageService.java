@@ -104,7 +104,7 @@ public class ProposalMessageService {
 	public List<ProposalMessage> getNewProposalMessage(Long proposalId, Role role, Date timestamp) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(timestamp);
-		cal.add(Calendar.HOUR, 7);
+		//cal.add(Calendar.HOUR, 7);
 		cal.add(Calendar.SECOND, -10);
 		System.out.println(cal.getTime());
 		List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, cal.getTime());
