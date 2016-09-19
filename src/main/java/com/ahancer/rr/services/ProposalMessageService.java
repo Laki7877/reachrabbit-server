@@ -1,6 +1,5 @@
 package com.ahancer.rr.services;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -102,12 +101,10 @@ public class ProposalMessageService {
 	}
 	
 	public List<ProposalMessage> getNewProposalMessage(Long proposalId, Role role, Date timestamp) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(timestamp);
-		//cal.add(Calendar.HOUR, 7);
-		cal.add(Calendar.SECOND, -10);
-		System.out.println(cal.getTime());
-		List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, cal.getTime());
+//		Calendar cal = Calendar.getInstance();
+//		cal.setTime(timestamp);
+//		cal.add(Calendar.MILLISECOND, -10);
+		List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, timestamp);
 		for(ProposalMessage p : pm) {
 			if(role.equals(Role.Influencer)) {
 				p.setIsInfluencerRead(true);
