@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.services.AuthenticationService;
@@ -26,16 +27,7 @@ import com.ahancer.rr.utils.Util;
 @Component
 @Order(2)
 public class AuthenticationFilter implements Filter {
-
-	@Value("${reachrabbit.token.header}")
-	private String tokenHeader;
-
-	@Value("${reachrabbit.request.attribute.user}")
-	private String userAttribute;
 	
-	@Value("${reachrabbit.request.attribute.token}")
-	private String tokenAttribute;
-
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
 
@@ -69,7 +61,7 @@ public class AuthenticationFilter implements Filter {
 			chain.doFilter(req, res);
 		} else {
 			try {
-				String token = request.getHeader(tokenHeader);
+				String token = request.getHeader(ApplicationConstant.TokenHeader);
 				UserResponse userResponse = (UserResponse) CacheUtil.getCacheObject(userRequestCache, token);
 				if(null == userResponse) {
 					Long userId = jwt.getUserId(token);
@@ -80,8 +72,8 @@ public class AuthenticationFilter implements Filter {
 					}
 				}
 				if(null != userResponse) {
-					request.setAttribute(userAttribute, userResponse);
-					request.setAttribute(tokenAttribute, token);
+					request.setAttribute(ApplicationConstant.UserRequest, userResponse);
+					request.setAttribute(ApplicationConstant.TokenAttribute, token);
 					chain.doFilter(req, res);
 				} else {
 					response.sendError(401);

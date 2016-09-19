@@ -4,22 +4,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.Role;
-import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.UserResponse;
+
 
 @Component
-@Order(4)
+@Order(3)
 public class AuthorizationFilter implements HandlerInterceptor {
-
-	@Value("${reachrabbit.attribute.user}")
-	private String userAttribute;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -28,7 +26,7 @@ public class AuthorizationFilter implements HandlerInterceptor {
 		com.ahancer.rr.annotations.Authorization role = handlerMethod.getMethodAnnotation(com.ahancer.rr.annotations.Authorization.class);
 		
 		if(role != null) {
-			User user = (User) request.getAttribute(userAttribute);
+			UserResponse user = (UserResponse) request.getAttribute(ApplicationConstant.UserRequest);
 			if(role.value().length == 0) {
 				// Check with all roles
 				Role[] roles = Role.values();

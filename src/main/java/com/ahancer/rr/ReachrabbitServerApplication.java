@@ -1,7 +1,5 @@
 package com.ahancer.rr;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
@@ -19,9 +17,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import com.ahancer.rr.response.YouTubeProfileResponse;
-import com.ahancer.rr.services.YoutubeService;
-
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan
@@ -31,8 +26,6 @@ import com.ahancer.rr.services.YoutubeService;
 public class ReachrabbitServerApplication extends AsyncConfigurerSupport {
 	
 	public static void main(String[] args) {
-		
-		
 		SpringApplication.run(ReachrabbitServerApplication.class, args);
 	}
 
