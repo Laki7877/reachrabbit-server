@@ -111,7 +111,7 @@ public class CampaignService {
 			cal.set(Calendar.SECOND,0);
 			cal.set(Calendar.MILLISECOND,0);
 			if(null == campaign.getProposalDeadline() || cal.getTime().after(campaign.getProposalDeadline())){
-				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.deadline.require");
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.deadline.invalid");
 			}
 			//send email to admin
 			String to = adminEmail;
