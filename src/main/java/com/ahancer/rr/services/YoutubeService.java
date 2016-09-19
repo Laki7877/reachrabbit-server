@@ -78,7 +78,6 @@ public class YoutubeService {
 		Channel chan = chanResult.getItems().get(0);
 		
 		List<PlaylistItem> pl = new ArrayList<>();
-		
 		String playlistId = chanResult.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();
 		YouTube.PlaylistItems.List ypllist = youtube.playlistItems().list("snippet");
 		ypllist.setPart("snippet,contentDetails");
