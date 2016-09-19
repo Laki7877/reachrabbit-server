@@ -78,7 +78,7 @@ public class ProfileController extends AbstractController{
 		return facebookService.getProfile(pageId);
 	}
 	
-	@RequestMapping(value="instagram", method=RequestMethod.GET)
+	@RequestMapping(value="/instagram", method=RequestMethod.GET)
 	public InstagramProfileResponse getInstagramProfile() throws Exception {
 		UserResponse user = this.getUserRequest();
 		
