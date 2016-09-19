@@ -130,6 +130,7 @@ public class InfluencerService {
 		user.setEmail(request.getEmail());
 		user.setName(request.getName());
 		user.setPhoneNumber(request.getPhoneNumber());
+		user.setProfilePicture(request.getProfilePicture());
 		user.setRole(Role.Influencer);
 		user = userDao.save(user);
 		//Setup user object
