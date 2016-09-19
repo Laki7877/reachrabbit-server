@@ -20,7 +20,7 @@ public class UserController extends AbstractController {
 	private UserDao userDao;
 	
 	@RequestMapping(value="/{userId}",method=RequestMethod.GET)
-	@Authorization(Role.Admin)
+	@Authorization({Role.Admin,Role.Influencer})
 	public User getOneUser(@PathVariable long userId) {
 		return userDao.findOne(userId);
 	}
