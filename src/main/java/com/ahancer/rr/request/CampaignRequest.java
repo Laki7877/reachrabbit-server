@@ -17,6 +17,8 @@ import com.ahancer.rr.models.Resource;
 public class CampaignRequest implements Serializable {
 	private static final long serialVersionUID = 1164567255480906846L;
 	
+	private Long campaignId;
+	
 	private Budget budget;
 	
 	@Size(max=200,message="error.campaign.website.length")
@@ -127,4 +129,11 @@ public class CampaignRequest implements Serializable {
 	public void setMainResource(Resource mainResource) {
 		this.mainResource = mainResource;
 	}
+	public Long getCampaignId() {
+		return campaignId;
+	}
+	public void setCampaignId(Long campaignId) {
+		this.campaignId = campaignId;
+	}
+	
 }

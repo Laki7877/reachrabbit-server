@@ -76,27 +76,21 @@ public class CampaignController extends AbstractController {
 	@ApiOperation(value = "Create new campaign")
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
-	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request
+	public CampaignRequest createCampaign(@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		Campaign campaign = campaignService.createCampaignByBrand(request, this.getUserRequest(),locale);
-		return getOneCampaign(campaign.getCampaignId());
+		return campaignService.createCampaignByBrand(request, this.getUserRequest(),locale);
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
+	public CampaignRequest updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		
-				
-		Campaign campaign = null;
-
 		//Admin powered
 		if(this.getUserRequest().getRole().equals(Role.Admin)) {
-			campaign = campaignService.updateCampaign(campaignId, request);
+			request = campaignService.updateCampaign(campaignId, request);
 		} else {
-			campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+			request = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
 		}
-		
-		return getOneCampaign(campaign.getCampaignId());
+		return request;
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)

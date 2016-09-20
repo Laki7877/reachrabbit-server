@@ -57,7 +57,7 @@ public class CampaignService {
 	@Value("${email.admin}")
 	private String adminEmail;
 
-	public Campaign createCampaignByBrand(CampaignRequest request, UserResponse user, Locale locale) throws Exception {
+	public CampaignRequest createCampaignByBrand(CampaignRequest request, UserResponse user, Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
 		//Setup campaign
 		Campaign campaign = new Campaign();
@@ -82,7 +82,8 @@ public class CampaignService {
 					, resource.getPosition());
 		}
 		validateCampaign(campaign,user,locale);
-		return campaign;
+		request.setCampaignId(campaign.getCampaignId());
+		return request;
 	}
 	
 	private void validateCampaign(Campaign campaign, UserResponse user, Locale locale) throws Exception {
@@ -138,15 +139,14 @@ public class CampaignService {
 		campaignDao.delete(campaignId);
 	}
 
-	public Campaign updateCampaign(Long campaignId, CampaignRequest request) {
+	public CampaignRequest updateCampaign(Long campaignId, CampaignRequest request) {
 		Campaign campaign = campaignDao.findOne(campaignId);
-		
 		campaign.setStatus(request.getStatus());
-		
-		return campaignDao.save(campaign);
+		campaign = campaignDao.save(campaign);
+		return request;
 	}
 
-	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, UserResponse user, Locale locale) throws Exception {
+	public CampaignRequest updateCampaignByBrand(Long campaignId, CampaignRequest request, UserResponse user, Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
 		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
 		if(null == campaign) {
@@ -193,7 +193,7 @@ public class CampaignService {
 			}
 		}
 		validateCampaign(campaign,user,locale);
-		return campaign;
+		return request;
 	}
 	
 	public Page<CampaignResponse> findAll(Pageable pageable) {
