@@ -151,7 +151,10 @@ public class ProposalController extends AbstractController {
 	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false)  String timestamp ) throws Exception {
 		final Date date = Util.parseJacksonDate(timestamp);
 		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, date, this.getUserRequest().getRole());
-		if(proposalMessageService.countNewProposalMessage(proposalId, date) > 0L) {
+		System.out.println(date);
+		Long count = proposalMessageService.countNewProposalMessage(proposalId, date);
+		System.out.println(count);
+		if(count > 0L) {
 			result.setResult(date);
 		} else {
 			proposalMessageService.addMessagePolling(proposalId, result);
