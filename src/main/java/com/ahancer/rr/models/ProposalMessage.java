@@ -63,7 +63,7 @@ public class ProposalMessage implements Serializable  {
 			inverseJoinColumns=@JoinColumn(name="resourceId", referencedColumnName="resourceId"))
 	private Set<Resource> resources = new HashSet<Resource>(0);
 	
-	@Column(name="referenceId",length=8)
+	@Column(name="referenceId",length=64)
 	private String referenceId;
 	
 	@Temporal(TemporalType.TIMESTAMP)
