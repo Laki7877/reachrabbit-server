@@ -369,6 +369,7 @@ public class ProposalService {
 			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale)
 					.replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName())
 					.replace("{{Outstanding Wallet Money}}", String.valueOf(sum))
+					.replace("{{Campaign Name}}", oldProposal.getCampaign().getTitle())
 					.replace("{{Host}}", uiHost);
 			emailService.send(to, subject, body);
 		}

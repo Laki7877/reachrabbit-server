@@ -216,7 +216,8 @@ public class TransactionService {
 			subject = superSubject;
 			body = superBody
 					.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
-					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle());
+					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
+					.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName());
 			emailService.send(to, subject, body);
 		}
 		
