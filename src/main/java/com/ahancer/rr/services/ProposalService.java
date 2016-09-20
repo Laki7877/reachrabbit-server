@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,7 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.response.CartResponse;
+import com.ahancer.rr.response.ProposalCountResponse;
 import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.response.WalletResponse;
@@ -65,6 +67,8 @@ public class ProposalService {
 	@Autowired
 	private EmailService emailService;
 	
+	@Value("${ui.host}")
+	private String uiHost;
 
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
 
@@ -153,11 +157,15 @@ public class ProposalService {
 		return proposalMessageDao.countByProposalProposalIdAndProposalInfluencerIdAndIsInfluencerReadFalse(proposalId, influencerId);
 	}
 
-	public Long countByBrand(Long brandId, ProposalStatus status) {
-		return proposalDao.countByCampaignBrandIdAndStatus(brandId, status);
+	public ProposalCountResponse countByBrand(Long brandId, ProposalStatus status) {
+		Long proposalCount = proposalDao.countByCampaignBrandIdAndStatus(brandId, status);
+		Long unreadBrand = proposalMessageDao.countByProposalCampaignBrandIdAndIsBrandReadFalseAndProposalStatus(brandId, status);
+		return new ProposalCountResponse(proposalCount,unreadBrand);
 	}
-	public Long countByInfluencer(Long influencerId, ProposalStatus status) {
-		return proposalDao.countByInfluencerInfluencerIdAndStatus(influencerId, status);
+	public ProposalCountResponse countByInfluencer(Long influencerId, ProposalStatus status) {
+		Long proposalCount = proposalDao.countByInfluencerInfluencerIdAndStatus(influencerId, status);
+		Long unreadInfluencer = proposalMessageDao.countByProposalInfluencerIdAndIsInfluencerReadFalseAndProposalStatus(influencerId,status);
+		return new ProposalCountResponse(proposalCount,unreadInfluencer);
 	}
 
 	public Page<Proposal> findAllByBrand(Long brandId,ProposalStatus status,Pageable pageable) {
@@ -278,10 +286,15 @@ public class ProposalService {
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
 		firstMessage.setUserId(influecnerId);
+		firstMessage.setCreatedAt(new Date());
 		firstMessage = proposalMessageDao.save(firstMessage);
 		String to = campaign.getBrand().getUser().getEmail();
 		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale).replace("{{Influencer Name}}", user.getName());
+		String body = messageSource.getMessage("email.brand.new.proposal.message",null,locale)
+				.replace("{{Influencer Name}}", user.getName())
+				.replace("{{Campaign Name}}", campaign.getTitle())
+				.replace("{{Host}}", uiHost)
+				.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId()));
 		emailService.send(to, subject, body);
 		return proposal;
 	}
@@ -300,10 +313,12 @@ public class ProposalService {
 		ProposalMessage rebotMessage = new ProposalMessage();
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
-		rebotMessage.setMessage(oldProposal.getInfluencer().getUser().getName() + " " + messageSource.getMessage("robot.proposal.message", null, local));
+		String message = messageSource.getMessage("robot.proposal.message", null, local).replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
+		rebotMessage.setMessage(message);
 		rebotMessage.setProposal(proposal);
 		User robotUser = robotService.getRobotUser();
 		rebotMessage.setUserId(robotUser.getUserId());
+		rebotMessage.setCreatedAt(new Date());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
 		rebotMessage.setUser(robotUser);
@@ -318,6 +333,7 @@ public class ProposalService {
 		oldProposal.setStatus(status);
 		
 		ProposalMessage rebotMessage = new ProposalMessage();
+		rebotMessage.setCreatedAt(new Date());
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
 		Calendar cal = Calendar.getInstance();
@@ -326,22 +342,34 @@ public class ProposalService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.invalid.status");
 		} else if(ProposalStatus.Complete.equals(oldProposal.getStatus())){
 			//set robot message
-			rebotMessage.setMessage(messageSource.getMessage("robot.proposal.complete.status.message", null, locale));
+			String message = messageSource.getMessage("robot.proposal.complete.status.message", null, locale);
+			rebotMessage.setMessage(message
+					.replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName())
+					.replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName()));
 			oldProposal.setCompleteDate(cal.getTime());
 			//add wallet
-			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.Pending);
+			Wallet wallet = walletDao.findByInfluencerIdAndStatus(oldProposal.getInfluencerId(), WalletStatus.WaitForPayout);
 			if(null == wallet){
 				wallet = new Wallet();
-				wallet.setStatus(WalletStatus.Pending);
+				wallet.setStatus(WalletStatus.WaitForPayout);
 				wallet.setInfluencerId(oldProposal.getInfluencerId());
 				wallet = walletDao.save(wallet);
 			}
 			oldProposal.setWalletId(wallet.getWalletId());
 			
+			Double sum = oldProposal.getPrice()-oldProposal.getFee();
+			for(Proposal proposal : wallet.getProposals()){
+				sum = sum + proposal.getPrice() - proposal.getFee();
+			}
+			
+			
 			//send email to influencer
 			String to = oldProposal.getInfluencer().getUser().getEmail();
 			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
-			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale).replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName());
+			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale)
+					.replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName())
+					.replace("{{Outstanding Wallet Money}}", String.valueOf(sum))
+					.replace("{{Host}}", uiHost);
 			emailService.send(to, subject, body);
 		}
 		User robotUser = robotService.getRobotUser();

@@ -2,13 +2,13 @@ package com.ahancer.rr.utils;
 
 import java.beans.FeatureDescriptor;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -38,8 +38,8 @@ public class Util {
 		if(utc == null) {
 			return null;
 		}
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        return formatter.parse(utc.replaceAll("Z$", "+0000"));
+		Date date = new DateTime(utc).toDate();
+        return date;
 	}
 	
 	public static UserResponse getUserResponse(User user){
@@ -51,24 +51,12 @@ public class Util {
 		userResponse.setRole(user.getRole());
 		userResponse.setUserId(user.getUserId());
 		if(Role.Brand == user.getRole()){
-			BrandResponse brand = new BrandResponse();
-			brand.setAbout(user.getBrand().getAbout());
-			brand.setBrandId(user.getBrand().getBrandId());
-			brand.setBrandName(user.getBrand().getBrandName());
-			brand.setWebsite(user.getBrand().getWebsite());
+			user.getBrand().setUser(user);
+			BrandResponse brand = new BrandResponse(user.getBrand(),"Brand");
 			userResponse.setBrand(brand);
 		}else if(Role.Influencer == user.getRole()){
-			InfluencerResponse influencer = new InfluencerResponse();
-			influencer.setAbout(user.getInfluencer().getAbout());
-			influencer.setBirthday(user.getInfluencer().getBirthday());
-			influencer.setCategories(user.getInfluencer().getCategories());
-			influencer.setGender(user.getInfluencer().getGender());
-			influencer.setInfluencerId(user.getInfluencer().getInfluencerId());
-			influencer.setInfluencerMedias(user.getInfluencer().getInfluencerMedias());
-			influencer.setWeb(user.getInfluencer().getWeb());
-			influencer.setAccountName(user.getInfluencer().getAccountName());
-			influencer.setAccountNumber(user.getInfluencer().getAccountNumber());
-			influencer.setBank(user.getInfluencer().getBank());
+			user.getInfluencer().setUser(user);
+			InfluencerResponse influencer = new InfluencerResponse(user.getInfluencer(),"Influencer");
 			userResponse.setInfluencer(influencer);
 		}
 		return userResponse;

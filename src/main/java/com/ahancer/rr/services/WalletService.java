@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -43,20 +44,23 @@ public class WalletService {
 	@Autowired
 	private EmailService emailService;
 	
+	@Value("${email.admin}")
+	private String adminEmail;
+	
 	public Wallet findPendingByIndluencer(Long influencerId) {
-		return walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.Pending);
+		return walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.WaitForPayout);
 	}
 	
 	public Transaction payoutWallet(PayoutRequest request, Long influencerId,Locale locale) throws Exception{
 		
-		Wallet wallet = walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.Pending);
+		Wallet wallet = walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.WaitForPayout);
 		if(null == wallet){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.not.exist");
 		}
 		if(0 == wallet.getProposals().size()){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.empty.proposal");
 		}
-		wallet.setStatus(WalletStatus.Paid);
+		wallet.setStatus(WalletStatus.Pending);
 		wallet = walletDao.save(wallet);
 		//setup transaction
 		Transaction transaction = new Transaction();
@@ -107,11 +111,13 @@ public class WalletService {
 		transaction = transactionDao.save(transaction);
 		
 		//send email to admin
-		String to = "admin@reachrabbit.com";
-		String subject = messageSource.getMessage("email.admin.influencer.payout.subject",null,locale);
+		String to = adminEmail;
+		String subject = messageSource.getMessage("email.admin.influencer.payout.subject",null,locale)
+				.replace("{{Influencer Name}}", wallet.getInfluencer().getUser().getName());
 		String body = messageSource.getMessage("email.admin.influencer.payout.message",null,locale)
 				.replace("{{Influencer Name}}", wallet.getInfluencer().getUser().getName())
 				.replace("{{Payout Amount}}", transaction.getAmount().toString())
+				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
 				.replace("{{Bank Name}}", request.getBank().getBankName())
 				.replace("{{Bank Account Number}}", request.getAccountNumber())
 				.replace("{{Bank Account Name}}", request.getAccountName());

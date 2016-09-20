@@ -30,7 +30,6 @@ import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
-import com.google.api.services.youtube.model.PlaylistListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 @Service
@@ -79,16 +78,13 @@ public class YoutubeService {
 		Channel chan = chanResult.getItems().get(0);
 		
 		List<PlaylistItem> pl = new ArrayList<>();
-		
-		for(Object value : chanResult.getItems().get(0).getContentDetails().getRelatedPlaylists().values()){
-			String playlistId = (String)value;
-			YouTube.PlaylistItems.List ypllist = youtube.playlistItems().list("snippet");
-			ypllist.setPart("snippet,contentDetails");
-			ypllist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setPlaylistId(playlistId);
+		String playlistId = chanResult.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();
+		YouTube.PlaylistItems.List ypllist = youtube.playlistItems().list("snippet");
+		ypllist.setPart("snippet,contentDetails");
+		ypllist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setPlaylistId(playlistId);
 
-			PlaylistItemListResponse result = ypllist.execute();
-			pl.addAll(result.getItems());
-		}
+		PlaylistItemListResponse result_pitem = ypllist.execute();
+		pl.addAll(result_pitem.getItems());
 		
 		HashSet<String> videoIds = new HashSet<String>();
 		

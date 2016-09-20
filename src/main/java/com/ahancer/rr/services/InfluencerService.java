@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
+import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Influencer;
@@ -37,6 +38,9 @@ public class InfluencerService {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private ProposalDao proposalDao;
 
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
@@ -46,14 +50,38 @@ public class InfluencerService {
 	
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Value("${ui.host}")
+	private String uiHost;
 
 	public UserResponse updateInfluencerUser(Long userId, ProfileRequest newUser, String token) throws Exception {
 		User oldUser = userDao.findOne(userId);
 		if(oldUser == null) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
-		for(InfluencerMedia link : newUser.getInfluencer().getInfluencerMedias()) {
-			InfluencerMediaId id = new InfluencerMediaId(userId, link.getMedia().getMediaId());
+		for(InfluencerMedia link2 : oldUser.getInfluencer().getInfluencerMedias()) {
+			boolean has = false;
+			for(InfluencerMedia link: newUser.getInfluencer().getInfluencerMedias()) {
+				InfluencerMediaId id = new InfluencerMediaId(userId, link.getMedia().getMediaId());
+				link.setInfluencerMediaId(id);
+				if(link.getMedia().getMediaId().equals(link2.getMedia().getMediaId())) {
+					has = true;
+					break;
+				}
+			}
+			if(!has) {
+				if(proposalDao.countByInfluencerIdAndMediaMediaId(userId, link2.getMedia().getMediaId()) > 0) {
+					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.has.proposals");
+				}
+			}
+		}
+		if(newUser.getInfluencer().getInfluencerMedias().size() == 0){
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.atlest.one");
+		}
+		influencerMediaDao.deleteByInfluencerId(userId);
+		for(InfluencerMedia link: newUser.getInfluencer().getInfluencerMedias()) {
+			influencerMediaDao.insertInfluencerMedia(userId,link.getMedia().getMediaId(),link.getFollowerCount(), link.getPageId(), link.getSocialId());
+			InfluencerMediaId id = new InfluencerMediaId(userId,link.getMedia().getMediaId());
 			link.setInfluencerMediaId(id);
 		}
 		//Validate duplicate Email
@@ -102,6 +130,7 @@ public class InfluencerService {
 		user.setEmail(request.getEmail());
 		user.setName(request.getName());
 		user.setPhoneNumber(request.getPhoneNumber());
+		user.setProfilePicture(request.getProfilePicture());
 		user.setRole(Role.Influencer);
 		user = userDao.save(user);
 		//Setup user object
@@ -121,7 +150,9 @@ public class InfluencerService {
 		
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.influencer.signup.subject",null,locale);
-		String body = messageSource.getMessage("email.influencer.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
+		String body = messageSource.getMessage("email.influencer.signup.message",null,locale)
+				.replace("{{Infuencer Name}}", user.getName())
+				.replace("{{Host}}", uiHost);
 		emailService.send(to, subject, body);
 		
 		return user;

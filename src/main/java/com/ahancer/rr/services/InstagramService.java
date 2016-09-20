@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.h2.store.Data;
 import org.jinstagram.Instagram;
 import org.jinstagram.auth.InstagramAuthService;
 import org.jinstagram.auth.model.Token;
@@ -14,9 +13,11 @@ import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ahancer.rr.daos.MediaDao;
+import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.InstagramProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
@@ -110,9 +111,18 @@ public class InstagramService {
 	public Instagram getInstance(String accessToken) {
 		return new Instagram(new Token(accessToken, appSecret));
 	}
-	public OAuthenticationResponse authenticate(String accessToken) throws InstagramException {
+	public OAuthenticationResponse authenticate(String accessToken) throws Exception {
 		Instagram instagram = getInstance(accessToken);
+		Instagram instagram2 = getInstance(getAdminAccessToken());
 		UserInfoData userInfo = instagram.getCurrentUserInfo().getData();
+		
+		try{
+			if(instagram2.getUserInfo(userInfo.getId()).getData() == null) {
+				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.instagram.notpublic");
+			}
+		} catch(Exception e) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.instagram.notpublic");
+		}
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(userInfo.getId(), "instagram");
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();

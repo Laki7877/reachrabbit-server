@@ -10,16 +10,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import com.ahancer.rr.constants.ApplicationConstant;
 
 @Component
 @Order(1)
 public class CorsFilter implements Filter {
 
-	@Value("${reachrabbit.token.header}")
-	private String tokenHeader;
 
 	public void doFilter(ServletRequest req
 			, ServletResponse res
@@ -27,7 +26,7 @@ public class CorsFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) res;
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
-		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Accept-Language, " + tokenHeader);
+		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Accept-Language, " + ApplicationConstant.TokenHeader);
 		chain.doFilter(req, res);
 	}
 

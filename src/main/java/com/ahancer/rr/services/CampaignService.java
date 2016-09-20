@@ -2,12 +2,14 @@ package com.ahancer.rr.services;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.CampaignResourceDao;
 import com.ahancer.rr.exception.ResponseException;
@@ -25,6 +28,7 @@ import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.CampaignRequest;
+import com.ahancer.rr.response.CampaignResponse;
 import com.ahancer.rr.response.UserResponse;
 
 @Service
@@ -51,8 +55,11 @@ public class CampaignService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Value("${email.admin}")
+	private String adminEmail;
 
-	public Campaign createCampaignByBrand(CampaignRequest request, UserResponse user, Locale locale) throws Exception {
+	public CampaignRequest createCampaignByBrand(CampaignRequest request, UserResponse user, Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
 		//Setup campaign
 		Campaign campaign = new Campaign();
@@ -77,7 +84,8 @@ public class CampaignService {
 					, resource.getPosition());
 		}
 		validateCampaign(campaign,user,locale);
-		return campaign;
+		request.setCampaignId(campaign.getCampaignId());
+		return request;
 	}
 	
 	private void validateCampaign(Campaign campaign, UserResponse user, Locale locale) throws Exception {
@@ -106,11 +114,13 @@ public class CampaignService {
 			cal.set(Calendar.SECOND,0);
 			cal.set(Calendar.MILLISECOND,0);
 			if(null == campaign.getProposalDeadline() || cal.getTime().after(campaign.getProposalDeadline())){
-				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.deadline.require");
+				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.deadline.invalid");
 			}
 			//send email to admin
-			String to = "admin@reachrabbit.com";
-			String subject = messageSource.getMessage("email.admin.brand.publish.campaign.subject",null,locale);
+			String to = adminEmail;
+			String subject = messageSource.getMessage("email.admin.brand.publish.campaign.subject",null,locale)
+					.replace("{{Category}}", campaign.getCategory().getCategoryName())
+					.replace("{{Brand Name}}", user.getBrand().getBrandName());
 			String body = messageSource.getMessage("email.admin.brand.publish.campaign.message",null,locale)
 					.replace("{{Brand Name}}", user.getBrand().getBrandName())
 					.replace("{{Campaign Name}}", campaign.getTitle())
@@ -119,7 +129,26 @@ public class CampaignService {
 		}
 	}
 	
-	public Campaign updateCampaignByBrand(Long campaignId, CampaignRequest request, UserResponse user, Locale locale) throws Exception {
+	public void deleteCampaign(Long campaignId, UserResponse user) throws Exception {
+		Long brandId = user.getBrand().getBrandId();
+		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
+		if(null == campaign) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.not.found");
+		}
+		if(campaign.getProposals().size() > 0){
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.has.proposal");
+		}
+		campaignDao.delete(campaignId);
+	}
+
+	public CampaignRequest updateCampaign(Long campaignId, CampaignRequest request) {
+		Campaign campaign = campaignDao.findOne(campaignId);
+		campaign.setStatus(request.getStatus());
+		campaign = campaignDao.save(campaign);
+		return request;
+	}
+
+	public CampaignRequest updateCampaignByBrand(Long campaignId, CampaignRequest request, UserResponse user, Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
 		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
 		if(null == campaign) {
@@ -150,13 +179,15 @@ public class CampaignService {
 		//Setup proposal message
 		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			List<Proposal> proposalList = proposalService.findAllByBrand(brandId, campaignId);
-			ProposalMessage message = new ProposalMessage();
-			message.setMessage(messageSource.getMessage("robot.campaign.message", null, locale));
+			ProposalMessage robotMessage = new ProposalMessage();
+			String message = messageSource.getMessage("robot.campaign.message", null, locale).replace("{{Brand Name}}", user.getBrand().getBrandName());
+			robotMessage.setMessage(message);
+			robotMessage.setCreatedAt(new Date());
 			User robotUser = robotService.getRobotUser();
 			for(Proposal proposal : proposalList) {
-				message.setProposal(proposal);
+				robotMessage.setProposal(proposal);
 				proposalMessageService.createProposalMessage(proposal.getProposalId()
-						, message
+						, robotMessage
 						, robotUser.getUserId()
 						, robotUser.getRole());
 				proposalService.processInboxPollingByOne(proposal.getInfluencerId());
@@ -165,35 +196,73 @@ public class CampaignService {
 			}
 		}
 		validateCampaign(campaign,user,locale);
-		return campaign;
+		return request;
 	}
 	
-	public Page<Campaign> findAll(Pageable pageable) {
-		return campaignDao.findAll(pageable);
+	public Page<CampaignResponse> findAll(Pageable pageable) {
+		return campaignDao.findCampaignByAdmin(pageable);
+	}
+	
+	public Page<CampaignResponse> findAllByAdmin(Pageable pageable) {
+		return campaignDao.findCampaignByAdmin(pageable);
 	}
 
-	public Page<Campaign> findAllByBrand(Long brandId, Pageable pageable) {
-		return campaignDao.findByBrandId(brandId, pageable);
-	}
-
-	public List<Campaign> findAllActiveByBrand(Long brandId) {
-		return campaignDao.findByBrandBrandIdAndStatusIn(brandId, Arrays.asList(CampaignStatus.Open, CampaignStatus.Production));
-	}
-
-	public Page<Campaign> findAllOpen(String mediaFilter,Pageable pageable) {		
-		if(mediaFilter != null) {
-			return campaignDao.findByStatusNotInAndMediaMediaIdIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), Arrays.asList(mediaFilter), pageable);
+	public Page<CampaignResponse> findAllByBrand(Long brandId, String statusValue, Pageable pageable) {
+		if(StringUtils.isNotEmpty(statusValue)) {
+			CampaignStatus status = CampaignStatus.valueOf(statusValue);
+			return campaignDao.findByBrandIdAndStatus(brandId, status, pageable);
 		} else {
-			return campaignDao.findByStatusNotIn(Arrays.asList(CampaignStatus.Draft, CampaignStatus.Complete), pageable);
-		}		
+			return campaignDao.findByBrandId(brandId, pageable);
+		}
 	}
 
-	public Campaign findOne(Long campaignId) {
-		return campaignDao.findOne(campaignId);
+	public List<CampaignResponse> findAllActiveByBrand(Long brandId) {
+		return campaignDao.findByBrandIdAndStatus(brandId, Arrays.asList(CampaignStatus.Open));
 	}
 
-	public Campaign findOneByBrand(Long campaignId, Long brandId) {
-		return campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
+	public Page<CampaignResponse> findAllOpen(String mediaFilter,Long influencerId,Pageable pageable) {		
+		Page<CampaignResponse> response = null;
+		if(StringUtils.isNotEmpty(mediaFilter)) {
+			response =  campaignDao.findByStatusAndMedia(Arrays.asList(CampaignStatus.Open), Arrays.asList(mediaFilter), pageable);
+		} else {
+			response = campaignDao.findByStatus(Arrays.asList(CampaignStatus.Open), pageable);
+		}
+		for(CampaignResponse campaign : response.getContent()){
+			campaign.setIsApply(false);
+			for(Proposal proposal : campaign.getProposals()){
+				if(proposal.getInfluencerId().compareTo(influencerId) == 0){
+					campaign.setIsApply(true);
+					break;
+				}
+			}
+		}
+		return response;
+	}
+	
+	public CampaignResponse findOneByInfluencer(Long campaignId, Long influencerId){
+		Campaign capaign = campaignDao.findOne(campaignId);
+		CampaignResponse response = new CampaignResponse(capaign,Role.Influencer.displayName());
+		response.setIsApply(false);
+		for(Proposal proposal : response.getProposals()){
+			if(proposal.getInfluencerId().compareTo(influencerId) == 0){
+				response.setIsApply(true);
+				response.setProposal(proposal);
+				break;
+			}
+		}
+		return response;
+	}
+
+	public CampaignResponse findOneByAdmin(Long campaignId) {
+		Campaign capaign = campaignDao.findOne(campaignId);
+		CampaignResponse response = new CampaignResponse(capaign,Role.Admin.displayName());
+		return response;
+	}
+
+	public CampaignResponse findOneByBrand(Long campaignId, Long brandId) {
+		Campaign capaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
+		CampaignResponse response = new CampaignResponse(capaign,Role.Brand.displayName());
+		return response;
 	}
 	
 	public void dismissCampaignNotification(Long campaignId, Long brandId){

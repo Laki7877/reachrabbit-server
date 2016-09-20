@@ -2,7 +2,6 @@ package com.ahancer.rr.services;
 
 
 
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -56,6 +55,9 @@ public class BrandService {
 	@Value("${reachrabbit.cache.userrequest}")
 	private String userRequestCache;
 	
+	@Value("${ui.host}")
+	private String uiHost;
+	
 	@Autowired
 	private MessageSource messageSource;
 	
@@ -84,13 +86,13 @@ public class BrandService {
 		brand = brandDao.save(brand);
 		//Setup campaign object
 		Campaign campaign = new Campaign();
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, 5);
-		campaign.setProposalDeadline(cal.getTime());
+//		Calendar cal = Calendar.getInstance();
+//		cal.add(Calendar.DAY_OF_MONTH, 5);
+		campaign.setProposalDeadline(null);
 		campaign.setBrandId(brand.getBrandId());
-		campaign.setTitle("Campaign แรกของคุณ");
+		campaign.setTitle(null);
 		campaign.setCategory(null);
-		campaign.setDescription("นี่คือคำอธิบาย");
+		campaign.setDescription(null);
 		campaign.setStatus(CampaignStatus.Draft);
 		Set<Media> allMedia = new HashSet<Media>();
 		mediaDao.findAll().forEach(allMedia::add);
@@ -100,7 +102,10 @@ public class BrandService {
 		user.setBrand(brand);
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.brand.signup.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.signup.message",null,locale).replace("{{Registered Name}}", user.getName());
+		String body = messageSource.getMessage("email.brand.signup.message",null,locale)
+				.replace("{{Brand Name}}", brand.getBrandName())
+				.replace("{{Registered Email}}", user.getEmail())
+				.replace("{{Host}}", uiHost);
 		emailService.send(to,subject, body);
 		return user;
 	}

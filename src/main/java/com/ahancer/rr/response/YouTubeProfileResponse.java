@@ -3,7 +3,6 @@ package com.ahancer.rr.response;
 import java.util.List;
 
 import com.google.api.services.youtube.model.Channel;
-import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.Video;
 
 public class YouTubeProfileResponse {

@@ -14,21 +14,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.social.facebook.api.Account;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.Page;
-import org.springframework.social.facebook.api.Video;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
-import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.FacebookProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
-import com.ahancer.rr.response.UserResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -140,6 +136,10 @@ public class FacebookService {
 		org.springframework.social.facebook.api.User fbUser = fb.userOperations().getUserProfile();
 		List<Account> accounts = fb.pageOperations().getAccounts();
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>(); 
+		
+		if(accounts.size() == 0) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.facebook.nopage");
+		}
 		
 		for(Account account : accounts) {
 			Page page = fb.fetchObject(account.getId(), Page.class, "engagement", "name", "picture.type(large)", "id");

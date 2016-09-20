@@ -2,8 +2,6 @@ package com.ahancer.rr.controllers;
 
 import java.util.Locale;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +38,7 @@ public class TransactionController extends AbstractController {
 				|| Role.Influencer.equals(this.getUserRequest().getRole())){
 			return transactionService.findAllByUserTransaction(type,this.getUserRequest().getUserId(), pageable);
 		}
-		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
@@ -61,7 +59,7 @@ public class TransactionController extends AbstractController {
 		}else if(Role.Admin.equals(this.getUserRequest().getRole())){
 			return transactionService.findOneTransactionByAdmin(transactionId);
 		}
-		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	@RequestMapping(value="/{transactionId}/confirm",method=RequestMethod.PUT)
@@ -73,7 +71,7 @@ public class TransactionController extends AbstractController {
 	
 	@RequestMapping(value="/{transactionId}/paid",method=RequestMethod.PUT)
 	@Authorization(Role.Admin)
-	public Transaction payTransaction(@PathVariable Long transactionId,@Valid @RequestBody Resource resource
+	public Transaction payTransaction(@PathVariable Long transactionId,@RequestBody(required=false) Resource resource
 			, @RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		Transaction transaction = transactionService.payTransaction(transactionId,resource,locale);
 		return transaction;

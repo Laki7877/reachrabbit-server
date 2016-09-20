@@ -8,6 +8,6 @@ import com.ahancer.rr.models.Bank;
 
 public interface BankDao extends CrudRepository<Bank, String> {
 	
-	public List<Bank> findAllByOrderByBankId();
+	public List<Bank> findAllByIsActiveTrueOrderByBankId();
 
 }

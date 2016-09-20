@@ -9,12 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.response.MessageCountResponse;
 
 public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long> {
 	
+	public Long countByProposalCampaignBrandIdAndIsBrandReadFalseAndProposalStatus(Long brandId,ProposalStatus status);
 	public Long countByProposalCampaignBrandIdAndIsBrandReadFalse(Long brandId);
+	public Long countByProposalInfluencerIdAndIsInfluencerReadFalseAndProposalStatus(Long influencerId,ProposalStatus status);
 	public Long countByProposalInfluencerIdAndIsInfluencerReadFalse(Long influencerId);
 	public Long countByProposalProposalIdAndProposalCampaignBrandIdAndIsBrandReadFalse(Long proposalId, Long brandId);
 	public Long countByProposalProposalIdAndProposalInfluencerIdAndIsInfluencerReadFalse(Long proposalId, Long influencerId);
@@ -23,7 +26,8 @@ public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long
 	public Page<ProposalMessage> findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(Long proposalId, Long influencerId, Date createdAtBefore, Pageable pageable);
 	public Page<ProposalMessage> findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtBefore(Long proposalId, Long brandId, Date createdAtBefore, Pageable pageable);
 	public List<ProposalMessage> findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(Long proposalId, Date createdAtAfter);
-	
+	public Long countByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(Long proposalId, Date createdAtAfter);
+
 	
 	
 	@Query("SELECT new com.ahancer.rr.response.MessageCountResponse(pm.proposal.campaign.brand.user.email, COUNT(pm)) "

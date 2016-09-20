@@ -1,7 +1,7 @@
 package com.ahancer.rr.custom.type;
 
 public enum WalletStatus {
-	
+	WaitForPayout("WaitForPayout"),
 	Pending("Pending"),
 	Paid("Paid");
 	

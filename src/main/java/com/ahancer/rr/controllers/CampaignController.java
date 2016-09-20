@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -19,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
-import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.CampaignRequest;
+import com.ahancer.rr.response.CampaignResponse;
 import com.ahancer.rr.services.CampaignService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalService;
@@ -41,67 +42,81 @@ public class CampaignController extends AbstractController {
 	private ProposalMessageService proposalMessageService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public Page<Campaign> getAllCampaign(Pageable pageRequest) throws Exception{
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
+	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status,Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole().equals(Role.Brand)) {
-			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), pageRequest);	
+			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, pageRequest);	
 		} else if(this.getUserRequest().getRole().equals(Role.Influencer)) {
 			return campaignService.findAll(pageRequest);		
 		} else if(this.getUserRequest().getRole().equals(Role.Admin)) {
-			return campaignService.findAll(pageRequest);
+			return campaignService.findAllByAdmin(pageRequest);
 		}
-		throw new Exception();
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/active", method=RequestMethod.GET)
-	public List<Campaign> getAllActiveCampaign() throws Exception {
-		if(this.getUserRequest().getRole() == Role.Brand) {
-			return campaignService.findAllActiveByBrand(this.getUserRequest().getBrand().getBrandId());
-		}
-		throw new Exception();
+	@Authorization({Role.Brand})
+	public List<CampaignResponse> getAllActiveCampaign() throws Exception {
+		return campaignService.findAllActiveByBrand(this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/open", method=RequestMethod.GET)
-	public Page<Campaign> getOpenCampaign(@RequestParam(name = "mediaId", required=false) String mediaId, Pageable pageRequest) throws Exception {
-		return campaignService.findAllOpen(mediaId, pageRequest);
+	@Authorization({Role.Influencer})
+	public Page<CampaignResponse> getOpenCampaign(@RequestParam(name = "mediaId", required=false) String mediaId, Pageable pageRequest) throws Exception {
+		return campaignService.findAllOpen(mediaId,this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);
 	}
 	
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
-	public Campaign getOneCampaign(@PathVariable Long campaignId) throws Exception{
-		Campaign campaign = campaignService.findOne(campaignId);
-		return campaign;
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
+	public CampaignResponse getOneCampaign(@PathVariable Long campaignId) throws Exception {
+		if(Role.Admin.equals(this.getUserRequest().getRole())){
+			return campaignService.findOneByAdmin(campaignId);
+		} else if (Role.Brand.equals(this.getUserRequest().getRole())){
+			return campaignService.findOneByBrand(campaignId,this.getUserRequest().getBrand().getBrandId());
+		} else if (Role.Influencer.equals(this.getUserRequest().getRole())) {
+			return campaignService.findOneByInfluencer(campaignId, this.getUserRequest().getInfluencer().getInfluencerId());
+		}
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	
 	@ApiOperation(value = "Create new campaign")
 	@RequestMapping(method=RequestMethod.POST)
-	@Authorization(Role.Brand)
-	public Campaign createCampaign(@Valid @RequestBody CampaignRequest request
+	@Authorization({Role.Brand})
+	public CampaignRequest createCampaign(@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		Campaign campaign = campaignService.createCampaignByBrand(request, this.getUserRequest(),locale);
-		return getOneCampaign(campaign.getCampaignId());
+		return campaignService.createCampaignByBrand(request, this.getUserRequest(),locale);
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
-	public Campaign updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
+	@Authorization({Role.Brand,Role.Admin})
+	public CampaignRequest updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		Campaign campaign = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
-		return getOneCampaign(campaign.getCampaignId());
+		//Admin powered
+		if(this.getUserRequest().getRole().equals(Role.Admin)) {
+			return campaignService.updateCampaign(campaignId, request);
+		} else if(this.getUserRequest().getRole().equals(Role.Brand)){
+			return campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+		}
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+	}
+	
+	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
+	@Authorization({Role.Brand})
+	public void deleteCampaignByBrand(@PathVariable Long campaignId) throws Exception {
+		campaignService.deleteCampaign(campaignId, this.getUserRequest());
 	}
 	
 	@RequestMapping(value="/{campaignId}/dismiss",method=RequestMethod.PUT)
+	@Authorization({Role.Brand})
 	public void dismissCampaignNotification(@PathVariable Long campaignId) throws Exception {
 		campaignService.dismissCampaignNotification(campaignId, this.getUserRequest().getBrand().getBrandId());
 	}
 	
-	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
-	public void deleteCampaign(@PathVariable Long campaignId) throws Exception{
-		throw new ResponseException("error.notimplement");
-	}
-	
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
-	@Authorization(Role.Influencer)
+	@Authorization({Role.Influencer})
 	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		proposal = proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest(),locale);
@@ -111,7 +126,7 @@ public class CampaignController extends AbstractController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{campaignId}/applied")
-	@Authorization(Role.Influencer)
+	@Authorization({Role.Influencer})
 	public Proposal getAppliedProposal(@PathVariable Long campaignId) throws Exception {
 		return proposalService.getAppliedProposal(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}

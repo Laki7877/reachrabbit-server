@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -26,23 +27,40 @@ public class ScheduledTask {
 	@Autowired
 	private MessageSource messageSource;
 	
+	@Value("${ui.host}")
+	private String uiHost;
+	
 	//@Scheduled(fixedRate = 60000)
-	@Scheduled(fixedRate = 180000)
+	@Scheduled(cron="0 0 * * * *")
+	//@Scheduled(fixedRate = 180000)
     public void reportCurrentTime() {
 		Calendar cal = Calendar.getInstance();
-		//cal.add(Calendar.HOUR, -1);
-		cal.add(Calendar.MINUTE, -3);
+		cal.add(Calendar.HOUR, -1);
+		//cal.add(Calendar.MINUTE, -3);
 		Date now = new Date();
-		List<MessageCountResponse> list = proposalMessageDao.findBrandMessageCount(false, cal.getTime(),now);
-		list.addAll(proposalMessageDao.findInfluencerMessageCount(false,cal.getTime(),now));
 		Locale locale = new Locale("th", "TH");
-		String superSubject = messageSource.getMessage("email.unread.message.subject",null,locale);
-		String superBody = messageSource.getMessage("email.unread.message.message",null,locale);
-		for(MessageCountResponse message : list){
+		
+		List<MessageCountResponse> brandList = proposalMessageDao.findBrandMessageCount(false, cal.getTime(),now);
+		
+		String brandSubject = messageSource.getMessage("email.brand.unread.message.subject",null,locale);
+		String brandBody = messageSource.getMessage("email.brand.unread.message.message",null,locale)
+				.replace("{{Host}}", uiHost);
+		
+		for(MessageCountResponse message : brandList){
 			String to = message.getEmail();
 			emailService.send(to
-					, superSubject
-					, superBody.replace("{{Message Count}}", message.getMessageCount().toString()));
+					, brandSubject
+					, brandBody.replace("{{Message Count}}", message.getMessageCount().toString()));
+		}
+		
+		List<MessageCountResponse> influencerList = proposalMessageDao.findInfluencerMessageCount(false,cal.getTime(),now);
+		String influencerSubject = messageSource.getMessage("email.influencer.unread.message.subject",null,locale);
+		String influencerBody = messageSource.getMessage("email.influencer.unread.message.message",null,locale);
+		for(MessageCountResponse message : influencerList){
+			String to = message.getEmail();
+			emailService.send(to
+					, influencerSubject
+					, influencerBody.replace("{{Message Count}}", message.getMessageCount().toString()));
 		}
 		
     }

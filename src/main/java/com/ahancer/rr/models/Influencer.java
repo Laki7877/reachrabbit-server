@@ -60,7 +60,7 @@ public class Influencer extends AbstractModel implements Serializable{
 	
 	@ManyToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL)
 	@JoinTable(
-			name="InfluencerCategory",
+			name="influencerCategory",
 			joinColumns=@JoinColumn(name="influencerId", referencedColumnName="influencerId"),
 			inverseJoinColumns=@JoinColumn(name="categoryId", referencedColumnName="categoryId"))
 	private Set<Category> categories = new HashSet<Category>(0);

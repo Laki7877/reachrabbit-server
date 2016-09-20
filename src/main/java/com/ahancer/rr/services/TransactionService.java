@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +19,12 @@ import com.ahancer.rr.custom.type.DocumentType;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.TransactionStatus;
 import com.ahancer.rr.custom.type.TransactionType;
+import com.ahancer.rr.custom.type.WalletStatus;
 import com.ahancer.rr.daos.BrandTransactionDocumentDao;
 import com.ahancer.rr.daos.CartDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.TransactionDao;
+import com.ahancer.rr.daos.WalletDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.BrandTransactionDocument;
 import com.ahancer.rr.models.Cart;
@@ -31,6 +34,7 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.EncodeUtil;
 
@@ -64,6 +68,12 @@ public class TransactionService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private WalletDao walletDao;
+	
+	@Value("${ui.host}")
+	private String uiHost;
 	
 	public Transaction createTransactionByBrand(UserResponse user,Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
@@ -99,8 +109,13 @@ public class TransactionService {
 		cartDao.save(cart);
 		
 		String to = user.getEmail();
-		String subject = messageSource.getMessage("email.brand.cart.checkout.subject",null,locale);
-		String body = messageSource.getMessage("email.brand.cart.checkout.message",null,locale);
+		String subject = messageSource.getMessage("email.brand.cart.checkout.subject",null,locale)
+				.replace("{{transaction id}}", transaction.getTransactionNumber());
+		String body = messageSource.getMessage("email.brand.cart.checkout.message",null,locale)
+				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
+				.replace("{{Total Price}}", String.valueOf(transaction.getAmount()))
+				.replace("{{Host}}", uiHost)
+				.replace("{{CartId}}", String.valueOf(cart.getCartId()));
 		emailService.send(to, subject, body);
 		
 		return transaction;
@@ -119,7 +134,7 @@ public class TransactionService {
 	}
 	
 	public Transaction findOneTransactionFromWalletByAdmin(Long walletId){
-		return transactionDao.findByBrandTransactionDocumentCartId(walletId);
+		return transactionDao.findByInfluencerTransactionDocumentWalletId(walletId);
 	}
 	
 	public Transaction findOneTransactionFromWalletByInfluencer(Long walletId,Long influencerId){
@@ -158,24 +173,37 @@ public class TransactionService {
 		
 		//update proposal status
 		Calendar cal = Calendar.getInstance();
-		ProposalMessage message = new ProposalMessage();
-		message.setMessage(messageSource.getMessage("robot.proposal.working.status.message", null, locale));
+		ProposalMessage robotMessage = new ProposalMessage();
+		robotMessage.setCreatedAt(new Date());
+		String message = messageSource.getMessage("robot.proposal.working.status.message", null, locale)
+				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName());
 		User robotUser = robotService.getRobotUser();
 		String to = StringUtils.EMPTY;
 		String subject = StringUtils.EMPTY;
 		String body = StringUtils.EMPTY;
 		
-		String superSubject = messageSource.getMessage("email.influencer.admin.confirm.checkout.subject",null,locale);
-		String superBody = messageSource.getMessage("email.influencer.admin.confirm.checkout.message",null,locale);
+		String superSubject = messageSource.getMessage("email.influencer.admin.confirm.checkout.subject",null,locale)
+				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName());
+		String superBody = messageSource.getMessage("email.influencer.admin.confirm.checkout.message",null,locale)
+				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName())
+				.replace("{{Host}}", uiHost);
 		
 		for(Proposal proposal : transaction.getBrandTransactionDocument().getCart().getProposals()){
 			proposal.setStatus(ProposalStatus.Working);
 			Integer days = proposal.getCompletionTime().getDay();
 			cal.add(Calendar.DATE, days);
 			proposal.setDueDate(cal.getTime());
-			message.setProposal(proposal);
+			
+			//setup robot message
+			robotMessage.setMessage(message
+					.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
+					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
+					.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId())));
+			robotMessage.setProposal(proposal);
+			
+			//long polling
 			proposalMessageService.createProposalMessage(proposal.getProposalId()
-					, message
+					, robotMessage
 					, robotUser.getUserId()
 					, robotUser.getRole());
 			proposalService.processInboxPollingByOne(proposal.getInfluencerId());
@@ -194,8 +222,13 @@ public class TransactionService {
 		
 		//send email to brand
 		to = transaction.getUser().getEmail();
-		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale);
-		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale).replace("{{Transaction ID}}", transaction.getTransactionNumber());
+		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale)
+				.replace("{{Transaction ID}}", transaction.getTransactionNumber());
+		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale)
+				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
+				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName())
+				.replace("{{Total Price}}", String.valueOf(transaction.getAmount()))
+				.replace("{{Host}}", uiHost);
 		emailService.send(to, subject, body);
 		
 		return transaction;
@@ -203,6 +236,9 @@ public class TransactionService {
 	
 	
 	public Transaction payTransaction(Long transactioId,  Resource resource, Locale locale) throws Exception {
+		if(resource == null){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.slip.require");
+		}
 		Transaction transaction = transactionDao.findOne(transactioId);
 		if(null == transaction){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.not.exist");
@@ -217,16 +253,20 @@ public class TransactionService {
 		transaction.setSlip(resource);
 		transaction = transactionDao.save(transaction);
 		
-		InfluencerTransactionDocument doc = transaction.getInfluencerTransactionDocument().iterator().next();
+		InfluencerTransactionDocument document = transaction.getInfluencerTransactionDocument().iterator().next();
+		Wallet wallet = document.getWallet();
+		wallet.setStatus(WalletStatus.Paid);
+		wallet = walletDao.save(wallet);
 		
 		//send mail to influencer
 		String to = transaction.getUser().getEmail();
 		String subject = messageSource.getMessage("email.influencer.admin.confirm.payout.subject",null,locale);
 		String body = messageSource.getMessage("email.influencer.admin.confirm.payout.message",null,locale)
 				.replace("{{Payout Amount}}", transaction.getAmount().toString())
-				.replace("{{Bank Name}}", doc.getBank().getBankName())
-				.replace("{{Bank Account Number}}", doc.getAccountNumber())
-				.replace("{{Bank Account Name}}", doc.getAccountName());
+				.replace("{{Bank Name}}", document.getBank().getBankName())
+				.replace("{{Bank Account Number}}", document.getAccountNumber())
+				.replace("{{Bank Account Name}}", document.getAccountName())
+				.replace("{{Host}}", uiHost);
 		emailService.send(to, subject, body);
 		
 		return transaction;

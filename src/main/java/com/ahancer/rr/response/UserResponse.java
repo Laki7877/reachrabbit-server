@@ -25,7 +25,7 @@ public class UserResponse implements Serializable {
 	public String getPageId(String mediaId) throws Exception {
 		InfluencerMedia media = null;
 		
-		if(getInfluencer() == null) {
+		if(null == getInfluencer()) {
 			throw new Exception();
 		}
 		
@@ -41,7 +41,7 @@ public class UserResponse implements Serializable {
 	public String getSocialId(String mediaId) throws Exception {
 		InfluencerMedia media = null;
 		
-		if(getInfluencer() == null) {
+		if(null == getInfluencer()) {
 			throw new Exception();
 		}
 		

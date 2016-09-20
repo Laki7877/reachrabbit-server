@@ -20,7 +20,7 @@ public class EncryptionUtil {
 	public boolean checkPassword(String password_plaintext, String stored_hash) {
 		boolean password_verified = false;
 		if(null == stored_hash || !stored_hash.startsWith("$2a$")) {
-			throw new java.lang.IllegalArgumentException("Invalid hash provided for comparison");
+			return false;
 		}
 		password_verified = BCrypt.checkpw(password_plaintext, stored_hash);
 		return password_verified;
