@@ -148,7 +148,7 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
-	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false) String timestamp) throws Exception {
+	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false)  String timestamp ) throws Exception {
 		final Date date = Util.parseJacksonDate(timestamp);
 		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, date, this.getUserRequest().getRole());
 		if(proposalMessageService.countNewProposalMessage(proposalId, date) > 0L) {

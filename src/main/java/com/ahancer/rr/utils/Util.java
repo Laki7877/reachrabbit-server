@@ -2,14 +2,13 @@ package com.ahancer.rr.utils;
 
 import java.beans.FeatureDescriptor;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.stream.Stream;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -39,9 +38,8 @@ public class Util {
 		if(utc == null) {
 			return null;
 		}
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        formatter.setTimeZone(TimeZone.getTimeZone("Asia/Bangkok"));
-        return formatter.parse(utc.replaceAll("Z$", "+0000"));
+		Date date = new DateTime(utc).toDate();
+        return date;
 	}
 	
 	public static UserResponse getUserResponse(User user){
