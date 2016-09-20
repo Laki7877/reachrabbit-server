@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 
 import org.springframework.beans.BeanUtils;
@@ -39,6 +40,7 @@ public class Util {
 			return null;
 		}
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        formatter.setTimeZone(TimeZone.getTimeZone("Asia/Bangkok"));
         return formatter.parse(utc.replaceAll("Z$", "+0000"));
 	}
 	
