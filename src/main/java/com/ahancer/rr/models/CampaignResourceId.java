@@ -53,8 +53,8 @@ public class CampaignResourceId implements java.io.Serializable {
 			return false;
 		CampaignResourceId castOther = (CampaignResourceId) other;
 
-		return (this.getCampaignId() == castOther.getCampaignId())
-				&& (this.getResourceId() == castOther.getResourceId());
+		return (this.getCampaignId().compareTo(castOther.getCampaignId()) == 0)
+				&& (this.getResourceId().compareTo(castOther.getResourceId()) == 0);
 	}
 
 	@Override

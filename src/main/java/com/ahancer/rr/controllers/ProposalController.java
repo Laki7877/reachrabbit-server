@@ -48,12 +48,12 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Influencer,Role.Brand})
 	public Page<Proposal> getAllProposal( @RequestParam(name="status", required=true) ProposalStatus status,Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
-		if(this.getUserRequest().getRole() == Role.Brand) {
+		if(Role.Brand.equals(this.getUserRequest().getRole())) {
 			return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(),status, pageRequest);
-		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
 			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(),status, pageRequest);	
 		}
-		throw new Exception();
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	@RequestMapping(method=RequestMethod.GET, value="/active")
 	@Authorization({Role.Influencer})
@@ -65,7 +65,7 @@ public class ProposalController extends AbstractController {
 	public DeferredProposal getAllUnreadProposal(@RequestParam(name="immediate", required=false) Boolean immediate) throws Exception {
 		final DeferredProposal result = new DeferredProposal(this.getUserRequest().getRole());
 		proposalService.addInboxPolling(this.getUserRequest().getUserId(), result);
-		if(immediate == true) {
+		if(true == immediate) {
 			proposalService.processInboxPolling(this.getUserRequest().getUserId());
 		}
 		return result;
@@ -74,9 +74,9 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET, value="/count")
 	@Authorization({Role.Influencer,Role.Brand})
 	public ProposalCountResponse getProposalCountByStatus(@RequestParam("status") ProposalStatus status) throws Exception {
-		if(this.getUserRequest().getRole() == Role.Brand) {
+		if(Role.Brand.equals(this.getUserRequest().getRole())) {
 			return proposalService.countByBrand(this.getUserRequest().getBrand().getBrandId(), status);
-		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
 			return proposalService.countByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), status);
 		}
 		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
@@ -84,9 +84,9 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/count")
 	public Long getUnreadProposalMessageCount(@PathVariable Long proposalId) throws Exception {
-		if(this.getUserRequest().getRole() == Role.Brand) {
+		if(Role.Brand.equals(this.getUserRequest().getRole())) {
 			return proposalService.countByUnreadProposalMessageForBrand(proposalId, this.getUserRequest().getBrand().getBrandId());			
-		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
 			return proposalService.countByUnreadProposalMessageForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId());
 		}
 		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
@@ -132,9 +132,9 @@ public class ProposalController extends AbstractController {
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
 		Page<ProposalMessage> result = null;
-		if(this.getUserRequest().getRole() == Role.Brand) {
+		if(Role.Brand.equals(this.getUserRequest().getRole())) {
 			result = proposalMessageService.findByProposalForBrand(proposalId, this.getUserRequest().getBrand().getBrandId(), Util.parseJacksonDate(timestamp), pageRequest);
-		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
 			result = proposalMessageService.findByProposalForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId(), Util.parseJacksonDate(timestamp), pageRequest);
 		}
 		proposalService.processInboxPolling(this.getUserRequest().getUserId());
@@ -162,9 +162,9 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}")
 	@Authorization({Role.Brand,Role.Influencer})
 	public ProposalResponse getOneProposal(@PathVariable Long proposalId) throws Exception {
-		if(this.getUserRequest().getRole() == Role.Brand) {
+		if(Role.Brand.equals(this.getUserRequest().getRole())) {
 			return proposalService.findOneByBrand(proposalId,this.getUserRequest().getBrand().getBrandId());
-		} else if(this.getUserRequest().getRole() == Role.Influencer) {
+		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
 			return proposalService.findOneByInfluencer(proposalId,this.getUserRequest().getInfluencer().getInfluencerId());		
 		}
 		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");

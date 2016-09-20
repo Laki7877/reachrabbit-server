@@ -27,7 +27,7 @@ public class AuthorizationFilter implements HandlerInterceptor {
 		
 		if(role != null) {
 			UserResponse user = (UserResponse) request.getAttribute(ApplicationConstant.UserRequest);
-			if(role.value().length == 0) {
+			if(0 == role.value().length) {
 				// Check with all roles
 				Role[] roles = Role.values();
 				if(ArrayUtils.contains(roles, user.getRole())) {
