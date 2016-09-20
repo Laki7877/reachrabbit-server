@@ -137,6 +137,10 @@ public class FacebookService {
 		List<Account> accounts = fb.pageOperations().getAccounts();
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>(); 
 		
+		if(accounts.size() == 0) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.facebook.nopage");
+		}
+		
 		for(Account account : accounts) {
 			Page page = fb.fetchObject(account.getId(), Page.class, "engagement", "name", "picture.type(large)", "id");
 			String url = ((LinkedHashMap<String, LinkedHashMap<String, String>>)page.getExtraData().get("picture")).get("data").get("url");
