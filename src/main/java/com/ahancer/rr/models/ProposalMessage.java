@@ -67,7 +67,7 @@ public class ProposalMessage implements Serializable  {
 	private String referenceId;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "createdAt",updatable=false)
+	@Column(name = "createdAt",updatable=false,insertable=true)
 	private Date createdAt;
 
 	@JsonIgnore
@@ -85,7 +85,7 @@ public class ProposalMessage implements Serializable  {
 	
 	@PrePersist
 	protected void onCreate() {
-		updatedAt = createdAt = new Date();
+		updatedAt = new Date();
 	}
 
 	@PreUpdate
