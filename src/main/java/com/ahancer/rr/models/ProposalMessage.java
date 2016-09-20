@@ -85,7 +85,7 @@ public class ProposalMessage implements Serializable  {
 	
 	@PrePersist
 	protected void onCreate() {
-		updatedAt = new Date();
+		createdAt = updatedAt = new Date();
 	}
 
 	@PreUpdate
