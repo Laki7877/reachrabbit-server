@@ -43,7 +43,7 @@ public class AuthorizationFilter implements HandlerInterceptor {
 		}
 		
 		// Some authentication error by role
-		response.sendError(401);
+		response.sendError(405);
 		return false;
 	}
 

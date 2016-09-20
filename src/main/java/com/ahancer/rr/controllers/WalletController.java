@@ -33,20 +33,20 @@ public class WalletController extends AbstractController {
 	private TransactionService transactionService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	@Authorization(Role.Influencer)
+	@Authorization({Role.Influencer})
 	public Wallet getPendingWallet() throws Exception {
 		return walletService.findPendingByIndluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	
 	@RequestMapping(value="/payout",method=RequestMethod.POST)
-	@Authorization(Role.Influencer)
+	@Authorization({Role.Influencer})
 	public Transaction payoutWallet(@Valid @RequestBody PayoutRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		return walletService.payoutWallet(request,this.getUserRequest().getInfluencer().getInfluencerId(),locale);
 	}
 	
 	@RequestMapping(value="/{walletId}/transaction",method=RequestMethod.GET)
-	@Authorization({ Role.Brand, Role.Admin })
+	@Authorization({ Role.Influencer, Role.Admin })
 	public Transaction getTransactionFromWallet(@PathVariable Long walletId) throws Exception {
 		if(Role.Influencer.equals(this.getUserRequest().getRole())){
 			return transactionService.findOneTransactionFromWalletByInfluencer(walletId,this.getUserRequest().getInfluencer().getInfluencerId());

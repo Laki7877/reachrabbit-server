@@ -42,26 +42,31 @@ public class DataController {
 	private CompletionTimeDao completionTimeDao;
 
 	@RequestMapping(value="/media",method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Media> getAllMedia() throws Exception{
 		return mediaDao.findAllByOrderByMediaId();
 	}
 	
 	@RequestMapping(value="/categories",method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Category> getAllCategories() throws Exception{
 		return categoryDao.findAllByOrderByCategoryId();
 	}
 	
 	@RequestMapping(value="/banks",method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Bank> getAllBanks() throws Exception{
 		return bankDao.findAllByIsActiveTrueOrderByBankId();
 	}
 	
 	@RequestMapping(value="/budgets",method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Budget> getBudget() throws Exception{
 		return budgetDao.findAllByOrderByBudgetId();
 	}
 	
 	@RequestMapping(value="/completiontime",method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<CompletionTime> getCompletionTime() throws Exception{
 		return completionTimeDao.findAllByOrderByCompletionId();
 	}

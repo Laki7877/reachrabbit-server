@@ -41,6 +41,7 @@ public class CampaignController extends AbstractController {
 	private ProposalMessageService proposalMessageService;
 	
 	@RequestMapping(method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status,Pageable pageRequest) throws Exception{
 		if(this.getUserRequest().getRole().equals(Role.Brand)) {
 			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, pageRequest);	
@@ -54,19 +55,20 @@ public class CampaignController extends AbstractController {
 	
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/active", method=RequestMethod.GET)
-	@Authorization(Role.Brand)
+	@Authorization({Role.Brand})
 	public List<CampaignResponse> getAllActiveCampaign() throws Exception {
 		return campaignService.findAllActiveByBrand(this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/open", method=RequestMethod.GET)
-	@Authorization(Role.Influencer)
+	@Authorization({Role.Influencer})
 	public Page<CampaignResponse> getOpenCampaign(@RequestParam(name = "mediaId", required=false) String mediaId, Pageable pageRequest) throws Exception {
 		return campaignService.findAllOpen(mediaId,this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);
 	}
 	
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public Campaign getOneCampaign(@PathVariable Long campaignId) throws Exception{
 		Campaign campaign = campaignService.findOne(campaignId);
 		return campaign;
@@ -75,13 +77,14 @@ public class CampaignController extends AbstractController {
 	
 	@ApiOperation(value = "Create new campaign")
 	@RequestMapping(method=RequestMethod.POST)
-	@Authorization(Role.Brand)
+	@Authorization({Role.Brand})
 	public CampaignRequest createCampaign(@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		return campaignService.createCampaignByBrand(request, this.getUserRequest(),locale);
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
+	@Authorization({Role.Brand,Role.Admin})
 	public CampaignRequest updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		//Admin powered
@@ -94,18 +97,19 @@ public class CampaignController extends AbstractController {
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
-	@Authorization(Role.Brand)
+	@Authorization({Role.Brand})
 	public void deleteCampaignByBrand(@PathVariable Long campaignId) throws Exception {
 		campaignService.deleteCampaign(campaignId, this.getUserRequest());
 	}
 	
 	@RequestMapping(value="/{campaignId}/dismiss",method=RequestMethod.PUT)
+	@Authorization({Role.Brand})
 	public void dismissCampaignNotification(@PathVariable Long campaignId) throws Exception {
 		campaignService.dismissCampaignNotification(campaignId, this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
-	@Authorization(Role.Influencer)
+	@Authorization({Role.Influencer})
 	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		proposal = proposalService.createCampaignProposalByInfluencer(campaignId, proposal, this.getUserRequest(),locale);
@@ -115,7 +119,7 @@ public class CampaignController extends AbstractController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{campaignId}/applied")
-	@Authorization(Role.Influencer)
+	@Authorization({Role.Influencer})
 	public Proposal getAppliedProposal(@PathVariable Long campaignId) throws Exception {
 		return proposalService.getAppliedProposal(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}

@@ -26,13 +26,13 @@ public class CartController extends AbstractController {
 	private TransactionService transactionService;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	@Authorization(Role.Brand)
+	@Authorization({Role.Brand})
 	public Cart getInCart() throws Exception {
 		return cartService.getInCartByBrand(this.getUserRequest().getBrand().getBrandId());
 	}
 	
 	@RequestMapping(value="/{cartId}/transaction",method=RequestMethod.GET)
-	@Authorization({ Role.Brand, Role.Admin })
+	@Authorization({Role.Brand,Role.Admin})
 	public Transaction getTransactionFromCart(@PathVariable Long cartId) throws Exception {
 		if(Role.Brand.equals(this.getUserRequest().getRole())){
 			return transactionService.findOneTransactionFromCartByBrand(cartId,this.getUserRequest().getBrand().getBrandId());
