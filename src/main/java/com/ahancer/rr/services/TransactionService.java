@@ -174,7 +174,8 @@ public class TransactionService {
 		//update proposal status
 		Calendar cal = Calendar.getInstance();
 		ProposalMessage robotMessage = new ProposalMessage();
-		String message = messageSource.getMessage("robot.proposal.working.status.message", null, locale);
+		String message = messageSource.getMessage("robot.proposal.working.status.message", null, locale)
+				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName());
 		User robotUser = robotService.getRobotUser();
 		String to = StringUtils.EMPTY;
 		String subject = StringUtils.EMPTY;
