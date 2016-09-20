@@ -286,7 +286,7 @@ public class ProposalService {
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
 		firstMessage.setUserId(influecnerId);
-		firstMessage.setCreatedAt(new Date());
+		//firstMessage.setCreatedAt(new Date());
 		firstMessage = proposalMessageDao.save(firstMessage);
 		String to = campaign.getBrand().getUser().getEmail();
 		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
@@ -318,7 +318,7 @@ public class ProposalService {
 		rebotMessage.setProposal(proposal);
 		User robotUser = robotService.getRobotUser();
 		rebotMessage.setUserId(robotUser.getUserId());
-		rebotMessage.setCreatedAt(new Date());
+		//rebotMessage.setCreatedAt(new Date());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
 		rebotMessage.setUser(robotUser);
@@ -333,7 +333,7 @@ public class ProposalService {
 		oldProposal.setStatus(status);
 		
 		ProposalMessage rebotMessage = new ProposalMessage();
-		rebotMessage.setCreatedAt(new Date());
+		//rebotMessage.setCreatedAt(new Date());
 		rebotMessage.setIsBrandRead(true);
 		rebotMessage.setIsInfluencerRead(true);
 		Calendar cal = Calendar.getInstance();
@@ -369,6 +369,7 @@ public class ProposalService {
 			String body = messageSource.getMessage("email.influencer.brand.confirm.proposal.message", null, locale)
 					.replace("{{Brand Name}}", oldProposal.getCampaign().getBrand().getBrandName())
 					.replace("{{Outstanding Wallet Money}}", String.valueOf(sum))
+					.replace("{{Campaign Name}}", oldProposal.getCampaign().getTitle())
 					.replace("{{Host}}", uiHost);
 			emailService.send(to, subject, body);
 		}

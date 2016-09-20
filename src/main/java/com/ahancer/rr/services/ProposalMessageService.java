@@ -1,5 +1,6 @@
 package com.ahancer.rr.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class ProposalMessageService {
 
 	private final static Long timeout = 60000L;
 
-	public static class DeferredProposalMessage extends DeferredResult<Date> {
+	public static class DeferredProposalMessage extends DeferredResult<List<Date>> {
 		private Date timestamp;
 		private Long proposalId;
 		private Role role;
@@ -55,6 +56,13 @@ public class ProposalMessageService {
 		}
 		public void setTimestamp(Date timestamp) {
 			this.timestamp = timestamp;
+		}
+		public void setResult(Date timestamp) {
+			ArrayList<Date> array = new ArrayList<>();
+			array.add(this.getTimestamp());
+			array.add(new Date());
+			super.setResult(array);
+			
 		}
 	}
 

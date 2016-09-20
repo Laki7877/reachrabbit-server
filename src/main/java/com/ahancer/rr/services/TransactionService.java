@@ -174,7 +174,7 @@ public class TransactionService {
 		//update proposal status
 		Calendar cal = Calendar.getInstance();
 		ProposalMessage robotMessage = new ProposalMessage();
-		robotMessage.setCreatedAt(new Date());
+		//robotMessage.setCreatedAt(new Date());
 		String message = messageSource.getMessage("robot.proposal.working.status.message", null, locale)
 				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName());
 		User robotUser = robotService.getRobotUser();
@@ -216,7 +216,8 @@ public class TransactionService {
 			subject = superSubject;
 			body = superBody
 					.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
-					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle());
+					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
+					.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName());
 			emailService.send(to, subject, body);
 		}
 		
