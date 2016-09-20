@@ -2,6 +2,7 @@ package com.ahancer.rr.services;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -180,6 +181,7 @@ public class CampaignService {
 			ProposalMessage robotMessage = new ProposalMessage();
 			String message = messageSource.getMessage("robot.campaign.message", null, locale).replace("{{Brand Name}}", user.getBrand().getBrandName());
 			robotMessage.setMessage(message);
+			robotMessage.setCreatedAt(new Date());
 			User robotUser = robotService.getRobotUser();
 			for(Proposal proposal : proposalList) {
 				robotMessage.setProposal(proposal);
