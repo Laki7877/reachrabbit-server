@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.CampaignRequest;
@@ -50,7 +52,7 @@ public class CampaignController extends AbstractController {
 		} else if(this.getUserRequest().getRole().equals(Role.Admin)) {
 			return campaignService.findAllByAdmin(pageRequest);
 		}
-		throw new Exception();
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	@ApiOperation(value = "Get campaign by campaign id")
@@ -89,11 +91,11 @@ public class CampaignController extends AbstractController {
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		//Admin powered
 		if(this.getUserRequest().getRole().equals(Role.Admin)) {
-			request = campaignService.updateCampaign(campaignId, request);
-		} else {
-			request = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+			return campaignService.updateCampaign(campaignId, request);
+		} else if(this.getUserRequest().getRole().equals(Role.Brand)){
+			return campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
 		}
-		return request;
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)

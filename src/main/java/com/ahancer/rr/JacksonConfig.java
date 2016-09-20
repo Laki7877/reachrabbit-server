@@ -1,5 +1,7 @@
 package com.ahancer.rr;
 
+import java.util.TimeZone;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -20,6 +22,8 @@ public class JacksonConfig {
         mapper.setSerializationInclusion(Include.NON_NULL);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true);
+        mapper.setTimeZone(TimeZone.getTimeZone("Asia/Bangkok"));
         messageConverter.setObjectMapper(mapper);
         return messageConverter;
     }

@@ -38,7 +38,7 @@ public class TransactionController extends AbstractController {
 				|| Role.Influencer.equals(this.getUserRequest().getRole())){
 			return transactionService.findAllByUserTransaction(type,this.getUserRequest().getUserId(), pageable);
 		}
-		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
@@ -59,7 +59,7 @@ public class TransactionController extends AbstractController {
 		}else if(Role.Admin.equals(this.getUserRequest().getRole())){
 			return transactionService.findOneTransactionByAdmin(transactionId);
 		}
-		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	@RequestMapping(value="/{transactionId}/confirm",method=RequestMethod.PUT)

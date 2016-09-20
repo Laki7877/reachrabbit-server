@@ -39,7 +39,7 @@ public class CartController extends AbstractController {
 		}else if(Role.Admin.equals(this.getUserRequest().getRole())){
 			return transactionService.findOneTransactionFromCartByAdmin(cartId);
 		}
-		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 
 }
