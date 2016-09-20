@@ -228,6 +228,7 @@ public class CampaignService {
 			response = campaignDao.findByStatus(Arrays.asList(CampaignStatus.Open), pageable);
 		}
 		for(CampaignResponse campaign : response.getContent()){
+			campaign.setIsApply(false);
 			for(Proposal proposal : campaign.getProposals()){
 				if(proposal.getInfluencerId() == influencerId){
 					campaign.setIsApply(true);
