@@ -42,14 +42,7 @@ public class CampaignResponse implements Serializable {
 	private Boolean isApply;
 	@JsonIgnore
 	private Set<Proposal> proposals = new HashSet<Proposal>(0);
-	
-	public Set<Proposal> getProposals() {
-		return proposals;
-	}
-
-	public void setProposals(Set<Proposal> proposals) {
-		this.proposals = proposals;
-	}
+	private Proposal proposal;
 
 	public CampaignResponse() {
 		
@@ -263,6 +256,22 @@ public class CampaignResponse implements Serializable {
 
 	public void setIsApply(Boolean isApply) {
 		this.isApply = isApply;
+	}
+	
+	public Proposal getProposal() {
+		return proposal;
+	}
+
+	public void setProposal(Proposal proposal) {
+		this.proposal = proposal;
+	}
+
+	public Set<Proposal> getProposals() {
+		return proposals;
+	}
+
+	public void setProposals(Set<Proposal> proposals) {
+		this.proposals = proposals;
 	}
 	
 }

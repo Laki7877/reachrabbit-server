@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
-import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.CampaignRequest;
 import com.ahancer.rr.response.CampaignResponse;
@@ -71,9 +70,15 @@ public class CampaignController extends AbstractController {
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
-	public Campaign getOneCampaign(@PathVariable Long campaignId) throws Exception{
-		Campaign campaign = campaignService.findOne(campaignId);
-		return campaign;
+	public CampaignResponse getOneCampaign(@PathVariable Long campaignId) throws Exception {
+		if(Role.Admin.equals(this.getUserRequest().getRole())){
+			return campaignService.findOneByAdmin(campaignId);
+		} else if (Role.Brand.equals(this.getUserRequest().getRole())){
+			return campaignService.findOneByBrand(campaignId,this.getUserRequest().getBrand().getBrandId());
+		} else if (Role.Influencer.equals(this.getUserRequest().getRole())) {
+			return campaignService.findOneByInfluencer(campaignId, this.getUserRequest().getInfluencer().getInfluencerId());
+		}
+		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 	}
 	
 	

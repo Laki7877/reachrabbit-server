@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.CampaignResourceDao;
 import com.ahancer.rr.exception.ResponseException;
@@ -236,13 +237,30 @@ public class CampaignService {
 		}
 		return response;
 	}
-
-	public Campaign findOne(Long campaignId) {
-		return campaignDao.findOne(campaignId);
+	
+	public CampaignResponse findOneByInfluencer(Long campaignId, Long influencerId){
+		Campaign capaign = campaignDao.findOne(campaignId);
+		CampaignResponse response = new CampaignResponse(capaign,Role.Influencer.displayName());
+		for(Proposal proposal : response.getProposals()){
+			if(proposal.getInfluencerId() == influencerId){
+				response.setIsApply(true);
+				response.setProposal(proposal);
+				break;
+			}
+		}
+		return response;
 	}
 
-	public Campaign findOneByBrand(Long campaignId, Long brandId) {
-		return campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
+	public CampaignResponse findOneByAdmin(Long campaignId) {
+		Campaign capaign = campaignDao.findOne(campaignId);
+		CampaignResponse response = new CampaignResponse(capaign,Role.Admin.displayName());
+		return response;
+	}
+
+	public CampaignResponse findOneByBrand(Long campaignId, Long brandId) {
+		Campaign capaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
+		CampaignResponse response = new CampaignResponse(capaign,Role.Brand.displayName());
+		return response;
 	}
 	
 	public void dismissCampaignNotification(Long campaignId, Long brandId){
