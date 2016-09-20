@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -149,11 +150,12 @@ public class ProposalController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false)  String timestamp ) throws Exception {
-		final Date date = Util.parseJacksonDate(timestamp);
+		Date date = new Date();
+		if(StringUtils.isNotEmpty(timestamp)){
+			date = Util.parseJacksonDate(timestamp);
+		}
 		final DeferredProposalMessage result = new DeferredProposalMessage(proposalId, date, this.getUserRequest().getRole());
-		System.out.println(date);
 		Long count = proposalMessageService.countNewProposalMessage(proposalId, date);
-		System.out.println(count);
 		if(count > 0L) {
 			result.setResult(date);
 		} else {
