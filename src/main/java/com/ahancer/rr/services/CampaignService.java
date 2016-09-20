@@ -230,7 +230,7 @@ public class CampaignService {
 		for(CampaignResponse campaign : response.getContent()){
 			campaign.setIsApply(false);
 			for(Proposal proposal : campaign.getProposals()){
-				if(proposal.getInfluencerId() == influencerId){
+				if(proposal.getInfluencerId().compareTo(influencerId) == 0){
 					campaign.setIsApply(true);
 					break;
 				}
@@ -242,8 +242,9 @@ public class CampaignService {
 	public CampaignResponse findOneByInfluencer(Long campaignId, Long influencerId){
 		Campaign capaign = campaignDao.findOne(campaignId);
 		CampaignResponse response = new CampaignResponse(capaign,Role.Influencer.displayName());
+		response.setIsApply(false);
 		for(Proposal proposal : response.getProposals()){
-			if(proposal.getInfluencerId() == influencerId){
+			if(proposal.getInfluencerId().compareTo(influencerId) == 0){
 				response.setIsApply(true);
 				response.setProposal(proposal);
 				break;
