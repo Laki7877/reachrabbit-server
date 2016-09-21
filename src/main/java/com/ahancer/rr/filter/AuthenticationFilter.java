@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +27,6 @@ import com.ahancer.rr.utils.Util;
 @Order(2)
 public class AuthenticationFilter implements Filter {
 	
-	@Value("${reachrabbit.cache.userrequest}")
-	private String userRequestCache;
-
 	@Autowired
 	private JwtUtil jwt;
 
@@ -62,13 +58,13 @@ public class AuthenticationFilter implements Filter {
 		} else {
 			try {
 				String token = request.getHeader(ApplicationConstant.TokenHeader);
-				UserResponse userResponse = (UserResponse) CacheUtil.getCacheObject(userRequestCache, token);
+				UserResponse userResponse = (UserResponse) CacheUtil.getCacheObject(ApplicationConstant.UserRequestCache, token);
 				if(null == userResponse) {
 					Long userId = jwt.getUserId(token);
 					User user = authenticationService.getUserById(userId);
 					if(null != user){
 						userResponse = Util.getUserResponse(user);
-						CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+						CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 					}
 				}
 				if(null != userResponse) {

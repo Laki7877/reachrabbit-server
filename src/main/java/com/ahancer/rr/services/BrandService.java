@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BrandDao;
@@ -51,9 +52,6 @@ public class BrandService {
 
 	@Autowired
 	private EncryptionUtil encrypt;
-
-	@Value("${reachrabbit.cache.userrequest}")
-	private String userRequestCache;
 	
 	@Value("${ui.host}")
 	private String uiHost;
@@ -133,7 +131,7 @@ public class BrandService {
 		oldUser.getBrand().setBrandId(userId);
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);
+		CacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
 	}
 

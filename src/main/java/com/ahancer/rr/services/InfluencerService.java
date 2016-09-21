@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
@@ -32,9 +33,6 @@ import com.ahancer.rr.utils.Util;
 public class InfluencerService {
 	@Autowired
 	private InfluencerDao influencerDao;
-
-	@Value("${reachrabbit.cache.userrequest}")
-	private String userRequestCache;
 
 	@Autowired
 	private UserDao userDao;
@@ -96,7 +94,7 @@ public class InfluencerService {
 		oldUser.setProfilePicture(newUser.getProfilePicture());
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);
+		CacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
 	}
 	
@@ -110,7 +108,7 @@ public class InfluencerService {
 		oldUser.getInfluencer().setAccountNumber(request.getAccountNumber());
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.updateCacheObject(userRequestCache, token, userResponse);
+		CacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
 	}
 

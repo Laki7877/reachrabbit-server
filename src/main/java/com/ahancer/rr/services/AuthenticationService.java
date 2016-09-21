@@ -3,10 +3,10 @@ package com.ahancer.rr.services;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
@@ -29,9 +29,6 @@ public class AuthenticationService {
 	
 	@Autowired
 	private JwtUtil jwt;
-	
-	@Value("${reachrabbit.cache.userrequest}")
-	private String userRequestCache;
 
 	public AuthenticationResponse brandAuthentication(String email, String password) {
 		User user = userDao.findByEmail(email);
@@ -40,7 +37,7 @@ public class AuthenticationService {
 		} else {
 			String token = jwt.generateToken(user.getUserId());
 			UserResponse userResponse = Util.getUserResponse(user);
-			CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+			CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 			AuthenticationResponse response = new AuthenticationResponse(token);
 			return response;
 		}
@@ -52,7 +49,7 @@ public class AuthenticationService {
 		} else {
 			String token = jwt.generateToken(user.getUserId());
 			UserResponse userResponse = Util.getUserResponse(user);
-			CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+			CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 			AuthenticationResponse response = new AuthenticationResponse(token);
 			return response;
 		}
@@ -64,7 +61,7 @@ public class AuthenticationService {
 		}
 		String token = jwt.generateToken(user.getUserId());
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+		CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		AuthenticationResponse response = new AuthenticationResponse(token);
 		return response;
 	}
@@ -72,7 +69,7 @@ public class AuthenticationService {
 	public AuthenticationResponse generateTokenFromUser(User user) {
 		String token = jwt.generateToken(user.getUserId());
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+		CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		AuthenticationResponse response = new AuthenticationResponse(token);
 		return response;
 	}
@@ -88,7 +85,7 @@ public class AuthenticationService {
 		} else {
 			String token = jwt.generateToken(user.getUserId());
 			UserResponse userResponse = Util.getUserResponse(user);
-			CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+			CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 			AuthenticationResponse response = new AuthenticationResponse(token);
 			return response;
 		}
