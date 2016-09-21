@@ -15,10 +15,8 @@ import com.ahancer.rr.models.User;
 @RestController
 @RequestMapping("/users")
 public class UserController extends AbstractController {
-
 	@Autowired
 	private UserDao userDao;
-	
 	@RequestMapping(value="/{userId}",method=RequestMethod.GET)
 	@Authorization({Role.Admin})
 	public User getOneUser(@PathVariable long userId) {

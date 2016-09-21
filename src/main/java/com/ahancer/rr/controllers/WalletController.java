@@ -25,26 +25,21 @@ import com.ahancer.rr.services.WalletService;
 @RestController
 @RequestMapping("/wallets")
 public class WalletController extends AbstractController {
-	
 	@Autowired
 	private WalletService walletService;
-	
 	@Autowired
 	private TransactionService transactionService;
-	
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Influencer})
 	public Wallet getPendingWallet() throws Exception {
 		return walletService.findPendingByIndluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
-	
 	@RequestMapping(value="/payout",method=RequestMethod.POST)
 	@Authorization({Role.Influencer})
 	public Transaction payoutWallet(@Valid @RequestBody PayoutRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		return walletService.payoutWallet(request,this.getUserRequest().getInfluencer().getInfluencerId(),locale);
 	}
-	
 	@RequestMapping(value="/{walletId}/transaction",method=RequestMethod.GET)
 	@Authorization({ Role.Influencer, Role.Admin })
 	public Transaction getTransactionFromWallet(@PathVariable Long walletId) throws Exception {
@@ -61,5 +56,4 @@ public class WalletController extends AbstractController {
 		}
 		return response;
 	}
-
 }

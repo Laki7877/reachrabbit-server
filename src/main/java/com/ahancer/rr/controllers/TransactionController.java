@@ -25,10 +25,8 @@ import com.ahancer.rr.services.TransactionService;
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController extends AbstractController {
-	
 	@Autowired
 	private TransactionService transactionService;
-	
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Admin, Role.Influencer, Role.Brand})
 	public Page<Transaction> getAllTransaction(@RequestParam TransactionType type, Pageable pageable) throws Exception {
@@ -46,14 +44,12 @@ public class TransactionController extends AbstractController {
 		}
 		return response;
 	}
-	
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
 	public Transaction createTransaction(@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		Transaction transaction = transactionService.createTransactionByBrand(this.getUserRequest(),locale);
 		return transaction;
 	}
-	
 	@RequestMapping(value="/{transactionId}",method=RequestMethod.GET)
 	@Authorization(Role.Brand)
 	public Transaction getTransaction(@PathVariable Long transactionId) throws Exception {
@@ -73,14 +69,12 @@ public class TransactionController extends AbstractController {
 		}
 		return response;
 	}
-	
 	@RequestMapping(value="/{transactionId}/confirm",method=RequestMethod.PUT)
 	@Authorization(Role.Admin)
 	public Transaction confirmTransaction(@PathVariable Long transactionId, Locale local) throws Exception {
 		Transaction transaction = transactionService.confirmTransaction(transactionId,local);
 		return transaction;
 	}
-	
 	@RequestMapping(value="/{transactionId}/paid",method=RequestMethod.PUT)
 	@Authorization(Role.Admin)
 	public Transaction payTransaction(@PathVariable Long transactionId,@RequestBody(required=false) Resource resource

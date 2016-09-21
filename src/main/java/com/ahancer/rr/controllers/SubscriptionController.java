@@ -14,10 +14,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/subscription")
 public class SubscriptionController {
-	
 	@Autowired
 	private SubscriptionService subscriptionService;
-	
 	@ApiOperation(value = "Create new subscription")
 	@RequestMapping(method=RequestMethod.POST)
 	public Subscription createSubscription(@RequestBody Subscription subscription) throws Exception{
