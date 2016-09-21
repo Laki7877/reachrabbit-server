@@ -22,59 +22,54 @@ import com.ahancer.rr.models.Media;
 import com.ahancer.rr.utils.S3Util;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/data")
 public class DataController {
-	
 	@Autowired
 	private MediaDao mediaDao;
-	
 	@Autowired
 	private CategoryDao categoryDao;
-	
 	@Autowired
 	private BankDao bankDao;
-	
 	@Autowired
 	private BudgetDao budgetDao;
-	
 	@Autowired
 	private CompletionTimeDao completionTimeDao;
-
+	@Autowired
+	private S3Util s3Util;
+	@ApiOperation(value = "Get media list")
 	@RequestMapping(value="/media",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Media> getAllMedia() throws Exception{
 		return mediaDao.findAllByOrderByMediaId();
 	}
-	
+	@ApiOperation(value = "Get category list")
 	@RequestMapping(value="/categories",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Category> getAllCategories() throws Exception{
 		return categoryDao.findAllByOrderByCategoryId();
 	}
-	
+	@ApiOperation(value = "Get bank list")
 	@RequestMapping(value="/banks",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Bank> getAllBanks() throws Exception{
 		return bankDao.findAllByIsActiveTrueOrderByBankId();
 	}
-	
+	@ApiOperation(value = "Get budget list")
 	@RequestMapping(value="/budgets",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Budget> getBudget() throws Exception{
 		return budgetDao.findAllByOrderByBudgetId();
 	}
-	
+	@ApiOperation(value = "Get completion time list")
 	@RequestMapping(value="/completiontime",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<CompletionTime> getCompletionTime() throws Exception{
 		return completionTimeDao.findAllByOrderByCompletionId();
 	}
-	
-	
-	@Autowired
-	private S3Util s3Util;
-	
+	@ApiOperation(value = "Clear s3 picture")
 	@RequestMapping(value="/clear",method=RequestMethod.DELETE)
 	@Authorization(Role.Admin)
 	public int clearS3() throws Exception {
@@ -87,5 +82,4 @@ public class DataController {
 		 }
 		 return list.size();
 	}
-	
 }

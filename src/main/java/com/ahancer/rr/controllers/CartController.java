@@ -15,22 +15,22 @@ import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.services.CartService;
 import com.ahancer.rr.services.TransactionService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/carts")
 public class CartController extends AbstractController {
-	
 	@Autowired
 	private CartService cartService;
-	
 	@Autowired
 	private TransactionService transactionService;
-	
+	@ApiOperation(value = "Get active cart")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Brand})
 	public Cart getInCart() throws Exception {
 		return cartService.getInCartByBrand(this.getUserRequest().getBrand().getBrandId());
 	}
-	
+	@ApiOperation(value = "Get transaction from cart")
 	@RequestMapping(value="/{cartId}/transaction",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Admin})
 	public Transaction getTransactionFromCart(@PathVariable Long cartId) throws Exception {
@@ -47,5 +47,4 @@ public class CartController extends AbstractController {
 		}
 		return response;
 	}
-
 }
