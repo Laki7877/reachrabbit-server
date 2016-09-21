@@ -3,6 +3,7 @@ package com.ahancer.rr.custom.type;
 public enum CampaignStatus {
 	Draft("Draft"),
 	Open("Open"),
+	Close("Close"),
 	//WaitForPayment("Wait for Payment"),
 	//Production("Production"),
 	Complete("Complete"),

@@ -2,6 +2,7 @@ package com.ahancer.rr.services;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -203,16 +204,32 @@ public class CampaignService {
 	}
 	
 	public Page<CampaignResponse> findAllByAdmin(Pageable pageable) {
-		return campaignDao.findCampaignByAdmin(pageable);
+		Page<CampaignResponse> response = campaignDao.findCampaignByAdmin(pageable);
+		return response;
 	}
 
 	public Page<CampaignResponse> findAllByBrand(Long brandId, String statusValue, Pageable pageable) {
+		Page<CampaignResponse> response = null;
 		if(StringUtils.isNotEmpty(statusValue)) {
 			CampaignStatus status = CampaignStatus.valueOf(statusValue);
-			return campaignDao.findByBrandIdAndStatus(brandId, status, pageable);
+			switch(status){
+			case Draft:
+				response = campaignDao.findByBrandIdAndStatus(brandId, status, pageable);
+				break;
+			case Open:
+				response = campaignDao.findByBrandIdAndStatusOpen(brandId, status, new Date(), pageable);
+				break;
+			case Close:
+				response = campaignDao.findByBrandIdAndStatusClose(brandId, CampaignStatus.Open, new Date(), pageable);
+				break;
+			default:
+				break;
+			}
+			
 		} else {
-			return campaignDao.findByBrandId(brandId, pageable);
+			response = campaignDao.findByBrandId(brandId, pageable);
 		}
+		return response;
 	}
 
 	public List<CampaignResponse> findAllActiveByBrand(Long brandId) {
