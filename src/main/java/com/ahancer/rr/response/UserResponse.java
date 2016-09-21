@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.Resource;
+import com.ahancer.rr.models.User;
 
 public class UserResponse implements Serializable {
 	
@@ -20,6 +21,28 @@ public class UserResponse implements Serializable {
 	
 	public UserResponse(){
 		
+	}
+	
+	public UserResponse(User user, String roleValue) {
+		Role role = Role.valueOf(roleValue);
+		this.userId = user.getUserId();
+		this.name = user.getName();
+		this.profilePicture = user.getProfilePicture();
+		switch (role) {
+			case Admin:
+				influencer = new InfluencerResponse(user.getInfluencer(),roleValue);
+				brand = new BrandResponse(user.getBrand(),roleValue);
+				break;
+			case Brand:
+				influencer = new InfluencerResponse(user.getInfluencer(),roleValue);
+				break;
+			case Influencer:
+				brand = new BrandResponse(user.getBrand(),roleValue);
+				break;
+			default:
+				break;
+		}
+		this.role = user.getRole();
 	}
 	
 	public String getPageId(String mediaId) throws Exception {

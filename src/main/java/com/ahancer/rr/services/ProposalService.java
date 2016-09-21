@@ -294,7 +294,7 @@ public class ProposalService {
 				.replace("{{Influencer Name}}", user.getName())
 				.replace("{{Campaign Name}}", campaign.getTitle())
 				.replace("{{Host}}", uiHost)
-				.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId()));
+				.replace("{{Proposal Id}}", String.valueOf(proposal.getProposalId()));
 		emailService.send(to, subject, body);
 		return proposal;
 	}

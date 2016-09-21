@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,7 +23,7 @@ import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.ProposalMessage;
-import com.google.api.client.util.Lists;
+import com.ahancer.rr.response.ProposalMessageResponse;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -108,19 +110,21 @@ public class ProposalMessageService {
 		return proposalMessageDao.countByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, timestamp);
 	}
 	
-	public List<ProposalMessage> getNewProposalMessage(Long proposalId, Role role, Date timestamp) {
-//		Calendar cal = Calendar.getInstance();
-//		cal.setTime(timestamp);
-//		cal.add(Calendar.MILLISECOND, -10);
-		List<ProposalMessage> pm = proposalMessageDao.findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, timestamp);
-		for(ProposalMessage p : pm) {
-			if(role.equals(Role.Influencer)) {
-				p.setIsInfluencerRead(true);
-			} else if(role.equals(Role.Brand)){
-				p.setIsBrandRead(true);
-			}
-		}
-		return Lists.newArrayList(proposalMessageDao.save(pm));
+	
+	public List<ProposalMessageResponse> getNewProposalMessageByBrand(Long proposalId, Long brandId, Date timestamp) {
+		List<ProposalMessageResponse> response = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, brandId, timestamp);
+		Function<ProposalMessageResponse, Long> transform = ProposalMessageResponse::getMessageId;
+		List<Long> messageIds = response.stream().map(transform).collect(Collectors.toList());
+		proposalMessageDao.updateBrandReadMessage(proposalId, messageIds, true);
+		return response;
+	}
+	
+	public List<ProposalMessageResponse> getNewProposalMessageByInfluencer(Long proposalId, Long influencerId, Date timestamp) {
+		List<ProposalMessageResponse> response = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, influencerId, timestamp);
+		Function<ProposalMessageResponse, Long> transform = ProposalMessageResponse::getMessageId;
+		List<Long> messageIds = response.stream().map(transform).collect(Collectors.toList());
+		proposalMessageDao.updateInfluencerReadMessage(proposalId, messageIds, true);
+		return response;
 	}
 
 	public ProposalMessage createProposalMessage(Long proposalId, ProposalMessage message,Long userId,Role userRole) throws Exception {
@@ -146,41 +150,41 @@ public class ProposalMessageService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
 		message.setUserId(userId);
+		message.setProposalId(proposalId);
 		message = proposalMessageDao.save(message);
 		message.setUser(userDao.findOne(userId));
 		message.setProposal(proposalDao.findOne(proposalId));
 		return message;
 	}
 
-	public Page<ProposalMessage> findByProposalForBrand(Long proposalId, Long brandId, Date before, Pageable pageable) {
-		Page<ProposalMessage> page = null;
-		if(before == null) {
-			page = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandId(proposalId, brandId, pageable);
+	public Page<ProposalMessageResponse> findByProposalForBrand(Long proposalId, Long brandId, Date before, Pageable pageable) {
+		Page<ProposalMessageResponse> response = null;
+		if(null == before) {
+			response = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandId(proposalId, brandId, pageable);
 		} else {
-			page = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtBefore(proposalId, brandId, before, pageable);
+			response = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtBefore(proposalId, brandId, before, pageable);
 		}
-		//Update reading message
-		List<ProposalMessage> pm = page.getContent();
-		for(ProposalMessage p : pm) {
-			p.setIsBrandRead(true);
+		if(null != response){
+			Function<ProposalMessageResponse, Long> transform = ProposalMessageResponse::getMessageId;
+			List<Long> messageIds = response.getContent().stream().map(transform).collect(Collectors.toList());
+			proposalMessageDao.updateBrandReadMessage(proposalId, messageIds, true);
 		}
-		proposalMessageDao.save(pm);
-		return page;
+		return response;
 	}
 
-	public Page<ProposalMessage> findByProposalForInfluencer(Long proposalId, Long influencerId, Date before, Pageable pageable) {
-		Page<ProposalMessage> page = null;
-		if(before == null) {
-			page = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerId(proposalId, influencerId, pageable);
+	public Page<ProposalMessageResponse> findByProposalForInfluencer(Long proposalId, Long influencerId, Date before, Pageable pageable) {
+		Page<ProposalMessageResponse> response = null;
+		if(null == before) {
+			response = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerId(proposalId, influencerId, pageable);
 		} else {
-			page = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(proposalId, influencerId, before, pageable);
+			response = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(proposalId, influencerId, before, pageable);
 		}
-		//Update reading message
-		List<ProposalMessage> pm = page.getContent();
-		for(ProposalMessage p : pm) {
-			p.setIsInfluencerRead(true);
+		if(null != response){
+			Function<ProposalMessageResponse, Long> transform = ProposalMessageResponse::getMessageId;
+			List<Long> messageIds = response.getContent().stream().map(transform).collect(Collectors.toList());
+			proposalMessageDao.updateInfluencerReadMessage(proposalId, messageIds, true);
 		}
-		proposalMessageDao.save(pm);
-		return page;
+		
+		return response;
 	}
 }

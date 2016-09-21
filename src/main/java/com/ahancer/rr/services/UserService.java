@@ -11,7 +11,6 @@ import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.UserResponse;
-import com.ahancer.rr.utils.Util;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -43,7 +42,7 @@ public class UserService {
 				|| userRole.equals(user.getRole())){
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
 		}
-		return Util.getUserResponse(user);
+		return new UserResponse(user,userRole.displayName());
 	}
 	
 

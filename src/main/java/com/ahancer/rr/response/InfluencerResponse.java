@@ -39,6 +39,8 @@ public class InfluencerResponse implements Serializable {
 		user.setUserId(influencer.getUser().getUserId());
 		switch (role) {
 			case Admin:
+				user.setEmail(influencer.getUser().getEmail());
+				user.setPhoneNumber(influencer.getUser().getPhoneNumber());
 				break;
 			case Brand:
 				break;
@@ -142,4 +144,12 @@ public class InfluencerResponse implements Serializable {
 		this.accountName = accountName;
 	}
 	
+	public UserResponse getUser() {
+		return user;
+	}
+
+	public void setUser(UserResponse user) {
+		this.user = user;
+	}
+
 }

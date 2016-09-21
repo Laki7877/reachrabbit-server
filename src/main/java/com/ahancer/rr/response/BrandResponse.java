@@ -26,6 +26,8 @@ public class BrandResponse implements Serializable {
 		user.setUserId(brand.getUser().getUserId());
 		switch (role) {
 			case Admin:
+				user.setEmail(brand.getUser().getEmail());
+				user.setPhoneNumber(brand.getUser().getPhoneNumber());
 				break;
 			case Brand:
 				user.setEmail(brand.getUser().getEmail());

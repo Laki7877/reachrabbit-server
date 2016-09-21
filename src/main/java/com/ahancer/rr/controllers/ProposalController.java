@@ -26,6 +26,7 @@ import com.ahancer.rr.models.Cart;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.response.ProposalCountResponse;
+import com.ahancer.rr.response.ProposalMessageResponse;
 import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.services.CartService;
 import com.ahancer.rr.services.ProposalMessageService;
@@ -95,7 +96,7 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/proposalmessages")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
-	public ProposalMessage createProposalMessage(@PathVariable Long proposalId, @RequestBody ProposalMessage message) throws Exception {
+	public ProposalMessageResponse createProposalMessage(@PathVariable Long proposalId, @RequestBody ProposalMessage message) throws Exception {
 		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(), this.getUserRequest().getRole());
 		proposalMessageService.processMessagePolling(proposalId);
 		
@@ -108,7 +109,7 @@ public class ProposalController extends AbstractController {
 			proposalService.processInboxPolling(message.getProposal().getCampaign().getBrandId());
 		}
 		
-		return message;
+		return new ProposalMessageResponse(message,this.getUserRequest().getRole().displayName());
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}")
@@ -131,8 +132,8 @@ public class ProposalController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
-	public Page<ProposalMessage> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
-		Page<ProposalMessage> result = null;
+	public Page<ProposalMessageResponse> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
+		Page<ProposalMessageResponse> result = null;
 		if(Role.Brand.equals(this.getUserRequest().getRole())) {
 			result = proposalMessageService.findByProposalForBrand(proposalId, this.getUserRequest().getBrand().getBrandId(), Util.parseJacksonDate(timestamp), pageRequest);
 		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
@@ -143,8 +144,22 @@ public class ProposalController extends AbstractController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/new")
-	public List<ProposalMessage> getNewProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp") String timestamp) throws Exception {
-		return proposalMessageService.getNewProposalMessage(proposalId,this.getUserRequest().getRole() ,Util.parseJacksonDate(timestamp));
+	public List<ProposalMessageResponse> getNewProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp") String timestamp) throws Exception {
+		List<ProposalMessageResponse> response = null;
+		Date date = Util.parseJacksonDate(timestamp);
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = proposalMessageService.getNewProposalMessageByBrand(proposalId,this.getUserRequest().getBrand().getBrandId() , date);
+			break;
+		case Admin:
+			break;
+		case Influencer:
+			response = proposalMessageService.getNewProposalMessageByInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId(), date);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		}
+		return response;
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
