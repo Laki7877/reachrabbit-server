@@ -32,13 +32,19 @@ public class TransactionController extends AbstractController {
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Admin, Role.Influencer, Role.Brand})
 	public Page<Transaction> getAllTransaction(@RequestParam TransactionType type, Pageable pageable) throws Exception {
-		if(Role.Admin.equals(this.getUserRequest().getRole())){
-			return transactionService.findAllTransactions(type,pageable);
-		}else if(Role.Brand.equals(this.getUserRequest().getRole())
-				|| Role.Influencer.equals(this.getUserRequest().getRole())){
-			return transactionService.findAllByUserTransaction(type,this.getUserRequest().getUserId(), pageable);
+		Page<Transaction> response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+		case Influencer:
+			response = transactionService.findAllByUserTransaction(type,this.getUserRequest().getUserId(), pageable);
+			break;
+		case Admin:
+			response = transactionService.findAllTransactions(type,pageable);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
@@ -51,15 +57,21 @@ public class TransactionController extends AbstractController {
 	@RequestMapping(value="/{transactionId}",method=RequestMethod.GET)
 	@Authorization(Role.Brand)
 	public Transaction getTransaction(@PathVariable Long transactionId) throws Exception {
-		
-		if(Role.Brand.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransaction(transactionId,this.getUserRequest().getBrand().getBrandId());
-		}else if(Role.Influencer.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransaction(transactionId,this.getUserRequest().getInfluencer().getInfluencerId());
-		}else if(Role.Admin.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransactionByAdmin(transactionId);
+		Transaction response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = transactionService.findOneTransaction(transactionId,this.getUserRequest().getBrand().getBrandId());
+			break;
+		case Influencer:
+			response = transactionService.findOneTransaction(transactionId,this.getUserRequest().getInfluencer().getInfluencerId());
+			break;
+		case Admin:
+			response = transactionService.findOneTransactionByAdmin(transactionId);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
 	
 	@RequestMapping(value="/{transactionId}/confirm",method=RequestMethod.PUT)

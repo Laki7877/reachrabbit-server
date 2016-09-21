@@ -34,12 +34,18 @@ public class CartController extends AbstractController {
 	@RequestMapping(value="/{cartId}/transaction",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Admin})
 	public Transaction getTransactionFromCart(@PathVariable Long cartId) throws Exception {
-		if(Role.Brand.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransactionFromCartByBrand(cartId,this.getUserRequest().getBrand().getBrandId());
-		}else if(Role.Admin.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransactionFromCartByAdmin(cartId);
+		Transaction response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = transactionService.findOneTransactionFromCartByBrand(cartId,this.getUserRequest().getBrand().getBrandId());
+			break;
+		case Admin:
+			response = transactionService.findOneTransactionFromCartByAdmin(cartId);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
 
 }

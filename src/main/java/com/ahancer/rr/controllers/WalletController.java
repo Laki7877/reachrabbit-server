@@ -48,12 +48,18 @@ public class WalletController extends AbstractController {
 	@RequestMapping(value="/{walletId}/transaction",method=RequestMethod.GET)
 	@Authorization({ Role.Influencer, Role.Admin })
 	public Transaction getTransactionFromWallet(@PathVariable Long walletId) throws Exception {
-		if(Role.Influencer.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransactionFromWalletByInfluencer(walletId,this.getUserRequest().getInfluencer().getInfluencerId());
-		}else if(Role.Admin.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransactionFromWalletByAdmin(walletId);
+		Transaction response = null;
+		switch(this.getUserRequest().getRole()){
+		case Influencer:
+			response = transactionService.findOneTransactionFromWalletByInfluencer(walletId,this.getUserRequest().getInfluencer().getInfluencerId());
+			break;
+		case Admin:
+			response = transactionService.findOneTransactionFromWalletByAdmin(walletId);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
+		return response;
 	}
 
 }

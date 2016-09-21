@@ -115,7 +115,7 @@ public class ProposalMessageService {
 		List<ProposalMessageResponse> response = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, brandId, timestamp);
 		Function<ProposalMessageResponse, Long> transform = ProposalMessageResponse::getMessageId;
 		List<Long> messageIds = response.stream().map(transform).collect(Collectors.toList());
-		proposalMessageDao.updateBrandReadMessage(proposalId, messageIds, true);
+		proposalMessageDao.updateBrandReadNewMessage(proposalId, messageIds, true);
 		return response;
 	}
 	
@@ -123,7 +123,7 @@ public class ProposalMessageService {
 		List<ProposalMessageResponse> response = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtAfterOrderByCreatedAtDesc(proposalId, influencerId, timestamp);
 		Function<ProposalMessageResponse, Long> transform = ProposalMessageResponse::getMessageId;
 		List<Long> messageIds = response.stream().map(transform).collect(Collectors.toList());
-		proposalMessageDao.updateInfluencerReadMessage(proposalId, messageIds, true);
+		proposalMessageDao.updateInfluencerReadNewMessage(proposalId, messageIds, true);
 		return response;
 	}
 
@@ -164,11 +164,7 @@ public class ProposalMessageService {
 		} else {
 			response = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtBefore(proposalId, brandId, before, pageable);
 		}
-		if(null != response){
-			Function<ProposalMessageResponse, Long> transform = ProposalMessageResponse::getMessageId;
-			List<Long> messageIds = response.getContent().stream().map(transform).collect(Collectors.toList());
-			proposalMessageDao.updateBrandReadMessage(proposalId, messageIds, true);
-		}
+		proposalMessageDao.updateBrandReadMessage(proposalId, true);
 		return response;
 	}
 
@@ -179,11 +175,7 @@ public class ProposalMessageService {
 		} else {
 			response = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(proposalId, influencerId, before, pageable);
 		}
-		if(null != response){
-			Function<ProposalMessageResponse, Long> transform = ProposalMessageResponse::getMessageId;
-			List<Long> messageIds = response.getContent().stream().map(transform).collect(Collectors.toList());
-			proposalMessageDao.updateInfluencerReadMessage(proposalId, messageIds, true);
-		}
+		proposalMessageDao.updateInfluencerReadMessage(proposalId, true);
 		
 		return response;
 	}

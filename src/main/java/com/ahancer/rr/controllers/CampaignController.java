@@ -43,15 +43,22 @@ public class CampaignController extends AbstractController {
 	
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
-	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status,Pageable pageRequest) throws Exception{
-		if(this.getUserRequest().getRole().equals(Role.Brand)) {
-			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, pageRequest);	
-		} else if(this.getUserRequest().getRole().equals(Role.Influencer)) {
-			return campaignService.findAll(pageRequest);		
-		} else if(this.getUserRequest().getRole().equals(Role.Admin)) {
-			return campaignService.findAllByAdmin(pageRequest);
+	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status,Pageable pageRequest) throws Exception {
+		Page<CampaignResponse> response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, pageRequest);
+			break;
+		case Influencer:
+			response = campaignService.findAll(pageRequest);
+			break;
+		case Admin:
+			response = campaignService.findAllByAdmin(pageRequest);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
 	
 	@ApiOperation(value = "Get campaign by campaign id")
@@ -71,14 +78,21 @@ public class CampaignController extends AbstractController {
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public CampaignResponse getOneCampaign(@PathVariable Long campaignId) throws Exception {
-		if(Role.Admin.equals(this.getUserRequest().getRole())){
-			return campaignService.findOneByAdmin(campaignId);
-		} else if (Role.Brand.equals(this.getUserRequest().getRole())){
-			return campaignService.findOneByBrand(campaignId,this.getUserRequest().getBrand().getBrandId());
-		} else if (Role.Influencer.equals(this.getUserRequest().getRole())) {
-			return campaignService.findOneByInfluencer(campaignId, this.getUserRequest().getInfluencer().getInfluencerId());
+		CampaignResponse response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = campaignService.findOneByBrand(campaignId,this.getUserRequest().getBrand().getBrandId());
+			break;
+		case Influencer:
+			response = campaignService.findOneByInfluencer(campaignId, this.getUserRequest().getInfluencer().getInfluencerId());
+			break;
+		case Admin:
+			response = campaignService.findOneByAdmin(campaignId);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
 	
 	
@@ -94,13 +108,18 @@ public class CampaignController extends AbstractController {
 	@Authorization({Role.Brand,Role.Admin})
 	public CampaignRequest updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		//Admin powered
-		if(this.getUserRequest().getRole().equals(Role.Admin)) {
-			return campaignService.updateCampaign(campaignId, request);
-		} else if(this.getUserRequest().getRole().equals(Role.Brand)){
-			return campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+		CampaignRequest response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+			break;
+		case Admin:
+			response = campaignService.updateCampaign(campaignId, request);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
 	
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)

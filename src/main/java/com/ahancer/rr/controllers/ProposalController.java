@@ -40,29 +40,35 @@ import com.ahancer.rr.utils.Util;
 public class ProposalController extends AbstractController {
 	@Autowired
 	private ProposalService proposalService;
-	
+
 	@Autowired
 	private ProposalMessageService proposalMessageService;
-	
+
 	@Autowired
 	private CartService cartService;
-	
+
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Influencer,Role.Brand})
 	public Page<Proposal> getAllProposal( @RequestParam(name="status", required=true) ProposalStatus status,Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
-		if(Role.Brand.equals(this.getUserRequest().getRole())) {
-			return proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(),status, pageRequest);
-		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
-			return proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(),status, pageRequest);	
+		Page<Proposal> response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(),status, pageRequest);
+			break;
+		case Influencer:
+			response = proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(),status, pageRequest);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
 	@RequestMapping(method=RequestMethod.GET, value="/active")
 	@Authorization({Role.Influencer})
 	public List<Proposal> getAllActiveProposal() {
 		return proposalService.findAllActiveByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
-	
+
 	@RequestMapping(method=RequestMethod.GET, value="/count/poll")
 	public DeferredProposal getAllUnreadProposal(@RequestParam(name="immediate", required=false) Boolean immediate) throws Exception {
 		final DeferredProposal result = new DeferredProposal(this.getUserRequest().getRole());
@@ -72,46 +78,58 @@ public class ProposalController extends AbstractController {
 		}
 		return result;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.GET, value="/count")
 	@Authorization({Role.Influencer,Role.Brand})
 	public ProposalCountResponse getProposalCountByStatus(@RequestParam("status") ProposalStatus status) throws Exception {
-		if(Role.Brand.equals(this.getUserRequest().getRole())) {
-			return proposalService.countByBrand(this.getUserRequest().getBrand().getBrandId(), status);
-		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
-			return proposalService.countByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), status);
+		ProposalCountResponse response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = proposalService.countByBrand(this.getUserRequest().getBrand().getBrandId(), status);
+			break;
+		case Influencer:
+			response = proposalService.countByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), status);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/count")
 	public Long getUnreadProposalMessageCount(@PathVariable Long proposalId) throws Exception {
-		if(Role.Brand.equals(this.getUserRequest().getRole())) {
-			return proposalService.countByUnreadProposalMessageForBrand(proposalId, this.getUserRequest().getBrand().getBrandId());			
-		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
-			return proposalService.countByUnreadProposalMessageForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId());
+		Long response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = proposalService.countByUnreadProposalMessageForBrand(proposalId, this.getUserRequest().getBrand().getBrandId());			
+			break;
+		case Influencer:
+			response = proposalService.countByUnreadProposalMessageForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId());
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/proposalmessages")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public ProposalMessageResponse createProposalMessage(@PathVariable Long proposalId, @RequestBody ProposalMessage message) throws Exception {
 		message = proposalMessageService.createProposalMessage(proposalId,message, this.getUserRequest().getUserId(), this.getUserRequest().getRole());
 		proposalMessageService.processMessagePolling(proposalId);
-		
-		//For brand, notify influencer
-		if(Role.Brand.equals(this.getUserRequest().getRole())) {
-			proposalService.processInboxPolling(message.getProposal().getInfluencerId());
-		}
-		//For influencer, notify brand
-		else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			proposalService.processInboxPolling(message.getProposal().getInfluencerId());	
+			break;
+		case Influencer:
 			proposalService.processInboxPolling(message.getProposal().getCampaign().getBrandId());
+			break;
+		default:
+			break;
 		}
-		
 		return new ProposalMessageResponse(message,this.getUserRequest().getRole().displayName());
 	}
-	
+
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}")
 	@Authorization(Role.Influencer)
 	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal
@@ -122,27 +140,32 @@ public class ProposalController extends AbstractController {
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/dismiss")
 	@Authorization(Role.Influencer)
 	public void dismissNotification(@PathVariable Long proposalId) throws Exception {
 		proposalService.dismissProposalNotification(proposalId,this.getUserRequest().getInfluencer().getInfluencerId());
 	}
-	
-	
+
+
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
-	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
+	@Authorization({Role.Brand,Role.Influencer})
 	public Page<ProposalMessageResponse> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
-		Page<ProposalMessageResponse> result = null;
-		if(Role.Brand.equals(this.getUserRequest().getRole())) {
-			result = proposalMessageService.findByProposalForBrand(proposalId, this.getUserRequest().getBrand().getBrandId(), Util.parseJacksonDate(timestamp), pageRequest);
-		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
-			result = proposalMessageService.findByProposalForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId(), Util.parseJacksonDate(timestamp), pageRequest);
+		Page<ProposalMessageResponse> response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = proposalMessageService.findByProposalForBrand(proposalId, this.getUserRequest().getBrand().getBrandId(), Util.parseJacksonDate(timestamp), pageRequest);
+			break;
+		case Influencer:
+			response = proposalMessageService.findByProposalForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId(), Util.parseJacksonDate(timestamp), pageRequest);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		proposalService.processInboxPolling(this.getUserRequest().getUserId());
-		return result;
+		return response;
+
 	}
-	
+
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/new")
 	public List<ProposalMessageResponse> getNewProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp") String timestamp) throws Exception {
 		List<ProposalMessageResponse> response = null;
@@ -161,7 +184,7 @@ public class ProposalController extends AbstractController {
 		}
 		return response;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false)  String timestamp ) throws Exception {
@@ -178,18 +201,24 @@ public class ProposalController extends AbstractController {
 		}
 		return result;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}")
 	@Authorization({Role.Brand,Role.Influencer})
 	public ProposalResponse getOneProposal(@PathVariable Long proposalId) throws Exception {
-		if(Role.Brand.equals(this.getUserRequest().getRole())) {
-			return proposalService.findOneByBrand(proposalId,this.getUserRequest().getBrand().getBrandId());
-		} else if(Role.Influencer.equals(this.getUserRequest().getRole())) {
-			return proposalService.findOneByInfluencer(proposalId,this.getUserRequest().getInfluencer().getInfluencerId());		
+		ProposalResponse response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = proposalService.findOneByBrand(proposalId,this.getUserRequest().getBrand().getBrandId());
+			break;
+		case Influencer:
+			response = proposalService.findOneByInfluencer(proposalId,this.getUserRequest().getInfluencer().getInfluencerId());
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/status/{status}")
 	@Authorization({Role.Brand})
 	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status
@@ -200,21 +229,21 @@ public class ProposalController extends AbstractController {
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/cart")
 	@Authorization({Role.Brand})
 	public Cart addProposalToCaert(@PathVariable Long proposalId) throws Exception {
 		Cart cart = cartService.addProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
 		return cart;
 	}
-	
-	
+
+
 	@RequestMapping(method=RequestMethod.DELETE,value="/{proposalId}/cart")
 	@Authorization({Role.Brand})
 	public void deleteProposalToCaert(@PathVariable Long proposalId) throws Exception {
 		cartService.deleteProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
 	}
-	
-	
+
+
 
 }

@@ -33,58 +33,67 @@ public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long
 	
 	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Influencer') "
 			+ "FROM proposalMessage pm "
-			+ "WHERE pm.proposalId=:proposalId AND pm.proposal.influencerId=:influencerId")
+			+ "WHERE pm.proposalId = :proposalId AND pm.proposal.influencerId = :influencerId")
 	public Page<ProposalMessageResponse> findByProposalProposalIdAndProposalInfluencerId(@Param("proposalId") Long proposalId,@Param("influencerId") Long influencerId, Pageable pageable);
 	
 	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Influencer') "
 			+ "FROM proposalMessage pm "
-			+ "WHERE pm.proposalId=:proposalId AND pm.createdAt < :createdAtBefore AND pm.proposal.influencerId=:influencerId")
+			+ "WHERE pm.proposalId = :proposalId AND pm.createdAt < :createdAtBefore AND pm.proposal.influencerId=:influencerId")
 	public Page<ProposalMessageResponse> findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(@Param("proposalId") Long proposalId,@Param("influencerId") Long influencerId,@Param("createdAtBefore") Date createdAtBefore, Pageable pageable);
 	
 	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Brand') "
 			+ "FROM proposalMessage pm "
-			+ "WHERE pm.proposalId=:proposalId AND pm.createdAt < :createdAtBefore AND pm.proposal.campaign.brandId=:brandId ")
+			+ "WHERE pm.proposalId = :proposalId AND pm.createdAt < :createdAtBefore AND pm.proposal.campaign.brandId = :brandId ")
 	public Page<ProposalMessageResponse> findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtBefore(@Param("proposalId") Long proposalId,@Param("brandId") Long brandId,@Param("createdAtBefore") Date createdAtBefore, Pageable pageable);
 	
 	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Brand') "
 			+ "FROM proposalMessage pm "
-			+ "WHERE pm.proposalId=:proposalId AND pm.createdAt > :createdAtBefore "
+			+ "WHERE pm.proposalId = :proposalId AND pm.createdAt > :createdAtBefore "
 			+ "ORDER BY pm.createdAt DESC")
 	public List<ProposalMessageResponse> findByProposalProposalIdAndCreatedAtAfterOrderByCreatedAtDesc(@Param("proposalId") Long proposalId, @Param("createdAtBefore") Date createdAtAfter);
 	
 	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Brand') "
 			+ "FROM proposalMessage pm "
-			+ "WHERE pm.proposalId=:proposalId AND pm.createdAt > :createdAtBefore AND pm.proposal.campaign.brandId=:brandId "
+			+ "WHERE pm.proposalId = :proposalId AND pm.createdAt > :createdAtBefore AND pm.proposal.campaign.brandId = :brandId "
 			+ "ORDER BY pm.createdAt DESC")
 	public List<ProposalMessageResponse> findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtAfterOrderByCreatedAtDesc(@Param("proposalId") Long proposalId,@Param("brandId") Long brandId, @Param("createdAtBefore") Date createdAtAfter);
 	
 	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Influencer') "
 			+ "FROM proposalMessage pm "
-			+ "WHERE pm.proposalId=:proposalId AND pm.createdAt > :createdAtBefore AND pm.proposal.influencerId=:influencerId "
+			+ "WHERE pm.proposalId = :proposalId AND pm.createdAt > :createdAtBefore AND pm.proposal.influencerId = :influencerId "
 			+ "ORDER BY pm.createdAt DESC")
 	public List<ProposalMessageResponse> findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtAfterOrderByCreatedAtDesc(@Param("proposalId") Long proposalId,@Param("influencerId") Long influencerId, @Param("createdAtBefore") Date createdAtAfter);
 
+	@Modifying
+	@Query("UPDATE proposalMessage pm SET pm.isBrandRead = :isBrandRead "
+			+ "WHERE pm.proposalId = :proposalId AND pm.isBrandRead != :isBrandRead ")
+	public int updateBrandReadMessage(@Param("proposalId") Long proposalId, @Param("isBrandRead") Boolean isBrandRead);
 	
 	@Modifying
 	@Query("UPDATE proposalMessage pm SET pm.isBrandRead=:isBrandRead "
-			+ "WHERE pm.proposalId=:proposalId AND pm.messageId IN :messageIds ")
-	public int updateBrandReadMessage(@Param("proposalId") Long proposalId,@Param("messageIds") Collection<Long> messageIds, @Param("isBrandRead") Boolean isBrandRead);
+			+ "WHERE pm.proposalId = :proposalId AND pm.messageId IN :messageIds ")
+	public int updateBrandReadNewMessage(@Param("proposalId") Long proposalId,@Param("messageIds") Collection<Long> messageIds, @Param("isBrandRead") Boolean isBrandRead);
 	
 	@Modifying
-	@Query("UPDATE proposalMessage pm SET pm.isInfluencerRead=:isInfluencerRead "
-			+ "WHERE pm.proposalId=:proposalId AND pm.messageId IN :messageIds ")
-	public int updateInfluencerReadMessage(@Param("proposalId") Long proposalId, @Param("messageIds") Collection<Long> messageIds, @Param("isInfluencerRead") Boolean isInfluencerRead);
+	@Query("UPDATE proposalMessage pm SET pm.isInfluencerRead = :isInfluencerRead "
+			+ "WHERE pm.proposalId = :proposalId AND pm.isInfluencerRead != :isInfluencerRead ")
+	public int updateInfluencerReadMessage(@Param("proposalId") Long proposalId,@Param("isInfluencerRead") Boolean isInfluencerRead);
+	
+	@Modifying
+	@Query("UPDATE proposalMessage pm SET pm.isInfluencerRead = :isInfluencerRead "
+			+ "WHERE pm.proposalId = :proposalId AND pm.messageId IN :messageIds ")
+	public int updateInfluencerReadNewMessage(@Param("proposalId") Long proposalId, @Param("messageIds") Collection<Long> messageIds, @Param("isInfluencerRead") Boolean isInfluencerRead);
 	
 	@Query("SELECT new com.ahancer.rr.response.MessageCountResponse(pm.proposal.campaign.brand.user.email, COUNT(pm)) "
 			+ "FROM proposalMessage pm "
-			+ "WHERE pm.isBrandRead=:isBrandRead AND pm.createdAt>=:from AND pm.createdAt<=:to "
+			+ "WHERE pm.isBrandRead = :isBrandRead AND pm.createdAt >= :from AND pm.createdAt <= :to "
 			+ "GROUP BY pm.proposal.campaign.brand.user.email "
 			+ "HAVING COUNT(pm) > 0")
 	public List<MessageCountResponse> findBrandMessageCount(@Param("isBrandRead") Boolean isBrandRead,@Param("from") Date from,@Param("to") Date to);
 	
 	@Query("SELECT new com.ahancer.rr.response.MessageCountResponse(pm.proposal.influencer.user.email, COUNT(pm)) "
 			+ "FROM proposalMessage pm "
-			+ "WHERE pm.isInfluencerRead=:isInfluencerRead AND pm.createdAt>=:from AND pm.createdAt<=:to "
+			+ "WHERE pm.isInfluencerRead = :isInfluencerRead AND pm.createdAt >= :from AND pm.createdAt <= :to "
 			+ "GROUP BY pm.proposal.influencer.user.email "
 			+ "HAVING COUNT(pm) > 0")
 	public List<MessageCountResponse> findInfluencerMessageCount(@Param("isInfluencerRead") Boolean isInfluencerRead,@Param("from") Date from,@Param("to") Date to);
