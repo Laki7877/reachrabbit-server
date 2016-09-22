@@ -50,7 +50,7 @@ public class SwaggerConfig {
 				.version("0.0.1")
 				.license("AHA License")
 				.licenseUrl("www.ahancer.com")
-				.contact(new Contact("Laki", "www.ahancer.com", "laki7877@gmail.com"))
+				.contact(new Contact("Laki", "http://www.ahancer.com", "laki7877@gmail.com"))
 				.build();
 	}
 	
