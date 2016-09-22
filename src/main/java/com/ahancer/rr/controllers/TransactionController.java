@@ -22,11 +22,14 @@ import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.services.TransactionService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController extends AbstractController {
 	@Autowired
 	private TransactionService transactionService;
+	@ApiOperation(value = "Get transaction pagination")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Admin, Role.Influencer, Role.Brand})
 	public Page<Transaction> getAllTransaction(@RequestParam TransactionType type, Pageable pageable) throws Exception {
@@ -44,12 +47,14 @@ public class TransactionController extends AbstractController {
 		}
 		return response;
 	}
+	@ApiOperation(value = "Create transaction")
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization(Role.Brand)
 	public Transaction createTransaction(@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		Transaction transaction = transactionService.createTransactionByBrand(this.getUserRequest(),locale);
 		return transaction;
 	}
+	@ApiOperation(value = "Get transaction by transaction id")
 	@RequestMapping(value="/{transactionId}",method=RequestMethod.GET)
 	@Authorization(Role.Brand)
 	public Transaction getTransaction(@PathVariable Long transactionId) throws Exception {
@@ -69,12 +74,14 @@ public class TransactionController extends AbstractController {
 		}
 		return response;
 	}
+	@ApiOperation(value = "Confirm transaction")
 	@RequestMapping(value="/{transactionId}/confirm",method=RequestMethod.PUT)
 	@Authorization(Role.Admin)
 	public Transaction confirmTransaction(@PathVariable Long transactionId, Locale local) throws Exception {
 		Transaction transaction = transactionService.confirmTransaction(transactionId,local);
 		return transaction;
 	}
+	@ApiOperation(value = "Confirm payment")
 	@RequestMapping(value="/{transactionId}/paid",method=RequestMethod.PUT)
 	@Authorization(Role.Admin)
 	public Transaction payTransaction(@PathVariable Long transactionId,@RequestBody(required=false) Resource resource

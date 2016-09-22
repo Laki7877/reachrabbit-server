@@ -16,30 +16,24 @@ import com.ahancer.rr.services.ResourceService;
 @RestController
 @RequestMapping("/resources")
 public class ResourceController {
-
 	@Autowired
 	private ResourceService resourceService;
-	
 	@RequestMapping(method=RequestMethod.POST)
 	public Resource createResource(@RequestBody MultipartFile file) throws Exception{
 		return resourceService.upload(file);
 	}
-	
 	@RequestMapping(value="/remote",method=RequestMethod.POST)
 	public Resource createResource(@RequestBody ResourceRemoteRequest request) throws Exception {
 		return resourceService.upload(request);
 	}
-	
 	@RequestMapping(value="/{resourceId}",method=RequestMethod.GET)
 	public Resource getOneResource(@PathVariable Long resourceId) throws Exception{
 		throw new ResponseException();
 	}
-	
 	@RequestMapping(value="/{resourceId}",method=RequestMethod.PUT)
 	public Resource updateResource(@PathVariable Long resourceId,@RequestBody Resource resource) throws Exception{
 		throw new ResponseException("error.notimplement");
 	}
-	
 	@RequestMapping(value="/{resourceId}",method=RequestMethod.DELETE)
 	public void deleteResource(@PathVariable Long resourceId) throws Exception{
 		throw new ResponseException("error.notimplement");

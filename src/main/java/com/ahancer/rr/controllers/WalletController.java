@@ -22,6 +22,8 @@ import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.services.TransactionService;
 import com.ahancer.rr.services.WalletService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/wallets")
 public class WalletController extends AbstractController {
@@ -29,17 +31,20 @@ public class WalletController extends AbstractController {
 	private WalletService walletService;
 	@Autowired
 	private TransactionService transactionService;
+	@ApiOperation(value = "Get active wallet")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Influencer})
 	public Wallet getPendingWallet() throws Exception {
 		return walletService.findPendingByIndluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
+	@ApiOperation(value = "Create new payout")
 	@RequestMapping(value="/payout",method=RequestMethod.POST)
 	@Authorization({Role.Influencer})
 	public Transaction payoutWallet(@Valid @RequestBody PayoutRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		return walletService.payoutWallet(request,this.getUserRequest().getInfluencer().getInfluencerId(),locale);
 	}
+	@ApiOperation(value = "Get transaction from wallet")
 	@RequestMapping(value="/{walletId}/transaction",method=RequestMethod.GET)
 	@Authorization({ Role.Influencer, Role.Admin })
 	public Transaction getTransactionFromWallet(@PathVariable Long walletId) throws Exception {

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
@@ -35,18 +34,18 @@ import com.ahancer.rr.services.ProposalService;
 import com.ahancer.rr.services.ProposalService.DeferredProposal;
 import com.ahancer.rr.utils.Util;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/proposals")
 public class ProposalController extends AbstractController {
 	@Autowired
 	private ProposalService proposalService;
-
 	@Autowired
 	private ProposalMessageService proposalMessageService;
-
 	@Autowired
 	private CartService cartService;
-
+	@ApiOperation(value = "Get proposal pagination")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Influencer,Role.Brand})
 	public Page<Proposal> getAllProposal( @RequestParam(name="status", required=true) ProposalStatus status,Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
@@ -63,12 +62,13 @@ public class ProposalController extends AbstractController {
 		}
 		return response;
 	}
+	@ApiOperation(value = "Get active proposal list")
 	@RequestMapping(method=RequestMethod.GET, value="/active")
 	@Authorization({Role.Influencer})
 	public List<Proposal> getAllActiveProposal() {
 		return proposalService.findAllActiveByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
-
+	@ApiOperation(value = "Get count new message")
 	@RequestMapping(method=RequestMethod.GET, value="/count/poll")
 	public DeferredProposal getAllUnreadProposal(@RequestParam(name="immediate", required=false) Boolean immediate) throws Exception {
 		final DeferredProposal result = new DeferredProposal(this.getUserRequest().getRole());
@@ -78,7 +78,7 @@ public class ProposalController extends AbstractController {
 		}
 		return result;
 	}
-
+	@ApiOperation(value = "Get count proposal status")
 	@RequestMapping(method=RequestMethod.GET, value="/count")
 	@Authorization({Role.Influencer,Role.Brand})
 	public ProposalCountResponse getProposalCountByStatus(@RequestParam("status") ProposalStatus status) throws Exception {
@@ -95,7 +95,7 @@ public class ProposalController extends AbstractController {
 		}
 		return response;
 	}
-
+	@ApiOperation(value = "Get count proposal message from proposal")
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/count")
 	public Long getUnreadProposalMessageCount(@PathVariable Long proposalId) throws Exception {
 		Long response = null;
@@ -111,7 +111,7 @@ public class ProposalController extends AbstractController {
 		}
 		return response;
 	}
-
+	@ApiOperation(value = "Create new proposal message in proposal")
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/proposalmessages")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
 	public ProposalMessageResponse createProposalMessage(@PathVariable Long proposalId, @RequestBody ProposalMessage message) throws Exception {
@@ -129,7 +129,7 @@ public class ProposalController extends AbstractController {
 		}
 		return new ProposalMessageResponse(message,this.getUserRequest().getRole().displayName());
 	}
-
+	@ApiOperation(value = "Update proposal")
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}")
 	@Authorization(Role.Influencer)
 	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal
@@ -140,14 +140,13 @@ public class ProposalController extends AbstractController {
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
 	}
-
+	@ApiOperation(value = "Update rabbit flag in proposal")
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/dismiss")
 	@Authorization(Role.Influencer)
 	public void dismissNotification(@PathVariable Long proposalId) throws Exception {
 		proposalService.dismissProposalNotification(proposalId,this.getUserRequest().getInfluencer().getInfluencerId());
 	}
-
-
+	@ApiOperation(value = "Get proposal message pagination")
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
 	@Authorization({Role.Brand,Role.Influencer})
 	public Page<ProposalMessageResponse> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
@@ -165,7 +164,7 @@ public class ProposalController extends AbstractController {
 		return response;
 
 	}
-
+	@ApiOperation(value = "Get new proposal message list")
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/new")
 	public List<ProposalMessageResponse> getNewProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp") String timestamp) throws Exception {
 		List<ProposalMessageResponse> response = null;
@@ -184,10 +183,10 @@ public class ProposalController extends AbstractController {
 		}
 		return response;
 	}
-
+	@ApiOperation(value = "Get new proposal message list")
 	@RequestMapping(method=RequestMethod.GET, value="/{proposalId}/proposalmessages/poll")
 	@Authorization({Role.Admin,Role.Brand,Role.Influencer})
-	public @ResponseBody DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false)  String timestamp ) throws Exception {
+	public DeferredProposalMessage getAllProposalMessagePoll(@PathVariable Long proposalId, @RequestParam(name="timestamp",required=false)  String timestamp ) throws Exception {
 		Date date = new Date();
 		if(StringUtils.isNotEmpty(timestamp)){
 			date = Util.parseJacksonDate(timestamp);
@@ -201,7 +200,7 @@ public class ProposalController extends AbstractController {
 		}
 		return result;
 	}
-
+	@ApiOperation(value = "Get proposal from proposal id")
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}")
 	@Authorization({Role.Brand,Role.Influencer})
 	public ProposalResponse getOneProposal(@PathVariable Long proposalId) throws Exception {
@@ -218,7 +217,7 @@ public class ProposalController extends AbstractController {
 		}
 		return response;
 	}
-
+	@ApiOperation(value = "Update proposal status")
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/status/{status}")
 	@Authorization({Role.Brand})
 	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status
@@ -229,21 +228,17 @@ public class ProposalController extends AbstractController {
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
 	}
-
+	@ApiOperation(value = "Add proposal to cart")
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/cart")
 	@Authorization({Role.Brand})
 	public Cart addProposalToCaert(@PathVariable Long proposalId) throws Exception {
 		Cart cart = cartService.addProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
 		return cart;
 	}
-
-
+	@ApiOperation(value = "Delete proposal from cart")
 	@RequestMapping(method=RequestMethod.DELETE,value="/{proposalId}/cart")
 	@Authorization({Role.Brand})
 	public void deleteProposalToCaert(@PathVariable Long proposalId) throws Exception {
 		cartService.deleteProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
 	}
-
-
-
 }
