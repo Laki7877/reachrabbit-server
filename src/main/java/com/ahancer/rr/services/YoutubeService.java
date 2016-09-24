@@ -105,7 +105,7 @@ public class YoutubeService {
 		
 	}
 	
-	public OAuthenticationResponse authentication(String accessToken) throws Exception {
+	public OAuthenticationResponse authentication(String accessToken, String ip) throws Exception {
 		YouTube youtube = getInstance(accessToken);
 		YouTube.Channels.List channelRequest = youtube.channels().list("contentDetails");
 		channelRequest.setMine(true);
@@ -123,7 +123,7 @@ public class YoutubeService {
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
 		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getSnippet().getTitle(), null, channel.getStatistics().getSubscriberCount()));
 		
-		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "google");
+		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "google", ip);
 		
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();

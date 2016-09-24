@@ -95,7 +95,7 @@ public class TransactionService {
 		cal.add(Calendar.DATE, 5);
 		transaction.setExpiredAt(cal.getTime());
 		transaction = transactionDao.save(transaction);
-		transaction.setTransactionNumber(EncodeUtil.encode(transaction.getTransactionId()));
+		transaction.setTransactionNumber(EncodeUtil.encodeLong(transaction.getTransactionId()));
 		transaction = transactionDao.save(transaction);
 		//create document
 		BrandTransactionDocument document = new BrandTransactionDocument();

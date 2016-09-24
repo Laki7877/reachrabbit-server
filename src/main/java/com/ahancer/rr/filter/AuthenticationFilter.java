@@ -17,23 +17,18 @@ import org.springframework.stereotype.Component;
 
 import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.TokenResponse;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.utils.CacheUtil;
-import com.ahancer.rr.utils.JwtUtil;
+import com.ahancer.rr.utils.EncodeUtil;
 import com.ahancer.rr.utils.Util;
 
 @Component
 @Order(2)
 public class AuthenticationFilter implements Filter {
-	
-	
 	@Autowired
 	private CacheUtil cacheUtil;
-	
-	@Autowired
-	private JwtUtil jwt;
-
 	@Autowired
 	private AuthenticationService authenticationService;
 
@@ -62,9 +57,13 @@ public class AuthenticationFilter implements Filter {
 		} else {
 			try {
 				String token = request.getHeader(ApplicationConstant.TokenHeader);
+				TokenResponse tokenObject = (TokenResponse) EncodeUtil.decodeObject(token);
+				if(!request.getRemoteAddr().equals(tokenObject.getIp())){
+					throw new Exception();
+				}
 				UserResponse userResponse = (UserResponse) cacheUtil.getCacheObject(ApplicationConstant.UserRequestCache, token);
 				if(null == userResponse) {
-					Long userId = jwt.getUserId(token);
+					Long userId = tokenObject.getUserId();
 					User user = authenticationService.getUserById(userId);
 					if(null != user){
 						userResponse = Util.getUserResponse(user);
@@ -76,7 +75,7 @@ public class AuthenticationFilter implements Filter {
 					request.setAttribute(ApplicationConstant.TokenAttribute, token);
 					chain.doFilter(req, res);
 				} else {
-					response.sendError(401);
+					throw new Exception();
 				}
 			}catch (Exception e) {
 				response.sendError(401);

@@ -111,7 +111,7 @@ public class InstagramService {
 	public Instagram getInstance(String accessToken) {
 		return new Instagram(new Token(accessToken, appSecret));
 	}
-	public OAuthenticationResponse authenticate(String accessToken) throws Exception {
+	public OAuthenticationResponse authenticate(String accessToken, String ip) throws Exception {
 		Instagram instagram = getInstance(accessToken);
 		Instagram instagram2 = getInstance(getAdminAccessToken());
 		UserInfoData userInfo = instagram.getCurrentUserInfo().getData();
@@ -124,7 +124,7 @@ public class InstagramService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.instagram.notpublic");
 		}
 		
-		AuthenticationResponse auth = authenticationService.influencerAuthentication(userInfo.getId(), "instagram");
+		AuthenticationResponse auth = authenticationService.influencerAuthentication(userInfo.getId(), "instagram", ip);
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
 		pages.add(new OAuthenticationResponse.Page(userInfo.getId(), userInfo.getFullName(), userInfo.getProfilePicture(), BigInteger.valueOf(userInfo.getCounts().getFollowedBy())));
 		

@@ -131,7 +131,7 @@ public class FacebookService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public OAuthenticationResponse authenticate(String accessToken) throws ResponseException {
+	public OAuthenticationResponse authenticate(String accessToken, String ip) throws Exception {
 		Facebook fb = getInstance(accessToken);
 		org.springframework.social.facebook.api.User fbUser = fb.userOperations().getUserProfile();
 		List<Account> accounts = fb.pageOperations().getAccounts();
@@ -147,7 +147,7 @@ public class FacebookService {
 			pages.add(new OAuthenticationResponse.Page(account.getId(), page.getName(), url, BigInteger.valueOf(page.getEngagement().getCount())));
 		}
 		
-		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook");
+		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook", ip);
 
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();

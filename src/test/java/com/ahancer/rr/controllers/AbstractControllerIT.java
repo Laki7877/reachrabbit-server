@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.After;
 import org.junit.Before;
@@ -36,6 +38,9 @@ import io.restassured.specification.RequestSpecification;
 @SpringApplicationConfiguration(classes = ReachrabbitServerApplication.class)
 @WebIntegrationTest
 public abstract class AbstractControllerIT {
+	
+	@Autowired
+	private HttpServletRequest request;
 
 	@Value("${server.port}") 
 	private int port;
@@ -121,9 +126,9 @@ public abstract class AbstractControllerIT {
 			inf.setInfluencerId(influencer.getUserId());
 			influencer.setInfluencer(influencerDao.save(inf));
 
-			adminToken = authenticationService.generateTokenFromUser(admin).getToken();
-			influencerToken = authenticationService.generateTokenFromUser(influencer).getToken();
-			brandToken = authenticationService.generateTokenFromUser(brand).getToken();
+			adminToken = authenticationService.generateTokenFromUser(admin, this.request.getRemoteAddr()).getToken();
+			influencerToken = authenticationService.generateTokenFromUser(influencer, this.request.getRemoteAddr()).getToken();
+			brandToken = authenticationService.generateTokenFromUser(brand, this.request.getRemoteAddr()).getToken();
 
 			this.admin = admin;
 			this.brand = brand;
@@ -131,6 +136,8 @@ public abstract class AbstractControllerIT {
 
 		} catch(ConstraintViolationException e) {
 			System.err.println(e.getConstraintName());
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 	@After
