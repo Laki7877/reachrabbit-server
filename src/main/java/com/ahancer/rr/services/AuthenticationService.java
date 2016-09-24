@@ -20,6 +20,9 @@ import com.ahancer.rr.utils.Util;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class AuthenticationService {
+	
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	@Autowired
 	private UserDao userDao;
@@ -37,7 +40,7 @@ public class AuthenticationService {
 		} else {
 			String token = jwt.generateToken(user.getUserId());
 			UserResponse userResponse = Util.getUserResponse(user);
-			CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+			cacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 			AuthenticationResponse response = new AuthenticationResponse(token);
 			return response;
 		}
@@ -49,7 +52,7 @@ public class AuthenticationService {
 		} else {
 			String token = jwt.generateToken(user.getUserId());
 			UserResponse userResponse = Util.getUserResponse(user);
-			CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+			cacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 			AuthenticationResponse response = new AuthenticationResponse(token);
 			return response;
 		}
@@ -61,7 +64,7 @@ public class AuthenticationService {
 		}
 		String token = jwt.generateToken(user.getUserId());
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+		cacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		AuthenticationResponse response = new AuthenticationResponse(token);
 		return response;
 	}
@@ -69,7 +72,7 @@ public class AuthenticationService {
 	public AuthenticationResponse generateTokenFromUser(User user) {
 		String token = jwt.generateToken(user.getUserId());
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+		cacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		AuthenticationResponse response = new AuthenticationResponse(token);
 		return response;
 	}
@@ -85,7 +88,7 @@ public class AuthenticationService {
 		} else {
 			String token = jwt.generateToken(user.getUserId());
 			UserResponse userResponse = Util.getUserResponse(user);
-			CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+			cacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 			AuthenticationResponse response = new AuthenticationResponse(token);
 			return response;
 		}

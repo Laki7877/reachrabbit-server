@@ -27,6 +27,10 @@ import com.ahancer.rr.utils.Util;
 @Order(2)
 public class AuthenticationFilter implements Filter {
 	
+	
+	@Autowired
+	private CacheUtil cacheUtil;
+	
 	@Autowired
 	private JwtUtil jwt;
 
@@ -58,13 +62,13 @@ public class AuthenticationFilter implements Filter {
 		} else {
 			try {
 				String token = request.getHeader(ApplicationConstant.TokenHeader);
-				UserResponse userResponse = (UserResponse) CacheUtil.getCacheObject(ApplicationConstant.UserRequestCache, token);
+				UserResponse userResponse = (UserResponse) cacheUtil.getCacheObject(ApplicationConstant.UserRequestCache, token);
 				if(null == userResponse) {
 					Long userId = jwt.getUserId(token);
 					User user = authenticationService.getUserById(userId);
 					if(null != user){
 						userResponse = Util.getUserResponse(user);
-						CacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+						cacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 					}
 				}
 				if(null != userResponse) {

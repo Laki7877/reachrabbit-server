@@ -31,6 +31,10 @@ import com.ahancer.rr.utils.Util;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class InfluencerService {
+	
+	@Autowired
+	private CacheUtil cacheUtil;
+	
 	@Autowired
 	private InfluencerDao influencerDao;
 
@@ -94,7 +98,7 @@ public class InfluencerService {
 		oldUser.setProfilePicture(newUser.getProfilePicture());
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
 	}
 	
@@ -108,7 +112,7 @@ public class InfluencerService {
 		oldUser.getInfluencer().setAccountNumber(request.getAccountNumber());
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
 	}
 

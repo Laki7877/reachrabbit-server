@@ -1,39 +1,32 @@
 package com.ahancer.rr.utils;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.Cache.ValueWrapper;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CacheUtil {
-	
-	public static Object getCacheObject(String cacheName,Object key){
-		CacheManager manager = CacheManager.getInstance();
-		Cache cache = manager.getCache(cacheName);
-		Element element = cache.get(key);
-		if(null != element) {
-			return element.getObjectValue();
-		}else {
+	@Autowired
+	private org.springframework.cache.CacheManager cacheManager;
+	public Object getCacheObject(String cacheName,Object key){
+		Cache cache = cacheManager.getCache(cacheName);
+		ValueWrapper wrapper = cache.get(key);
+		if(null != wrapper) {
+			return wrapper.get();
+		} else {
 			return null;
 		}
 	}
-	
-	public static void putCacheObject(String cacheName,Object key,Object value){
-		CacheManager manager = CacheManager.getInstance();
-		Cache cache = manager.getCache(cacheName);
-		Element element = new Element(key, value);
-		cache.put(element);
+	public void putCacheObject(String cacheName,Object key,Object value) {
+		Cache cache = cacheManager.getCache(cacheName);
+		cache.put(key, value);
 	}
-	
-	public static void removeCacheObject(String cacheName,Object key){
-		CacheManager manager = CacheManager.getInstance();
-		Cache cache = manager.getCache(cacheName);
-		Element element = cache.get(key);
-		if(null != element) {
-			cache.removeElement(element);
-		}
+	public void removeCacheObject(String cacheName,Object key) {
+		Cache cache = cacheManager.getCache(cacheName);
+		cache.putIfAbsent(key, null);
 	}
-	
-	public static void updateCacheObject(String cacheName,Object key,Object newValue) {
+	public void updateCacheObject(String cacheName,Object key,Object newValue) {
 		removeCacheObject(cacheName,key);
 		putCacheObject(cacheName,key,newValue);
 	}

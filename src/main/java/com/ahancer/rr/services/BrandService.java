@@ -36,6 +36,9 @@ import com.ahancer.rr.utils.Util;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class BrandService {
+	
+	@Autowired
+	private CacheUtil cacheUtil;
 
 
 	@Autowired
@@ -131,7 +134,7 @@ public class BrandService {
 		oldUser.getBrand().setBrandId(userId);
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
-		CacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
 	}
 
