@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,21 +36,18 @@ public class S3Util {
 	@Autowired
 	private AmazonS3Client amazonS3Client;
 	
-	@Value("${cloud.aws.s3.bucket}")
-	private String bucket;
-	
-	public String getUrl(String key) {
+	public String getUrl(String bucket, String key) {
 		return amazonS3Client.getResourceUrl(bucket, key);
 	}
 	
-	public PutObjectResult upload(String filePath, String uploadKey) throws FileNotFoundException {
-		return upload(new FileInputStream(filePath), uploadKey);
+	public PutObjectResult upload(String filePath,String bucket, String uploadKey) throws FileNotFoundException {
+		return upload(new FileInputStream(filePath), bucket, uploadKey);
 	}
 
-	public PutObjectResult upload(InputStream inputStream, String uploadKey) {
-		return upload(inputStream, uploadKey, new ObjectMetadata());
+	public PutObjectResult upload(InputStream inputStream, String bucket, String uploadKey) {
+		return upload(inputStream, bucket, uploadKey, new ObjectMetadata());
 	}
-	public PutObjectResult upload(InputStream inputStream, String uploadKey, ObjectMetadata metaData) {
+	public PutObjectResult upload(InputStream inputStream, String bucket, String uploadKey, ObjectMetadata metaData) {
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, uploadKey, inputStream, metaData);
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
 		PutObjectResult putObjectResult = amazonS3Client.putObject(putObjectRequest);
@@ -59,24 +55,24 @@ public class S3Util {
 		return putObjectResult;
 	}
 
-	public PutObjectResult upload(MultipartFile file, String uploadKey) throws IOException {
+	public PutObjectResult upload(MultipartFile file, String bucket, String uploadKey) throws IOException {
 		ObjectMetadata metaData = new ObjectMetadata();
 		metaData.setContentType(file.getContentType());
-		return upload(file.getInputStream(), uploadKey, metaData);
+		return upload(file.getInputStream(), bucket, uploadKey, metaData);
 	}
 
-	public void delete(String key){ 
+	public void delete(String bucket, String key){ 
 		amazonS3Client.deleteObject(bucket, key);
 	}
 	
-	public List<PutObjectResult> upload(MultipartFile[] multipartFiles) {
+	public List<PutObjectResult> upload(MultipartFile[] multipartFiles, String bucket) {
 		List<PutObjectResult> putObjectResults = new ArrayList<>();
 
 		Arrays.stream(multipartFiles)
 				.filter(multipartFile -> !StringUtils.isNullOrEmpty(multipartFile.getOriginalFilename()))
 				.forEach(multipartFile -> {
 					try {
-						putObjectResults.add(upload(multipartFile.getInputStream(), multipartFile.getOriginalFilename()));
+						putObjectResults.add(upload(multipartFile.getInputStream(),bucket, multipartFile.getOriginalFilename()));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -84,7 +80,7 @@ public class S3Util {
 
 		return putObjectResults;
 	}
-	public ResponseEntity<byte[]> download(String key) throws IOException {
+	public ResponseEntity<byte[]> download(String bucket, String key) throws IOException {
 		GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
 
 		S3Object s3Object = amazonS3Client.getObject(getObjectRequest);
@@ -103,7 +99,7 @@ public class S3Util {
 		return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
 	}
 
-	public List<S3ObjectSummary> list() {
+	public List<S3ObjectSummary> list(String bucket) {
 		ObjectListing objectListing = amazonS3Client.listObjects(new ListObjectsRequest().withBucketName(bucket));
 
 		List<S3ObjectSummary> s3ObjectSummaries = objectListing.getObjectSummaries();

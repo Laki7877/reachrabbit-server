@@ -14,26 +14,27 @@ import org.springframework.stereotype.Component;
 import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.response.MessageCountResponse;
 import com.ahancer.rr.services.EmailService;
+import com.ahancer.rr.utils.S3Util;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 @Component
 public class ScheduledTask {
-	
 	@Autowired
 	private ProposalMessageDao proposalMessageDao;
-	
 	@Autowired
 	private EmailService emailService;
-	
 	@Autowired
 	private MessageSource messageSource;
-	
+	@Autowired
+	private S3Util s3Util;
 	@Value("${ui.host}")
 	private String uiHost;
-	
-	//@Scheduled(fixedRate = 60000)
+	@Value("${server.env}")
+	private String env;
+	@Value("${cloud.aws.s3.bucket.backup}")
+	private String backupBucket;
 	@Scheduled(cron="0 0 * * * *")
-	//@Scheduled(fixedRate = 180000)
-    public void reportCurrentTime() {
+    public void sendEmailHourly() {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -1);
 		//cal.add(Calendar.MINUTE, -3);
@@ -62,7 +63,25 @@ public class ScheduledTask {
 					, influencerSubject
 					, influencerBody.replace("{{Message Count}}", message.getMessageCount().toString()));
 		}
-		
     }
+	
+	@Scheduled(cron="0 * 1 * * *")
+	public void cleanBackupfile() {
+		if(!"production".equals(env)) {
+			return;
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -7);
+		List<S3ObjectSummary> list = s3Util.list(backupBucket);
+		for(S3ObjectSummary summary : list){
+			if("backup/".equals(summary.getKey())){
+				continue;
+			}
+			if(summary.getLastModified().before(cal.getTime())){
+				s3Util.delete(backupBucket, summary.getKey());
+			}
+		}
+	}
+	
 
 }

@@ -3,6 +3,7 @@ package com.ahancer.rr.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,8 @@ public class DataController {
 	private CompletionTimeDao completionTimeDao;
 	@Autowired
 	private S3Util s3Util;
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucket;
 	@ApiOperation(value = "Get media list")
 	@RequestMapping(value="/media",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
@@ -73,12 +76,12 @@ public class DataController {
 	@RequestMapping(value="/clear",method=RequestMethod.DELETE)
 	@Authorization(Role.Admin)
 	public int clearS3() throws Exception {
-		 List<S3ObjectSummary> list = s3Util.list();
+		 List<S3ObjectSummary> list = s3Util.list(bucket);
 		 for(S3ObjectSummary obj : list){
 			 if("placeholder-profile-picture-bot.png".equals(obj.getKey())){
 				 continue;
 			 }
-			 s3Util.delete(obj.getKey());
+			 s3Util.delete(bucket,obj.getKey());
 		 }
 		 return list.size();
 	}
