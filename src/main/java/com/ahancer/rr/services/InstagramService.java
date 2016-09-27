@@ -61,6 +61,12 @@ public class InstagramService {
 			return false;
 		}
 	}
+	public void getPostInfo(String postId) throws InstagramException {
+		Instagram instagram = getInstance(getAdminAccessToken());
+
+		BigInteger comments = BigInteger.valueOf(instagram.getMediaInfo(postId).getData().getComments().getCount());
+		BigInteger likes = BigInteger.valueOf(instagram.getMediaInfo(postId).getData().getLikes().getCount());
+	}
 	public InstagramProfileResponse getProfile(String socialId) throws InstagramException {
 		Instagram instagram = getInstance(getAdminAccessToken());
 		UserInfoData userInfo = instagram.getUserInfo(socialId).getData();

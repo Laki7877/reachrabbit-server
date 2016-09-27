@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.social.facebook.api.Account;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.Page;
+import org.springframework.social.facebook.api.Post;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.oauth2.AccessGrant;
@@ -64,6 +65,21 @@ public class FacebookService {
 	
 	public String getAppAccessToken() {
 		return appKey + "|" + appSecret;
+	}
+	public void getPostInfo(String postId) throws ResponseException {
+		Gson gson = new Gson();
+		Facebook fb = getInstance(getAppAccessToken());
+		Post post = fb.fetchObject(postId, Post.class, "comments.limit(0).summary(true),likes.limit(0).summary(true),shares");
+
+		JsonObject ext = gson.toJsonTree(post).getAsJsonObject().getAsJsonObject("extraData");
+		
+		BigInteger likes = ext.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsBigInteger();
+		BigInteger comments = ext.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsBigInteger();
+		BigInteger shares = BigInteger.ZERO;
+		if(ext.has("shares")) {
+			shares = ext.getAsJsonObject("shares").get("count").getAsBigInteger();
+		}
+		
 	}
 	public FacebookProfileResponse getProfile(String pageId) throws ResponseException {
 		Gson gson = new Gson();

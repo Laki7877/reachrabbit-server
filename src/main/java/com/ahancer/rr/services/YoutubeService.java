@@ -1,6 +1,7 @@
 package com.ahancer.rr.services;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 @Service
@@ -66,7 +68,18 @@ public class YoutubeService {
 		Credential credential = new GoogleCredential().setAccessToken(accessToken);
 		return new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).build();
 	}
-
+	public void getPostInfo(String postId) throws Exception{
+		Credential credential = new GoogleCredential();
+		YouTube youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).setApplicationName("Reachrabbit-Server/1.05R").build();
+		YouTube.Videos.List videoList = youtube.videos().list("statistics");
+		videoList.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId(postId);
+		Video video = videoList.execute().getItems().get(0);
+		
+		BigInteger likes = video.getStatistics().getLikeCount();
+		BigInteger comments = video.getStatistics().getCommentCount();
+		BigInteger views = video.getStatistics().getViewCount();
+		
+	}
 	public YouTubeProfileResponse getVideoFeed(String channelId) throws GeneralSecurityException, IOException{
 		Credential credential = new GoogleCredential();
 		YouTubeProfileResponse ytres = new YouTubeProfileResponse();
