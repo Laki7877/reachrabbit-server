@@ -10,12 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.springframework.beans.factory.annotation.Configurable;
-
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.ResourceType;
 
 @Entity(name="resource")
-@Configurable
 public class Resource extends AbstractModel implements Serializable{
 	
 	private static final long serialVersionUID = -8947832737382539230L;
@@ -34,7 +32,7 @@ public class Resource extends AbstractModel implements Serializable{
 
 	}
 	public String getUrl() {
-		return "https://reachrabbit-dev.s3-ap-southeast-1.amazonaws.com/" + this.getResourcePath();
+		return "https://" + ApplicationConstant.Bucket +".s3-ap-southeast-1.amazonaws.com/" + this.getResourcePath();
 	}
 
 	public Long getResourceId() {
