@@ -285,6 +285,7 @@ public class ProposalService {
 		firstMessage.setIsInfluencerRead(true);
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
+		firstMessage.setProposalId(proposal.getProposalId());
 		firstMessage.setUserId(influecnerId);
 		//firstMessage.setCreatedAt(new Date());
 		firstMessage = proposalMessageDao.save(firstMessage);
@@ -315,10 +316,9 @@ public class ProposalService {
 		rebotMessage.setIsInfluencerRead(true);
 		String message = messageSource.getMessage("robot.proposal.message", null, local).replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
 		rebotMessage.setMessage(message);
-		rebotMessage.setProposal(proposal);
+		rebotMessage.setProposalId(proposal.getProposalId());
 		User robotUser = robotService.getRobotUser();
 		rebotMessage.setUserId(robotUser.getUserId());
-		//rebotMessage.setCreatedAt(new Date());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
 		rebotMessage.setUser(robotUser);
@@ -374,7 +374,8 @@ public class ProposalService {
 			emailService.send(to, subject, body);
 		}
 		User robotUser = robotService.getRobotUser();
-		rebotMessage.setProposal(oldProposal);
+		//rebotMessage.setProposal(oldProposal);
+		rebotMessage.setProposalId(oldProposal.getProposalId());
 		rebotMessage.setUserId(robotUser.getUserId());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		rebotMessage.setUser(robotUser);

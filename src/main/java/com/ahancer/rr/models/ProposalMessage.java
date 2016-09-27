@@ -34,7 +34,7 @@ public class ProposalMessage implements Serializable  {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long messageId;
 	
-	@Column(name="proposalId", nullable = false)
+	@Column(name="proposalId")
 	private Long proposalId;
 	
 	@JsonIgnore
