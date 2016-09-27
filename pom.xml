@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ahancer.rr</groupId>
 	<artifactId>reachrabbit</artifactId>
-	<version>0.9.1</version>
+	<version>v3</version>
 	<packaging>jar</packaging>
 
 	<name>reachrabbit-server</name>
@@ -18,7 +18,7 @@
 	</parent>
 
 	<properties>
-		<docker.image.prefix>reachrabbit</docker.image.prefix>
+		<docker.image.prefix>ahancercompany/reachrabbit-server</docker.image.prefix>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -238,7 +238,7 @@
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.4.11</version>
 				<configuration>
-					<imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+					<imageName>${docker.image.prefix}:${project.version}</imageName>
 					<dockerDirectory>src/main/docker</dockerDirectory>
 					<resources>
 						<resource>

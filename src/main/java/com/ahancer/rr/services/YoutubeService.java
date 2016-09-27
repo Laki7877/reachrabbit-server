@@ -73,7 +73,7 @@ public class YoutubeService {
 		YouTube youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).setApplicationName("Reachrabbit-Server/1.05R").build();
 		
 		YouTube.Channels.List chanlist = youtube.channels().list("snippet,contentDetails,statistics");
-		chanlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId(channelId);
+		chanlist.setKey(apiKey).setId(channelId);
 		ChannelListResponse chanResult = chanlist.execute();
 		Channel chan = chanResult.getItems().get(0);
 		
@@ -81,7 +81,7 @@ public class YoutubeService {
 		String playlistId = chanResult.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();
 		YouTube.PlaylistItems.List ypllist = youtube.playlistItems().list("snippet");
 		ypllist.setPart("snippet,contentDetails");
-		ypllist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setPlaylistId(playlistId);
+		ypllist.setKey(apiKey).setPlaylistId(playlistId);
 
 		PlaylistItemListResponse result_pitem = ypllist.execute();
 		pl.addAll(result_pitem.getItems());
@@ -95,7 +95,7 @@ public class YoutubeService {
 		
 		String videoQuery =  String.join(",", videoIds);
 		YouTube.Videos.List yvlist = youtube.videos().list("snippet,statistics");
-		yvlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId(videoQuery);
+		yvlist.setKey(apiKey).setId(videoQuery);
 		VideoListResponse result = yvlist.execute();
 		
 		ytres.setVideos(result.getItems());
