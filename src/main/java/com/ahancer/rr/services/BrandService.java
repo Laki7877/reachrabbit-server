@@ -2,9 +2,7 @@ package com.ahancer.rr.services;
 
 
 
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.constants.ApplicationConstant;
-import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BrandDao;
-import com.ahancer.rr.daos.CampaignDao;
-import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Brand;
-import com.ahancer.rr.models.Campaign;
-import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.BrandSignUpRequest;
 import com.ahancer.rr.request.ProfileRequest;
@@ -47,11 +40,11 @@ public class BrandService {
 	@Autowired
 	private UserDao userDao;
 
-	@Autowired
-	private CampaignDao campaignDao;
-
-	@Autowired
-	private MediaDao mediaDao;
+//	@Autowired
+//	private CampaignDao campaignDao;
+//
+//	@Autowired
+//	private MediaDao mediaDao;
 
 	@Autowired
 	private EncryptionUtil encrypt;
@@ -86,20 +79,18 @@ public class BrandService {
 		brand.setBrandId(user.getUserId());
 		brand = brandDao.save(brand);
 		//Setup campaign object
-		Campaign campaign = new Campaign();
-//		Calendar cal = Calendar.getInstance();
-//		cal.add(Calendar.DAY_OF_MONTH, 5);
-		campaign.setProposalDeadline(null);
-		campaign.setBrandId(brand.getBrandId());
-		campaign.setTitle(null);
-		campaign.setCategory(null);
-		campaign.setDescription(null);
-		campaign.setStatus(CampaignStatus.Draft);
-		Set<Media> allMedia = new HashSet<Media>();
-		mediaDao.findAll().forEach(allMedia::add);
-		campaign.setMedia(allMedia);
-		campaign.setRabbitFlag(false);
-		campaign = campaignDao.save(campaign);
+//		Campaign campaign = new Campaign();
+//		campaign.setProposalDeadline(null);
+//		campaign.setBrandId(brand.getBrandId());
+//		campaign.setTitle(null);
+//		campaign.setCategory(null);
+//		campaign.setDescription(null);
+//		campaign.setStatus(CampaignStatus.Draft);
+//		Set<Media> allMedia = new HashSet<Media>();
+//		mediaDao.findAll().forEach(allMedia::add);
+//		campaign.setMedia(allMedia);
+//		campaign.setRabbitFlag(false);
+//		campaign = campaignDao.save(campaign);
 		user.setBrand(brand);
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.brand.signup.subject",null,locale);
