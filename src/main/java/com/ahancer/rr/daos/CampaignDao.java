@@ -45,6 +45,8 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	
 	public Campaign findByCampaignIdAndBrandId(Long campaignId, Long brandId);
 	
+	public Campaign findByCampaignIdAndStatus(Long campaignId, CampaignStatus status);
+	
 	@Modifying
 	@Query("UPDATE campaign c SET c.rabbitFlag=:rabbitFlag WHERE c.campaignId=:campaignId AND c.brandId=:brandId")
 	public int updateRabbitFlag(@Param("rabbitFlag") Boolean rabbitFlag, @Param("campaignId") Long campaignId,@Param("brandId") Long brandId);

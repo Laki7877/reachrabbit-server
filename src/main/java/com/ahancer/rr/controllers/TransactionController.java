@@ -20,6 +20,7 @@ import com.ahancer.rr.custom.type.TransactionType;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.models.Transaction;
+import com.ahancer.rr.services.ProposalService;
 import com.ahancer.rr.services.TransactionService;
 
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,8 @@ import io.swagger.annotations.ApiOperation;
 public class TransactionController extends AbstractController {
 	@Autowired
 	private TransactionService transactionService;
+	@Autowired
+	private ProposalService proposalService;
 	@ApiOperation(value = "Get transaction pagination")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Admin, Role.Influencer, Role.Brand})
@@ -52,6 +55,7 @@ public class TransactionController extends AbstractController {
 	@Authorization(Role.Brand)
 	public Transaction createTransaction(@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		Transaction transaction = transactionService.createTransactionByBrand(this.getUserRequest(),locale);
+		proposalService.processInboxPolling(this.getUserRequest().getBrand().getBrandId());
 		return transaction;
 	}
 	@ApiOperation(value = "Get transaction by transaction id")

@@ -233,12 +233,14 @@ public class ProposalController extends AbstractController {
 	@Authorization({Role.Brand})
 	public Cart addProposalToCaert(@PathVariable Long proposalId) throws Exception {
 		Cart cart = cartService.addProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
+		proposalService.processInboxPolling(this.getUserRequest().getBrand().getBrandId());
 		return cart;
 	}
 	@ApiOperation(value = "Delete proposal from cart")
 	@RequestMapping(method=RequestMethod.DELETE,value="/{proposalId}/cart")
 	@Authorization({Role.Brand})
-	public void deleteProposalToCaert(@PathVariable Long proposalId) throws Exception {
+	public void deleteProposalFromCaert(@PathVariable Long proposalId) throws Exception {
 		cartService.deleteProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
+		proposalService.processInboxPolling(this.getUserRequest().getBrand().getBrandId());
 	}
 }

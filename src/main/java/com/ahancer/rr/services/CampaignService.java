@@ -256,7 +256,7 @@ public class CampaignService {
 	}
 	
 	public CampaignResponse findOneByInfluencer(Long campaignId, Long influencerId){
-		Campaign capaign = campaignDao.findOne(campaignId);
+		Campaign capaign = campaignDao.findByCampaignIdAndStatus(campaignId, CampaignStatus.Open);
 		CampaignResponse response = new CampaignResponse(capaign,Role.Influencer.displayName());
 		response.setIsApply(false);
 		for(Proposal proposal : response.getProposals()){
@@ -276,7 +276,7 @@ public class CampaignService {
 	}
 	
 	public CampaignResponse findOneByPublic(Long campaignId) {
-		Campaign capaign = campaignDao.findOne(campaignId);
+		Campaign capaign = campaignDao.findByCampaignIdAndStatus(campaignId, CampaignStatus.Open);
 		CampaignResponse response = new CampaignResponse(capaign,Role.Public.displayName());
 		return response;
 	}
