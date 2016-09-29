@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.social.facebook.api.Account;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.Page;
-import org.springframework.social.facebook.api.Post;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.oauth2.AccessGrant;
@@ -23,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.Post;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.FacebookProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
@@ -66,20 +66,21 @@ public class FacebookService {
 	public String getAppAccessToken() {
 		return appKey + "|" + appSecret;
 	}
-	public void getPostInfo(String postId) throws ResponseException {
+	public Post getPostInfo(String postId) throws ResponseException {
 		Gson gson = new Gson();
 		Facebook fb = getInstance(getAppAccessToken());
-		Post post = fb.fetchObject(postId, Post.class, "comments.limit(0).summary(true),likes.limit(0).summary(true),shares");
-
+		org.springframework.social.facebook.api.Post post = fb.fetchObject(postId, org.springframework.social.facebook.api.Post.class, "comments.limit(0).summary(true),likes.limit(0).summary(true),shares");
 		JsonObject ext = gson.toJsonTree(post).getAsJsonObject().getAsJsonObject("extraData");
-		
-		BigInteger likes = ext.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsBigInteger();
-		BigInteger comments = ext.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsBigInteger();
-		BigInteger shares = BigInteger.ZERO;
-		if(ext.has("shares")) {
-			shares = ext.getAsJsonObject("shares").get("count").getAsBigInteger();
-		}
-		
+		Long likes = ext.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsLong();
+		Long comments = ext.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsLong();
+		Long shares = (long) post.getShares();
+		Post postModel = new Post();
+		postModel.setViewCount(0L);
+		postModel.setCommentCount(comments);
+		postModel.setLikeCount(likes);
+		postModel.setShareCount(shares);
+		postModel.setSocialPostId(postId);
+		return postModel;
 	}
 	public FacebookProfileResponse getProfile(String pageId) throws ResponseException {
 		Gson gson = new Gson();
