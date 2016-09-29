@@ -30,6 +30,7 @@ import com.ahancer.rr.daos.ProposalMessageDao;
 import com.ahancer.rr.daos.WalletDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
+import com.ahancer.rr.models.Cart;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
@@ -152,7 +153,13 @@ public class ProposalService {
 				poll.setSelection(countByBrand(userId, ProposalStatus.Selection));
 				poll.setWorking(countByBrand(userId, ProposalStatus.Working));
 				poll.setComplete(countByBrand(userId, ProposalStatus.Complete));
-				poll.setCart((long) cartService.getInCartByBrand(userId).getProposals().size());
+				
+				Cart c = cartService.getInCartByBrand(userId);
+				if(c != null) {
+					poll.setCart((long) c.getProposals().size());
+				} else {
+					poll.setCart(0L);
+				}
 				m.setResult(poll);
 			} else if(m.getRole() == Role.Influencer) {
 				PollingCounter poll = new PollingCounter(); 
