@@ -53,7 +53,8 @@ public class AuthenticationFilter implements Filter {
 				|| path.startsWith("/configuration") 
 				|| path.startsWith("/v2")
 				|| path.startsWith("/subscription")
-				|| path.startsWith("/test")) {
+				|| path.startsWith("/test")
+				|| path.startsWith("/campaigns/public")) {
 			chain.doFilter(req, res);
 		} else {
 			try {

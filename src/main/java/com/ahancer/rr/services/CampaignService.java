@@ -274,6 +274,12 @@ public class CampaignService {
 		CampaignResponse response = new CampaignResponse(capaign,Role.Admin.displayName());
 		return response;
 	}
+	
+	public CampaignResponse findOneByPublic(Long campaignId) {
+		Campaign capaign = campaignDao.findOne(campaignId);
+		CampaignResponse response = new CampaignResponse(capaign,Role.Public.displayName());
+		return response;
+	}
 
 	public CampaignResponse findOneByBrand(Long campaignId, Long brandId) {
 		Campaign capaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
