@@ -69,6 +69,9 @@ public class ProposalMessageService {
 	}
 
 	@Autowired
+	private ProposalService proposalService;
+	
+	@Autowired
 	private ProposalMessageDao proposalMessageDao;
 
 	@Autowired
@@ -165,6 +168,7 @@ public class ProposalMessageService {
 			response = proposalMessageDao.findByProposalProposalIdAndProposalCampaignBrandIdAndCreatedAtBefore(proposalId, brandId, before, pageable);
 		}
 		proposalMessageDao.updateBrandReadMessage(proposalId, true);
+		proposalService.processInboxPolling(brandId);
 		return response;
 	}
 
@@ -176,7 +180,7 @@ public class ProposalMessageService {
 			response = proposalMessageDao.findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(proposalId, influencerId, before, pageable);
 		}
 		proposalMessageDao.updateInfluencerReadMessage(proposalId, true);
-		
+		proposalService.processInboxPolling(influencerId);
 		return response;
 	}
 }
