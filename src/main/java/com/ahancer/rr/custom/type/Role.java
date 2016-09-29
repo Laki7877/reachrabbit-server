@@ -4,7 +4,8 @@ public enum Role {
 	Admin("Admin"),
 	Brand("Brand"),
 	Influencer("Influencer"),
-	Bot("Bot");
+	Bot("Bot"),
+	Public("Public");
 
 	private String displayName;
 
