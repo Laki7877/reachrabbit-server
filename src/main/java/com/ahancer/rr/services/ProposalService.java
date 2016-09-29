@@ -1,5 +1,6 @@
 package com.ahancer.rr.services;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -62,6 +63,9 @@ public class ProposalService {
 	private MessageSource messageSource;
 	
 	@Autowired
+	private CartService cartService;
+
+	@Autowired
 	private WalletDao walletDao;
 	
 	@Autowired
@@ -72,7 +76,41 @@ public class ProposalService {
 
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
 
-	public static class DeferredProposal extends DeferredResult<Long> {
+	public class PollingCounter implements Serializable{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private ProposalCountResponse working;
+		private ProposalCountResponse selection;
+		private ProposalCountResponse complete;
+		private Long cart;
+		public ProposalCountResponse getWorking() {
+			return working;
+		}
+		public void setWorking(ProposalCountResponse working) {
+			this.working = working;
+		}
+		public ProposalCountResponse getSelection() {
+			return selection;
+		}
+		public void setSelection(ProposalCountResponse selection) {
+			this.selection = selection;
+		}
+		public ProposalCountResponse getComplete() {
+			return complete;
+		}
+		public void setComplete(ProposalCountResponse complete) {
+			this.complete = complete;
+		}
+		public Long getCart() {
+			return cart;
+		}
+		public void setCart(Long cart) {
+			this.cart = cart;
+		}
+	}
+	public static class DeferredProposal extends DeferredResult<PollingCounter> {
 		private Role role;
 		public DeferredProposal(Role role) {
 			super(timeout, null);
@@ -110,27 +148,18 @@ public class ProposalService {
 		}
 		for(DeferredProposal m : proposalPollingMap.get(userId)) {
 			if(m.getRole() == Role.Brand) {
-				Long count = countByUnreadProposalForBrand(userId);
-				m.setResult(count);
+				PollingCounter poll = new PollingCounter(); 
+				poll.setSelection(countByBrand(userId, ProposalStatus.Selection));
+				poll.setWorking(countByBrand(userId, ProposalStatus.Working));
+				poll.setComplete(countByBrand(userId, ProposalStatus.Complete));
+				poll.setCart((long) cartService.getInCartByBrand(userId).getProposals().size());
+				m.setResult(poll);
 			} else if(m.getRole() == Role.Influencer) {
-				Long count = countByUnreadProposalForInfluencer(userId);
-				m.setResult(count);
-			}
-
-		}
-	}
-	
-	public void processInboxPollingByOne(Long userId) {
-		if(proposalPollingMap.get(userId) == null) {
-			return;
-		}
-		for(DeferredProposal m : proposalPollingMap.get(userId)) {
-			if(m.getRole() == Role.Brand) {
-				Long count = countByUnreadProposalForBrand(userId) + 1;
-				m.setResult(count);
-			} else if(m.getRole() == Role.Influencer) {
-				Long count = countByUnreadProposalForInfluencer(userId) + 1;
-				m.setResult(count);
+				PollingCounter poll = new PollingCounter(); 
+				poll.setSelection(countByInfluencer(userId, ProposalStatus.Selection));
+				poll.setWorking(countByInfluencer(userId, ProposalStatus.Working));
+				poll.setComplete(countByInfluencer(userId, ProposalStatus.Complete));
+				m.setResult(poll);
 			}
 
 		}

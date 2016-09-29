@@ -223,8 +223,8 @@ public class ProposalController extends AbstractController {
 	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		Proposal proposal = proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId(), locale);
-		proposalService.processInboxPollingByOne(proposal.getInfluencerId());
-		proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
+		proposalService.processInboxPolling(proposal.getInfluencerId());
+		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
 	}

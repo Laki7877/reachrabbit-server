@@ -190,8 +190,8 @@ public class CampaignService {
 						, robotMessage
 						, robotUser.getUserId()
 						, robotUser.getRole());
-				proposalService.processInboxPollingByOne(proposal.getInfluencerId());
-				proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
+				proposalService.processInboxPolling(proposal.getInfluencerId());
+				proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
