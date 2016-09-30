@@ -40,6 +40,7 @@ public class CampaignResponse implements Serializable {
 	private Integer countProposalComplete;
 	private Date updatedAt;
 	private Boolean isApply;
+	private String publicCode;
 	@JsonIgnore
 	private Set<Proposal> proposals = new HashSet<Proposal>(0);
 	private Proposal proposal;
@@ -96,6 +97,7 @@ public class CampaignResponse implements Serializable {
 		this.proposalDeadline = campaign.getProposalDeadline();
 		this.status = campaign.getStatus();
 		this.rabbitFlag = campaign.getRabbitFlag();
+		this.publicCode = campaign.getPublicCode();
 	}
 
 	public Long getCampaignId() {
@@ -273,5 +275,14 @@ public class CampaignResponse implements Serializable {
 	public void setProposals(Set<Proposal> proposals) {
 		this.proposals = proposals;
 	}
+
+	public String getPublicCode() {
+		return publicCode;
+	}
+
+	public void setPublicCode(String publicCode) {
+		this.publicCode = publicCode;
+	}
+	
 	
 }
