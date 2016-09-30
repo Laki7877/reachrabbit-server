@@ -92,9 +92,9 @@ public class CampaignController extends AbstractController {
 	}
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/public/{campaignId}",method=RequestMethod.GET)
-	public CampaignResponse getOnePublicCampaign(@PathVariable Long campaignId) throws Exception {
+	public CampaignResponse getOnePublicCampaign(@PathVariable String publicCode) throws Exception {
 		CampaignResponse response = null;
-		response = campaignService.findOneByPublic(campaignId);
+		response = campaignService.findOneByPublic(publicCode);
 		return response;
 	}
 	@ApiOperation(value = "Create new campaign")

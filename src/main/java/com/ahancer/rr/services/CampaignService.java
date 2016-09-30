@@ -278,8 +278,11 @@ public class CampaignService {
 		return response;
 	}
 	
-	public CampaignResponse findOneByPublic(Long campaignId) {
-		Campaign capaign = campaignDao.findByCampaignIdAndStatus(campaignId, CampaignStatus.Open);
+	public CampaignResponse findOneByPublic(String publicCode) {
+		Campaign capaign = campaignDao.findByPublicCodeAndStatus(publicCode, CampaignStatus.Open);
+		if(null == capaign){
+			return null;
+		}
 		CampaignResponse response = new CampaignResponse(capaign,Role.Public.displayName());
 		return response;
 	}
