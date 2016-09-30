@@ -97,6 +97,9 @@ public class Campaign extends AbstractModel implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy="campaign",fetch=FetchType.EAGER)
 	private Set<Proposal> proposals = new HashSet<Proposal>(0);
+	
+	@Column(name="publicCode",length=32)
+	private String publicCode;
 
 	public Campaign() {
 
@@ -228,6 +231,14 @@ public class Campaign extends AbstractModel implements Serializable {
 
 	public void setProposals(Set<Proposal> proposals) {
 		this.proposals = proposals;
+	}
+
+	public String getPublicCode() {
+		return publicCode;
+	}
+
+	public void setPublicCode(String publicCode) {
+		this.publicCode = publicCode;
 	}
 	
 }

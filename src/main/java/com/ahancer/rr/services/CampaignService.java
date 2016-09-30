@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,8 @@ public class CampaignService {
 		campaign.setWebsite(request.getWebsite());
 		campaign.setMainResource(request.getMainResource());
 		campaign.setRabbitFlag(false);
+		String publicCode = UUID.randomUUID().toString().replace("-", "");
+		campaign.setPublicCode(publicCode);
 		campaign = campaignDao.save(campaign);
 		//Setup resources
 		Set<CampaignResource> resources = request.getCampaignResources();
@@ -289,5 +292,15 @@ public class CampaignService {
 	
 	public void dismissCampaignNotification(Long campaignId, Long brandId){
 		campaignDao.updateRabbitFlag(true, campaignId, brandId);
+	}
+	
+	public void updatePublicCode(){
+		for(Campaign campaign : campaignDao.findAll()){
+			if(StringUtils.isEmpty(campaign.getPublicCode())){
+				campaign.setPublicCode(UUID.randomUUID().toString().replace("-", ""));
+				campaignDao.save(campaign);
+			}
+			
+		}
 	}
 }
