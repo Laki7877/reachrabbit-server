@@ -15,10 +15,8 @@ import com.ahancer.rr.models.Proposal;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class CartService {
-	
 	@Autowired
 	private CartDao cartDao;
-	
 	@Autowired
 	private ProposalDao proposalDao;
 	
@@ -43,9 +41,9 @@ public class CartService {
 		cart = cartDao.save(cart);
 		proposal.setCartId(cart.getCartId());
 		proposal = proposalDao.save(proposal);
+		cart.getProposals().add(proposal);
 		return cart;
 	}
-	
 	
 	public void deleteProposalToCart(Long proposalId,Long brandId) throws Exception{
 		Proposal proposal = proposalDao.findByProposalIdAndCampaignBrandId(proposalId, brandId);

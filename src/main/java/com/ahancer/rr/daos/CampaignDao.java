@@ -1,6 +1,7 @@
 package com.ahancer.rr.daos;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -29,6 +30,13 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status ")
 	public Page<CampaignResponse> findByBrandIdAndStatus(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, Pageable pageable);
 	
+	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status AND c.proposalDeadline > :proposalDeadline")
+	public Page<CampaignResponse> findByBrandIdAndStatusOpen(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, @Param("proposalDeadline") Date proposalDeadline, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status AND c.proposalDeadline <= :proposalDeadline")
+	public Page<CampaignResponse> findByBrandIdAndStatusClose(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, @Param("proposalDeadline") Date proposalDeadline, Pageable pageable);
+	
 	public Page<Campaign> findAll(Pageable pageable);
 	
 	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status IN :statuses ")
@@ -36,6 +44,10 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	
 	
 	public Campaign findByCampaignIdAndBrandId(Long campaignId, Long brandId);
+	
+	public Campaign findByCampaignIdAndStatus(Long campaignId, CampaignStatus status);
+	
+	public Campaign findByPublicCodeAndStatus(String publicCode, CampaignStatus status);
 	
 	@Modifying
 	@Query("UPDATE campaign c SET c.rabbitFlag=:rabbitFlag WHERE c.campaignId=:campaignId AND c.brandId=:brandId")

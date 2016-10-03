@@ -2,9 +2,11 @@ package com.ahancer.rr.services;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +76,8 @@ public class CampaignService {
 		campaign.setWebsite(request.getWebsite());
 		campaign.setMainResource(request.getMainResource());
 		campaign.setRabbitFlag(false);
+		String publicCode = UUID.randomUUID().toString().replace("-", "");
+		campaign.setPublicCode(publicCode);
 		campaign = campaignDao.save(campaign);
 		//Setup resources
 		Set<CampaignResource> resources = request.getCampaignResources();
@@ -189,8 +193,8 @@ public class CampaignService {
 						, robotMessage
 						, robotUser.getUserId()
 						, robotUser.getRole());
-				proposalService.processInboxPollingByOne(proposal.getInfluencerId());
-				proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
+				proposalService.processInboxPolling(proposal.getInfluencerId());
+				proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 			}
 		}
@@ -203,16 +207,32 @@ public class CampaignService {
 	}
 	
 	public Page<CampaignResponse> findAllByAdmin(Pageable pageable) {
-		return campaignDao.findCampaignByAdmin(pageable);
+		Page<CampaignResponse> response = campaignDao.findCampaignByAdmin(pageable);
+		return response;
 	}
 
 	public Page<CampaignResponse> findAllByBrand(Long brandId, String statusValue, Pageable pageable) {
+		Page<CampaignResponse> response = null;
 		if(StringUtils.isNotEmpty(statusValue)) {
 			CampaignStatus status = CampaignStatus.valueOf(statusValue);
-			return campaignDao.findByBrandIdAndStatus(brandId, status, pageable);
+			switch(status){
+			case Draft:
+				response = campaignDao.findByBrandIdAndStatus(brandId, status, pageable);
+				break;
+			case Open:
+				response = campaignDao.findByBrandIdAndStatusOpen(brandId, status, new Date(), pageable);
+				break;
+			case Close:
+				response = campaignDao.findByBrandIdAndStatusClose(brandId, CampaignStatus.Open, new Date(), pageable);
+				break;
+			default:
+				break;
+			}
+			
 		} else {
-			return campaignDao.findByBrandId(brandId, pageable);
+			response = campaignDao.findByBrandId(brandId, pageable);
 		}
+		return response;
 	}
 
 	public List<CampaignResponse> findAllActiveByBrand(Long brandId) {
@@ -239,7 +259,7 @@ public class CampaignService {
 	}
 	
 	public CampaignResponse findOneByInfluencer(Long campaignId, Long influencerId){
-		Campaign capaign = campaignDao.findOne(campaignId);
+		Campaign capaign = campaignDao.findByCampaignIdAndStatus(campaignId, CampaignStatus.Open);
 		CampaignResponse response = new CampaignResponse(capaign,Role.Influencer.displayName());
 		response.setIsApply(false);
 		for(Proposal proposal : response.getProposals()){
@@ -257,6 +277,15 @@ public class CampaignService {
 		CampaignResponse response = new CampaignResponse(capaign,Role.Admin.displayName());
 		return response;
 	}
+	
+	public CampaignResponse findOneByPublic(String publicCode) {
+		Campaign capaign = campaignDao.findByPublicCodeAndStatus(publicCode, CampaignStatus.Open);
+		if(null == capaign){
+			return null;
+		}
+		CampaignResponse response = new CampaignResponse(capaign,Role.Public.displayName());
+		return response;
+	}
 
 	public CampaignResponse findOneByBrand(Long campaignId, Long brandId) {
 		Campaign capaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
@@ -266,5 +295,15 @@ public class CampaignService {
 	
 	public void dismissCampaignNotification(Long campaignId, Long brandId){
 		campaignDao.updateRabbitFlag(true, campaignId, brandId);
+	}
+	
+	public void updatePublicCode(){
+		for(Campaign campaign : campaignDao.findAll()){
+			if(StringUtils.isEmpty(campaign.getPublicCode())){
+				campaign.setPublicCode(UUID.randomUUID().toString().replace("-", ""));
+				campaignDao.save(campaign);
+			}
+			
+		}
 	}
 }

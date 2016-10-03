@@ -107,7 +107,7 @@ public class WalletService {
 		sum += transferFeeDocument.getAmount();
 		
 		transaction.setAmount(sum);
-		transaction.setTransactionNumber(EncodeUtil.encode(transaction.getTransactionId()));
+		transaction.setTransactionNumber(EncodeUtil.encodeLong(transaction.getTransactionId()));
 		transaction = transactionDao.save(transaction);
 		
 		//send email to admin

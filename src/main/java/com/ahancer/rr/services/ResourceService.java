@@ -9,6 +9,7 @@ import java.security.MessageDigest;
 import org.apache.commons.io.FilenameUtils;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,9 @@ public class ResourceService {
 	
 	@Autowired
 	private S3Util s3Util;
+	
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucket;
 	
 	public Resource getById(Long id) {
 		return resourceDao.findOne(id);
@@ -47,7 +51,7 @@ public class ResourceService {
 	public Resource upload(MultipartFile multipartFile) throws Exception {
 		//Upload with generated name
 		String resourcePath = generateResourceName(multipartFile.getOriginalFilename());
-		s3Util.upload(multipartFile, resourcePath);
+		s3Util.upload(multipartFile, bucket, resourcePath);
 		
 		try {
 			//Save resource
@@ -56,7 +60,7 @@ public class ResourceService {
 			return resourceDao.save(resource);
 		}
 		catch(Exception e) {
-			s3Util.delete(resourcePath);
+			s3Util.delete(bucket,resourcePath);
 			throw e;
 		}
 	}
@@ -71,7 +75,7 @@ public class ResourceService {
 		String resourcePath = generateResourceName(url.getFile());
 
 		//Upload to s3
-		s3Util.upload(conn.getInputStream(), resourcePath);
+		s3Util.upload(conn.getInputStream(), bucket, resourcePath);
 		
 		//Save resource
 		try {
@@ -81,7 +85,7 @@ public class ResourceService {
 			return resourceDao.save(resource);
 		}
 		catch(Exception e) {
-			s3Util.delete(resourcePath);
+			s3Util.delete(bucket, resourcePath);
 			throw e;
 		}
 	}

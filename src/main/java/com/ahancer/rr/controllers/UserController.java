@@ -11,14 +11,15 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
 
+import io.swagger.annotations.ApiOperation;
+
 
 @RestController
 @RequestMapping("/users")
 public class UserController extends AbstractController {
-
 	@Autowired
 	private UserDao userDao;
-	
+	@ApiOperation(value = "Get user from user id")
 	@RequestMapping(value="/{userId}",method=RequestMethod.GET)
 	@Authorization({Role.Admin})
 	public User getOneUser(@PathVariable long userId) {

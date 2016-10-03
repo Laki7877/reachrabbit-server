@@ -34,6 +34,11 @@ public class ProposalMessage implements Serializable  {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long messageId;
 	
+	@Column(name="proposalId")
+	private Long proposalId;
+	
+	@JsonIgnore
+	@MapsId("proposalId")
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="proposalId",nullable=false)
 	private Proposal proposal;
@@ -195,6 +200,14 @@ public class ProposalMessage implements Serializable  {
 
 	public void setReferenceId(String referenceId) {
 		this.referenceId = referenceId;
+	}
+
+	public Long getProposalId() {
+		return proposalId;
+	}
+
+	public void setProposalId(Long proposalId) {
+		this.proposalId = proposalId;
 	}
 	
 }

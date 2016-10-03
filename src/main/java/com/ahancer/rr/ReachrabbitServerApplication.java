@@ -69,13 +69,11 @@ public class ReachrabbitServerApplication extends WebMvcConfigurerAdapter implem
 
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-		// TODO Auto-generated method stub
 
 	}
 

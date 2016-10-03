@@ -95,7 +95,7 @@ public class TransactionService {
 		cal.add(Calendar.DATE, 5);
 		transaction.setExpiredAt(cal.getTime());
 		transaction = transactionDao.save(transaction);
-		transaction.setTransactionNumber(EncodeUtil.encode(transaction.getTransactionId()));
+		transaction.setTransactionNumber(EncodeUtil.encodeLong(transaction.getTransactionId()));
 		transaction = transactionDao.save(transaction);
 		//create document
 		BrandTransactionDocument document = new BrandTransactionDocument();
@@ -206,8 +206,8 @@ public class TransactionService {
 					, robotMessage
 					, robotUser.getUserId()
 					, robotUser.getRole());
-			proposalService.processInboxPollingByOne(proposal.getInfluencerId());
-			proposalService.processInboxPollingByOne(proposal.getCampaign().getBrandId());
+			proposalService.processInboxPolling(proposal.getInfluencerId());
+			proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 			proposalMessageService.processMessagePolling(proposal.getProposalId());
 			proposalDao.save(proposal);
 			

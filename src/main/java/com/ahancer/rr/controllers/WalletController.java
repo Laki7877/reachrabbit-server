@@ -22,38 +22,43 @@ import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.services.TransactionService;
 import com.ahancer.rr.services.WalletService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/wallets")
 public class WalletController extends AbstractController {
-	
 	@Autowired
 	private WalletService walletService;
-	
 	@Autowired
 	private TransactionService transactionService;
-	
+	@ApiOperation(value = "Get active wallet")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Influencer})
 	public Wallet getPendingWallet() throws Exception {
 		return walletService.findPendingByIndluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
-	
+	@ApiOperation(value = "Create new payout")
 	@RequestMapping(value="/payout",method=RequestMethod.POST)
 	@Authorization({Role.Influencer})
 	public Transaction payoutWallet(@Valid @RequestBody PayoutRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		return walletService.payoutWallet(request,this.getUserRequest().getInfluencer().getInfluencerId(),locale);
 	}
-	
+	@ApiOperation(value = "Get transaction from wallet")
 	@RequestMapping(value="/{walletId}/transaction",method=RequestMethod.GET)
 	@Authorization({ Role.Influencer, Role.Admin })
 	public Transaction getTransactionFromWallet(@PathVariable Long walletId) throws Exception {
-		if(Role.Influencer.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransactionFromWalletByInfluencer(walletId,this.getUserRequest().getInfluencer().getInfluencerId());
-		}else if(Role.Admin.equals(this.getUserRequest().getRole())){
-			return transactionService.findOneTransactionFromWalletByAdmin(walletId);
+		Transaction response = null;
+		switch(this.getUserRequest().getRole()){
+		case Influencer:
+			response = transactionService.findOneTransactionFromWalletByInfluencer(walletId,this.getUserRequest().getInfluencer().getInfluencerId());
+			break;
+		case Admin:
+			response = transactionService.findOneTransactionFromWalletByAdmin(walletId);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.UNAUTHORIZED,"error.unauthorize");
+		return response;
 	}
-
 }

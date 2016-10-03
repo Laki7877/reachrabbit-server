@@ -34,54 +34,69 @@ import io.swagger.annotations.ApiOperation;
 public class CampaignController extends AbstractController {
 	@Autowired
 	private CampaignService campaignService;
-	
 	@Autowired
 	private ProposalService proposalService;
-	
 	@Autowired
 	private ProposalMessageService proposalMessageService;
-	
+	@ApiOperation(value = "Get campaign pagination")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
-	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status,Pageable pageRequest) throws Exception{
-		if(this.getUserRequest().getRole().equals(Role.Brand)) {
-			return campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, pageRequest);	
-		} else if(this.getUserRequest().getRole().equals(Role.Influencer)) {
-			return campaignService.findAll(pageRequest);		
-		} else if(this.getUserRequest().getRole().equals(Role.Admin)) {
-			return campaignService.findAllByAdmin(pageRequest);
+	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status,Pageable pageRequest) throws Exception {
+		Page<CampaignResponse> response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, pageRequest);
+			break;
+		case Influencer:
+			response = campaignService.findAll(pageRequest);
+			break;
+		case Admin:
+			response = campaignService.findAllByAdmin(pageRequest);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
-	
-	@ApiOperation(value = "Get campaign by campaign id")
+	@ApiOperation(value = "Get active campaign")
 	@RequestMapping(value="/active", method=RequestMethod.GET)
 	@Authorization({Role.Brand})
 	public List<CampaignResponse> getAllActiveCampaign() throws Exception {
 		return campaignService.findAllActiveByBrand(this.getUserRequest().getBrand().getBrandId());
 	}
-	
+	@ApiOperation(value = "Get open campaign pagination")
 	@RequestMapping(value="/open", method=RequestMethod.GET)
 	@Authorization({Role.Influencer})
 	public Page<CampaignResponse> getOpenCampaign(@RequestParam(name = "mediaId", required=false) String mediaId, Pageable pageRequest) throws Exception {
 		return campaignService.findAllOpen(mediaId,this.getUserRequest().getInfluencer().getInfluencerId(), pageRequest);
 	}
-	
 	@ApiOperation(value = "Get campaign by campaign id")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public CampaignResponse getOneCampaign(@PathVariable Long campaignId) throws Exception {
-		if(Role.Admin.equals(this.getUserRequest().getRole())){
-			return campaignService.findOneByAdmin(campaignId);
-		} else if (Role.Brand.equals(this.getUserRequest().getRole())){
-			return campaignService.findOneByBrand(campaignId,this.getUserRequest().getBrand().getBrandId());
-		} else if (Role.Influencer.equals(this.getUserRequest().getRole())) {
-			return campaignService.findOneByInfluencer(campaignId, this.getUserRequest().getInfluencer().getInfluencerId());
+		CampaignResponse response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = campaignService.findOneByBrand(campaignId,this.getUserRequest().getBrand().getBrandId());
+			break;
+		case Influencer:
+			response = campaignService.findOneByInfluencer(campaignId, this.getUserRequest().getInfluencer().getInfluencerId());
+			break;
+		case Admin:
+			response = campaignService.findOneByAdmin(campaignId);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
-	
-	
+	@ApiOperation(value = "Get campaign by campaign id")
+	@RequestMapping(value="/public/{publicCode}",method=RequestMethod.GET)
+	public CampaignResponse getOnePublicCampaign(@PathVariable String publicCode) throws Exception {
+		CampaignResponse response = null;
+		response = campaignService.findOneByPublic(publicCode);
+		return response;
+	}
 	@ApiOperation(value = "Create new campaign")
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization({Role.Brand})
@@ -89,32 +104,37 @@ public class CampaignController extends AbstractController {
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		return campaignService.createCampaignByBrand(request, this.getUserRequest(),locale);
 	}
-	
+	@ApiOperation(value = "Update campaign")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.PUT)
 	@Authorization({Role.Brand,Role.Admin})
 	public CampaignRequest updateCampaign(@PathVariable Long campaignId,@Valid @RequestBody CampaignRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		//Admin powered
-		if(this.getUserRequest().getRole().equals(Role.Admin)) {
-			return campaignService.updateCampaign(campaignId, request);
-		} else if(this.getUserRequest().getRole().equals(Role.Brand)){
-			return campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+		CampaignRequest response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response = campaignService.updateCampaignByBrand(campaignId, request, this.getUserRequest(), locale);
+			break;
+		case Admin:
+			response = campaignService.updateCampaign(campaignId, request);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
-		throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		return response;
 	}
-	
+	@ApiOperation(value = "Delete campaign")
 	@RequestMapping(value="/{campaignId}",method=RequestMethod.DELETE)
 	@Authorization({Role.Brand})
 	public void deleteCampaignByBrand(@PathVariable Long campaignId) throws Exception {
 		campaignService.deleteCampaign(campaignId, this.getUserRequest());
 	}
-	
+	@ApiOperation(value = "Uadate rabbit flag in campaign")
 	@RequestMapping(value="/{campaignId}/dismiss",method=RequestMethod.PUT)
 	@Authorization({Role.Brand})
 	public void dismissCampaignNotification(@PathVariable Long campaignId) throws Exception {
 		campaignService.dismissCampaignNotification(campaignId, this.getUserRequest().getBrand().getBrandId());
 	}
-	
+	@ApiOperation(value = "Create new proposal from campaign")
 	@RequestMapping(method=RequestMethod.POST,value="/{campaignId}/proposals")
 	@Authorization({Role.Influencer})
 	public Proposal createProposal(@PathVariable Long campaignId,@RequestBody Proposal proposal
@@ -124,13 +144,10 @@ public class CampaignController extends AbstractController {
 		proposalMessageService.processMessagePolling(proposal.getProposalId());
 		return proposal;
 	}
-	
+	@ApiOperation(value = "Get applied proposal in campaign")
 	@RequestMapping(method=RequestMethod.GET,value="/{campaignId}/applied")
 	@Authorization({Role.Influencer})
 	public Proposal getAppliedProposal(@PathVariable Long campaignId) throws Exception {
 		return proposalService.getAppliedProposal(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}
-	
-	
-	
 }

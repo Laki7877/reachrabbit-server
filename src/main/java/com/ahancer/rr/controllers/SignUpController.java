@@ -2,6 +2,7 @@ package com.ahancer.rr.controllers;
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,30 +20,32 @@ import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.services.BrandService;
 import com.ahancer.rr.services.InfluencerService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/signup")
 public class SignUpController {
 	@Autowired
+	private HttpServletRequest request;
+	@Autowired
 	private AuthenticationService authenticationService;
-	
 	@Autowired
 	private BrandService brandService;
-	
 	@Autowired
 	private InfluencerService influencerService;
-	
+	@ApiOperation(value = "Sign up by brand")
 	@RequestMapping(value="/brand", method=RequestMethod.POST)
 	public AuthenticationResponse signUpBrand(@Valid @RequestBody BrandSignUpRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		User newUser = brandService.signUpBrand(request,locale);
-		return authenticationService.generateTokenFromUser(newUser);
+		return authenticationService.generateTokenFromUser(newUser,this.request.getRemoteAddr());
 	}
-	
+	@ApiOperation(value = "Sign up by influencer")
 	@RequestMapping(value="/influencer", method=RequestMethod.POST)
 	public AuthenticationResponse signUpInfluencer(@Valid @RequestBody InfluencerSignUpRequest request
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
 		User newUser = influencerService.signupInfluencer(request,locale);
-		return authenticationService.generateTokenFromUser(newUser);
+		return authenticationService.generateTokenFromUser(newUser,this.request.getRemoteAddr());
 	}
 
 }

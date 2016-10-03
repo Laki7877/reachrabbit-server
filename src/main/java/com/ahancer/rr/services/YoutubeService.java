@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.Post;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
 import com.ahancer.rr.response.YouTubeProfileResponse;
@@ -30,6 +31,7 @@ import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 @Service
@@ -66,14 +68,34 @@ public class YoutubeService {
 		Credential credential = new GoogleCredential().setAccessToken(accessToken);
 		return new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).build();
 	}
-
+	public Post getPostInfo(String postId) throws Exception{
+		Credential credential = new GoogleCredential();
+		YouTube youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).setApplicationName("Reachrabbit-Server/1.05R").build();
+		YouTube.Videos.List videoList = youtube.videos().list("statistics");
+		videoList.setKey(apiKey).setId(postId);
+		
+		Video video = videoList.execute().getItems().get(0);
+		
+		Long likes = video.getStatistics().getLikeCount().longValue();
+		Long comments = video.getStatistics().getCommentCount().longValue();
+		Long views = video.getStatistics().getViewCount().longValue();
+		
+		Post post = new Post();
+		post.setLikeCount(likes);
+		post.setCommentCount(comments);
+		post.setViewCount(views);
+		post.setShareCount(0L);
+		post.setSocialPostId(postId);
+		return post;
+		
+	}
 	public YouTubeProfileResponse getVideoFeed(String channelId) throws GeneralSecurityException, IOException{
 		Credential credential = new GoogleCredential();
 		YouTubeProfileResponse ytres = new YouTubeProfileResponse();
 		YouTube youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), credential).setApplicationName("Reachrabbit-Server/1.05R").build();
 		
 		YouTube.Channels.List chanlist = youtube.channels().list("snippet,contentDetails,statistics");
-		chanlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId(channelId);
+		chanlist.setKey(apiKey).setId(channelId);
 		ChannelListResponse chanResult = chanlist.execute();
 		Channel chan = chanResult.getItems().get(0);
 		
@@ -81,7 +103,7 @@ public class YoutubeService {
 		String playlistId = chanResult.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads();
 		YouTube.PlaylistItems.List ypllist = youtube.playlistItems().list("snippet");
 		ypllist.setPart("snippet,contentDetails");
-		ypllist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setPlaylistId(playlistId);
+		ypllist.setKey(apiKey).setPlaylistId(playlistId);
 
 		PlaylistItemListResponse result_pitem = ypllist.execute();
 		pl.addAll(result_pitem.getItems());
@@ -95,7 +117,7 @@ public class YoutubeService {
 		
 		String videoQuery =  String.join(",", videoIds);
 		YouTube.Videos.List yvlist = youtube.videos().list("snippet,statistics");
-		yvlist.setKey("AIzaSyCX4HiUrpv0vYMO28qEDyHSIPshq0FEFxg").setId(videoQuery);
+		yvlist.setKey(apiKey).setId(videoQuery);
 		VideoListResponse result = yvlist.execute();
 		
 		ytres.setVideos(result.getItems());
@@ -105,7 +127,7 @@ public class YoutubeService {
 		
 	}
 	
-	public OAuthenticationResponse authentication(String accessToken) throws Exception {
+	public OAuthenticationResponse authentication(String accessToken, String ip) throws Exception {
 		YouTube youtube = getInstance(accessToken);
 		YouTube.Channels.List channelRequest = youtube.channels().list("contentDetails");
 		channelRequest.setMine(true);
@@ -123,7 +145,7 @@ public class YoutubeService {
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
 		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getSnippet().getTitle(), null, channel.getStatistics().getSubscriberCount()));
 		
-		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "google");
+		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "google", ip);
 		
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();

@@ -12,28 +12,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.TokenResponse;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.services.AuthenticationService;
 import com.ahancer.rr.utils.CacheUtil;
-import com.ahancer.rr.utils.JwtUtil;
+import com.ahancer.rr.utils.EncodeUtil;
 import com.ahancer.rr.utils.Util;
 
 @Component
 @Order(2)
 public class AuthenticationFilter implements Filter {
-	
-	@Value("${reachrabbit.cache.userrequest}")
-	private String userRequestCache;
-
 	@Autowired
-	private JwtUtil jwt;
-
+	private CacheUtil cacheUtil;
 	@Autowired
 	private AuthenticationService authenticationService;
 
@@ -57,18 +52,24 @@ public class AuthenticationFilter implements Filter {
 				|| path.startsWith("/swagger-resources") 
 				|| path.startsWith("/configuration") 
 				|| path.startsWith("/v2")
-				|| path.startsWith("/subscription")) {
+				|| path.startsWith("/subscription")
+				|| path.startsWith("/test")
+				|| path.startsWith("/campaigns/public")) {
 			chain.doFilter(req, res);
 		} else {
 			try {
 				String token = request.getHeader(ApplicationConstant.TokenHeader);
-				UserResponse userResponse = (UserResponse) CacheUtil.getCacheObject(userRequestCache, token);
+				TokenResponse tokenObject = (TokenResponse) EncodeUtil.decodeObject(token);
+				if(!request.getRemoteAddr().equals(tokenObject.getIp())){
+					throw new Exception();
+				}
+				UserResponse userResponse = (UserResponse) cacheUtil.getCacheObject(ApplicationConstant.UserRequestCache, token);
 				if(null == userResponse) {
-					Long userId = jwt.getUserId(token);
+					Long userId = tokenObject.getUserId();
 					User user = authenticationService.getUserById(userId);
 					if(null != user){
 						userResponse = Util.getUserResponse(user);
-						CacheUtil.putCacheObject(userRequestCache, token, userResponse);
+						cacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 					}
 				}
 				if(null != userResponse) {
@@ -76,7 +77,7 @@ public class AuthenticationFilter implements Filter {
 					request.setAttribute(ApplicationConstant.TokenAttribute, token);
 					chain.doFilter(req, res);
 				} else {
-					response.sendError(401);
+					throw new Exception();
 				}
 			}catch (Exception e) {
 				response.sendError(401);

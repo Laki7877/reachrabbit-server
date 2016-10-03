@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.Post;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.FacebookProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
@@ -64,6 +65,22 @@ public class FacebookService {
 	
 	public String getAppAccessToken() {
 		return appKey + "|" + appSecret;
+	}
+	public Post getPostInfo(String postId) throws ResponseException {
+		Gson gson = new Gson();
+		Facebook fb = getInstance(getAppAccessToken());
+		org.springframework.social.facebook.api.Post post = fb.fetchObject(postId, org.springframework.social.facebook.api.Post.class, "comments.limit(0).summary(true),likes.limit(0).summary(true),shares");
+		JsonObject ext = gson.toJsonTree(post).getAsJsonObject().getAsJsonObject("extraData");
+		Long likes = ext.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsLong();
+		Long comments = ext.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsLong();
+		Long shares = (long) post.getShares();
+		Post postModel = new Post();
+		postModel.setViewCount(0L);
+		postModel.setCommentCount(comments);
+		postModel.setLikeCount(likes);
+		postModel.setShareCount(shares);
+		postModel.setSocialPostId(postId);
+		return postModel;
 	}
 	public FacebookProfileResponse getProfile(String pageId) throws ResponseException {
 		Gson gson = new Gson();
@@ -131,7 +148,7 @@ public class FacebookService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public OAuthenticationResponse authenticate(String accessToken) throws ResponseException {
+	public OAuthenticationResponse authenticate(String accessToken, String ip) throws Exception {
 		Facebook fb = getInstance(accessToken);
 		org.springframework.social.facebook.api.User fbUser = fb.userOperations().getUserProfile();
 		List<Account> accounts = fb.pageOperations().getAccounts();
@@ -147,7 +164,7 @@ public class FacebookService {
 			pages.add(new OAuthenticationResponse.Page(account.getId(), page.getName(), url, BigInteger.valueOf(page.getEngagement().getCount())));
 		}
 		
-		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook");
+		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook", ip);
 
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();
