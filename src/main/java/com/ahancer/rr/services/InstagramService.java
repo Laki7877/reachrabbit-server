@@ -94,8 +94,12 @@ public class InstagramService {
 		JsonObject media = parser.parse(response.toString()).getAsJsonObject().getAsJsonObject("media");
 		Long commentCount = media.getAsJsonObject("comments").get("count").getAsLong();
 		Long likeCount = media.getAsJsonObject("likes").get("count").getAsLong();
+		Long videoViews = 0L;
+		if(media.has("video_views")){
+			videoViews = media.get("video_views").getAsLong();
+		}
 		Post postModel = new Post();
-		postModel.setViewCount(0L);
+		postModel.setViewCount(videoViews);
 		postModel.setCommentCount(commentCount);
 		postModel.setLikeCount(likeCount);
 		postModel.setShareCount(0L);
