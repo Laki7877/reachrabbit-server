@@ -37,10 +37,22 @@ public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long
 			+ "WHERE pm.proposalId = :proposalId AND pm.proposal.influencerId = :influencerId")
 	public Page<ProposalMessageResponse> findByProposalProposalIdAndProposalInfluencerId(@Param("proposalId") Long proposalId,@Param("influencerId") Long influencerId, Pageable pageable);
 	
+	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Admin') "
+			+ "FROM proposalMessage pm "
+			+ "WHERE pm.proposalId = :proposalId ")
+	public Page<ProposalMessageResponse> findByProposalProposalId(@Param("proposalId") Long proposalId, Pageable pageable);
+	
+	
 	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Influencer') "
 			+ "FROM proposalMessage pm "
 			+ "WHERE pm.proposalId = :proposalId AND pm.createdAt < :createdAtBefore AND pm.proposal.influencerId=:influencerId")
 	public Page<ProposalMessageResponse> findByProposalProposalIdAndProposalInfluencerIdAndCreatedAtBefore(@Param("proposalId") Long proposalId,@Param("influencerId") Long influencerId,@Param("createdAtBefore") Date createdAtBefore, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Influencer') "
+			+ "FROM proposalMessage pm "
+			+ "WHERE pm.proposalId = :proposalId AND pm.createdAt < :createdAtBefore ")
+	public Page<ProposalMessageResponse> findByProposalProposalIdAndCreatedAtBefore(@Param("proposalId") Long proposalId,@Param("createdAtBefore") Date createdAtBefore, Pageable pageable);
+	
 	
 	@Query("SELECT new com.ahancer.rr.response.ProposalMessageResponse(pm,'Brand') "
 			+ "FROM proposalMessage pm "

@@ -1,9 +1,13 @@
 package com.ahancer.rr.response;
 
+import java.io.Serializable;
+
 import com.ahancer.rr.custom.type.CartStatus;
 import com.ahancer.rr.models.Cart;
 
-public class CartResponse {
+public class CartResponse implements Serializable {
+	
+	private static final long serialVersionUID = -5295181698299635620L;
 	private Long cartId;
 	private CartStatus status;
 	

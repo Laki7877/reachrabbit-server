@@ -23,14 +23,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.ahancer.rr.constants.ApplicationConstant;
+import com.ahancer.rr.daos.InfluencerMediaDao;
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.InfluencerMedia;
+import com.ahancer.rr.models.InfluencerMediaId;
+import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.Post;
 import com.ahancer.rr.request.InstagramAuthenticationRequest;
 import com.ahancer.rr.response.AuthenticationResponse;
+import com.ahancer.rr.response.InstagramAuthenticationResponse;
 import com.ahancer.rr.response.InstagramProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
+import com.ahancer.rr.response.UserResponse;
+import com.ahancer.rr.utils.CacheUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -40,6 +50,10 @@ public class InstagramService {
 	private String appKey;
 	@Value("${instagram.appSecret}")
 	private String appSecret;
+	@Autowired
+	private InfluencerMediaDao influencerMediaDao;
+	@Autowired
+	private CacheUtil cacheUtil;
 	
 	//TODO remove hardcoded
 	private String adminAccessToken ="3776064946.c428876.6dba7fbf1f7c424bb9fa5bec9e8633e9";
@@ -187,24 +201,32 @@ public class InstagramService {
 			return new OAuthenticationResponse(auth.getToken());
 		}
 	}
-	
-	public void validateUser(InstagramAuthenticationRequest request) throws Exception {
+	@Transactional(rollbackFor=Exception.class)
+	public UserResponse validateUser(UserResponse user,String token,InstagramAuthenticationRequest request) throws Exception {
 		String urlString = "https://www.instagram.com/accounts/login/ajax/";
 		URL url = new URL(urlString);
 		HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+		con.setDoOutput(true);
 		con.setRequestMethod("POST");
+		con.setRequestProperty("origin", "https://www.instagram.com");
 		con.setRequestProperty("accept-encoding", "gzip, deflate, sdch, br");
-		con.setRequestProperty("x-requested-with", "XMLHttpRequest");
 		con.setRequestProperty("accept-language", "en-US,en;q=0.8");
+		con.setRequestProperty("x-requested-with", "XMLHttpRequest");
+		con.setRequestProperty("cookie", "mid=V_NhzQAEAAE8lekQlcNn8Cnd-riN; ig_pr=1; ig_vw=1280; csrftoken=VqQPIQJSstnUg1ytGgmg3XWp5b3P393U");
+		con.setRequestProperty("x-csrftoken", "VqQPIQJSstnUg1ytGgmg3XWp5b3P393U");
+		con.setRequestProperty("pragma", "no-cache");
+		con.setRequestProperty("x-instagram-ajax", "1");
 		con.setRequestProperty("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36");
+		con.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 		con.setRequestProperty("accept", "*/*");
+		con.setRequestProperty("cache-control", "no-cache");
 		con.setRequestProperty("authority", "www.instagram.com");
+		con.setRequestProperty("referer", "https://www.instagram.com/");
 		OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
 		String data = "username=" + request.getUsername() + "&password=" + request.getPassword();
 	    writer.write(data);
 	    writer.flush();
-		InputStream inStream = new GZIPInputStream(con.getInputStream());
-		BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
 		while ((inputLine = in.readLine()) != null) {
@@ -212,6 +234,26 @@ public class InstagramService {
 		}
 		writer.close();
 		in.close();
+		con.disconnect();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		InstagramAuthenticationResponse obj = mapper.readValue(response.toString(), InstagramAuthenticationResponse.class);
+		if(!obj.getAuthenticated()) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.instagram.validation.invalid");
+		}
+		Long influencerId = user.getInfluencer().getInfluencerId();
+		InfluencerMedia influencerMedia = new InfluencerMedia();
+		Media media = mediaDao.findOne("instagram");
+		influencerMedia.setMedia(media);
+		influencerMedia.setSocialId(obj.getUser());
+		InfluencerMediaId influencerMediaId = new InfluencerMediaId();
+		influencerMediaId.setInfluencerId(influencerId);
+		influencerMediaId.setMediaId(media.getMediaId());
+		influencerMedia.setInfluencerMediaId(influencerMediaId);
+		influencerMediaDao.insertInfluencerMedia(influencerId ,media.getMediaId() ,0L, null , influencerMedia.getSocialId());
+		user.getInfluencer().getInfluencerMedias().add(influencerMedia);
+		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, user);
+		return user;
 	}
 	
 }

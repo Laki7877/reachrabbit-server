@@ -183,4 +183,16 @@ public class ProposalMessageService {
 		proposalService.processInboxPolling(influencerId);
 		return response;
 	}
+	
+	public Page<ProposalMessageResponse> findByAdmin(Long proposalId, Date before, Pageable pageable) {
+		Page<ProposalMessageResponse> response = null;
+		if(null == before) {
+			response = proposalMessageDao.findByProposalProposalId(proposalId, pageable);
+		} else {
+			response = proposalMessageDao.findByProposalProposalIdAndCreatedAtBefore(proposalId, before, pageable);
+		}
+		return response;
+	}
+	
+	
 }

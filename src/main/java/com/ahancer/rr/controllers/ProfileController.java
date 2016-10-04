@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.request.InstagramAuthenticationRequest;
 import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
 import com.ahancer.rr.response.FacebookProfileResponse;
@@ -120,6 +121,11 @@ public class ProfileController extends AbstractController{
 		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
 		return ytService.getVideoFeed(user.getSocialId("google"));
 	}
-
+	@ApiOperation(value = "Validate instagram")
+	@Authorization({Role.Influencer})
+	@RequestMapping(value="/instagram/validate", method=RequestMethod.POST)
+	public UserResponse validateInstagram(@RequestBody InstagramAuthenticationRequest request) throws Exception {
+		return instagramService.validateUser(this.getUserRequest(), this.getTokenRequest(),request);
+	}
 
 }

@@ -160,7 +160,7 @@ public class ProposalController extends AbstractController {
 	}
 	@ApiOperation(value = "Get proposal message pagination")
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/proposalmessages")
-	@Authorization({Role.Brand,Role.Influencer})
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public Page<ProposalMessageResponse> getAllProposalMessage(@PathVariable Long proposalId, @RequestParam(name="timestamp", required=false) String timestamp, Pageable pageRequest) throws Exception {
 		Page<ProposalMessageResponse> response = null;
 		switch(this.getUserRequest().getRole()){
@@ -169,6 +169,9 @@ public class ProposalController extends AbstractController {
 			break;
 		case Influencer:
 			response = proposalMessageService.findByProposalForInfluencer(proposalId, this.getUserRequest().getInfluencer().getInfluencerId(), Util.parseJacksonDate(timestamp), pageRequest);
+			break;
+		case Admin:
+			response = proposalMessageService.findByAdmin(proposalId,Util.parseJacksonDate(timestamp), pageRequest);
 			break;
 		default:
 			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
