@@ -214,7 +214,7 @@ public class ProposalController extends AbstractController {
 	}
 	@ApiOperation(value = "Get proposal from proposal id")
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}")
-	@Authorization({Role.Brand,Role.Influencer})
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public ProposalResponse getOneProposal(@PathVariable Long proposalId) throws Exception {
 		ProposalResponse response = null;
 		switch(this.getUserRequest().getRole()){
@@ -223,6 +223,9 @@ public class ProposalController extends AbstractController {
 			break;
 		case Influencer:
 			response = proposalService.findOneByInfluencer(proposalId,this.getUserRequest().getInfluencer().getInfluencerId());
+			break;
+		case Admin:
+			response = proposalService.findOneByAdmin(proposalId);
 			break;
 		default:
 			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");

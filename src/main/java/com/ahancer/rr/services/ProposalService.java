@@ -221,8 +221,38 @@ public class ProposalService {
 		}
 		return response;
 	}
+	
+	public ProposalResponse findOneByAdmin(Long proposalId) throws Exception {
+		Proposal proposal =  proposalDao.findOne(proposalId);
+		if(null == proposal){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+		}
+		ProposalResponse response = new ProposalResponse();
+		response.setCampaign(proposal.getCampaign());
+		if(null != proposal.getCart()){
+			response.setCartId(proposal.getCartId());
+			response.setCart(new CartResponse(proposal.getCart()));
+		}
+		if(null != proposal.getWallet()){
+			response.setWalletId(proposal.getWalletId());
+			response.setWallet(new WalletResponse(proposal.getWallet()));
+		}
+		response.setCompleteDate(proposal.getCompleteDate());
+		response.setCompletionTime(proposal.getCompletionTime());
+		response.setDueDate(proposal.getDueDate());
+		response.setFee(proposal.getFee());
+		response.setInfluencer(proposal.getInfluencer());
+		response.setInfluencerId(proposal.getInfluencerId());
+		response.setMedia(proposal.getMedia());
+		response.setMessageUpdatedAt(proposal.getMessageUpdatedAt());
+		response.setPrice(proposal.getPrice());
+		response.setProposalId(proposal.getProposalId());
+		response.setStatus(proposal.getStatus());
+		response.setRabbitFlag(proposal.getRabbitFlag());
+		return response;
+	}
 
-	public ProposalResponse findOneByBrand(Long proposalId,Long brandId) throws Exception{
+	public ProposalResponse findOneByBrand(Long proposalId,Long brandId) throws Exception {
 		Proposal proposal =  proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 
 		if(null == proposal){

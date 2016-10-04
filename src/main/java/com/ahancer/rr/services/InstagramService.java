@@ -3,6 +3,7 @@ package com.ahancer.rr.services;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Post;
+import com.ahancer.rr.request.InstagramAuthenticationRequest;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.InstagramProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
@@ -185,4 +187,31 @@ public class InstagramService {
 			return new OAuthenticationResponse(auth.getToken());
 		}
 	}
+	
+	public void validateUser(InstagramAuthenticationRequest request) throws Exception {
+		String urlString = "https://www.instagram.com/accounts/login/ajax/";
+		URL url = new URL(urlString);
+		HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+		con.setRequestMethod("POST");
+		con.setRequestProperty("accept-encoding", "gzip, deflate, sdch, br");
+		con.setRequestProperty("x-requested-with", "XMLHttpRequest");
+		con.setRequestProperty("accept-language", "en-US,en;q=0.8");
+		con.setRequestProperty("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36");
+		con.setRequestProperty("accept", "*/*");
+		con.setRequestProperty("authority", "www.instagram.com");
+		OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
+		String data = "username=" + request.getUsername() + "&password=" + request.getPassword();
+	    writer.write(data);
+	    writer.flush();
+		InputStream inStream = new GZIPInputStream(con.getInputStream());
+		BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		writer.close();
+		in.close();
+	}
+	
 }
