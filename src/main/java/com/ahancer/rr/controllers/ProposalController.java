@@ -47,15 +47,19 @@ public class ProposalController extends AbstractController {
 	private CartService cartService;
 	@ApiOperation(value = "Get proposal pagination")
 	@RequestMapping(method=RequestMethod.GET)
-	@Authorization({Role.Influencer,Role.Brand})
-	public Page<Proposal> getAllProposal( @RequestParam(name="status", required=true) ProposalStatus status,Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
+	@Authorization({Role.Influencer,Role.Brand, Role.Admin})
+	public Page<Proposal> getAllProposal(@RequestParam(name="status", required=true) ProposalStatus status
+			, @RequestParam(name="search", required=false) String search,Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
 		Page<Proposal> response = null;
 		switch(this.getUserRequest().getRole()){
 		case Brand:
-			response = proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(),status, pageRequest);
+			response = proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(),status, search, pageRequest);
 			break;
 		case Influencer:
-			response = proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(),status, pageRequest);
+			response = proposalService.findAllByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(),status, search, pageRequest);
+			break;
+		case Admin:
+			response = proposalService.findAllByAdmin(status, search, pageRequest);
 			break;
 		default:
 			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");

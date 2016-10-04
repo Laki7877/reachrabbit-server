@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -56,22 +57,22 @@ public class ProposalService {
 
 	@Autowired
 	private CampaignDao campaignDao;
-	
+
 	@Autowired
 	private RobotService robotService;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	@Autowired
 	private CartService cartService;
 
 	@Autowired
 	private WalletDao walletDao;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Value("${ui.host}")
 	private String uiHost;
 
@@ -153,7 +154,7 @@ public class ProposalService {
 				poll.setSelection(countByBrand(userId, ProposalStatus.Selection));
 				poll.setWorking(countByBrand(userId, ProposalStatus.Working));
 				poll.setComplete(countByBrand(userId, ProposalStatus.Complete));
-				
+
 				Cart c = cartService.getInCartByBrand(userId);
 				if(c != null) {
 					poll.setCart((long) c.getProposals().size());
@@ -171,7 +172,7 @@ public class ProposalService {
 
 		}
 	}
-	
+
 
 	public List<Proposal> findAllByBrand(Long brandId, Long campaignId) {
 		return proposalDao.findByCampaignBrandIdAndCampaignCampaignId(brandId,campaignId);
@@ -204,17 +205,24 @@ public class ProposalService {
 		return new ProposalCountResponse(proposalCount,unreadInfluencer);
 	}
 
-	public Page<Proposal> findAllByBrand(Long brandId,ProposalStatus status,Pageable pageable) {
-		return proposalDao.findByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(brandId, status,  Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
+	public Page<Proposal> findAllByBrand(Long brandId,ProposalStatus status, String search,Pageable pageable) {
+		Page<Proposal> response = null;
+		Date date = Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		if(StringUtils.isEmpty(search)){
+			response = proposalDao.findByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(brandId, status,  date, pageable);
+		} else {
+			response = proposalDao.findByCampaignBrandIdAndStatusAndCampaignTitleContainingAndMessageUpdatedAtAfter(brandId, status, search, date, pageable);
+		}
+		return response;
 	}
 
 	public ProposalResponse findOneByBrand(Long proposalId,Long brandId) throws Exception{
 		Proposal proposal =  proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
-		
+
 		if(null == proposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
-		
+
 		ProposalResponse response = new ProposalResponse();
 		response.setCampaign(proposal.getCampaign());
 		if(null != proposal.getCart()){
@@ -225,7 +233,6 @@ public class ProposalService {
 			response.setWalletId(proposal.getWalletId());
 			response.setWallet(new WalletResponse(proposal.getWallet()));
 		}
-		
 		response.setCompleteDate(proposal.getCompleteDate());
 		response.setCompletionTime(proposal.getCompletionTime());
 		response.setDueDate(proposal.getDueDate());
@@ -238,9 +245,6 @@ public class ProposalService {
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
 		response.setRabbitFlag(proposal.getRabbitFlag());
-		//response.setWallet(proposal.getWallet());
-		//response.setWalletId(proposal.getWalletId());
-		
 		return response;
 	}
 
@@ -249,7 +253,7 @@ public class ProposalService {
 		if(null == proposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
-		
+
 		ProposalResponse response = new ProposalResponse();
 		response.setCampaign(proposal.getCampaign());
 		if(null != proposal.getCart()){
@@ -260,7 +264,7 @@ public class ProposalService {
 			response.setWalletId(proposal.getWalletId());
 			response.setWallet(new WalletResponse(proposal.getWallet()));
 		}
-		
+
 		response.setCompleteDate(proposal.getCompleteDate());
 		response.setCompletionTime(proposal.getCompletionTime());
 		response.setDueDate(proposal.getDueDate());
@@ -273,29 +277,36 @@ public class ProposalService {
 		response.setProposalId(proposal.getProposalId());
 		response.setStatus(proposal.getStatus());
 		response.setRabbitFlag(proposal.getRabbitFlag());
-		//response.setWallet(proposal.getWallet());
-		//response.setWalletId(proposal.getWalletId());
-		
 		return response;
-		
-		
 	}
 
 	public List<Proposal> findAllActiveByInfluencer(Long influencerId) {
 		return proposalDao.findByInfluencerId(influencerId);
 	}
 
-	public Page<Proposal> findAllByInfluencer(Long influencerId,ProposalStatus status,Pageable pageable) {
-		return proposalDao.findByInfluencerIdAndStatusAndMessageUpdatedAtAfter(influencerId,status, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
+	public Page<Proposal> findAllByInfluencer(Long influencerId,ProposalStatus status, String search,Pageable pageable) {
+		Page<Proposal> response = null;
+		Date date = Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		if(StringUtils.isEmpty(search)){
+			response = proposalDao.findByInfluencerIdAndStatusAndMessageUpdatedAtAfter(influencerId,status, date, pageable);
+		} else {
+			response = proposalDao.findByInfluencerIdAndStatusAndCampaignTitleContainingAndMessageUpdatedAtAfter(influencerId, status, search, date, pageable);
+		}
+
+		return response;
 	}
 
-//	public Page<Proposal> findAllByInfluencer(Long influencerId, Long campaignId, Pageable pageable) {
-//		if( null != campaignId ) {
-//			return proposalDao.findByInfluencerIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(influencerId,  campaignId, Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), pageable);
-//		} else {
-//			return findAllByInfluencer(influencerId, pageable);
-//		}
-//	}
+	public Page<Proposal> findAllByAdmin(ProposalStatus status, String search, Pageable pageable) {
+
+		Page<Proposal> response = null;
+		if(StringUtils.isEmpty(search)){
+			response = proposalDao.findByStatus(status, pageable);
+		} else {
+			response = proposalDao.findByStatusAndCampaignTitleContaining(status, search, pageable);
+		}
+
+		return response;
+	}
 
 	public Page<Proposal> findAll(Pageable pageable) {
 		return proposalDao.findAll(pageable);
@@ -323,7 +334,6 @@ public class ProposalService {
 		firstMessage.setProposal(proposal);
 		firstMessage.setProposalId(proposal.getProposalId());
 		firstMessage.setUserId(influecnerId);
-		//firstMessage.setCreatedAt(new Date());
 		firstMessage = proposalMessageDao.save(firstMessage);
 		String to = campaign.getBrand().getUser().getEmail();
 		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
@@ -367,7 +377,7 @@ public class ProposalService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
 		oldProposal.setStatus(status);
-		
+
 		ProposalMessage rebotMessage = new ProposalMessage();
 		//rebotMessage.setCreatedAt(new Date());
 		rebotMessage.setIsBrandRead(true);
@@ -392,13 +402,13 @@ public class ProposalService {
 				wallet = walletDao.save(wallet);
 			}
 			oldProposal.setWalletId(wallet.getWalletId());
-			
+
 			Double sum = oldProposal.getPrice()-oldProposal.getFee();
 			for(Proposal proposal : wallet.getProposals()){
 				sum = sum + proposal.getPrice() - proposal.getFee();
 			}
-			
-			
+
+
 			//send email to influencer
 			String to = oldProposal.getInfluencer().getUser().getEmail();
 			String subject = messageSource.getMessage("email.influencer.brand.confirm.proposal.subject", null, locale);
@@ -410,7 +420,6 @@ public class ProposalService {
 			emailService.send(to, subject, body);
 		}
 		User robotUser = robotService.getRobotUser();
-		//rebotMessage.setProposal(oldProposal);
 		rebotMessage.setProposalId(oldProposal.getProposalId());
 		rebotMessage.setUserId(robotUser.getUserId());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
@@ -418,11 +427,11 @@ public class ProposalService {
 		oldProposal = proposalDao.save(oldProposal);
 		return oldProposal;
 	}
-	
+
 	public Proposal getAppliedProposal(Long influencerId, Long campaignId) {
 		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId,campaignId);
 	}
-	
+
 	public void dismissProposalNotification(Long proposalId, Long influencerId){
 		proposalDao.updateRabbitFlag(true,proposalId, influencerId);
 	}

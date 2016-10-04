@@ -25,17 +25,32 @@ public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	
 	
 	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId")
-	public Page<CampaignResponse> findByBrandId(@Param("brandId") Long brandId, Pageable pageable);	
+	public Page<CampaignResponse> findByBrandId(@Param("brandId") Long brandId, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.title LIKE CONCAT('%' , :search , '%')" )
+	public Page<CampaignResponse> findByBrandIdAndSearch(@Param("brandId") Long brandId, @Param("search") String search , Pageable pageable);	
 	
 	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status ")
 	public Page<CampaignResponse> findByBrandIdAndStatus(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, Pageable pageable);
 	
 	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status AND c.title LIKE CONCAT('%' , :search , '%')")
+	public Page<CampaignResponse> findByBrandIdAndStatusAndSeacrh(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, @Param("search") String search, Pageable pageable);
+	
+	
+	
 	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status AND c.proposalDeadline > :proposalDeadline")
 	public Page<CampaignResponse> findByBrandIdAndStatusOpen(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, @Param("proposalDeadline") Date proposalDeadline, Pageable pageable);
 	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status AND c.proposalDeadline > :proposalDeadline AND c.title LIKE CONCAT('%' , :search , '%')")
+	public Page<CampaignResponse> findByBrandIdAndStatusOpenAndSearch(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, @Param("proposalDeadline") Date proposalDeadline, @Param("search") String search , Pageable pageable);
+	
+	
 	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status AND c.proposalDeadline <= :proposalDeadline")
 	public Page<CampaignResponse> findByBrandIdAndStatusClose(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, @Param("proposalDeadline") Date proposalDeadline, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Brand') FROM campaign c WHERE c.brandId=:brandId AND c.status=:status AND c.proposalDeadline <= :proposalDeadline AND c.title LIKE CONCAT('%' , :search , '%')")
+	public Page<CampaignResponse> findByBrandIdAndStatusCloseAndSearch(@Param("brandId") Long brandId, @Param("status") CampaignStatus status, @Param("proposalDeadline") Date proposalDeadline, @Param("search") String search, Pageable pageable);
 	
 	public Page<Campaign> findAll(Pageable pageable);
 	

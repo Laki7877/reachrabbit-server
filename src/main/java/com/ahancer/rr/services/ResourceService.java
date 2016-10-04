@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.ResourceType;
 import com.ahancer.rr.daos.ResourceDao;
 import com.ahancer.rr.models.Resource;
@@ -53,7 +54,7 @@ public class ResourceService {
 	public Resource upload(MultipartFile multipartFile) throws Exception {
 		//Upload with generated name
 		String resourcePath = generateResourceName(multipartFile.getOriginalFilename());
-		String desPath = "temporary/" + resourcePath;
+		String desPath = ApplicationConstant.TemporaryFolder + "/" + resourcePath;
 		File file = null;
 		try {
 			file = Util.resizeImage(multipartFile.getInputStream(), desPath, 0, 0);

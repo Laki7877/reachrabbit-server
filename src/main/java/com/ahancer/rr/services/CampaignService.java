@@ -35,28 +35,28 @@ import com.ahancer.rr.response.UserResponse;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class CampaignService {
-	
+
 	@Autowired
 	private CampaignDao campaignDao;
-	
+
 	@Autowired
 	private ProposalService proposalService;
 
 	@Autowired
 	private CampaignResourceDao campaignResourceDao;
-	
+
 	@Autowired
 	private ProposalMessageService proposalMessageService;
-	
+
 	@Autowired
 	private RobotService robotService;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Value("${email.admin}")
 	private String adminEmail;
 
@@ -90,7 +90,7 @@ public class CampaignService {
 		request.setCampaignId(campaign.getCampaignId());
 		return request;
 	}
-	
+
 	private void validateCampaign(Campaign campaign, UserResponse user, Locale locale) throws Exception {
 		if(CampaignStatus.Open.equals(campaign.getStatus())){
 			if(StringUtils.isEmpty(campaign.getTitle())) {
@@ -131,7 +131,7 @@ public class CampaignService {
 			emailService.send(to, subject, body);
 		}
 	}
-	
+
 	public void deleteCampaign(Long campaignId, UserResponse user) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
 		Campaign campaign = campaignDao.findByCampaignIdAndBrandId(campaignId, brandId);
@@ -201,36 +201,53 @@ public class CampaignService {
 		validateCampaign(campaign,user,locale);
 		return request;
 	}
-	
+
 	public Page<CampaignResponse> findAll(Pageable pageable) {
 		return campaignDao.findCampaignByAdmin(pageable);
 	}
-	
+
 	public Page<CampaignResponse> findAllByAdmin(Pageable pageable) {
 		Page<CampaignResponse> response = campaignDao.findCampaignByAdmin(pageable);
 		return response;
 	}
 
-	public Page<CampaignResponse> findAllByBrand(Long brandId, String statusValue, Pageable pageable) {
+	public Page<CampaignResponse> findAllByBrand(Long brandId, String statusValue, String search, Pageable pageable) {
 		Page<CampaignResponse> response = null;
 		if(StringUtils.isNotEmpty(statusValue)) {
 			CampaignStatus status = CampaignStatus.valueOf(statusValue);
 			switch(status){
 			case Draft:
-				response = campaignDao.findByBrandIdAndStatus(brandId, status, pageable);
+				if(StringUtils.isEmpty(search)) {
+					response = campaignDao.findByBrandIdAndStatus(brandId, status, pageable);
+				} else {
+					response = campaignDao.findByBrandIdAndStatusAndSeacrh(brandId, status, search, pageable);
+				}
 				break;
 			case Open:
-				response = campaignDao.findByBrandIdAndStatusOpen(brandId, status, new Date(), pageable);
+				if(StringUtils.isEmpty(search)) {
+					response = campaignDao.findByBrandIdAndStatusOpen(brandId, status, new Date(), pageable);
+				} else {
+					response = campaignDao.findByBrandIdAndStatusOpenAndSearch(brandId, status, new Date(), search, pageable);
+				}
 				break;
 			case Close:
-				response = campaignDao.findByBrandIdAndStatusClose(brandId, CampaignStatus.Open, new Date(), pageable);
+				if(StringUtils.isEmpty(search)) {
+					response = campaignDao.findByBrandIdAndStatusClose(brandId, CampaignStatus.Open, new Date(), pageable);
+				} else {
+					response = campaignDao.findByBrandIdAndStatusCloseAndSearch(brandId, CampaignStatus.Open, new Date(), search, pageable);
+				}
 				break;
 			default:
 				break;
 			}
-			
+
 		} else {
-			response = campaignDao.findByBrandId(brandId, pageable);
+			if(StringUtils.isEmpty(search)) {
+				response = campaignDao.findByBrandId(brandId, pageable);
+			} else {
+				response = campaignDao.findByBrandIdAndSearch(brandId, search, pageable);
+			}
+
 		}
 		return response;
 	}
@@ -257,7 +274,7 @@ public class CampaignService {
 		}
 		return response;
 	}
-	
+
 	public CampaignResponse findOneByInfluencer(Long campaignId, Long influencerId){
 		Campaign capaign = campaignDao.findByCampaignIdAndStatus(campaignId, CampaignStatus.Open);
 		CampaignResponse response = new CampaignResponse(capaign,Role.Influencer.displayName());
@@ -277,7 +294,7 @@ public class CampaignService {
 		CampaignResponse response = new CampaignResponse(capaign,Role.Admin.displayName());
 		return response;
 	}
-	
+
 	public CampaignResponse findOneByPublic(String publicCode) {
 		Campaign capaign = campaignDao.findByPublicCodeAndStatus(publicCode, CampaignStatus.Open);
 		if(null == capaign){
@@ -292,18 +309,18 @@ public class CampaignService {
 		CampaignResponse response = new CampaignResponse(capaign,Role.Brand.displayName());
 		return response;
 	}
-	
+
 	public void dismissCampaignNotification(Long campaignId, Long brandId){
 		campaignDao.updateRabbitFlag(true, campaignId, brandId);
 	}
-	
+
 	public void updatePublicCode(){
 		for(Campaign campaign : campaignDao.findAll()){
 			if(StringUtils.isEmpty(campaign.getPublicCode())){
 				campaign.setPublicCode(UUID.randomUUID().toString().replace("-", ""));
 				campaignDao.save(campaign);
 			}
-			
+
 		}
 	}
 }

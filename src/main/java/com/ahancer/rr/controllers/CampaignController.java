@@ -41,11 +41,12 @@ public class CampaignController extends AbstractController {
 	@ApiOperation(value = "Get campaign pagination")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
-	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status,Pageable pageRequest) throws Exception {
+	public Page<CampaignResponse> getAllCampaign(@RequestParam(name="status",required=false) String status
+			, @RequestParam(name="search", required=false) String search,Pageable pageRequest) throws Exception {
 		Page<CampaignResponse> response = null;
 		switch(this.getUserRequest().getRole()){
 		case Brand:
-			response = campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, pageRequest);
+			response = campaignService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(), status, search, pageRequest);
 			break;
 		case Influencer:
 			response = campaignService.findAll(pageRequest);

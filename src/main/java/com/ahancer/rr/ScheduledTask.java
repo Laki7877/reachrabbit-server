@@ -139,7 +139,6 @@ public class ScheduledTask {
 				e.printStackTrace();
 				String trace = ExceptionUtils.getStackTrace(e);
 				emailService.send("laki7877@gmail.com", "Stack trace update post information", trace);
-				throw e;
 			}
 		}
 		

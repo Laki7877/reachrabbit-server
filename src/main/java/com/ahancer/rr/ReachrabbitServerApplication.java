@@ -1,9 +1,11 @@
 package com.ahancer.rr;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.filter.AuthorizationFilter;
 
 @SpringBootApplication
@@ -30,7 +33,7 @@ import com.ahancer.rr.filter.AuthorizationFilter;
 @EntityScan("com.ahancer.rr.models")
 @EnableAsync
 @EnableScheduling
-public class ReachrabbitServerApplication extends WebMvcConfigurerAdapter implements SchedulingConfigurer,AsyncConfigurer {
+public class ReachrabbitServerApplication extends WebMvcConfigurerAdapter implements SchedulingConfigurer,AsyncConfigurer, CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ReachrabbitServerApplication.class, args);
@@ -75,6 +78,14 @@ public class ReachrabbitServerApplication extends WebMvcConfigurerAdapter implem
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 
+	}
+
+	@Override
+	public void run(String... arg0) throws Exception {
+		File theDir = new File(ApplicationConstant.TemporaryFolder);
+		if(!theDir.exists()){
+			theDir.mkdirs();
+		}
 	}
 
 }
