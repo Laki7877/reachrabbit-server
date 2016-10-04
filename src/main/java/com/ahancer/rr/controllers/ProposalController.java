@@ -22,12 +22,15 @@ import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Cart;
+import com.ahancer.rr.models.Post;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.request.PostRequest;
 import com.ahancer.rr.response.ProposalCountResponse;
 import com.ahancer.rr.response.ProposalMessageResponse;
 import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.services.CartService;
+import com.ahancer.rr.services.PostService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalMessageService.DeferredProposalMessage;
 import com.ahancer.rr.services.ProposalService;
@@ -39,6 +42,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/proposals")
 public class ProposalController extends AbstractController {
+	@Autowired
+	private PostService postService;
 	@Autowired
 	private ProposalService proposalService;
 	@Autowired
@@ -246,8 +251,18 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Delete proposal from cart")
 	@RequestMapping(method=RequestMethod.DELETE,value="/{proposalId}/cart")
 	@Authorization({Role.Brand})
-	public void deleteProposalFromCaert(@PathVariable Long proposalId) throws Exception {
+	public void deleteProposalFromCart(@PathVariable Long proposalId) throws Exception {
 		cartService.deleteProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
 		proposalService.processInboxPolling(this.getUserRequest().getBrand().getBrandId());
 	}
+	
+	@ApiOperation(value = "Add post to proposal")
+	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/post")
+	@Authorization({Role.Admin})
+	public Post addPostToProposal(@PathVariable Long proposalId, @RequestBody PostRequest request) throws Exception {
+		return postService.createPostByAdmin(proposalId, request);
+	}
+	
+	
+	
 }
