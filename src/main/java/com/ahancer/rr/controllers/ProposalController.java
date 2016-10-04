@@ -84,7 +84,7 @@ public class ProposalController extends AbstractController {
 	}
 	@ApiOperation(value = "Get count proposal status")
 	@RequestMapping(method=RequestMethod.GET, value="/count")
-	@Authorization({Role.Influencer,Role.Brand})
+	@Authorization({Role.Influencer,Role.Brand, Role.Admin})
 	public ProposalCountResponse getProposalCountByStatus(@RequestParam("status") ProposalStatus status) throws Exception {
 		ProposalCountResponse response = null;
 		switch(this.getUserRequest().getRole()){
@@ -93,6 +93,9 @@ public class ProposalController extends AbstractController {
 			break;
 		case Influencer:
 			response = proposalService.countByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId(), status);
+			break;
+		case Admin:
+			response = proposalService.countByAdmin(status);
 			break;
 		default:
 			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");

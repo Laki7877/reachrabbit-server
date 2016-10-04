@@ -204,6 +204,12 @@ public class ProposalService {
 		Long unreadInfluencer = proposalMessageDao.countByProposalInfluencerIdAndIsInfluencerReadFalseAndProposalStatus(influencerId,status);
 		return new ProposalCountResponse(proposalCount,unreadInfluencer);
 	}
+	public ProposalCountResponse countByAdmin(ProposalStatus status) {
+		Long proposalCount = proposalDao.countByStatus(status);
+		return new ProposalCountResponse(proposalCount,0L);
+	}
+	
+	
 
 	public Page<Proposal> findAllByBrand(Long brandId,ProposalStatus status, String search,Pageable pageable) {
 		Page<Proposal> response = null;
