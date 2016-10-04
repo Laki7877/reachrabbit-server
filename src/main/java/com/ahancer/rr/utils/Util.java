@@ -1,12 +1,20 @@
 package com.ahancer.rr.utils;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.beans.FeatureDescriptor;
+import java.io.File;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import javax.imageio.ImageIO;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -61,4 +69,43 @@ public class Util {
 		}
 		return userResponse;
 	}
+	
+	public static File resizeImage(InputStream sourceImg, String destImg, Integer Width, Integer Height) throws Exception {
+        BufferedImage origImage;
+        origImage = ImageIO.read(sourceImg);
+        int type = origImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : origImage.getType();
+        //*Special* if the width or height is 0 use image src dimensions
+        if (Width == 0) {
+            Width = origImage.getWidth();
+        }
+        if (Height == 0) {
+            Height = origImage.getHeight();
+        }
+        int fHeight = Height;
+        int fWidth = Width;
+        //Work out the resized width/height
+        if (origImage.getHeight() > Height || origImage.getWidth() > Width) {
+            fHeight = Height;
+            int wid = Width;
+            float sum = (float)origImage.getWidth() / (float)origImage.getHeight();
+            fWidth = Math.round(fHeight * sum);
+            if (fWidth > wid) {
+                //rezise again for the width this time
+                fHeight = Math.round(wid/sum);
+                fWidth = wid;
+            }
+        }
+        BufferedImage resizedImage = new BufferedImage(fWidth, fHeight, type);
+        Graphics2D g = resizedImage.createGraphics();
+        g.setComposite(AlphaComposite.Src);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.drawImage(origImage, 0, 0, fWidth, fHeight, null);
+        g.dispose();
+        File file = new File(destImg);
+        ImageIO.write(resizedImage, "png", file);
+        return file;
+    }
+	
 }

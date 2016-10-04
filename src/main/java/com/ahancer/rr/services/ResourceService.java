@@ -1,5 +1,6 @@
 package com.ahancer.rr.services;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
@@ -19,6 +20,7 @@ import com.ahancer.rr.daos.ResourceDao;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.request.ResourceRemoteRequest;
 import com.ahancer.rr.utils.S3Util;
+import com.ahancer.rr.utils.Util;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -51,9 +53,11 @@ public class ResourceService {
 	public Resource upload(MultipartFile multipartFile) throws Exception {
 		//Upload with generated name
 		String resourcePath = generateResourceName(multipartFile.getOriginalFilename());
-		s3Util.upload(multipartFile, bucket, resourcePath);
-		
+		String desPath = "temporary/" + resourcePath;
+		File file = null;
 		try {
+			file = Util.resizeImage(multipartFile.getInputStream(), desPath, 0, 0);
+			s3Util.upload(desPath, bucket, resourcePath);
 			//Save resource
 			Resource resource = new Resource();
 			resource.setResourcePath(resourcePath);
@@ -62,6 +66,10 @@ public class ResourceService {
 		catch(Exception e) {
 			s3Util.delete(bucket,resourcePath);
 			throw e;
+		} finally {
+			if(null != file){
+				file.delete();
+			}
 		}
 	}
 	
