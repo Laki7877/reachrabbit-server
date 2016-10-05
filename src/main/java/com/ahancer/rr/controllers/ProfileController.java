@@ -124,7 +124,7 @@ public class ProfileController extends AbstractController{
 	@ApiOperation(value = "Validate instagram")
 	@Authorization({Role.Influencer})
 	@RequestMapping(value="/instagram/validate", method=RequestMethod.POST)
-	public UserResponse validateInstagram(@RequestBody InstagramAuthenticationRequest request) throws Exception {
+	public InstagramProfileResponse validateInstagram(@RequestBody InstagramAuthenticationRequest request) throws Exception {
 		return instagramService.validateUser(this.getUserRequest(), this.getTokenRequest(),request);
 	}
 

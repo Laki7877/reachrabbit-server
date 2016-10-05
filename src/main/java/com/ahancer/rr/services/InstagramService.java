@@ -22,15 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.ahancer.rr.constants.ApplicationConstant;
-import com.ahancer.rr.daos.InfluencerMediaDao;
 import com.ahancer.rr.daos.MediaDao;
 import com.ahancer.rr.exception.ResponseException;
-import com.ahancer.rr.models.InfluencerMedia;
-import com.ahancer.rr.models.InfluencerMediaId;
-import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.Post;
 import com.ahancer.rr.request.InstagramAuthenticationRequest;
 import com.ahancer.rr.response.AuthenticationResponse;
@@ -38,7 +32,6 @@ import com.ahancer.rr.response.InstagramAuthenticationResponse;
 import com.ahancer.rr.response.InstagramProfileResponse;
 import com.ahancer.rr.response.OAuthenticationResponse;
 import com.ahancer.rr.response.UserResponse;
-import com.ahancer.rr.utils.CacheUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -51,10 +44,6 @@ public class InstagramService {
 	private String appKey;
 	@Value("${instagram.appSecret}")
 	private String appSecret;
-	@Autowired
-	private InfluencerMediaDao influencerMediaDao;
-	@Autowired
-	private CacheUtil cacheUtil;
 
 	//TODO remove hardcoded
 	private String adminAccessToken ="3776064946.c428876.6dba7fbf1f7c424bb9fa5bec9e8633e9";
@@ -280,8 +269,8 @@ public class InstagramService {
 			return new OAuthenticationResponse(auth.getToken());
 		}
 	}
-	@Transactional(rollbackFor=Exception.class)
-	public UserResponse validateUser(UserResponse user,String token,InstagramAuthenticationRequest request) throws Exception {
+	
+	public InstagramProfileResponse validateUser(UserResponse user,String token,InstagramAuthenticationRequest request) throws Exception {
 		String urlString = "https://www.instagram.com/accounts/login/ajax/";
 		URL url = new URL(urlString);
 		HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
@@ -320,23 +309,8 @@ public class InstagramService {
 		if(!obj.getAuthenticated()) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.instagram.validation.invalid");
 		}
-		
-		
 		InstagramProfileResponse profile = getProfile(obj.getUser());
-		
-		Long influencerId = user.getInfluencer().getInfluencerId();
-		InfluencerMedia influencerMedia = new InfluencerMedia();
-		Media media = mediaDao.findOne("instagram");
-		influencerMedia.setMedia(media);
-		influencerMedia.setSocialId(obj.getUser());
-		InfluencerMediaId influencerMediaId = new InfluencerMediaId();
-		influencerMediaId.setInfluencerId(influencerId);
-		influencerMediaId.setMediaId(media.getMediaId());
-		influencerMedia.setInfluencerMediaId(influencerMediaId);
-		influencerMediaDao.insertInfluencerMedia(influencerId ,media.getMediaId() ,profile.getFollowers().longValue(), null , influencerMedia.getSocialId());
-		user.getInfluencer().getInfluencerMedias().add(influencerMedia);
-		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, user);
-		return user;
+		return profile;
 	}
 
 }
