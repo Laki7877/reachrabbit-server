@@ -29,6 +29,7 @@ import com.ahancer.rr.request.PostRequest;
 import com.ahancer.rr.response.ProposalCountResponse;
 import com.ahancer.rr.response.ProposalMessageResponse;
 import com.ahancer.rr.response.ProposalResponse;
+import com.ahancer.rr.response.UpdatePostResponse;
 import com.ahancer.rr.services.CartService;
 import com.ahancer.rr.services.PostService;
 import com.ahancer.rr.services.ProposalMessageService;
@@ -261,13 +262,19 @@ public class ProposalController extends AbstractController {
 		cartService.deleteProposalToCart(proposalId, this.getUserRequest().getBrand().getBrandId());
 		proposalService.processInboxPolling(this.getUserRequest().getBrand().getBrandId());
 	}
-	
 	@ApiOperation(value = "Add post to proposal")
 	@RequestMapping(method=RequestMethod.POST,value="/{proposalId}/post")
 	@Authorization({Role.Admin})
 	public Post addPostToProposal(@PathVariable Long proposalId, @RequestBody PostRequest request) throws Exception {
 		return postService.createPostByAdmin(proposalId, request);
 	}
+	@ApiOperation(value = "Get post from proposal")
+	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/post")
+	@Authorization({Role.Admin})
+	public List<UpdatePostResponse> getListOfPost(@PathVariable Long proposalId){
+		return postService.getListPost(proposalId);
+	}
+	
 	
 	
 	

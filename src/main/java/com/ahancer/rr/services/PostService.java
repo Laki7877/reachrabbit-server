@@ -124,9 +124,17 @@ public class PostService {
 		post.setLikeCount(tmpPost.getLikeCount());
 		post.setShareCount(tmpPost.getShareCount());
 		post.setViewCount(tmpPost.getViewCount());
+		post.setUrl(request.getUrl());
 		post = postDao.save(post);
 		proposal.setHasPost(true);
 		proposal = proposalDao.save(proposal);
 		return post;
 	}
+	
+	
+	public List<UpdatePostResponse> getListPost(Long proposalId){
+		return postDao.findPostByProposalId(proposalId);
+	}
+	
+	
 }

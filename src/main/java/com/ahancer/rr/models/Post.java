@@ -38,7 +38,6 @@ public class Post extends AbstractModel implements Serializable {
 	@Column(name="mediaId",nullable=false)
 	private String mediaId;
 	
-	@JsonIgnore
 	@MapsId("mediaId")
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="mediaId",nullable=false)
@@ -55,6 +54,9 @@ public class Post extends AbstractModel implements Serializable {
 	
 	@Column(name="viewCount")
 	private Long viewCount;
+	
+	@Column(name="url")
+	private String url;
 
 	public Long getPostId() {
 		return postId;
@@ -135,7 +137,13 @@ public class Post extends AbstractModel implements Serializable {
 	public void setViewCount(Long viewCount) {
 		this.viewCount = viewCount;
 	}
-	
-	
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 	
 }
