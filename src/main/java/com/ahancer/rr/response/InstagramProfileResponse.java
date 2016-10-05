@@ -6,24 +6,21 @@ import java.util.List;
 
 public class InstagramProfileResponse implements Serializable {
 
-	/**
-	 * 
-	 */
 	public static class Post implements Serializable{
-		
-		/**
-		 * 
-		 */
+
 		private static final long serialVersionUID = 1L;
 		private String type;
 		
 		private String video;
 		private String image;
 		private Integer width;
-		private Integer height; //video width height
+		private Integer height;
 		
 		private BigInteger likes;
 		private BigInteger comments;
+		private BigInteger videoViews;
+		private String caption;
+		
 		public String getType() {
 			return type;
 		}
@@ -65,6 +62,18 @@ public class InstagramProfileResponse implements Serializable {
 		}
 		public void setComments(BigInteger comments) {
 			this.comments = comments;
+		}
+		public BigInteger getVideoViews() {
+			return videoViews;
+		}
+		public void setVideoViews(BigInteger videoViews) {
+			this.videoViews = videoViews;
+		}
+		public String getCaption() {
+			return caption;
+		}
+		public void setCaption(String caption) {
+			this.caption = caption;
 		}
 		
 	}
