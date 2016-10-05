@@ -33,4 +33,5 @@ public interface PostDao extends CrudRepository<Post, Long> {
 			+ "AND p.socialPostId = :socialPostId ")
 	public int deletePost(@Param("proposalId") Long proposalId, @Param("mediaId") String mediaId, @Param("socialPostId") String socialPostId );
 	
+	public Long countByProposalId(Long proposalId);
 }

@@ -74,4 +74,9 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	@Modifying
 	@Query("UPDATE proposal p SET p.rabbitFlag=:rabbitFlag WHERE p.proposalId=:proposalId AND p.influencerId=:influencerId")
 	public int updateRabbitFlag(@Param("rabbitFlag") Boolean rabbitFlag, @Param("proposalId") Long proposalId,@Param("influencerId") Long influencerId);
+
+	@Modifying
+	@Query("UPDATE proposal p SET p.hasPost = :hasPost WHERE p.proposalId = :proposalId ")
+	public int updateHasPost(@Param("hasPost") Boolean hasPost, @Param("proposalId") Long proposalId);
+
 }
