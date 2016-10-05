@@ -75,10 +75,21 @@ public class YoutubeService {
 		videoList.setKey(apiKey).setId(postId);
 		
 		Video video = videoList.execute().getItems().get(0);
+		Long likes = 0L;
+		Long comments = 0L;
+		Long views = 0L;
 		
-		Long likes = video.getStatistics().getLikeCount().longValue();
-		Long comments = video.getStatistics().getCommentCount().longValue();
-		Long views = video.getStatistics().getViewCount().longValue();
+		if(null != video && null != video.getStatistics()){
+			if(null != video.getStatistics().getLikeCount()){
+				likes = video.getStatistics().getLikeCount().longValue();
+			}
+			if(null != video.getStatistics().getCommentCount()){
+				comments = video.getStatistics().getCommentCount().longValue();
+			}
+			if(null != video.getStatistics().getViewCount()){
+				views = video.getStatistics().getViewCount().longValue();
+			}
+		}
 		
 		Post post = new Post();
 		post.setLikeCount(likes);
