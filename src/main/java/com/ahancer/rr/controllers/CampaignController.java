@@ -23,6 +23,7 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.CampaignRequest;
 import com.ahancer.rr.response.CampaignResponse;
+import com.ahancer.rr.response.ProposalDashboardResponse;
 import com.ahancer.rr.services.CampaignService;
 import com.ahancer.rr.services.ProposalMessageService;
 import com.ahancer.rr.services.ProposalService;
@@ -151,4 +152,22 @@ public class CampaignController extends AbstractController {
 	public Proposal getAppliedProposal(@PathVariable Long campaignId) throws Exception {
 		return proposalService.getAppliedProposal(this.getUserRequest().getInfluencer().getInfluencerId(),campaignId);
 	}
+	@ApiOperation(value = "Get proposal from campaign")
+	@RequestMapping(method=RequestMethod.GET,value="/{campaignId}/proposals")
+	@Authorization({Role.Brand,Role.Admin})
+	public List<ProposalDashboardResponse> getProposalFromCampaign(@PathVariable Long campaignId) throws Exception {
+		List<ProposalDashboardResponse> response = null;
+		switch(this.getUserRequest().getRole()){
+		case Brand:
+			response =  proposalService.getProposalFromCampaignByBrand(campaignId,this.getUserRequest().getBrand().getBrandId());
+			break;
+		case Admin:
+			response = proposalService.getProposalFromCampaignByAdmin(campaignId);
+			break;
+		default:
+			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
+		}
+		return response;
+	}
+	
 }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.ahancer.rr.models.Post;
+import com.ahancer.rr.response.PostAggregateResponse;
 import com.ahancer.rr.response.UpdatePostResponse;
 
 public interface PostDao extends CrudRepository<Post, Long> {
@@ -34,4 +35,11 @@ public interface PostDao extends CrudRepository<Post, Long> {
 	public int deletePost(@Param("proposalId") Long proposalId, @Param("mediaId") String mediaId, @Param("socialPostId") String socialPostId );
 	
 	public Long countByProposalId(Long proposalId);
+	
+	@Query("SELECT new com.ahancer.rr.response.PostAggregateResponse(DATE(p.createdAt), p.mediaId, SUM(p.likeCount), SUM(p.commentCount), SUM(p.viewCount), SUM(p.shareCount) ) "
+			+ "FROM post p "
+			+ "WHERE p.proposalId = :proposalId "
+			+ "GROUP BY DATE(p.createdAt) ,p.mediaId")
+	public List<PostAggregateResponse> getAggregatePost(@Param("proposalId") Long proposalId);
+	
 }

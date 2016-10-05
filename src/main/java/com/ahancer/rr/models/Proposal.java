@@ -268,5 +268,4 @@ public class Proposal extends AbstractModel implements Serializable{
 		this.hasPost = hasPost;
 	}
 	
-	
 }

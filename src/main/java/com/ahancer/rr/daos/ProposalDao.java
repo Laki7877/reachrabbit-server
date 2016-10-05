@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.models.Proposal;
+import com.ahancer.rr.response.ProposalDashboardResponse;
 
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
@@ -78,5 +79,19 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	@Modifying
 	@Query("UPDATE proposal p SET p.hasPost = :hasPost WHERE p.proposalId = :proposalId ")
 	public int updateHasPost(@Param("hasPost") Boolean hasPost, @Param("proposalId") Long proposalId);
+	
+	
+	@Query("SELECT new com.ahancer.rr.response.ProposalDashboardResponse(p.proposalId, p.influencerId, p.influencer, p.price, p.status) "
+			+ "FROM proposal p "
+			+ "WHERE p.campaign.campaignId = :campaignId "
+			+ "AND p.status in :statuses ")
+	public List<ProposalDashboardResponse> getListProposalByCampaignAndStatus(@Param("campaignId") Long campaignId, @Param("statuses") Collection<ProposalStatus> statuses);
+	
+	@Query("SELECT new com.ahancer.rr.response.ProposalDashboardResponse(p.proposalId, p.influencerId, p.influencer, p.price, p.status) "
+			+ "FROM proposal p "
+			+ "WHERE p.campaign.campaignId = :campaignId "
+			+ "AND p.campaign.brandId = :brandId "
+			+ "AND p.status in :statuses ")
+	public List<ProposalDashboardResponse> getListProposalByCampaignAndBrandAndStatus(@Param("campaignId") Long campaignId, @Param("brandId") Long brandId, @Param("statuses") Collection<ProposalStatus> statuses);
 
 }
