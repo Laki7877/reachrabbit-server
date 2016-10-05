@@ -131,9 +131,12 @@ public class PostService {
 		return post;
 	}
 	
-	
 	public List<UpdatePostResponse> getListPost(Long proposalId){
 		return postDao.findPostByProposalId(proposalId);
+	}
+	
+	public void deletePost(Long proposalId, PostRequest request){
+		
 	}
 	
 	

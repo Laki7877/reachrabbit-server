@@ -22,8 +22,7 @@ public interface PostDao extends CrudRepository<Post, Long> {
 	@Query("SELECT new com.ahancer.rr.response.UpdatePostResponse(p.socialPostId, p.mediaId, p.proposalId, p.url, p.media) "
 			+ "FROM post p "
 			+ "WHERE p.proposalId = :proposalId "
-			+ "GROUP BY p.socialPostId, p.mediaId, p.proposalId, p.url "
-			+ "HAVING MIN(createdAt) > :minDate")
+			+ "GROUP BY p.socialPostId, p.mediaId, p.proposalId, p.url ")
 	public List<UpdatePostResponse> findPostByProposalId(@Param("proposalId") Long proposalId);
 	
 }
