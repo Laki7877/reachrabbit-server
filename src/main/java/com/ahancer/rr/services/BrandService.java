@@ -29,32 +29,18 @@ import com.ahancer.rr.utils.Util;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class BrandService {
-	
 	@Autowired
 	private CacheUtil cacheUtil;
-
-
 	@Autowired
 	private BrandDao brandDao;
-
 	@Autowired
 	private UserDao userDao;
-
-//	@Autowired
-//	private CampaignDao campaignDao;
-//
-//	@Autowired
-//	private MediaDao mediaDao;
-
 	@Autowired
 	private EncryptionUtil encrypt;
-	
 	@Value("${ui.host}")
 	private String uiHost;
-	
 	@Autowired
 	private MessageSource messageSource;
-	
 	@Autowired
 	private EmailService emailService;
 
@@ -78,19 +64,6 @@ public class BrandService {
 		brand.setBrandName(request.getBrandName());
 		brand.setBrandId(user.getUserId());
 		brand = brandDao.save(brand);
-		//Setup campaign object
-//		Campaign campaign = new Campaign();
-//		campaign.setProposalDeadline(null);
-//		campaign.setBrandId(brand.getBrandId());
-//		campaign.setTitle(null);
-//		campaign.setCategory(null);
-//		campaign.setDescription(null);
-//		campaign.setStatus(CampaignStatus.Draft);
-//		Set<Media> allMedia = new HashSet<Media>();
-//		mediaDao.findAll().forEach(allMedia::add);
-//		campaign.setMedia(allMedia);
-//		campaign.setRabbitFlag(false);
-//		campaign = campaignDao.save(campaign);
 		user.setBrand(brand);
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.brand.signup.subject",null,locale);

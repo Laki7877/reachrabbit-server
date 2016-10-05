@@ -186,56 +186,6 @@ public class InstagramService {
 		response.setAverageLikes(averageLikes);
 		response.setPosts(posts);
 		return response;
-
-
-
-
-
-		//		Instagram instagram = getInstance(getAdminAccessToken());
-		//		UserInfoData userInfo = instagram.getUserInfo(socialId).getData();
-		//		List<MediaFeedData> mediaFeeds = instagram.getRecentMediaFeed(socialId, 20, null, null, null, null).getData();
-		//		
-		//		InstagramProfileResponse resp = new InstagramProfileResponse();
-		//
-		//		resp.setUsername(userInfo.getUsername());
-		//		resp.setName(userInfo.getFullName());
-		//		resp.setFollowers(BigInteger.valueOf(userInfo.getCounts().getFollowedBy()));
-		//		resp.setTotalPosts(BigInteger.valueOf(userInfo.getCounts().getMedia()));
-		//		
-		//		BigInteger averageLikes = BigInteger.ZERO;
-		//		BigInteger averageComments = BigInteger.ZERO;
-		//		
-		//		List<InstagramProfileResponse.Post> posts = new ArrayList<>();
-		//		
-		//		for(MediaFeedData data : mediaFeeds) {
-		//			InstagramProfileResponse.Post post = new InstagramProfileResponse.Post();
-		//			post.setType(data.getType());
-		//			if(post.getType().equals("image")) {
-		//				post.setImage(data.getImages().getStandardResolution().getImageUrl());
-		//				post.setWidth(data.getImages().getStandardResolution().getImageWidth());
-		//				post.setHeight(data.getImages().getStandardResolution().getImageHeight());
-		//			} else if(post.getType().equals("video")) {
-		//				post.setVideo(data.getVideos().getStandardResolution().getUrl());
-		//				post.setWidth(data.getVideos().getStandardResolution().getWidth());
-		//				post.setHeight(data.getVideos().getStandardResolution().getHeight());
-		//			}
-		//			post.setComments(BigInteger.valueOf(data.getComments().getCount()));
-		//			post.setLikes(BigInteger.valueOf(data.getLikes().getCount()));
-		//			
-		//			averageLikes = averageLikes.add(post.getLikes());
-		//			averageComments = averageComments.add(post.getComments());
-		//			
-		//			posts.add(post);
-		//		}
-		//		
-		//		averageLikes = averageLikes.divide(BigInteger.valueOf(posts.size()));
-		//		averageComments = averageComments.divide(BigInteger.valueOf(posts.size()));
-		//		
-		//		resp.setAverageComments(averageComments);
-		//		resp.setAverageLikes(averageLikes);
-		//		resp.setPosts(posts);
-		//		
-		//		return resp;
 	}
 	public Instagram getInstance(String accessToken) {
 		return new Instagram(new Token(accessToken, appSecret));

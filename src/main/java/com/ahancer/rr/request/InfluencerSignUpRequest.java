@@ -7,29 +7,37 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.Resource;
 
 public class InfluencerSignUpRequest {
-	
+
+	@NotNull(message="error.password.require")
+	@Size(min=8,max=100,message="error.password.length")
+	private String password;
+
+	@NotNull(message="error.name.require")
+	@Size(min=1,max=100,message="error.name.length")
 	private String name;
-	
+
 	@NotNull(message="error.email.require")
 	@Size(min=3,max=100,message="error.email.length")
 	@Email(message="error.email.invalid")
 	private String email;
-	
+
+	@NotNull(message="error.phonenumber.require")
+	@Size(min=1,max=20,message="error.phonenumber.length")
 	private String phoneNumber;
-	
+
 	private Resource profilePicture;
-	
-	@NotEmpty(message="error.influencer.signup.no.media")
+
 	private Set<InfluencerMedia> influencerMedia = new HashSet<InfluencerMedia>(0);
-	
+
 	public InfluencerSignUpRequest() {
+
 	}
+
 	public InfluencerSignUpRequest(String name, String email, String phoneNumber, Resource profilePicture,
 			Set<InfluencerMedia> influencerMedia) {
 		super();
@@ -70,5 +78,10 @@ public class InfluencerSignUpRequest {
 	public void setInfluencerMedia(Set<InfluencerMedia> influencerMedia) {
 		this.influencerMedia = influencerMedia;
 	}
-	
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }

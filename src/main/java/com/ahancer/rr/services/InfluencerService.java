@@ -26,35 +26,30 @@ import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.CacheUtil;
+import com.ahancer.rr.utils.EncryptionUtil;
 import com.ahancer.rr.utils.Util;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class InfluencerService {
-	
 	@Autowired
 	private CacheUtil cacheUtil;
-	
 	@Autowired
 	private InfluencerDao influencerDao;
-
 	@Autowired
 	private UserDao userDao;
-	
 	@Autowired
 	private ProposalDao proposalDao;
-
 	@Autowired
 	private InfluencerMediaDao influencerMediaDao;
-	
 	@Autowired
 	private EmailService emailService;
-	
 	@Autowired
 	private MessageSource messageSource;
-	
 	@Value("${ui.host}")
 	private String uiHost;
+	@Autowired
+	private EncryptionUtil encrypt;
 
 	public UserResponse updateInfluencerUser(Long userId, ProfileRequest newUser, String token) throws Exception {
 		User oldUser = userDao.findOne(userId);
@@ -101,7 +96,7 @@ public class InfluencerService {
 		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
 	}
-	
+
 	public UserResponse updateBankDetail(PayoutRequest request,Long influencerId, String token) throws Exception{
 		User oldUser = userDao.findOne(influencerId);
 		if(null == oldUser) {
@@ -121,12 +116,7 @@ public class InfluencerService {
 		int emailCount = userDao.countByEmail(request.getEmail());
 		if(0 < emailCount) {
 			throw new ResponseException(HttpStatus.INTERNAL_SERVER_ERROR,"error.email.duplicate");
-		}
-		//Check for social media linkage
-		if(request.getInfluencerMedia() == null || 
-				request.getInfluencerMedia().size() == 0) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.signup.no.media");
-		}
+		} 
 		//Setup user object
 		User user = new User();
 		user.setEmail(request.getEmail());
@@ -134,6 +124,8 @@ public class InfluencerService {
 		user.setPhoneNumber(request.getPhoneNumber());
 		user.setProfilePicture(request.getProfilePicture());
 		user.setRole(Role.Influencer);
+		String hashPassword = encrypt.hashPassword(request.getPassword());
+		user.setPassword(hashPassword);
 		user = userDao.save(user);
 		//Setup user object
 		Influencer influencer = new Influencer();
@@ -149,14 +141,14 @@ public class InfluencerService {
 		}
 		influencer = influencerDao.save(influencer);
 		user.setInfluencer(influencer);
-		
+
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.influencer.signup.subject",null,locale);
 		String body = messageSource.getMessage("email.influencer.signup.message",null,locale)
 				.replace("{{Infuencer Name}}", user.getName())
 				.replace("{{Host}}", uiHost);
 		emailService.send(to, subject, body);
-		
+
 		return user;
 	}
 
