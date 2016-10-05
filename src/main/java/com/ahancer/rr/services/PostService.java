@@ -135,8 +135,8 @@ public class PostService {
 		return postDao.findPostByProposalId(proposalId);
 	}
 	
-	public void deletePost(Long proposalId, PostRequest request){
-		
+	public int deletePost(Long proposalId, PostRequest request) {
+		return postDao.deletePost(proposalId, request.getMedia().getMediaId(), request.getSocialPostId());
 	}
 	
 	

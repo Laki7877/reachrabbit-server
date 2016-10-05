@@ -9,6 +9,7 @@ public class PostRequest implements Serializable {
 	private static final long serialVersionUID = 8046715432462180328L;
 	private Media media;
 	private String url;
+	private String socialPostId;
 	
 	public PostRequest(){
 		
@@ -29,5 +30,15 @@ public class PostRequest implements Serializable {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
+	public String getSocialPostId() {
+		return socialPostId;
+	}
+
+	public void setSocialPostId(String socialPostId) {
+		this.socialPostId = socialPostId;
+	}
+	
+	
 
 }

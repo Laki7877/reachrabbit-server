@@ -3,6 +3,7 @@ package com.ahancer.rr.daos;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -24,5 +25,12 @@ public interface PostDao extends CrudRepository<Post, Long> {
 			+ "WHERE p.proposalId = :proposalId "
 			+ "GROUP BY p.socialPostId, p.mediaId, p.proposalId, p.url ")
 	public List<UpdatePostResponse> findPostByProposalId(@Param("proposalId") Long proposalId);
+	
+	@Modifying
+	@Query("DELETE FROM post p "
+			+ "WHERE p.proposalId = :proposalId "
+			+ "AND p.mediaId = :mediaId "
+			+ "AND p.socialPostId = :socialPostId ")
+	public int deletePost(@Param("proposalId") Long proposalId, @Param("mediaId") String mediaId, @Param("socialPostId") String socialPostId );
 	
 }

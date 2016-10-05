@@ -277,8 +277,8 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Delete post from proposal")
 	@RequestMapping(method=RequestMethod.DELETE,value="/{proposalId}/post")
 	@Authorization({Role.Admin})
-	public Post deletePostToProposal(@PathVariable Long proposalId, @RequestBody PostRequest request) throws Exception {
-		return postService.createPostByAdmin(proposalId, request);
+	public int deletePostToProposal(@PathVariable Long proposalId, @RequestBody PostRequest request) throws Exception {
+		return postService.deletePost(proposalId, request);
 	}
 	
 }
