@@ -136,8 +136,8 @@ public class PostService {
 	}
 	
 	public int deletePost(Long proposalId, PostRequest request) {
-		int deletedItem = postDao.deletePost(proposalId, request.getMedia().getMediaId(), request.getSocialPostId());
 		Long proposalPostCount = postDao.countByProposalId(proposalId);
+		int deletedItem = postDao.deletePost(proposalId, request.getMedia().getMediaId(), request.getSocialPostId());
 		if((proposalPostCount - deletedItem) <= 0){
 			proposalDao.updateHasPost(false, proposalId);
 		}
