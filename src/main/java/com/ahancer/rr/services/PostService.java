@@ -46,7 +46,10 @@ public class PostService {
 		return postDao.save(post);
 	}
 	
-	public Post createPostByAdmin(Long proposalId, PostRequest request) throws Exception{
+	public Post createPostByAdmin(Long proposalId, PostRequest request) throws Exception {
+		if(StringUtils.isEmpty(request.getUrl())) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+		}
 		Proposal proposal = proposalDao.findOne(proposalId);
 		if(null == proposal) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.invalid");
@@ -114,7 +117,7 @@ public class PostService {
 			if(splitUrl.length < 2){
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 			}
-			post.setSocialPostId(splitUrl[2]);
+			post.setSocialPostId(splitUrl[1]);
 			tmpPost = youtubeService.getPostInfo(post.getSocialPostId());
 			break;
 		default:
