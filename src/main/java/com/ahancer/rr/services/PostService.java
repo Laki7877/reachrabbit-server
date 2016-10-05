@@ -125,6 +125,8 @@ public class PostService {
 		post.setShareCount(tmpPost.getShareCount());
 		post.setViewCount(tmpPost.getViewCount());
 		post = postDao.save(post);
+		proposal.setHasPost(true);
+		proposal = proposalDao.save(proposal);
 		return post;
 	}
 }

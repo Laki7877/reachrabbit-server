@@ -109,6 +109,9 @@ public class Proposal extends AbstractModel implements Serializable{
 	@Column(name="rabbitFlag")
 	private Boolean rabbitFlag;
 	
+	@Column(name="hasPost")
+	private Boolean hasPost;
+	
 	public Proposal() {
 		
 	}
@@ -256,5 +259,14 @@ public class Proposal extends AbstractModel implements Serializable{
 	public void setRabbitFlag(Boolean rabbitFlag) {
 		this.rabbitFlag = rabbitFlag;
 	}
+
+	public Boolean getHasPost() {
+		return hasPost;
+	}
+
+	public void setHasPost(Boolean hasPost) {
+		this.hasPost = hasPost;
+	}
+	
 	
 }
