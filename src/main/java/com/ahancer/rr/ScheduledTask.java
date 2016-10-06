@@ -86,7 +86,7 @@ public class ScheduledTask {
 		}
     }
 	
-	@Scheduled(cron="0 * 1 * * *")
+	@Scheduled(cron="0 5 0 * * *")
 	public void cleanBackupfileDaily() {
 		if(!"production".equals(env)) {
 			return;
@@ -104,7 +104,7 @@ public class ScheduledTask {
 		}
 	}
 	
-	@Scheduled(cron="0 * 23 * * *")
+	@Scheduled(cron="0 10 0 * * *")
 	@Transactional(rollbackFor=Exception.class)
 	public void getPostInfoDaily() throws Exception {
 		Calendar cal = Calendar.getInstance();

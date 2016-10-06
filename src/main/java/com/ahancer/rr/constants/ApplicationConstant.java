@@ -11,6 +11,7 @@ public final class ApplicationConstant {
 	public final static String TokenHeader = "X-Auth-Token";
 	public final static String UserRequestCache = "UserRequestCache";
 	public final static String TemporaryFolder = "temporary";
+	public final static String DashboardRequestCache = "DashboardRequestCache";
 	
 	
 	public static String Bucket;

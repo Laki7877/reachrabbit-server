@@ -1,6 +1,8 @@
 package com.ahancer.rr;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -21,8 +23,10 @@ public class CacheConfig {
 	private String redisHost;
 	@Value("${redis.cache.port}")
 	private Integer redisPort;
-	@Value("${redis.cache.expiration.second}")
-	private Integer redisExpiration;
+	@Value("${redis.cache.token.expiration.second}")
+	private Long userRequestExpiration;
+	@Value("${redis.cache.dashboard.expiration.second}")
+	private Long dashboardRequestExpiration;
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
         JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory();
@@ -41,9 +45,11 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager(RedisTemplate<?, ?> redisTemplate) {
         RedisCacheManager cacheManager = new RedisCacheManager(redisTemplate);
-        cacheManager.setCacheNames(Arrays.asList(ApplicationConstant.UserRequestCache));
-        // Number of seconds before expiration. Defaults to unlimited (0)
-        cacheManager.setDefaultExpiration(redisExpiration);
+        cacheManager.setCacheNames(Arrays.asList(ApplicationConstant.UserRequestCache,ApplicationConstant.DashboardRequestCache));
+        Map<String,Long> expire = new HashMap<String,Long>();
+        expire.put(ApplicationConstant.UserRequestCache, userRequestExpiration);
+        expire.put(ApplicationConstant.DashboardRequestCache, dashboardRequestExpiration);
+        cacheManager.setExpires(expire);
         return cacheManager;
     }
 }

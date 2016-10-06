@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.custom.type.WalletStatus;
@@ -44,6 +45,10 @@ import com.ahancer.rr.response.ProposalDashboardResponse;
 import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.response.WalletResponse;
+import com.ahancer.rr.utils.CacheUtil;
+import com.ahancer.rr.utils.GZIPCompressionUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -68,6 +73,8 @@ public class ProposalService {
 	private PostDao postDao;
 	@Autowired
 	private EmailService emailService;
+	@Autowired
+	private CacheUtil cacheUtil;
 	@Value("${ui.host}")
 	private String uiHost;
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
@@ -433,24 +440,52 @@ public class ProposalService {
 	public void dismissProposalNotification(Long proposalId, Long influencerId){
 		proposalDao.updateRabbitFlag(true,proposalId, influencerId);
 	}
-	public List<ProposalDashboardResponse> getProposalFromCampaignByAdmin(Long campaignId) {
-		List<ProposalStatus> statuses = new ArrayList<ProposalStatus>();
-		statuses.add(ProposalStatus.Complete);
-		statuses.add(ProposalStatus.Working);
-		return proposalDao.getListProposalByCampaignAndStatus(campaignId, statuses);
-	}
-	public List<ProposalDashboardResponse> getProposalFromCampaignByBrand(Long campaignId, Long brandId) {
-		List<ProposalStatus> statuses = new ArrayList<ProposalStatus>();
-		statuses.add(ProposalStatus.Complete);
-		statuses.add(ProposalStatus.Working);
-		
-		List<ProposalDashboardResponse> response = proposalDao.getListProposalByCampaignAndBrandAndStatus(campaignId, brandId, statuses);
-		
-		for(ProposalDashboardResponse proposal : response){
-			proposal.setPosts(postDao.getAggregatePost(proposal.getProposalId()));
+	public List<ProposalDashboardResponse> getProposalFromCampaignByAdmin(Long campaignId) throws Exception {
+		Object obj = cacheUtil.getCacheObject(ApplicationConstant.DashboardRequestCache, campaignId);
+		String jsonCache = StringUtils.EMPTY;
+		List<ProposalDashboardResponse> response = null;
+		ObjectMapper mapper = new ObjectMapper();
+		if(null != obj) {
+			byte[] bytes = (byte[]) obj;
+			jsonCache =  GZIPCompressionUtil.decompress(bytes);
+			response = mapper.readValue(jsonCache, new TypeReference<List<ProposalDashboardResponse>>(){});
+		} else {
+			List<ProposalStatus> statuses = new ArrayList<ProposalStatus>();
+			statuses.add(ProposalStatus.Complete);
+			statuses.add(ProposalStatus.Working);
+			response = proposalDao.getListProposalByCampaignAndStatus(campaignId, statuses);
+			for(ProposalDashboardResponse proposal : response){
+				proposal.setPosts(postDao.getAggregatePost(proposal.getProposalId()));
+			}
+			if(null !=  response && !response.isEmpty()) {
+				jsonCache = mapper.writeValueAsString(response);
+				cacheUtil.putCacheObject(ApplicationConstant.DashboardRequestCache, campaignId, GZIPCompressionUtil.compress(jsonCache));
+			}
 		}
-		
-		
+		return response;
+	}
+	public List<ProposalDashboardResponse> getProposalFromCampaignByBrand(Long campaignId, Long brandId) throws Exception {
+		Object obj = cacheUtil.getCacheObject(ApplicationConstant.DashboardRequestCache, campaignId);
+		String jsonCache = StringUtils.EMPTY;
+		List<ProposalDashboardResponse> response = null;
+		ObjectMapper mapper = new ObjectMapper();
+		if(null != obj) {
+			byte[] bytes = (byte[]) obj;
+			jsonCache =  GZIPCompressionUtil.decompress(bytes);
+			response = mapper.readValue(jsonCache, new TypeReference<List<ProposalDashboardResponse>>(){});
+		} else {
+			List<ProposalStatus> statuses = new ArrayList<ProposalStatus>();
+			statuses.add(ProposalStatus.Complete);
+			statuses.add(ProposalStatus.Working);
+			response = proposalDao.getListProposalByCampaignAndBrandAndStatus(campaignId, brandId, statuses);
+			for(ProposalDashboardResponse proposal : response){
+				proposal.setPosts(postDao.getAggregatePost(proposal.getProposalId()));
+			}
+			if(null !=  response && !response.isEmpty()) {
+				jsonCache = mapper.writeValueAsString(response);
+				cacheUtil.putCacheObject(ApplicationConstant.DashboardRequestCache, campaignId, GZIPCompressionUtil.compress(jsonCache));
+			}
+		}
 		return response;
 	}
 
