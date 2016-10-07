@@ -11,13 +11,17 @@ import com.ahancer.rr.models.CampaignResource;
 import com.ahancer.rr.models.CampaignResourceId;
 
 public interface CampaignResourceDao extends CrudRepository<CampaignResource, CampaignResourceId> {
+	
 	public Set<CampaignResource> findByIdCampaignId(Long campaignId);
 	
 	@Modifying
-	@Query("DELETE FROM CampaignResource cr WHERE cr.id.campaignId=:campaignId")
+	@Query("DELETE "
+			+ "FROM CampaignResource cr "
+			+ "WHERE cr.id.campaignId=:campaignId")
 	public void deleteByIdCampaignId(@Param("campaignId") Long campaignId);
 	
 	@Modifying
-	@Query(value = "INSERT INTO campaignResource (campaignId, resourceId, position) VALUES (:campaignId, :resourceId, :position)", nativeQuery = true)
+	@Query(value = "INSERT INTO campaignResource (campaignId, resourceId, position) "
+			+ "VALUES (:campaignId, :resourceId, :position)", nativeQuery = true)
 	public void insertResource(@Param("campaignId") Long campaignId, @Param("resourceId") Long resourceId, @Param("position") Integer position);
 }

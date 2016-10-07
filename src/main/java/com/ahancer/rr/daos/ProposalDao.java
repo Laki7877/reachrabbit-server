@@ -23,7 +23,6 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Proposal findByProposalIdAndInfluencerId(Long proposalId,Long influencerId);
 	public Proposal findByProposalIdAndCampaignBrandId(Long proposalId,Long brandId);
 	public Proposal findByInfluencerIdAndCampaignCampaignId(Long influencerId, Long campaignId);
-
 	
 	public List<Proposal> findByInfluencerIdAndCampaignStatusIn(Long influencerId, Collection<CampaignStatus> statuses);
 	public Page<Proposal> findByInfluencerId(Long influencerId,Pageable pageable);
@@ -50,7 +49,9 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Page<Proposal> findAll(Pageable pageable);
 
 	public Long countByInfluencerInfluencerIdAndCampaignCampaignId(Long influencerId, Long campaignId);
-	public Long countByProposalIdAndCampaignBrandId(@Param("proposalId") Long proposalId,@Param("brandId") Long brandId);
+	
+	public Long countByProposalIdAndCampaignBrandId(Long proposalId,Long brandId);
+	
 	public Long countByInfluencerInfluencerIdAndStatus(Long influencerId, ProposalStatus status);
 	
 	public Long countByStatus(ProposalStatus status);
@@ -62,24 +63,35 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Long countByInfluencerIdAndMediaMediaId(Long influencerId, String mediaId);
 	
 	@Modifying
-	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId AND cp.influencerId=:influencerId")
+	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt "
+			+ "WHERE cp.proposalId=:proposalId "
+			+ "AND cp.influencerId=:influencerId")
 	public int updateMessageUpdatedAtByInfluencer(@Param("proposalId") Long proposalId,  @Param("influencerId") Long influencerId, @Param("messageUpdatedAt") Date messageUpdatedAt);
 	
 	@Modifying
-	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt WHERE cp.proposalId=:proposalId")
+	@Query("UPDATE proposal cp "
+			+ "SET messageUpdatedAt=:messageUpdatedAt "
+			+ "WHERE cp.proposalId=:proposalId")
 	public int updateMessageUpdatedAtByProposal(@Param("proposalId") Long proposalId, @Param("messageUpdatedAt") Date messageUpdatedAt);
 	
 	@Modifying
-	@Query("UPDATE proposal cp SET status=:status WHERE cp.proposalId=:proposalId")
+	@Query("UPDATE proposal cp "
+			+ "SET status=:status "
+			+ "WHERE cp.proposalId=:proposalId")
 	public int updateProposalStatus(@Param("proposalId") Long proposalId, @Param("status") ProposalStatus status);
 	
 	
 	@Modifying
-	@Query("UPDATE proposal p SET p.rabbitFlag=:rabbitFlag WHERE p.proposalId=:proposalId AND p.influencerId=:influencerId")
+	@Query("UPDATE proposal p "
+			+ "SET p.rabbitFlag=:rabbitFlag "
+			+ "WHERE p.proposalId=:proposalId "
+			+ "AND p.influencerId=:influencerId")
 	public int updateRabbitFlag(@Param("rabbitFlag") Boolean rabbitFlag, @Param("proposalId") Long proposalId,@Param("influencerId") Long influencerId);
 
 	@Modifying
-	@Query("UPDATE proposal p SET p.hasPost = :hasPost WHERE p.proposalId = :proposalId ")
+	@Query("UPDATE proposal p "
+			+ "SET p.hasPost = :hasPost "
+			+ "WHERE p.proposalId = :proposalId ")
 	public int updateHasPost(@Param("hasPost") Boolean hasPost, @Param("proposalId") Long proposalId);
 	
 	

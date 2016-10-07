@@ -15,14 +15,14 @@ public interface InfluencerMediaDao extends CrudRepository<InfluencerMedia, Long
 			+ "   AND im.socialId=:socialId")
 	public int countByMediaIdAndSocialId(@Param("mediaId") String mediaId,@Param("socialId") String socialId);
 	
-	
 	@Modifying
-	@Query("DELETE FROM influencerMedia im WHERE im.influencerMediaId.influencerId=:influencerId")
+	@Query("DELETE FROM influencerMedia im "
+			+ "WHERE im.influencerMediaId.influencerId=:influencerId")
 	public void deleteByInfluencerId(@Param("influencerId") Long influencerId);
 	
-	
 	@Modifying
-	@Query(value = "INSERT INTO influencerMedia (influencerId, mediaId, followerCount, pageId, socialId) VALUES (:influencerId, :mediaId, :followerCount, :pageId, :socialId)", nativeQuery = true)
+	@Query(value = "INSERT INTO influencerMedia (influencerId, mediaId, followerCount, pageId, socialId) "
+			+ "VALUES (:influencerId, :mediaId, :followerCount, :pageId, :socialId)", nativeQuery = true)
 	public void insertInfluencerMedia(
 			  @Param("influencerId") Long influencerId
 			, @Param("mediaId") String mediaId

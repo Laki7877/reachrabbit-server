@@ -20,7 +20,6 @@ public interface PostDao extends CrudRepository<Post, Long> {
 			+ "HAVING MIN(createdAt) > :minDate")
 	public List<UpdatePostResponse> findUpdatePost(@Param("minDate") Date minDate);
 	
-	
 	@Query("SELECT new com.ahancer.rr.response.UpdatePostResponse(p.socialPostId, p.mediaId, p.proposalId, p.url, p.media) "
 			+ "FROM post p "
 			+ "WHERE p.proposalId = :proposalId "
