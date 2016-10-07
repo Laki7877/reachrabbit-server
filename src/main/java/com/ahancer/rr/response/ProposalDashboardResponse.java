@@ -2,10 +2,13 @@ package com.ahancer.rr.response;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.models.Influencer;
+import com.ahancer.rr.models.Media;
 
 public class ProposalDashboardResponse implements Serializable {
 
@@ -17,6 +20,7 @@ public class ProposalDashboardResponse implements Serializable {
 	private Double price;
 	private ProposalStatus status;
 	private List<PostAggregateResponse> posts = new ArrayList<PostAggregateResponse>(0);
+	private Set<Media> media = new HashSet<Media>(0);
 	
 	public ProposalDashboardResponse() { 
 		
@@ -77,5 +81,13 @@ public class ProposalDashboardResponse implements Serializable {
 
 	public void setPosts(List<PostAggregateResponse> posts) {
 		this.posts = posts;
+	}
+
+	public Set<Media> getMedia() {
+		return media;
+	}
+
+	public void setMedia(Set<Media> media) {
+		this.media = media;
 	}
 }

@@ -3,6 +3,7 @@ package com.ahancer.rr.daos;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.ProposalStatus;
+import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.response.ProposalDashboardResponse;
 
@@ -94,4 +96,12 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 			+ "AND p.status in :statuses ")
 	public List<ProposalDashboardResponse> getListProposalByCampaignAndBrandAndStatus(@Param("campaignId") Long campaignId, @Param("brandId") Long brandId, @Param("statuses") Collection<ProposalStatus> statuses);
 
+	@Query("SELECT m "
+			+ "FROM proposal p "
+			+ "LEFT OUTER JOIN p.media m "
+			+ "WHERE p.proposalId = :proposalId ")
+	public Set<Media> getMediaFromProposal(@Param("proposalId") Long proposalId);
+	
+	
+	
 }

@@ -456,6 +456,7 @@ public class ProposalService {
 			response = proposalDao.getListProposalByCampaignAndStatus(campaignId, statuses);
 			for(ProposalDashboardResponse proposal : response){
 				proposal.setPosts(postDao.getAggregatePost(proposal.getProposalId()));
+				proposal.setMedia(proposalDao.getMediaFromProposal(proposal.getProposalId()));
 			}
 			if(null !=  response && !response.isEmpty()) {
 				jsonCache = mapper.writeValueAsString(response);
@@ -464,6 +465,7 @@ public class ProposalService {
 		}
 		return response;
 	}
+
 	public List<ProposalDashboardResponse> getProposalFromCampaignByBrand(Long campaignId, Long brandId) throws Exception {
 		Object obj = cacheUtil.getCacheObject(ApplicationConstant.DashboardRequestCache, campaignId);
 		String jsonCache = StringUtils.EMPTY;
@@ -480,6 +482,7 @@ public class ProposalService {
 			response = proposalDao.getListProposalByCampaignAndBrandAndStatus(campaignId, brandId, statuses);
 			for(ProposalDashboardResponse proposal : response){
 				proposal.setPosts(postDao.getAggregatePost(proposal.getProposalId()));
+				proposal.setMedia(proposalDao.getMediaFromProposal(proposal.getProposalId()));
 			}
 			if(null !=  response && !response.isEmpty()) {
 				jsonCache = mapper.writeValueAsString(response);
