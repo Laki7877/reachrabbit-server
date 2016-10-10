@@ -59,44 +59,51 @@ public class PostService {
 		post.setMediaId(request.getMedia().getMediaId());
 		Post tmpPost = null;
 		String[] splitUrl = null;
+		Long count = 0L;
 		switch(request.getMedia().getMediaId()){
 		case "facebook":
-			String pageId = StringUtils.EMPTY;
-			for(InfluencerMedia media : proposal.getInfluencer().getInfluencerMedias()){
-				if(media.getMedia().getMediaId().equals("facebook")){
-					pageId = media.getPageId();
-					break;
-				}
-			}
-			if(StringUtils.isEmpty(pageId)){
-				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.facebook.pageid.requre");
-			}
-			
 			splitUrl = request.getUrl().split("/");
-			if(splitUrl.length < 5) {
+			if(splitUrl.length == 1 && splitUrl[0].contains("_")) {
+				post.setSocialPostId(splitUrl[0]);
+			} else if(splitUrl.length < 5) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+			} else {
+				String pageId = StringUtils.EMPTY;
+				for(InfluencerMedia media : proposal.getInfluencer().getInfluencerMedias()){
+					if(media.getMedia().getMediaId().equals("facebook")){
+						pageId = media.getPageId();
+						break;
+					}
+				}
+				if(StringUtils.isEmpty(pageId)){
+					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.facebook.pageid.requre");
+				}
+				switch(splitUrl[4]){
+				case "photos":
+					if(splitUrl.length < 7) {
+						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+					}
+					post.setSocialPostId(pageId + "_" + splitUrl[6]);
+					break;
+				case "videos":
+					if(splitUrl.length < 6) {
+						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+					}
+					post.setSocialPostId(pageId + "_" + splitUrl[5]);
+					break;
+				case "posts":
+					if(splitUrl.length < 6) {
+						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+					}
+					post.setSocialPostId(pageId + "_" + splitUrl[5]);
+					break;
+				default:
+					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+				}
 			}
-			switch(splitUrl[4]){
-			case "photos":
-				if(splitUrl.length < 7) {
-					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
-				}
-				post.setSocialPostId(pageId + "_" + splitUrl[6]);
-				break;
-			case "videos":
-				if(splitUrl.length < 6) {
-					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
-				}
-				post.setSocialPostId(pageId + "_" + splitUrl[5]);
-				break;
-			case "posts":
-				if(splitUrl.length < 6) {
-					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
-				}
-				post.setSocialPostId(pageId + "_" + splitUrl[5]);
-				break;
-			default:
-				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId(), new Date());
+			if(count > 0L) {
+				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
 			}
 			tmpPost = facebookService.getPostInfo(post.getSocialPostId());
 			break;
@@ -106,6 +113,10 @@ public class PostService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 			}
 			post.setSocialPostId(splitUrl[4]);
+			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId(), new Date());
+			if(count > 0L) {
+				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
+			}
 			tmpPost = instagramService.getPostInfo(post.getSocialPostId());
 			break;
 		case "google":
@@ -118,6 +129,10 @@ public class PostService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 			}
 			post.setSocialPostId(splitUrl[1]);
+			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId(), new Date());
+			if(count > 0L) {
+				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
+			}
 			tmpPost = youtubeService.getPostInfo(post.getSocialPostId());
 			break;
 		default:

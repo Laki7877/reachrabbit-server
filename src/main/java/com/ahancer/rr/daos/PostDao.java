@@ -41,4 +41,13 @@ public interface PostDao extends CrudRepository<Post, Long> {
 			+ "GROUP BY DATE(p.createdAt) ,p.mediaId")
 	public List<PostAggregateResponse> getAggregatePost(@Param("proposalId") Long proposalId);
 	
+	
+	@Query("SELECT count(*) "
+			+ "FROM post p "
+			+ "WHERE p.proposalId = :proposalId "
+			+ "AND p.mediaId = :mediaId "
+			+ "AND p.socialPostId = :socialPostId "
+			+ "AND DATE(p.createdAt) = :createdAt ")
+	public Long countByMediaIdAndSocialPostIdAndCreatedAt(@Param("proposalId") Long proposalId, @Param("mediaId") String mediaId, @Param("socialPostId") String socialPostId, @Param("createdAt") Date createdAt);
+	
 }
