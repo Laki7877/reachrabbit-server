@@ -101,7 +101,7 @@ public class PostService {
 					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 				}
 			}
-			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId(), new Date());
+			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
 			if(count > 0L) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
 			}
@@ -113,7 +113,7 @@ public class PostService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 			}
 			post.setSocialPostId(splitUrl[4]);
-			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId(), new Date());
+			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
 			if(count > 0L) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
 			}
@@ -129,7 +129,7 @@ public class PostService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 			}
 			post.setSocialPostId(splitUrl[1]);
-			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId(), new Date());
+			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
 			if(count > 0L) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
 			}

@@ -46,8 +46,7 @@ public interface PostDao extends CrudRepository<Post, Long> {
 			+ "FROM post p "
 			+ "WHERE p.proposalId = :proposalId "
 			+ "AND p.mediaId = :mediaId "
-			+ "AND p.socialPostId = :socialPostId "
-			+ "AND DATE(p.createdAt) = :createdAt ")
-	public Long countByMediaIdAndSocialPostIdAndCreatedAt(@Param("proposalId") Long proposalId, @Param("mediaId") String mediaId, @Param("socialPostId") String socialPostId, @Param("createdAt") Date createdAt);
+			+ "AND p.socialPostId = :socialPostId ")
+	public Long countByMediaIdAndSocialPostIdAndCreatedAt(@Param("proposalId") Long proposalId, @Param("mediaId") String mediaId, @Param("socialPostId") String socialPostId);
 	
 }
