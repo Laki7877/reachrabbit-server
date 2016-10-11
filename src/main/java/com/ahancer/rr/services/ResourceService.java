@@ -7,6 +7,8 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.io.FilenameUtils;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +59,7 @@ public class ResourceService {
 		String desPath = ApplicationConstant.TemporaryFolder + "/" + resourcePath;
 		File file = null;
 		try {
-			file = Util.resizeImage(multipartFile.getInputStream(), desPath, 0, 0);
+			file = Util.compressImage(ImageIO.read(multipartFile.getInputStream()), desPath, 0.7f);
 			s3Util.upload(desPath, bucket, resourcePath);
 			//Save resource
 			Resource resource = new Resource();
