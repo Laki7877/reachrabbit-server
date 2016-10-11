@@ -1,9 +1,12 @@
 package com.ahancer.rr.daos;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.User;
 
 
@@ -24,5 +27,8 @@ public interface UserDao extends CrudRepository<User, Long> {
 			+ "FROM user u "
 			+ "WHERE u.email=:email")
 	public int countByEmail(@Param("email") String email);
-
+	
+	public Page<User> findByRole(Role role, Pageable pageable);
+	public Page<User> findByRoleAndName(Role role, String name, Pageable pageable);
+	public Page<User> findByRoleAndNameOrBrandBrandName(Role role, String name, String brandName, Pageable pageable);
 }
