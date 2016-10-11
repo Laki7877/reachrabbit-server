@@ -1,5 +1,7 @@
 package com.ahancer.rr.services;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.math.BigInteger;
 import java.net.URL;
@@ -59,7 +61,13 @@ public class ResourceService {
 		String desPath = ApplicationConstant.TemporaryFolder + "/" + resourcePath;
 		File file = null;
 		try {
-			file = Util.compressImage(ImageIO.read(multipartFile.getInputStream()), desPath, 0.7f);
+			BufferedImage inputImage = ImageIO.read(multipartFile.getInputStream());
+			BufferedImage newBufferedImage = new BufferedImage(inputImage.getWidth(),
+					inputImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+			
+			newBufferedImage.createGraphics().drawImage(inputImage, 0, 0, Color.WHITE, null);
+
+			file = Util.compressImage(newBufferedImage, desPath, 0.7f);
 			s3Util.upload(desPath, bucket, resourcePath);
 			//Save resource
 			Resource resource = new Resource();
