@@ -29,7 +29,7 @@ public class UserController extends AbstractController {
 	public User getOneUser(@PathVariable long userId) {
 		return userDao.findOne(userId);
 	}
-	
+	@ApiOperation(value = "Get all brand pagenation")
 	@RequestMapping(value="/brand", method=RequestMethod.GET)
 	@Authorization(Role.Admin)
 	public Page<UserResponse> getBrands(@RequestParam(required=false, name="search") String search, Pageable pageable) {
@@ -38,6 +38,7 @@ public class UserController extends AbstractController {
 		}
 		return userDao.findAllBrand(search, pageable);
 	}
+	@ApiOperation(value = "Get all influencer pagenation")
 	@RequestMapping(value="/influencer", method=RequestMethod.GET)
 	@Authorization(Role.Admin)
 	public Page<UserResponse> getInfluencers(@RequestParam(required=false, name="search") String search, Pageable pageable) {

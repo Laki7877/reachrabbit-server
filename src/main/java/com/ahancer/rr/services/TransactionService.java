@@ -87,7 +87,9 @@ public class TransactionService {
 		//create transaction
 		Transaction transaction = new Transaction();
 		Double sum = cart.getProposals().stream().mapToDouble(o -> o.getPrice()).sum();
-		transaction.setAmount(sum);
+		Double tax = sum * 0.03;
+		Double total = sum - tax; 
+		transaction.setAmount(total);
 		transaction.setStatus(TransactionStatus.Pending);
 		transaction.setUserId(brandId);
 		transaction.setType(TransactionType.Payin);
@@ -103,7 +105,19 @@ public class TransactionService {
 		document.setTransactionId(transaction.getTransactionId());
 		document.setAmount(sum);
 		document.setType(DocumentType.Base);
-		brandTransactionDocumentDao.save(document);
+		document.setCompanyAddress(user.getBrand().getCompanyAddress());
+		document.setCompanyName(user.getBrand().getCompanyName());
+		document.setCompanyTaxId(user.getBrand().getCompanyTaxId());
+		document = brandTransactionDocumentDao.save(document);
+		BrandTransactionDocument taxDocument = new BrandTransactionDocument();
+		taxDocument.setCartId(cart.getCartId());
+		taxDocument.setTransactionId(transaction.getTransactionId());
+		taxDocument.setAmount(-tax);
+		taxDocument.setType(DocumentType.Tax);
+		taxDocument.setCompanyAddress(user.getBrand().getCompanyAddress());
+		taxDocument.setCompanyName(user.getBrand().getCompanyName());
+		taxDocument.setCompanyTaxId(user.getBrand().getCompanyTaxId());
+		taxDocument = brandTransactionDocumentDao.save(taxDocument);
 		//update cart status
 		cart.setStatus(CartStatus.Checkout);
 		cartDao.save(cart);
@@ -188,38 +202,46 @@ public class TransactionService {
 				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName())
 				.replace("{{Host}}", uiHost);
 		
-		for(Proposal proposal : transaction.getBrandTransactionDocument().getCart().getProposals()){
-			proposal.setStatus(ProposalStatus.Working);
-			Integer days = proposal.getCompletionTime().getDay();
-			cal.add(Calendar.DATE, days);
-			proposal.setDueDate(cal.getTime());
-			
-			//setup robot message
-			robotMessage.setMessage(message
-					.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
-					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
-					.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId())));
-			robotMessage.setProposal(proposal);
-			
-			//long polling
-			proposalMessageService.createProposalMessage(proposal.getProposalId()
-					, robotMessage
-					, robotUser.getUserId()
-					, robotUser.getRole());
-			proposalService.processInboxPolling(proposal.getInfluencerId());
-			proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
-			proposalMessageService.processMessagePolling(proposal.getProposalId());
-			proposalDao.save(proposal);
-			
-			//send email to influencer
-			to = proposal.getInfluencer().getUser().getEmail();
-			subject = superSubject;
-			body = superBody
-					.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
-					.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
-					.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName());
-			emailService.send(to, subject, body);
+		
+		for(BrandTransactionDocument brandDoc : transaction.getBrandTransactionDocument()) {
+			if(!DocumentType.Base.equals(brandDoc.getType())) {
+				continue;
+			}
+			for(Proposal proposal : brandDoc.getCart().getProposals()){
+				proposal.setStatus(ProposalStatus.Working);
+				Integer days = proposal.getCompletionTime().getDay();
+				cal.add(Calendar.DATE, days);
+				proposal.setDueDate(cal.getTime());
+				
+				//setup robot message
+				robotMessage.setMessage(message
+						.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
+						.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
+						.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId())));
+				robotMessage.setProposal(proposal);
+				
+				//long polling
+				proposalMessageService.createProposalMessage(proposal.getProposalId()
+						, robotMessage
+						, robotUser.getUserId()
+						, robotUser.getRole());
+				proposalService.processInboxPolling(proposal.getInfluencerId());
+				proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
+				proposalMessageService.processMessagePolling(proposal.getProposalId());
+				proposalDao.save(proposal);
+				
+				//send email to influencer
+				to = proposal.getInfluencer().getUser().getEmail();
+				subject = superSubject;
+				body = superBody
+						.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
+						.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
+						.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName());
+				emailService.send(to, subject, body);
+			}
 		}
+		
+		
 		
 		//send email to brand
 		to = transaction.getUser().getEmail();

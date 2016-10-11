@@ -75,7 +75,7 @@ public class Transaction implements Serializable {
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
 	@PrimaryKeyJoinColumn
 	@JsonManagedReference(value="transaction-brand")
-	private BrandTransactionDocument brandTransactionDocument;
+	private Set<BrandTransactionDocument> brandTransactionDocument = new HashSet<BrandTransactionDocument>(0);
 	
 	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
 	@PrimaryKeyJoinColumn
@@ -155,14 +155,14 @@ public class Transaction implements Serializable {
 		this.status = status;
 	}
 
-	public BrandTransactionDocument getBrandTransactionDocument() {
+	public Set<BrandTransactionDocument> getBrandTransactionDocument() {
 		return brandTransactionDocument;
 	}
 
-	public void setBrandTransactionDocument(BrandTransactionDocument brandTransactionDocument) {
+	public void setBrandTransactionDocument(Set<BrandTransactionDocument> brandTransactionDocument) {
 		this.brandTransactionDocument = brandTransactionDocument;
 	}
-	
+
 	public Set<InfluencerTransactionDocument> getInfluencerTransactionDocument() {
 		return influencerTransactionDocument;
 	}
@@ -186,8 +186,6 @@ public class Transaction implements Serializable {
 	public void setType(TransactionType type) {
 		this.type = type;
 	}
-	
-	
 	
 	public Date getCreatedAt() {
 		return createdAt;

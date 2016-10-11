@@ -51,6 +51,16 @@ public class BrandTransactionDocument extends AbstractModel implements Serializa
 	@Enumerated(EnumType.STRING)
 	private DocumentType type;
 	
+	@Column(name="companyName",length=255)
+	private String companyName;
+	
+	@Column(name="companyAddress",length=10000)
+	private String companyAddress;
+	
+	@Column(name="companyTaxId",length=255)
+	private String companyTaxId;
+	
+	
 	public BrandTransactionDocument() {
 		
 	}
@@ -110,5 +120,31 @@ public class BrandTransactionDocument extends AbstractModel implements Serializa
 	public void setType(DocumentType type) {
 		this.type = type;
 	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getCompanyAddress() {
+		return companyAddress;
+	}
+
+	public void setCompanyAddress(String companyAddress) {
+		this.companyAddress = companyAddress;
+	}
+
+	public String getCompanyTaxId() {
+		return companyTaxId;
+	}
+
+	public void setCompanyTaxId(String companyTaxId) {
+		this.companyTaxId = companyTaxId;
+	}
+	
+	
 
 }
