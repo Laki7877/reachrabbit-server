@@ -72,7 +72,7 @@ public class Transaction implements Serializable {
 	@Column(name = "completedAt")
 	private Date completedAt;
 	
-	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
 	@PrimaryKeyJoinColumn
 	@JsonManagedReference(value="transaction-brand")
 	private Set<BrandTransactionDocument> brandTransactionDocument = new HashSet<BrandTransactionDocument>(0);
