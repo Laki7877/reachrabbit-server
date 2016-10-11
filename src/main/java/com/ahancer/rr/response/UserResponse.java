@@ -30,8 +30,12 @@ public class UserResponse implements Serializable {
 		this.profilePicture = user.getProfilePicture();
 		switch (role) {
 			case Admin:
-				influencer = new InfluencerResponse(user.getInfluencer(),roleValue);
-				brand = new BrandResponse(user.getBrand(),roleValue);
+				if(null != user.getInfluencer()) {
+					influencer = new InfluencerResponse(user.getInfluencer(),roleValue);
+				}
+				if(null != user.getBrand()) {
+					brand = new BrandResponse(user.getBrand(),roleValue);
+				}
 				break;
 			case Brand:
 				influencer = new InfluencerResponse(user.getInfluencer(),roleValue);
