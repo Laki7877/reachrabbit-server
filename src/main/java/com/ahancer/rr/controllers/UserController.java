@@ -13,6 +13,7 @@ import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.UserResponse;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -31,7 +32,7 @@ public class UserController extends AbstractController {
 	
 	@RequestMapping(value="/brand", method=RequestMethod.GET)
 	@Authorization(Role.Admin)
-	public Page<User> getBrands(@RequestParam(required=false, name="search") String search, Pageable pageable) {
+	public Page<UserResponse> getBrands(@RequestParam(required=false, name="search") String search, Pageable pageable) {
 		if(search == null) {
 			return userDao.findAllBrand(pageable);
 		}
@@ -39,7 +40,7 @@ public class UserController extends AbstractController {
 	}
 	@RequestMapping(value="/influencer", method=RequestMethod.GET)
 	@Authorization(Role.Admin)
-	public Page<User> getInfluencers(@RequestParam(required=false, name="search") String search, Pageable pageable) {
+	public Page<UserResponse> getInfluencers(@RequestParam(required=false, name="search") String search, Pageable pageable) {
 		if(search == null) {
 			return userDao.findAllInfluencer(pageable);
 		}

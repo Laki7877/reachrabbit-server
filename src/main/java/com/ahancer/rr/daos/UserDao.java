@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.UserResponse;
 
 
 public interface UserDao extends CrudRepository<User, Long> {
@@ -28,26 +28,26 @@ public interface UserDao extends CrudRepository<User, Long> {
 			+ "WHERE u.email=:email")
 	public int countByEmail(@Param("email") String email);
 	
-	@Query("SELECT new com.ahancer.rr.response.BrandResponse(u, 'Brand') " 
+	@Query("SELECT new com.ahancer.rr.response.UserResponse(u, 'Admin') " 
 			+ "FROM user u "
 			+ "WHERE u.role='Brand' ")
-	public Page<User> findAllBrand(Pageable pageable);
+	public Page<UserResponse> findAllBrand(Pageable pageable);
 	
-	@Query("SELECT new com.ahancer.rr.response.BrandResponse(u, 'Brand') " 
+	@Query("SELECT new com.ahancer.rr.response.UserResponse(u, 'Admin') " 
 			+ "FROM user u "
-			+ "JOIN u.brand b"
+			+ "JOIN u.brand b "
 			+ "WHERE u.role='Brand' "
 			+ "AND (u.email LIKE CONCAT('%', :search, '%') OR b.brandName LIKE CONCAT('%', :search, '%'))")
-	public Page<User> findAllBrand(@Param("search") String search, Pageable pageable);
+	public Page<UserResponse> findAllBrand(@Param("search") String search, Pageable pageable);
 	
-	@Query("SELECT new com.ahancer.rr.response.InfluencerResponse(u, 'Influencer') " 
+	@Query("SELECT new com.ahancer.rr.response.UserResponse(u, 'Admin') " 
 			+ "FROM user u "
 			+ "WHERE u.role='Influencer' ")
-	public Page<User> findAllInfluencer(Pageable pageable);
+	public Page<UserResponse> findAllInfluencer(Pageable pageable);
 	
-	@Query("SELECT new com.ahancer.rr.response.InfluencerResponse(u, 'Influencer') " 
+	@Query("SELECT new com.ahancer.rr.response.UserResponse(u, 'Admin') " 
 			+ "FROM user u "
 			+ "WHERE u.role='Influencer' "
 			+ "AND (u.email LIKE CONCAT('%', :search, '%') OR u.name LIKE CONCAT('%', :search, '%'))")
-	public Page<User> findAllInfluencer(@Param("search") String search, Pageable pageable);
+	public Page<UserResponse> findAllInfluencer(@Param("search") String search, Pageable pageable);
 }
