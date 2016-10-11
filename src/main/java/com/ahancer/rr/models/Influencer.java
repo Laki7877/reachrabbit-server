@@ -74,7 +74,23 @@ public class Influencer extends AbstractModel implements Serializable{
 	
 	@Column(name="accountName",length=100)
 	private String accountName;
-
+	
+	@Column(name="fullname",length=255)
+	private String fullname;
+	
+	@Column(name="address",length=1000)
+	private String address;
+	
+	@Column(name="idCardNumber",length=13)
+	private String idCardNumber;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="idCardId")
+	private Resource idCard;
+	
+	@Column(name="isVerfy")
+	private Boolean isVerfy;
+	
 	public Influencer() {
 
 	}
@@ -167,4 +183,44 @@ public class Influencer extends AbstractModel implements Serializable{
 		this.accountName = accountName;
 	}
 
+	public String getFullname() {
+		return fullname;
+	}
+
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	
+	public Boolean getIsVerfy() {
+		return isVerfy;
+	}
+
+	public void setIsVerfy(Boolean isVerfy) {
+		this.isVerfy = isVerfy;
+	}
+
+	public String getIdCardNumber() {
+		return idCardNumber;
+	}
+
+	public void setIdCardNumber(String idCardNumber) {
+		this.idCardNumber = idCardNumber;
+	}
+
+	public Resource getIdCard() {
+		return idCard;
+	}
+
+	public void setIdCard(Resource idCard) {
+		this.idCard = idCard;
+	}
+	
 }

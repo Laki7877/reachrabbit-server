@@ -10,10 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.imageio.IIOImage;
@@ -24,7 +21,6 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.FileImageOutputStream;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
@@ -41,12 +37,7 @@ public class Util {
 	            .filter(propertyName -> wrappedSource.getPropertyValue(propertyName) == null)
 	            .toArray(String[]::new);
 	}
-	public static void copyProperties(Object source, Object target, String ...ignoreProperties) {
-		Set<String> set = new HashSet<String>();
-		set.addAll(Arrays.asList(ignoreProperties));
-		set.addAll(Arrays.asList(getNullPropertyNames(source)));
-		BeanUtils.copyProperties(source, target, set.toArray(new String[set.size()]));
-	}
+	
 	
 	public static Date parseJacksonDate(String utc) throws ParseException {
 		if(utc == null) {

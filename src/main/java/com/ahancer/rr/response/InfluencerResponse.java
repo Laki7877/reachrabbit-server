@@ -11,6 +11,7 @@ import com.ahancer.rr.models.Bank;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
+import com.ahancer.rr.models.Resource;
 
 public class InfluencerResponse implements Serializable {
 
@@ -26,6 +27,11 @@ public class InfluencerResponse implements Serializable {
 	private String accountNumber;
 	private String accountName;
 	private UserResponse user;
+	private String fullname;
+	private String address;
+	private String idCardNumber;
+	private Boolean isVerfy;
+	private Resource idCard;
 	
 	public InfluencerResponse(){
 		
@@ -47,6 +53,10 @@ public class InfluencerResponse implements Serializable {
 			case Influencer:
 				user.setEmail(influencer.getUser().getEmail());
 				user.setPhoneNumber(influencer.getUser().getPhoneNumber());
+				this.fullname = influencer.getFullname();
+				this.address = influencer.getAddress();
+				this.idCardNumber = influencer.getIdCardNumber();
+				this.idCard = influencer.getIdCard();
 				break;
 			default:
 				break;
@@ -62,6 +72,7 @@ public class InfluencerResponse implements Serializable {
 		this.accountNumber = influencer.getAccountNumber();
 		this.accountName = influencer.getAccountName();
 		this.gender = influencer.getGender();
+		this.isVerfy = influencer.getIsVerfy();
 	}
 
 	public Long getInfluencerId() {
@@ -150,6 +161,46 @@ public class InfluencerResponse implements Serializable {
 
 	public void setUser(UserResponse user) {
 		this.user = user;
+	}
+
+	public String getFullname() {
+		return fullname;
+	}
+
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public Boolean getIsVerfy() {
+		return isVerfy;
+	}
+
+	public void setIsVerfy(Boolean isVerfy) {
+		this.isVerfy = isVerfy;
+	}
+
+	public String getIdCardNumber() {
+		return idCardNumber;
+	}
+
+	public void setIdCardNumber(String idCardNumber) {
+		this.idCardNumber = idCardNumber;
+	}
+
+	public Resource getIdCard() {
+		return idCard;
+	}
+
+	public void setIdCard(Resource idCard) {
+		this.idCard = idCard;
 	}
 
 }

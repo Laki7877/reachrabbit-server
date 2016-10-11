@@ -51,14 +51,14 @@ public class InfluencerService {
 	@Autowired
 	private EncryptionUtil encrypt;
 
-	public UserResponse updateInfluencerUser(Long userId, ProfileRequest newUser, String token) throws Exception {
-		User oldUser = userDao.findOne(userId);
-		if(oldUser == null) {
+	public UserResponse updateInfluencerUser(Long userId, ProfileRequest request, String token) throws Exception {
+		User user = userDao.findOne(userId);
+		if(user == null || !Role.Influencer.equals(user.getRole())) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
-		for(InfluencerMedia link2 : oldUser.getInfluencer().getInfluencerMedias()) {
+		for(InfluencerMedia link2 : user.getInfluencer().getInfluencerMedias()) {
 			boolean has = false;
-			for(InfluencerMedia link: newUser.getInfluencer().getInfluencerMedias()) {
+			for(InfluencerMedia link: request.getInfluencer().getInfluencerMedias()) {
 				InfluencerMediaId id = new InfluencerMediaId(userId, link.getMedia().getMediaId());
 				link.setInfluencerMediaId(id);
 				if(link.getMedia().getMediaId().equals(link2.getMedia().getMediaId())) {
@@ -72,26 +72,47 @@ public class InfluencerService {
 				}
 			}
 		}
-		if(newUser.getInfluencer().getInfluencerMedias().size() == 0){
+		if(request.getInfluencer().getInfluencerMedias().size() == 0){
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.atlest.one");
 		}
 		influencerMediaDao.deleteByInfluencerId(userId);
-		for(InfluencerMedia link: newUser.getInfluencer().getInfluencerMedias()) {
+		for(InfluencerMedia link: request.getInfluencer().getInfluencerMedias()) {
 			influencerMediaDao.insertInfluencerMedia(userId,link.getMedia().getMediaId(),link.getFollowerCount(), link.getPageId(), link.getSocialId());
 			InfluencerMediaId id = new InfluencerMediaId(userId,link.getMedia().getMediaId());
 			link.setInfluencerMediaId(id);
 		}
 		//Validate duplicate Email
-		if(StringUtils.isNotEmpty(oldUser.getEmail()) 
-				&& !oldUser.getEmail().equals(newUser.getEmail())) {
-			int countEmail = userDao.countByEmail(newUser.getEmail());
+		if(StringUtils.isNotEmpty(user.getEmail()) 
+				&& !user.getEmail().equals(request.getEmail())) {
+			int countEmail = userDao.countByEmail(request.getEmail());
 			if(0 < countEmail){
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
 			}
 		}
-		Util.copyProperties(newUser, oldUser);
-		oldUser.setProfilePicture(newUser.getProfilePicture());
-		User user = userDao.save(oldUser);
+		user.setEmail(request.getEmail());
+		user.setName(request.getName());
+		user.setPhoneNumber(request.getPhoneNumber());
+		Influencer influencer = user.getInfluencer();
+		influencer.setAbout(request.getInfluencer().getAbout());
+		influencer.setAddress(request.getInfluencer().getAddress());
+		influencer.setBirthday(request.getInfluencer().getBirthday());
+		influencer.setCategories(request.getInfluencer().getCategories());
+		influencer.setWeb(request.getInfluencer().getWeb());
+		influencer.setGender(request.getInfluencer().getGender());
+		influencer.setFullname(request.getInfluencer().getFullname());
+		influencer.setIdCardNumber(request.getInfluencer().getIdCardNumber());
+		influencer.setIdCard(request.getInfluencer().getIdCard());
+		//Check if verify
+		influencer.setIsVerfy(false);
+		if(StringUtils.isNotEmpty(influencer.getFullname())
+				&& StringUtils.isNotEmpty(influencer.getAddress())
+				&& StringUtils.isNotEmpty(influencer.getIdCardNumber())
+				&& null != influencer.getIdCard() && 0L != influencer.getIdCard().getResourceId()) {
+			influencer.setIsVerfy(true);
+		}
+		user.setInfluencer(influencer);
+		user.setProfilePicture(request.getProfilePicture());
+		user = userDao.save(user);
 		UserResponse userResponse = Util.getUserResponse(user);
 		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
