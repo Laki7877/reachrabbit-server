@@ -28,7 +28,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.BrandResponse;
 import com.ahancer.rr.response.InfluencerResponse;
@@ -56,7 +55,6 @@ public class Util {
 		Date date = new DateTime(utc).toDate();
         return date;
 	}
-	
 	public static UserResponse getUserResponse(User user){
 		UserResponse userResponse = new UserResponse();
 		userResponse.setEmail(user.getEmail());
@@ -65,14 +63,21 @@ public class Util {
 		userResponse.setProfilePicture(user.getProfilePicture());
 		userResponse.setRole(user.getRole());
 		userResponse.setUserId(user.getUserId());
-		if(Role.Brand == user.getRole()){
+		switch(user.getRole()){
+		case Brand:
 			user.getBrand().setUser(user);
 			BrandResponse brand = new BrandResponse(user.getBrand(),"Brand");
 			userResponse.setBrand(brand);
-		}else if(Role.Influencer == user.getRole()){
+			break;
+		case Influencer:
 			user.getInfluencer().setUser(user);
 			InfluencerResponse influencer = new InfluencerResponse(user.getInfluencer(),"Influencer");
 			userResponse.setInfluencer(influencer);
+			break;
+		case Admin:
+			break;
+		default:
+			break;
 		}
 		return userResponse;
 	}
@@ -90,11 +95,9 @@ public class Util {
         writer.write(null, new IIOImage(image, null, null), jpegParams);
         return file;
 	}
-	
 	public static File resizeImage(InputStream sourceImg, String destImg, Integer Width, Integer Height) throws Exception {
         BufferedImage origImage;
         origImage = ImageIO.read(sourceImg);
-        
         if(Height > 0 && Width > 0){
             int fHeight = Height;
             int fWidth = Width;
@@ -121,9 +124,7 @@ public class Util {
 	        g.dispose();
 	        return compressImage(resizedImage, destImg, 0.65f);
         }
-        
         return compressImage(origImage, destImg, 0.65f);
-        
     }
 	
 }

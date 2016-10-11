@@ -35,6 +35,18 @@ public class Brand extends AbstractModel implements Serializable {
 	
 	@Column(name="website",length=255)
 	private String website;
+	
+	@Column(name="companyName",length=255)
+	private String companyName;
+	
+	@Column(name="companyAddress",length=10000)
+	private String companyAddress;
+	
+	@Column(name="companyTaxId",length=255)
+	private String companyTaxId;
+	
+	@Column(name="isCompany")
+	private Boolean isCompany;
 
 	public Brand() {
 
@@ -83,5 +95,36 @@ public class Brand extends AbstractModel implements Serializable {
 	public void setWebsite(String website) {
 		this.website = website;
 	}
-	
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getCompanyAddress() {
+		return companyAddress;
+	}
+
+	public void setCompanyAddress(String companyAddress) {
+		this.companyAddress = companyAddress;
+	}
+
+	public String getCompanyTaxId() {
+		return companyTaxId;
+	}
+
+	public void setCompanyTaxId(String companyTaxId) {
+		this.companyTaxId = companyTaxId;
+	}
+
+	public Boolean getIsCompany() {
+		return isCompany;
+	}
+
+	public void setIsCompany(Boolean isCompany) {
+		this.isCompany = isCompany;
+	}
 }

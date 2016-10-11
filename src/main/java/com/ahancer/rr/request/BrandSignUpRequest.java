@@ -31,14 +31,19 @@ public class BrandSignUpRequest implements Serializable {
 	@Size(min=1,max=100,message="error.brand.name.length")
 	private String brandName;
 	
-	public BrandSignUpRequest(String email, String name, String brandName, String phoneNumber, String password) {
-		super();
-		this.email = email;
-		this.name = name;
-		this.phoneNumber = phoneNumber;
-		this.password = password;
-		this.setBrandName(brandName);
-	}
+	@Size(max=255,message="error.brand.companyName.length")
+	private String companyName;
+	
+	@Size(max=1000,message="error.brand.companyAddress.length")
+	private String companyAddress;
+	
+	@Size(max=255,message="error.brand.companyTaxId.length")
+	private String companyTaxId;
+	
+	private Boolean isCompany;
+	
+	private String ref;
+	
 	public BrandSignUpRequest() {
 	}
 	public String getEmail() {
@@ -71,5 +76,34 @@ public class BrandSignUpRequest implements Serializable {
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
 	}
-
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public String getCompanyAddress() {
+		return companyAddress;
+	}
+	public void setCompanyAddress(String companyAddress) {
+		this.companyAddress = companyAddress;
+	}
+	public String getCompanyTaxId() {
+		return companyTaxId;
+	}
+	public void setCompanyTaxId(String companyTaxId) {
+		this.companyTaxId = companyTaxId;
+	}
+	public Boolean getIsCompany() {
+		return isCompany;
+	}
+	public void setIsCompany(Boolean isCompany) {
+		this.isCompany = isCompany;
+	}
+	public String getRef() {
+		return ref;
+	}
+	public void setRef(String ref) {
+		this.ref = ref;
+	}
 }

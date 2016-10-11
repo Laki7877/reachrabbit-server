@@ -13,11 +13,13 @@ public class BrandResponse implements Serializable {
 	private String about;
 	private String website;
 	private UserResponse user;
-
+	private String companyName;
+	private String companyAddress;
+	private String companyTaxId;
+	private Boolean isCompany;
 	public BrandResponse(){
 		
 	}
-	
 	public BrandResponse(Brand brand,String roleValue){
 		Role role = Role.valueOf(roleValue);
 		user = new UserResponse();
@@ -32,6 +34,10 @@ public class BrandResponse implements Serializable {
 			case Brand:
 				user.setEmail(brand.getUser().getEmail());
 				user.setPhoneNumber(brand.getUser().getPhoneNumber());
+				this.companyName = brand.getCompanyName();
+				this.companyAddress = brand.getCompanyAddress();
+				this.companyTaxId = brand.getCompanyTaxId();
+				this.isCompany = brand.getIsCompany();
 				break;
 			case Influencer:
 				break;
@@ -83,6 +89,28 @@ public class BrandResponse implements Serializable {
 	public void setUser(UserResponse user) {
 		this.user = user;
 	}
-	
-	
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public String getCompanyAddress() {
+		return companyAddress;
+	}
+	public void setCompanyAddress(String companyAddress) {
+		this.companyAddress = companyAddress;
+	}
+	public String getCompanyTaxId() {
+		return companyTaxId;
+	}
+	public void setCompanyTaxId(String companyTaxId) {
+		this.companyTaxId = companyTaxId;
+	}
+	public Boolean getIsCompany() {
+		return isCompany;
+	}
+	public void setIsCompany(Boolean isCompany) {
+		this.isCompany = isCompany;
+	}
 }

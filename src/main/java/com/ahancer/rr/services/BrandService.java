@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BrandDao;
+import com.ahancer.rr.daos.ReferralDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Brand;
@@ -37,6 +38,8 @@ public class BrandService {
 	private UserDao userDao;
 	@Autowired
 	private EncryptionUtil encrypt;
+	@Autowired
+	private ReferralDao referralDao;
 	@Value("${ui.host}")
 	private String uiHost;
 	@Autowired
@@ -58,10 +61,20 @@ public class BrandService {
 		String hashPassword = encrypt.hashPassword(request.getPassword());
 		user.setPassword(hashPassword);
 		user.setRole(Role.Brand);
+		if(StringUtils.isNotEmpty(request.getRef())) {
+			Long count = referralDao.countByReferralId(request.getRef());
+			if(count > 0L){
+				user.setReferralId(request.getRef());
+			}
+		}
 		user = userDao.save(user);
 		//Setup brand object
 		Brand brand = new Brand();
 		brand.setBrandName(request.getBrandName());
+		brand.setCompanyAddress(request.getCompanyAddress());
+		brand.setCompanyName(request.getCompanyName());
+		brand.setCompanyTaxId(request.getCompanyTaxId());
+		brand.setIsCompany(null == request.getIsCompany() ? false : request.getIsCompany());
 		brand.setBrandId(user.getUserId());
 		brand = brandDao.save(brand);
 		user.setBrand(brand);
@@ -75,39 +88,39 @@ public class BrandService {
 		return user;
 	}
 
-	public UserResponse updateBrandUser(Long userId, ProfileRequest newUser,String token) throws Exception {
-		User oldUser = userDao.findOne(userId);
-		if(null == oldUser) {
+	public UserResponse updateBrandUser(Long userId, ProfileRequest request,String token) throws Exception {
+		User user = userDao.findOne(userId);
+		if(null == user || !Role.Brand.equals(user.getRole())) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.brand.not.found");
 		}
 		//Validate duplicate Email
-		if(StringUtils.isNotEmpty(oldUser.getEmail()) 
-				&& !oldUser.getEmail().equals(newUser.getEmail())) {
-			int countEmail = userDao.countByEmail(newUser.getEmail());
+		if(StringUtils.isNotEmpty(user.getEmail()) 
+				&& !user.getEmail().equals(request.getEmail())) {
+			int countEmail = userDao.countByEmail(request.getEmail());
 			if(0 < countEmail){
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
 			}
 		}
-		Util.copyProperties(newUser, oldUser);
-		oldUser.setProfilePicture(newUser.getProfilePicture());
-		if(StringUtils.isNotEmpty(newUser.getPassword())) {
-			String hashPassword = encrypt.hashPassword(newUser.getPassword());
-			oldUser.setPassword(hashPassword);
+		user.setEmail(request.getEmail());
+		user.setName(request.getName());
+		user.setPhoneNumber(request.getPhoneNumber());
+		Brand brand = user.getBrand();
+		brand.setBrandName(request.getBrand().getBrandName());
+		brand.setCompanyAddress(request.getBrand().getCompanyAddress());
+		brand.setCompanyName(request.getBrand().getCompanyName());
+		brand.setCompanyTaxId(request.getBrand().getCompanyTaxId());
+		brand.setIsCompany(request.getBrand().getIsCompany());
+		brand.setBrandId(user.getUserId());
+		user.setBrand(brand);
+		user.setProfilePicture(request.getProfilePicture());
+		if(StringUtils.isNotEmpty(request.getPassword())) {
+			String hashPassword = encrypt.hashPassword(request.getPassword());
+			user.setPassword(hashPassword);
 		}
-		oldUser.setUserId(userId);
-		oldUser.getBrand().setBrandId(userId);
-		User user = userDao.save(oldUser);
+		user = userDao.save(user);
 		UserResponse userResponse = Util.getUserResponse(user);
 		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
-	}
-
-	public Brand getBrand(Long brandId) throws ResponseException {
-		Brand brand = brandDao.findOne(brandId);
-		if(null == brand){
-			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.brand.not.found");
-		}
-		return brand;
 	}
 
 }

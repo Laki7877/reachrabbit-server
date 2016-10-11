@@ -89,6 +89,7 @@ public class ProfileController extends AbstractController{
 	}
 	@ApiOperation(value = "Update profile")
 	@RequestMapping(method=RequestMethod.PUT)
+	@Authorization({Role.Influencer, Role.Brand})
 	public UserResponse updateProfile(@RequestBody ProfileRequest request) throws Exception {
 		UserResponse ownUser = this.getUserRequest();
 		if(ownUser.getRole().equals(Role.Brand)) {

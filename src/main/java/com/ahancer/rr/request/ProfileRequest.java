@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Pattern;
 
-import com.ahancer.rr.models.Brand;
-import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.Resource;
+import com.ahancer.rr.response.BrandResponse;
+import com.ahancer.rr.response.InfluencerResponse;
 
 public class ProfileRequest implements Serializable {
 	
@@ -17,8 +17,8 @@ public class ProfileRequest implements Serializable {
 	private Resource profilePicture;
 	@Pattern(regexp="[0-9]*", message="error.phone")
 	private String phoneNumber;
-	private Brand brand;
-	private Influencer influencer;
+	private BrandResponse brand;
+	private InfluencerResponse influencer;
 	
 	public ProfileRequest(){
 		
@@ -64,19 +64,19 @@ public class ProfileRequest implements Serializable {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public Brand getBrand() {
+	public BrandResponse getBrand() {
 		return brand;
 	}
 
-	public void setBrand(Brand brand) {
+	public void setBrand(BrandResponse brand) {
 		this.brand = brand;
 	}
 
-	public Influencer getInfluencer() {
+	public InfluencerResponse getInfluencer() {
 		return influencer;
 	}
 
-	public void setInfluencer(Influencer influencer) {
+	public void setInfluencer(InfluencerResponse influencer) {
 		this.influencer = influencer;
 	}
 

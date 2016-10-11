@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.Pattern;
@@ -47,18 +49,10 @@ public class User extends AbstractModel implements Serializable {
 	@JoinColumn(name="profilePictureId")
 	private Resource profilePicture;
 	
-//	@ManyToOne(fetch=FetchType.EAGER)
-//	@JoinColumn(name="bankId")
-//	private Bank bank;
-//	
-//	@Column(name="bankAccount",length=255)
-//	private String bankAccount;
-	
 	@Column(name="phoneNumber",length=255)
 	@Pattern(regexp="[0-9]*", message="error.phone")
 	private String phoneNumber;
 	
-
 	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="user")
 	@PrimaryKeyJoinColumn
 	@JsonBackReference(value="user-brand")
@@ -68,6 +62,14 @@ public class User extends AbstractModel implements Serializable {
 	@PrimaryKeyJoinColumn
 	@JsonBackReference(value="user-influencer")
 	private Influencer influencer;
+
+	@Column(name="referralId")
+	private String referralId;
+	
+	@MapsId("referralId")
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="referralId",nullable=true)
+	private Referral referral;
 
 	public User() {
 	}
@@ -142,6 +144,22 @@ public class User extends AbstractModel implements Serializable {
 
 	public void setInfluencer(Influencer influencer) {
 		this.influencer = influencer;
+	}
+
+	public String getReferralId() {
+		return referralId;
+	}
+
+	public void setReferralId(String referralId) {
+		this.referralId = referralId;
+	}
+
+	public Referral getReferral() {
+		return referral;
+	}
+
+	public void setReferral(Referral referral) {
+		this.referral = referral;
 	}
 	
 }
