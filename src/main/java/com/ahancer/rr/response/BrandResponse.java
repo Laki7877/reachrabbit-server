@@ -30,6 +30,10 @@ public class BrandResponse implements Serializable {
 			case Admin:
 				user.setEmail(brand.getUser().getEmail());
 				user.setPhoneNumber(brand.getUser().getPhoneNumber());
+				this.companyName = brand.getCompanyName();
+				this.companyAddress = brand.getCompanyAddress();
+				this.companyTaxId = brand.getCompanyTaxId();
+				this.isCompany = brand.getIsCompany();
 				break;
 			case Brand:
 				user.setEmail(brand.getUser().getEmail());
