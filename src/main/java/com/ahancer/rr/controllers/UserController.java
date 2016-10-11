@@ -33,16 +33,16 @@ public class UserController extends AbstractController {
 	@Authorization(Role.Admin)
 	public Page<User> getBrands(@RequestParam(required=false, name="search") String search, Pageable pageable) {
 		if(search == null) {
-			return userDao.findByRole(Role.Brand, pageable);
+			return userDao.findAllBrand(pageable);
 		}
-		return userDao.findByRoleAndNameOrBrandBrandName(Role.Brand, search, search, pageable);
+		return userDao.findAllBrand(search, pageable);
 	}
 	@RequestMapping(value="/influencer", method=RequestMethod.GET)
 	@Authorization(Role.Admin)
 	public Page<User> getInfluencers(@RequestParam(required=false, name="search") String search, Pageable pageable) {
 		if(search == null) {
-			return userDao.findByRole(Role.Influencer, pageable);
+			return userDao.findAllInfluencer(pageable);
 		}
-		return userDao.findByRoleAndName(Role.Influencer, search, pageable);
+		return userDao.findAllInfluencer(search, pageable);
 	}
 }

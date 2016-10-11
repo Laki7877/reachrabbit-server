@@ -28,7 +28,26 @@ public interface UserDao extends CrudRepository<User, Long> {
 			+ "WHERE u.email=:email")
 	public int countByEmail(@Param("email") String email);
 	
-	public Page<User> findByRole(Role role, Pageable pageable);
-	public Page<User> findByRoleAndName(Role role, String name, Pageable pageable);
-	public Page<User> findByRoleAndNameOrBrandBrandName(Role role, String name, String brandName, Pageable pageable);
+	@Query("SELECT new com.ahancer.rr.response.BrandResponse(u, 'Brand') " 
+			+ "FROM user u "
+			+ "WHERE u.role='Brand' ")
+	public Page<User> findAllBrand(Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.BrandResponse(u, 'Brand') " 
+			+ "FROM user u "
+			+ "JOIN u.brand b"
+			+ "WHERE u.role='Brand' "
+			+ "AND (u.email LIKE CONCAT('%', :search, '%') OR b.brandName LIKE CONCAT('%', :search, '%'))")
+	public Page<User> findAllBrand(@Param("search") String search, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.InfluencerResponse(u, 'Influencer') " 
+			+ "FROM user u "
+			+ "WHERE u.role='Influencer' ")
+	public Page<User> findAllInfluencer(Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.InfluencerResponse(u, 'Influencer') " 
+			+ "FROM user u "
+			+ "WHERE u.role='Influencer' "
+			+ "AND (u.email LIKE CONCAT('%', :search, '%') OR u.name LIKE CONCAT('%', :search, '%'))")
+	public Page<User> findAllInfluencer(@Param("search") String search, Pageable pageable);
 }
