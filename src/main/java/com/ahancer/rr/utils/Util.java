@@ -130,10 +130,10 @@ public class Util {
 	        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	        g.drawImage(origImage, 0, 0, fWidth, fHeight, null);
 	        g.dispose();
-	        return compressImage(resizedImage, destImg, 0.5f);
+	        return compressImage(resizedImage, destImg, 0.75f);
         }
         
-        return compressImage(origImage, destImg, 0.5f);
+        return compressImage(origImage, destImg, 0.75f);
         
     }
 	
