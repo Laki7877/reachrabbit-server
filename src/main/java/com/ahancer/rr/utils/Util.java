@@ -94,30 +94,19 @@ public class Util {
 	public static File resizeImage(InputStream sourceImg, String destImg, Integer Width, Integer Height) throws Exception {
         BufferedImage origImage;
         origImage = ImageIO.read(sourceImg);
-        int type = origImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : origImage.getType();
-        
-        //*Special* if the width or height is 0 use image src dimensions
-       
-        if (Width == 0) {
-            Width = origImage.getWidth();
-        }
-        if (Height == 0) {
-            Height = origImage.getHeight();
-        }
-        int fHeight = Height;
-        int fWidth = Width;
-        
         
         if(Height > 0 && Width > 0){
+            int fHeight = Height;
+            int fWidth = Width;
         	//Note: If both W , H is 0 then u don't need to resize 
         	//Work out the resized width/height
+        	int type = origImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : origImage.getType();
 	        if (origImage.getHeight() > Height || origImage.getWidth() > Width) {
 	            fHeight = Height;
 	            int wid = Width;
 	            float sum = (float)origImage.getWidth() / (float)origImage.getHeight();
 	            fWidth = Math.round(fHeight * sum);
 	            if (fWidth > wid) {
-	                //rezise again for the width this time
 	                fHeight = Math.round(wid/sum);
 	                fWidth = wid;
 	            }
@@ -130,10 +119,10 @@ public class Util {
 	        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	        g.drawImage(origImage, 0, 0, fWidth, fHeight, null);
 	        g.dispose();
-	        return compressImage(resizedImage, destImg, 0.75f);
+	        return compressImage(resizedImage, destImg, 0.65f);
         }
         
-        return compressImage(origImage, destImg, 0.75f);
+        return compressImage(origImage, destImg, 0.65f);
         
     }
 	
