@@ -31,6 +31,8 @@ public class UserService {
 			proposalCount = proposalDao.countByCampaignBrandIdAndInfluencerId(requestUserId, userId);
 		} else if(Role.Influencer.equals(userRole)) {
 			proposalCount = proposalDao.countByCampaignBrandIdAndInfluencerId(userId, requestUserId);
+		} else if(Role.Admin.equals(userRole)){
+			proposalCount = 1L;
 		}
 		if(0L >= proposalCount){
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
@@ -39,7 +41,7 @@ public class UserService {
 		if(null == user 
 				|| Role.Admin.equals(user.getRole())
 				|| Role.Bot.equals(user.getRole())
-				|| userRole.equals(user.getRole())){
+				|| userRole.equals(user.getRole())) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
 		}
 		return new UserResponse(user,userRole.displayName());
