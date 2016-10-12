@@ -87,7 +87,10 @@ public class TransactionService {
 		//create transaction
 		Transaction transaction = new Transaction();
 		Double sum = cart.getProposals().stream().mapToDouble(o -> o.getPrice()).sum();
-		Double tax = sum * 0.03;
+		Double tax = 0.0;
+		if(null != user.getBrand().getIsCompany() && user.getBrand().getIsCompany()) {
+			tax = sum * 0.03;
+		}
 		Double total = sum - tax; 
 		transaction.setAmount(total);
 		transaction.setStatus(TransactionStatus.Pending);
@@ -109,15 +112,17 @@ public class TransactionService {
 		document.setCompanyName(user.getBrand().getCompanyName());
 		document.setCompanyTaxId(user.getBrand().getCompanyTaxId());
 		document = brandTransactionDocumentDao.save(document);
-		BrandTransactionDocument taxDocument = new BrandTransactionDocument();
-		taxDocument.setCartId(cart.getCartId());
-		taxDocument.setTransactionId(transaction.getTransactionId());
-		taxDocument.setAmount(-tax);
-		taxDocument.setType(DocumentType.Tax);
-		taxDocument.setCompanyAddress(user.getBrand().getCompanyAddress());
-		taxDocument.setCompanyName(user.getBrand().getCompanyName());
-		taxDocument.setCompanyTaxId(user.getBrand().getCompanyTaxId());
-		taxDocument = brandTransactionDocumentDao.save(taxDocument);
+		if(null != user.getBrand().getIsCompany() && user.getBrand().getIsCompany()) {
+			BrandTransactionDocument taxDocument = new BrandTransactionDocument();
+			taxDocument.setCartId(cart.getCartId());
+			taxDocument.setTransactionId(transaction.getTransactionId());
+			taxDocument.setAmount(-tax);
+			taxDocument.setType(DocumentType.Tax);
+			taxDocument.setCompanyAddress(user.getBrand().getCompanyAddress());
+			taxDocument.setCompanyName(user.getBrand().getCompanyName());
+			taxDocument.setCompanyTaxId(user.getBrand().getCompanyTaxId());
+			taxDocument = brandTransactionDocumentDao.save(taxDocument);
+		}
 		//update cart status
 		cart.setStatus(CartStatus.Checkout);
 		cartDao.save(cart);
