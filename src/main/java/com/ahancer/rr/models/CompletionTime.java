@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name="completionTime")
 public class CompletionTime implements Serializable {
 
@@ -22,6 +24,10 @@ public class CompletionTime implements Serializable {
 	
 	@Column(name="day")
 	private Integer day;
+	
+	@JsonIgnore
+	@Column(name="isActive")
+	private Boolean isActive;
 
 	public CompletionTime() {
 
@@ -55,6 +61,14 @@ public class CompletionTime implements Serializable {
 
 	public void setDay(Integer day) {
 		this.day = day;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

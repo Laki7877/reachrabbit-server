@@ -10,11 +10,13 @@ import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Budget;
 import com.ahancer.rr.models.Campaign;
+import com.ahancer.rr.models.CampaignObjective;
 import com.ahancer.rr.models.CampaignResource;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.Resource;
+import com.ahancer.rr.models.WorkType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class CampaignResponse implements Serializable {
@@ -23,28 +25,30 @@ public class CampaignResponse implements Serializable {
 	private Long campaignId;
 	private Long brandId;
 	private BrandResponse brand;
-	private Category category;
-	private Budget budget;
+	private String title;
+	private CampaignObjective objective;
+	private Set<WorkType> workType = new HashSet<WorkType>(0);
 	private Set<Media> media = new HashSet<Media>(0);
+	private String description;
+	private String productName;
+	private Category category;
 	private Resource mainResource;
 	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
-	private String keyword;
-	private String title;
-	private String description;
 	private String website;
+	private Budget budget;
 	private Date proposalDeadline;
 	private CampaignStatus status;
 	private Boolean rabbitFlag;
+	@JsonIgnore
+	private Set<Proposal> proposals = new HashSet<Proposal>(0);
+	private String publicCode;
 	private Integer countProposalSelection;
 	private Integer countProposalWorking;
 	private Integer countProposalComplete;
 	private Date updatedAt;
-	private Boolean isApply;
-	private String publicCode;
-	@JsonIgnore
-	private Set<Proposal> proposals = new HashSet<Proposal>(0);
 	private Proposal proposal;
-
+	private Boolean isApply;
+	
 	public CampaignResponse() {
 		
 	}
@@ -90,7 +94,6 @@ public class CampaignResponse implements Serializable {
 		this.media = campaign.getMedia();
 		this.mainResource = campaign.getMainResource();
 		this.campaignResources = campaign.getCampaignResources();
-		this.keyword = campaign.getKeyword();
 		this.title = campaign.getTitle();
 		this.description = campaign.getDescription();
 		this.website = campaign.getWebsite();
@@ -162,14 +165,6 @@ public class CampaignResponse implements Serializable {
 
 	public void setCampaignResources(Set<CampaignResource> campaignResources) {
 		this.campaignResources = campaignResources;
-	}
-
-	public String getKeyword() {
-		return keyword;
-	}
-
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
 	}
 
 	public String getTitle() {
@@ -283,6 +278,29 @@ public class CampaignResponse implements Serializable {
 	public void setPublicCode(String publicCode) {
 		this.publicCode = publicCode;
 	}
-	
+
+	public CampaignObjective getObjective() {
+		return objective;
+	}
+
+	public void setObjective(CampaignObjective objective) {
+		this.objective = objective;
+	}
+
+	public Set<WorkType> getWorkType() {
+		return workType;
+	}
+
+	public void setWorkType(Set<WorkType> workType) {
+		this.workType = workType;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
 	
 }

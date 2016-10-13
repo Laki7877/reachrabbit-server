@@ -25,14 +25,6 @@ public abstract class AbstractModel {
 	private Date updatedAt;
 	
 	
-	@JsonIgnore
-	@Column(name="createdBy")
-	private Long createdBy;
-	
-	@JsonIgnore
-	@Column(name="updatedBy")
-	private Long updatedBy;
-	
 	@PrePersist
 	protected void onCreate() {
 		updatedAt = createdAt = new Date();
@@ -41,10 +33,6 @@ public abstract class AbstractModel {
 	@PreUpdate
 	protected void onUpdate() {
 		updatedAt = new Date();
-	}
-	
-	public Long getUpdatedBy() {
-		return updatedBy;
 	}
 	
 	public Date getUpdatedAt() {
@@ -57,18 +45,6 @@ public abstract class AbstractModel {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
-	}
-
-	public void setUpdatedBy(Long updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-	
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
 	}
 
 	public Date getCreatedAt() {

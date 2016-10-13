@@ -95,14 +95,6 @@ public class Transaction implements Serializable {
 	@Column(name = "updatedAt")
 	private Date updatedAt;
 	
-	@JsonIgnore
-	@Column(name="createdBy")
-	private Long createdBy;
-	
-	@JsonIgnore
-	@Column(name="updatedBy")
-	private Long updatedBy;
-	
 	public Transaction(){
 		
 	}
@@ -201,22 +193,6 @@ public class Transaction implements Serializable {
 
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
-	}
-
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Long getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(Long updatedBy) {
-		this.updatedBy = updatedBy;
 	}
 	
 	public Date getCompletedAt() {

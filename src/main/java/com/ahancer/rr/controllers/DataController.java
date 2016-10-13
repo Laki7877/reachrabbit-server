@@ -12,14 +12,18 @@ import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.BankDao;
 import com.ahancer.rr.daos.BudgetDao;
+import com.ahancer.rr.daos.CampaignObjectiveDao;
 import com.ahancer.rr.daos.CategoryDao;
 import com.ahancer.rr.daos.CompletionTimeDao;
 import com.ahancer.rr.daos.MediaDao;
+import com.ahancer.rr.daos.WorkTypeDao;
 import com.ahancer.rr.models.Bank;
 import com.ahancer.rr.models.Budget;
+import com.ahancer.rr.models.CampaignObjective;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.CompletionTime;
 import com.ahancer.rr.models.Media;
+import com.ahancer.rr.models.WorkType;
 import com.ahancer.rr.utils.S3Util;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
@@ -39,6 +43,10 @@ public class DataController {
 	@Autowired
 	private CompletionTimeDao completionTimeDao;
 	@Autowired
+	private CampaignObjectiveDao campaignObjectiveDao;
+	@Autowired
+	private WorkTypeDao workTypeDao;
+	@Autowired
 	private S3Util s3Util;
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
@@ -46,13 +54,13 @@ public class DataController {
 	@RequestMapping(value="/media",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Media> getAllMedia() throws Exception{
-		return mediaDao.findAllByOrderByMediaId();
+		return mediaDao.findAllByIsActiveTrueOrderByMediaId();
 	}
 	@ApiOperation(value = "Get category list")
 	@RequestMapping(value="/categories",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Category> getAllCategories() throws Exception{
-		return categoryDao.findAllByOrderByCategoryId();
+		return categoryDao.findAllByIsActiveTrueOrderByCategoryId();
 	}
 	@ApiOperation(value = "Get bank list")
 	@RequestMapping(value="/banks",method=RequestMethod.GET)
@@ -64,13 +72,25 @@ public class DataController {
 	@RequestMapping(value="/budgets",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<Budget> getBudget() throws Exception{
-		return budgetDao.findAllByOrderByBudgetId();
+		return budgetDao.findAllByIsActiveTrueOrderByBudgetId();
 	}
 	@ApiOperation(value = "Get completion time list")
 	@RequestMapping(value="/completiontime",method=RequestMethod.GET)
 	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
 	public List<CompletionTime> getCompletionTime() throws Exception{
 		return completionTimeDao.findAllByOrderByCompletionId();
+	}
+	@ApiOperation(value = "Get campaign obejective list")
+	@RequestMapping(value="/campaignobjectives",method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
+	public List<CampaignObjective> getCampaignObjective() throws Exception{
+		return campaignObjectiveDao.findAllByIsActiveTrueOrderByObjectiveId();
+	}
+	@ApiOperation(value = "Get campaign obejective list")
+	@RequestMapping(value="/worktypes",method=RequestMethod.GET)
+	@Authorization({Role.Brand,Role.Influencer,Role.Admin})
+	public List<WorkType> getWorkType() throws Exception{
+		return workTypeDao.findAllByIsActiveTrueOrderByWorkTypeId();
 	}
 	@ApiOperation(value = "Clear s3 picture")
 	@RequestMapping(value="/clear",method=RequestMethod.DELETE)

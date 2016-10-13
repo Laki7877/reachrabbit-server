@@ -34,8 +34,6 @@ public class CampaignRequest implements Serializable {
 	@Size(max=100,message="error.campaign.title.length")
 	private String title;
 	
-	@Size(max=100,message="error.campaign.keyword.length=")
-	private String keyword;
 	
 	private Category category;
 	
@@ -47,22 +45,7 @@ public class CampaignRequest implements Serializable {
 	
 	public CampaignRequest() {
 	}
-	public CampaignRequest(Budget budget, String website, Date proposalDeadline,
-			CampaignStatus status, String description, String title, String keyword, Category category,
-			Set<Media> media, Set<CampaignResource> campaignResources,Resource mainResource) {
-		super();
-		this.budget = budget;
-		this.website = website;
-		this.proposalDeadline = proposalDeadline;
-		this.status = status;
-		this.description = description;
-		this.title = title;
-		this.keyword = keyword;
-		this.category = category;
-		this.media = media;
-		this.campaignResources = campaignResources;
-		this.mainResource = mainResource;
-	}
+
 	public Budget getBudget() {
 		return budget;
 	}
@@ -98,12 +81,6 @@ public class CampaignRequest implements Serializable {
 	}
 	public void setTitle(String title) {
 		this.title = title;
-	}
-	public String getKeyword() {
-		return keyword;
-	}
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
 	}
 	public Category getCategory() {
 		return category;

@@ -47,14 +47,21 @@ public class Campaign extends AbstractModel implements Serializable {
 	@JoinColumn(name="brandId")
 	private Brand brand;
 	
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
-	@JoinColumn(name="categoryId")
-	private Category category;
+	@Column(name="title",length=255)
+	private String title;
 	
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
-	@JoinColumn(name="budgetId")
-	private Budget budget;
-
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="objectiveId")
+	private CampaignObjective objective;
+	
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(
+			name="campaignWorkType",
+			joinColumns=@JoinColumn(name="campaignId", referencedColumnName="campaignId"),
+			inverseJoinColumns=@JoinColumn(name="workTypeId", referencedColumnName="workTypeId"))
+	@OrderBy("workTypeId")
+	private Set<WorkType> workType = new HashSet<WorkType>(0);
+	
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 			name="campaignMedia",
@@ -63,26 +70,31 @@ public class Campaign extends AbstractModel implements Serializable {
 	@OrderBy("mediaId")
 	private Set<Media> media = new HashSet<Media>(0);
 	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="mainResourceId")
-	private Resource mainResource;
-
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign")
-	@OrderBy("position")
-	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
-	
-	@Column(name="keyword",length=255)
-	private String keyword;
-
-	@Column(name="title",length=255)
-	private String title;
-
 	@Lob
 	@Column(name="description")
 	private String description;
 	
+	@Column(name="productName",length=255)
+	private String productName;
+	
+	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@JoinColumn(name="categoryId")
+	private Category category;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="mainResourceId")
+	private Resource mainResource;
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "campaign")
+	@OrderBy("position")
+	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
+	
 	@Column(name="website",length=255)
 	private String website;
+	
+	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@JoinColumn(name="budgetId")
+	private Budget budget;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date proposalDeadline;
@@ -113,20 +125,20 @@ public class Campaign extends AbstractModel implements Serializable {
 		this.campaignId = campaignId;
 	}
 
+	public Long getBrandId() {
+		return brandId;
+	}
+
+	public void setBrandId(Long brandId) {
+		this.brandId = brandId;
+	}
+
 	public Brand getBrand() {
 		return brand;
 	}
 
 	public void setBrand(Brand brand) {
 		this.brand = brand;
-	}
-
-	public Category getCategory() {
-		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
 	}
 
 	public String getTitle() {
@@ -137,28 +149,20 @@ public class Campaign extends AbstractModel implements Serializable {
 		this.title = title;
 	}
 
-	public String getDescription() {
-		return description;
+	public CampaignObjective getObjective() {
+		return objective;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setObjective(CampaignObjective objective) {
+		this.objective = objective;
 	}
 
-	public Date getProposalDeadline() {
-		return proposalDeadline;
+	public Set<WorkType> getWorkType() {
+		return workType;
 	}
 
-	public void setProposalDeadline(Date proposalDeadline) {
-		this.proposalDeadline = proposalDeadline;
-	}
-
-	public Long getBrandId() {
-		return brandId;
-	}
-
-	public void setBrandId(Long brandId) {
-		this.brandId = brandId;
+	public void setWorkType(Set<WorkType> workType) {
+		this.workType = workType;
 	}
 
 	public Set<Media> getMedia() {
@@ -169,36 +173,28 @@ public class Campaign extends AbstractModel implements Serializable {
 		this.media = media;
 	}
 
-	public CampaignStatus getStatus() {
-		return status;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setStatus(CampaignStatus status) {
-		this.status = status;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String getWebsite() {
-		return website;
+	public String getProductName() {
+		return productName;
 	}
 
-	public void setWebsite(String website) {
-		this.website = website;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
-	public String getKeyword() {
-		return keyword;
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
-
-	public Set<CampaignResource> getCampaignResources() {
-		return campaignResources;
-	}
-
-	public void setCampaignResources(Set<CampaignResource> campaignResources) {
-		this.campaignResources = campaignResources;
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 	public Resource getMainResource() {
@@ -209,12 +205,44 @@ public class Campaign extends AbstractModel implements Serializable {
 		this.mainResource = mainResource;
 	}
 
+	public Set<CampaignResource> getCampaignResources() {
+		return campaignResources;
+	}
+
+	public void setCampaignResources(Set<CampaignResource> campaignResources) {
+		this.campaignResources = campaignResources;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
 	public Budget getBudget() {
 		return budget;
 	}
 
 	public void setBudget(Budget budget) {
 		this.budget = budget;
+	}
+
+	public Date getProposalDeadline() {
+		return proposalDeadline;
+	}
+
+	public void setProposalDeadline(Date proposalDeadline) {
+		this.proposalDeadline = proposalDeadline;
+	}
+
+	public CampaignStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(CampaignStatus status) {
+		this.status = status;
 	}
 
 	public Boolean getRabbitFlag() {
@@ -240,5 +268,4 @@ public class Campaign extends AbstractModel implements Serializable {
 	public void setPublicCode(String publicCode) {
 		this.publicCode = publicCode;
 	}
-	
 }

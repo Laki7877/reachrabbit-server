@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name="bank")
 public class Bank implements Serializable{
 
@@ -18,6 +20,7 @@ public class Bank implements Serializable{
 	@Column(name="bankName",length=255)
 	private String bankName;
 	
+	@JsonIgnore
 	@Column(name="isActive")
 	private Boolean isActive;
 

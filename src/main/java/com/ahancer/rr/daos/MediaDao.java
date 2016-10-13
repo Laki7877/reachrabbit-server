@@ -9,5 +9,5 @@ import com.ahancer.rr.models.Media;
 public interface MediaDao extends CrudRepository<Media, String> {
 	public Media findByMediaId(String mediaId);
 	
-	public List<Media> findAllByOrderByMediaId();
+	public List<Media> findAllByIsActiveTrueOrderByMediaId();
 }

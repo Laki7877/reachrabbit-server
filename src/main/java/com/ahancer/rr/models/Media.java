@@ -14,7 +14,7 @@ public class Media implements Serializable{
 	private static final long serialVersionUID = -7106394972853750323L;
 
 	@Id
-	@Column(length=255)
+	@Column(length=20)
 	private String mediaId;
 
 	@Column(name="mediaName",length=255)

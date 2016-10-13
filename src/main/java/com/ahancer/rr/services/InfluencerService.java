@@ -150,6 +150,7 @@ public class InfluencerService {
 		user = userDao.save(user);
 		//Setup user object
 		Influencer influencer = new Influencer();
+		influencer.setIsVerfy(false);
 		influencer.setInfluencerId(user.getUserId());
 		influencer.setInfluencerMedias(request.getInfluencerMedia());
 		//Check if media link exists

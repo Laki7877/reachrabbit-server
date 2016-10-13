@@ -8,6 +8,6 @@ import com.ahancer.rr.models.Category;
 
 public interface CategoryDao extends CrudRepository<Category, Long>{
 	
-	public List<Category> findAllByOrderByCategoryId();
+	public List<Category> findAllByIsActiveTrueOrderByCategoryId();
 
 }

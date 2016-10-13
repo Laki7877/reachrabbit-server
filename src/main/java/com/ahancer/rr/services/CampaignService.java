@@ -68,7 +68,6 @@ public class CampaignService {
 		campaign.setCategory(request.getCategory());
 		campaign.setDescription(request.getDescription());
 		campaign.setBudget(request.getBudget());
-		campaign.setKeyword(request.getKeyword());
 		campaign.setMedia(request.getMedia());
 		campaign.setProposalDeadline(request.getProposalDeadline());
 		campaign.setStatus(request.getStatus());
@@ -166,7 +165,6 @@ public class CampaignService {
 		campaign.setCategory(request.getCategory());
 		campaign.setDescription(request.getDescription());
 		campaign.setBudget(request.getBudget());
-		campaign.setKeyword(request.getKeyword());
 		campaign.setMedia(request.getMedia());
 		campaign.setProposalDeadline(request.getProposalDeadline());
 		campaign.setStatus(request.getStatus());
