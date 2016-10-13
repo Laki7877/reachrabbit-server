@@ -38,7 +38,6 @@ public class ReferralService {
 		if(null == user) {
 			user = new User();
 			user.setEmail(request.getEmail());
-			user.setName(request.getEmail().split("@")[0]);
 			user.setRole(Role.Partner);
 			encryptionUtil.hashPassword("P@ssw0rd");
 			user = userDao.save(user);
