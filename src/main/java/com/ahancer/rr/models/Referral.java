@@ -10,8 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 @Entity(name="referral")
 public class Referral extends AbstractModel implements Serializable {
 	
@@ -27,7 +25,6 @@ public class Referral extends AbstractModel implements Serializable {
 	@MapsId("partnerId")
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="partnerId")
-	@JsonManagedReference(value="user-partner")
 	private User partner;
 	
 	@Column(name="description",length=255)

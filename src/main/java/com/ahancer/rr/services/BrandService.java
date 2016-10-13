@@ -106,6 +106,8 @@ public class BrandService {
 		user.setPhoneNumber(request.getPhoneNumber());
 		Brand brand = user.getBrand();
 		brand.setBrandName(request.getBrand().getBrandName());
+		brand.setAbout(request.getBrand().getAbout());
+		brand.setWebsite(request.getBrand().getWebsite());
 		brand.setCompanyAddress(request.getBrand().getCompanyAddress());
 		brand.setCompanyName(request.getBrand().getCompanyName());
 		brand.setCompanyTaxId(request.getBrand().getCompanyTaxId());
