@@ -1,6 +1,7 @@
 package com.ahancer.rr.response;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Referral;
@@ -14,6 +15,7 @@ public class ReferralResponse implements Serializable  {
 	private String description;
 	private Long signUpCount;
 	private Long paidWorkRoomCount;
+	private Date createdAt;
 	
 	public ReferralResponse(Referral referral,String roleValue) {
 		Role role = Role.valueOf(roleValue);
@@ -26,6 +28,7 @@ public class ReferralResponse implements Serializable  {
 		this.email = referral.getUser().getEmail();
 		this.description = referral.getDescription();
 		this.referralId = referral.getReferralId();
+		this.createdAt = referral.getCreatedAt();
 	}
 	public String getReferralId() {
 		return referralId;
@@ -57,5 +60,10 @@ public class ReferralResponse implements Serializable  {
 	public void setPaidWorkRoomCount(Long paidWorkRoomCount) {
 		this.paidWorkRoomCount = paidWorkRoomCount;
 	}
-	
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 }
