@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +28,7 @@ public class ReferralController {
 	@ApiOperation(value = "Create new referral")
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization({Role.Admin})
-	public Referral createReferral(ReferralRequest request) throws Exception {
+	public Referral createReferral(@Valid ReferralRequest request) throws Exception {
 		Referral referral = referralService.createReferral(request);
 		return referral;
 	}
