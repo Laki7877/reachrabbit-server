@@ -74,6 +74,9 @@ public class CampaignService {
 		campaign.setTitle(request.getTitle());
 		campaign.setWebsite(request.getWebsite());
 		campaign.setMainResource(request.getMainResource());
+		campaign.setObjective(request.getObjective());
+		campaign.setWorkType(request.getWorkType());
+		campaign.setProductName(request.getProductName());
 		campaign.setRabbitFlag(false);
 		String publicCode = UUID.randomUUID().toString().replace("-", "");
 		campaign.setPublicCode(publicCode);
@@ -171,6 +174,9 @@ public class CampaignService {
 		campaign.setTitle(request.getTitle());
 		campaign.setWebsite(request.getWebsite());
 		campaign.setMainResource(request.getMainResource());
+		campaign.setObjective(request.getObjective());
+		campaign.setWorkType(request.getWorkType());
+		campaign.setProductName(request.getProductName());
 		campaign = campaignDao.save(campaign);
 		//Setup resources
 		campaignResourceDao.deleteByIdCampaignId(campaignId);

@@ -9,40 +9,45 @@ import javax.validation.constraints.Size;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.models.Budget;
+import com.ahancer.rr.models.CampaignObjective;
 import com.ahancer.rr.models.CampaignResource;
 import com.ahancer.rr.models.Category;
 import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.Resource;
+import com.ahancer.rr.models.WorkType;
 
 public class CampaignRequest implements Serializable {
 	private static final long serialVersionUID = 1164567255480906846L;
-	
+
 	private Long campaignId;
+	@Size(max=255,message="error.campaign.title.length")
+	private String title;
+
+	private CampaignObjective objective;
+
+	private Set<WorkType> workType = new HashSet<WorkType>(0);
+
+	private Set<Media> media = new HashSet<Media>(0);
 	
-	private Budget budget;
+	private String description;
+	
+	private String productName;
+	
+	private Category category;
+	
+	private Resource mainResource;
+
+	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
 	
 	@Size(max=200,message="error.campaign.website.length")
 	private String website;
 	
+	private Budget budget;
+
 	private Date proposalDeadline;
-	
+
 	private CampaignStatus status;
-	
-	@Size(max=5000,message="error.campaign.website.length")
-	private String description;
-	
-	@Size(max=100,message="error.campaign.title.length")
-	private String title;
-	
-	
-	private Category category;
-	
-	private Set<Media> media = new HashSet<Media>(0);
-	
-	private Resource mainResource;
-	
-	private Set<CampaignResource> campaignResources = new HashSet<CampaignResource>(0);
-	
+
 	public CampaignRequest() {
 	}
 
@@ -112,5 +117,28 @@ public class CampaignRequest implements Serializable {
 	public void setCampaignId(Long campaignId) {
 		this.campaignId = campaignId;
 	}
-	
+
+	public CampaignObjective getObjective() {
+		return objective;
+	}
+
+	public void setObjective(CampaignObjective objective) {
+		this.objective = objective;
+	}
+
+	public Set<WorkType> getWorkType() {
+		return workType;
+	}
+
+	public void setWorkType(Set<WorkType> workType) {
+		this.workType = workType;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
 }

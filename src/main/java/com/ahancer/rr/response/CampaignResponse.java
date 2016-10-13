@@ -95,6 +95,9 @@ public class CampaignResponse implements Serializable {
 		this.mainResource = campaign.getMainResource();
 		this.campaignResources = campaign.getCampaignResources();
 		this.title = campaign.getTitle();
+		this.objective = campaign.getObjective();
+		this.workType = campaign.getWorkType();
+		this.productName = campaign.getProductName();
 		this.description = campaign.getDescription();
 		this.website = campaign.getWebsite();
 		this.proposalDeadline = campaign.getProposalDeadline();
