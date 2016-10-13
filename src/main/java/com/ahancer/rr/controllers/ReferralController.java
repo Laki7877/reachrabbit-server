@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahancer.rr.annotations.Authorization;
@@ -37,8 +38,8 @@ public class ReferralController {
 	@ApiOperation(value = "Get referral pagenation")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Admin})
-	public Page<ReferralResponse> getAllReferral(Pageable pageRequest) throws Exception {
-		Page<ReferralResponse> page = referralService.findAll(pageRequest);
+	public Page<ReferralResponse> getAllReferral(@RequestParam(name="search", required=false) String search, Pageable pageRequest) throws Exception {
+		Page<ReferralResponse> page = referralService.findAll(search, pageRequest);
 		return page;
 	}
 
