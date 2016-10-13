@@ -41,37 +41,26 @@ import com.ahancer.rr.utils.EncodeUtil;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class TransactionService {
-	
 	@Autowired
 	private TransactionDao transactionDao;
-	
 	@Autowired
 	private CartDao cartDao;
-	
 	@Autowired
 	private ProposalDao proposalDao;
-	
 	@Autowired
 	private BrandTransactionDocumentDao brandTransactionDocumentDao;
-	
 	@Autowired
 	private ProposalMessageService proposalMessageService;
-	
 	@Autowired
 	private RobotService robotService;
-	
 	@Autowired
 	private MessageSource messageSource;
-	
 	@Autowired
 	private ProposalService proposalService;
-	
 	@Autowired
 	private EmailService emailService;
-	
 	@Autowired
 	private WalletDao walletDao;
-	
 	@Value("${ui.host}")
 	private String uiHost;
 	
@@ -189,7 +178,6 @@ public class TransactionService {
 		transaction.setCompletedAt(now);
 		transaction.setStatus(TransactionStatus.Complete);
 		transaction = transactionDao.save(transaction);
-		
 		//update proposal status
 		Calendar cal = Calendar.getInstance();
 		ProposalMessage robotMessage = new ProposalMessage();
@@ -200,14 +188,11 @@ public class TransactionService {
 		String to = StringUtils.EMPTY;
 		String subject = StringUtils.EMPTY;
 		String body = StringUtils.EMPTY;
-		
 		String superSubject = messageSource.getMessage("email.influencer.admin.confirm.checkout.subject",null,locale)
 				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName());
 		String superBody = messageSource.getMessage("email.influencer.admin.confirm.checkout.message",null,locale)
 				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName())
 				.replace("{{Host}}", uiHost);
-		
-		
 		for(BrandTransactionDocument brandDoc : transaction.getBrandTransactionDocument()) {
 			if(!DocumentType.Base.equals(brandDoc.getType())) {
 				continue;
@@ -217,14 +202,12 @@ public class TransactionService {
 				Integer days = proposal.getCompletionTime().getDay();
 				cal.add(Calendar.DATE, days);
 				proposal.setDueDate(cal.getTime());
-				
 				//setup robot message
 				robotMessage.setMessage(message
 						.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
 						.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
 						.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId())));
 				robotMessage.setProposal(proposal);
-				
 				//long polling
 				proposalMessageService.createProposalMessage(proposal.getProposalId()
 						, robotMessage
@@ -234,7 +217,6 @@ public class TransactionService {
 				proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 				proposalMessageService.processMessagePolling(proposal.getProposalId());
 				proposalDao.save(proposal);
-				
 				//send email to influencer
 				to = proposal.getInfluencer().getUser().getEmail();
 				subject = superSubject;
@@ -245,9 +227,6 @@ public class TransactionService {
 				emailService.send(to, subject, body);
 			}
 		}
-		
-		
-		
 		//send email to brand
 		to = transaction.getUser().getEmail();
 		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale)
@@ -261,7 +240,6 @@ public class TransactionService {
 		
 		return transaction;
 	}
-	
 	
 	public Transaction payTransaction(Long transactioId,  Resource resource, Locale locale) throws Exception {
 		if(resource == null){
@@ -280,12 +258,11 @@ public class TransactionService {
 		transaction.setStatus(TransactionStatus.Complete);
 		transaction.setSlip(resource);
 		transaction = transactionDao.save(transaction);
-		
+		//create document
 		InfluencerTransactionDocument document = transaction.getInfluencerTransactionDocument().iterator().next();
 		Wallet wallet = document.getWallet();
 		wallet.setStatus(WalletStatus.Paid);
 		wallet = walletDao.save(wallet);
-		
 		//send mail to influencer
 		String to = transaction.getUser().getEmail();
 		String subject = messageSource.getMessage("email.influencer.admin.confirm.payout.subject",null,locale);
@@ -296,7 +273,6 @@ public class TransactionService {
 				.replace("{{Bank Account Name}}", document.getAccountName())
 				.replace("{{Host}}", uiHost);
 		emailService.send(to, subject, body);
-		
 		return transaction;
 	}
 	

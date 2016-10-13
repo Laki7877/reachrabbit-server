@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 
 import com.ahancer.rr.custom.type.DocumentType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -44,7 +45,6 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 	@JoinColumn(name="walletId")
 	private Wallet wallet;
 	
-	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="bankId")
 	private Bank bank;
@@ -57,6 +57,19 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 	
 	@Column(name="amount",scale=10,precision=3)
 	private Double amount;
+	
+	@Column(name="fullname",length=255)
+	private String fullname;
+	
+	@Column(name="address",length=1000)
+	private String address;
+	
+	@Column(name="idCardNumber",length=13)
+	private String idCardNumber;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="idCardId")
+	private Resource idCard;
 	
 	@Column(name="type",length=20)
 	@Enumerated(EnumType.STRING)
@@ -144,5 +157,37 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 
 	public void setType(DocumentType type) {
 		this.type = type;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getIdCardNumber() {
+		return idCardNumber;
+	}
+
+	public void setIdCardNumber(String idCardNumber) {
+		this.idCardNumber = idCardNumber;
+	}
+
+	public Resource getIdCard() {
+		return idCard;
+	}
+
+	public void setIdCard(Resource idCard) {
+		this.idCard = idCard;
+	}
+
+	public String getFullname() {
+		return fullname;
+	}
+
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
 	}
 }

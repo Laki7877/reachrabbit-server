@@ -28,34 +28,30 @@ import com.ahancer.rr.utils.EncodeUtil;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class WalletService {
-	
 	@Autowired
 	private WalletDao walletDao;
-	
 	@Autowired
 	private TransactionDao transactionDao;
-	
 	@Autowired
 	private InfluencerTransactionDocumentDao influencerTransactionDocumentDao;
-	
 	@Autowired
 	private MessageSource messageSource;
-	
 	@Autowired
 	private EmailService emailService;
-	
 	@Value("${email.admin}")
 	private String adminEmail;
-	
+
 	public Wallet findPendingByIndluencer(Long influencerId) {
 		return walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.WaitForPayout);
 	}
 	
-	public Transaction payoutWallet(PayoutRequest request, Long influencerId,Locale locale) throws Exception{
-		
+	public Transaction payoutWallet(PayoutRequest request, Long influencerId,Locale locale) throws Exception {
 		Wallet wallet = walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.WaitForPayout);
 		if(null == wallet){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.not.exist");
+		}
+		if(null == wallet.getInfluencer().getIsVerfy() || !wallet.getInfluencer().getIsVerfy()) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.infleucner.not.verify");
 		}
 		if(0 == wallet.getProposals().size()){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.empty.proposal");
@@ -79,6 +75,10 @@ public class WalletService {
 			baseDocument.setTransactionId(transaction.getTransactionId());
 			baseDocument.setType(DocumentType.Base);
 			baseDocument.setWalletId(wallet.getWalletId());
+			baseDocument.setFullname(wallet.getInfluencer().getFullname());
+			baseDocument.setAddress(wallet.getInfluencer().getAddress());
+			baseDocument.setIdCardNumber(wallet.getInfluencer().getIdCardNumber());
+			baseDocument.setIdCard(wallet.getInfluencer().getIdCard());
 			baseDocument = influencerTransactionDocumentDao.save(baseDocument);
 			//fee document
 			InfluencerTransactionDocument feeDocument = new InfluencerTransactionDocument();
@@ -89,10 +89,12 @@ public class WalletService {
 			feeDocument.setTransactionId(transaction.getTransactionId());
 			feeDocument.setType(DocumentType.Fee);
 			feeDocument.setWalletId(wallet.getWalletId());
+			feeDocument.setFullname(wallet.getInfluencer().getFullname());
+			feeDocument.setAddress(wallet.getInfluencer().getAddress());
+			feeDocument.setIdCardNumber(wallet.getInfluencer().getIdCardNumber());
+			feeDocument.setIdCard(wallet.getInfluencer().getIdCard());
 			feeDocument = influencerTransactionDocumentDao.save(feeDocument);
-			
 			sum = sum + baseDocument.getAmount() + feeDocument.getAmount();
-			
 		}
 		//transfer fee
 		InfluencerTransactionDocument transferFeeDocument = new InfluencerTransactionDocument();
