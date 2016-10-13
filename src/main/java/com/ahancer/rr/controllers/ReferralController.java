@@ -32,7 +32,7 @@ public class ReferralController {
 	}
 	
 	@ApiOperation(value = "Get referral pagenation")
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Admin})
 	public Page<ReferralResponse> getAllReferral(Pageable pageRequest) throws Exception {
 		Page<ReferralResponse> page = referralService.findAll(pageRequest);
