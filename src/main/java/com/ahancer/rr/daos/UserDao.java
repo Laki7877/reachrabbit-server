@@ -52,6 +52,6 @@ public interface UserDao extends CrudRepository<User, Long> {
 	public Page<UserResponse> findAllInfluencer(@Param("search") String search, Pageable pageable);
 	
 	
-	public Long countByReferral(String referralId);
+	public Long countByReferralId(String referralId);
 	
 }

@@ -60,7 +60,7 @@ public class ReferralService {
 		statuses.add(ProposalStatus.Working);
 		statuses.add(ProposalStatus.Complete);
 		for(ReferralResponse referral : page.getContent()){
-			referral.setSignUpCount(userDao.countByReferral(referral.getReferralId()));
+			referral.setSignUpCount(userDao.countByReferralId(referral.getReferralId()));
 			referral.setPaidWorkRoomCount(proposalDao.countByCampaignBrandUserReferralIdAndStatusIn(referral.getReferralId(),statuses));
 		}
 		return page;
