@@ -1,31 +1,37 @@
 package com.ahancer.rr.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ReferralDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Referral;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.ReferralRequest;
+import com.ahancer.rr.response.ReferralResponse;
 import com.ahancer.rr.utils.EncryptionUtil;
 
 @Service
 public class ReferralService {
-	
 	@Autowired
 	private ReferralDao referralDao;
-	
 	@Autowired
 	private UserDao userDao;
-	
 	@Autowired
 	private EncryptionUtil encryptionUtil;
+	@Autowired
+	private ProposalDao proposalDao;
 	
 	public Referral createReferral(ReferralRequest request) throws Exception {
 		User user = userDao.findByEmail(request.getEmail());
@@ -49,5 +55,16 @@ public class ReferralService {
 		return referral;
 	}
 	
+	public Page<ReferralResponse> findAll(Pageable pageable){
+		Page<ReferralResponse> page = referralDao.findAll(pageable);
+		List<ProposalStatus> statuses = new ArrayList<ProposalStatus>(2);
+		statuses.add(ProposalStatus.Working);
+		statuses.add(ProposalStatus.Complete);
+		for(ReferralResponse referral : page.getContent()){
+			referral.setSignUpCount(userDao.countByReferral(referral.getReferralId()));
+			referral.setPaidWorkRoomCount(proposalDao.countByCampaignBrandUserReferralIdAndStatusIn(referral.getReferralId(),statuses));
+		}
+		return page;
+	}
 
 }

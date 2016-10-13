@@ -50,4 +50,8 @@ public interface UserDao extends CrudRepository<User, Long> {
 			+ "WHERE u.role='Influencer' "
 			+ "AND (u.email LIKE CONCAT('%', :search, '%') OR u.name LIKE CONCAT('%', :search, '%'))")
 	public Page<UserResponse> findAllInfluencer(@Param("search") String search, Pageable pageable);
+	
+	
+	public Long countByReferral(String referralId);
+	
 }

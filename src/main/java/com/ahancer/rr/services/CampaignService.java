@@ -35,28 +35,20 @@ import com.ahancer.rr.response.UserResponse;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class CampaignService {
-
 	@Autowired
 	private CampaignDao campaignDao;
-
 	@Autowired
 	private ProposalService proposalService;
-
 	@Autowired
 	private CampaignResourceDao campaignResourceDao;
-
 	@Autowired
 	private ProposalMessageService proposalMessageService;
-
 	@Autowired
 	private RobotService robotService;
-
 	@Autowired
 	private MessageSource messageSource;
-
 	@Autowired
 	private EmailService emailService;
-
 	@Value("${email.admin}")
 	private String adminEmail;
 

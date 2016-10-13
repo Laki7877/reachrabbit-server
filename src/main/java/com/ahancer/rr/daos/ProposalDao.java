@@ -60,6 +60,8 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Long countByCampaignBrandIdAndStatus(Long brandId, ProposalStatus status);
 	public Long countByCampaignBrandIdAndInfluencerId(Long brandId, Long influencerId);
 	
+	public Long countByCampaignBrandUserReferralIdAndStatusIn(String referralId,Collection<ProposalStatus> statuses);
+	
 	public Long countByInfluencerIdAndMediaMediaId(Long influencerId, String mediaId);
 	
 	@Modifying
