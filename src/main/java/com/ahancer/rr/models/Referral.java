@@ -7,8 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 
 @Entity(name="referral")
 public class Referral extends AbstractModel implements Serializable {
@@ -23,7 +23,7 @@ public class Referral extends AbstractModel implements Serializable {
 	private Long userId;
 	
 	@MapsId("userId")
-	@ManyToOne(fetch=FetchType.EAGER)
+	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="userId")
 	private User user;
 	
@@ -32,7 +32,7 @@ public class Referral extends AbstractModel implements Serializable {
 	
 	@Column(name="commission",scale=10,precision=3)
 	private Double commission;
-
+	
 	public String getReferralId() {
 		return referralId;
 	}

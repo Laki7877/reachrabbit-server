@@ -336,6 +336,7 @@ public class ProposalService {
 		proposal.setFee(Math.floor(proposal.getPrice()*0.18));
 		proposal.setRabbitFlag(false);
 		proposal.setHasPost(false);
+		proposal.setIsReferralPay(false);
 		proposal = proposalDao.save(proposal);
 		//Insert first message
 		ProposalMessage firstMessage = new ProposalMessage();
@@ -490,6 +491,18 @@ public class ProposalService {
 			}
 		}
 		return response;
+	}
+	
+	public Page<Proposal> getReferralProposal(String search, Pageable pageable){
+		Page<Proposal> page = null;
+		if(StringUtils.isEmpty(search)){
+			page = proposalDao.findAllByCampaignBrandUserReferralIdNotNull(pageable);
+		} else {
+			
+		}
+		
+		return page;
+		
 	}
 
 }

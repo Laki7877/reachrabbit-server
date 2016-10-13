@@ -67,7 +67,7 @@ public class User extends AbstractModel implements Serializable {
 	private String referralId;
 	
 	@MapsId("referralId")
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="referralId",nullable=true)
 	private Referral referral;
 

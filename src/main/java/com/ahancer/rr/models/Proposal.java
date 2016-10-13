@@ -112,6 +112,9 @@ public class Proposal extends AbstractModel implements Serializable{
 	@Column(name="hasPost")
 	private Boolean hasPost;
 	
+	@Column(name="isReferralPay")
+	private Boolean isReferralPay;
+	
 	public Proposal() {
 		
 	}
@@ -267,5 +270,14 @@ public class Proposal extends AbstractModel implements Serializable{
 	public void setHasPost(Boolean hasPost) {
 		this.hasPost = hasPost;
 	}
+
+	public Boolean getIsReferralPay() {
+		return isReferralPay;
+	}
+
+	public void setIsReferralPay(Boolean isReferralPay) {
+		this.isReferralPay = isReferralPay;
+	}
+	
 	
 }

@@ -56,6 +56,8 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Long countByStatus(ProposalStatus status);
 	
+	public Page<Proposal> findAllByCampaignBrandUserReferralIdNotNull(Pageable pageable);
+	
 	
 	public Long countByCampaignBrandIdAndStatus(Long brandId, ProposalStatus status);
 	public Long countByCampaignBrandIdAndInfluencerId(Long brandId, Long influencerId);

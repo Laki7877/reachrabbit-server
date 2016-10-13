@@ -280,5 +280,11 @@ public class ProposalController extends AbstractController {
 	public int deletePostToProposal(@PathVariable Long proposalId, @RequestBody PostRequest request) throws Exception {
 		return postService.deletePost(proposalId, request);
 	}
+	@ApiOperation(value = "Get referral")
+	@RequestMapping(method=RequestMethod.GET,value="/referral")
+	@Authorization({Role.Admin})
+	public Page<Proposal> getReferralProposal(@RequestParam(name="search", required=false) String search, Pageable pageRequest){
+		return proposalService.getReferralProposal(search, pageRequest);
+	}
 	
 }
