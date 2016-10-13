@@ -26,7 +26,7 @@ public class ReferralResponse implements Serializable  {
 			default:
 				break;
 		}
-		this.email = referral.getUser().getEmail();
+		this.email = referral.getPartner().getEmail();
 		this.description = referral.getDescription();
 		this.referralId = referral.getReferralId();
 		this.commission = referral.getCommission();

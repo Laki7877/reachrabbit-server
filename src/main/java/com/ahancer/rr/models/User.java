@@ -21,6 +21,7 @@ import javax.validation.constraints.Pattern;
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name="user")
 public class User extends AbstractModel implements Serializable {
@@ -66,12 +67,16 @@ public class User extends AbstractModel implements Serializable {
 	@Column(name="referralId")
 	private String referralId;
 	
+	@JsonIgnore
 	@MapsId("referralId")
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.MERGE)
 	@JoinColumn(name="referralId",nullable=true)
+	@JsonManagedReference(value="user-referral")
 	private Referral referral;
 
+
 	public User() {
+		
 	}
 
 	public Long getUserId() {
@@ -161,5 +166,4 @@ public class User extends AbstractModel implements Serializable {
 	public void setReferral(Referral referral) {
 		this.referral = referral;
 	}
-	
 }

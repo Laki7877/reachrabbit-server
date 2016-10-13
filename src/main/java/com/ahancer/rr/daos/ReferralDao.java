@@ -20,7 +20,8 @@ public interface ReferralDao extends CrudRepository<Referral, String> {
 			+ "FROM referral r "
 			+ "WHERE r.referralId LIKE CONCAT('%' , :search , '%') "
 			+ "OR r.description   LIKE CONCAT('%' , :search , '%') "
-			+ "OR r.user.email    LIKE CONCAT('%' , :search , '%') ")
+			+ "OR r.partner.email    LIKE CONCAT('%' , :search , '%') "
+			)
 	public Page<ReferralResponse> findAllBySearch(@Param("search") String search, Pageable pageable);
 	
 	

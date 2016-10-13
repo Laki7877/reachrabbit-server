@@ -48,16 +48,17 @@ public class ReferralService {
 		}
 		Referral referral = new Referral();
 		referral.setReferralId(UUID.randomUUID().toString().replace("-", ""));
-		referral.setUserId(user.getUserId());
+		referral.setPartnerId(user.getUserId());
 		referral.setCommission(request.getCommission());
 		referral.setDescription(request.getDescription());
 		referral = referralDao.save(referral);
-		referral.setUser(user);
+		referral.setPartner(user);
 		return referral;
 	}
 	
 	public Page<ReferralResponse> findAll(String search, Pageable pageable) {
 		Page<ReferralResponse> page = null;
+		referralDao.findAll();
 		if(StringUtils.isEmpty(search)) {
 			page = referralDao.findAll(pageable);
 		} else {

@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity(name="referral")
 public class Referral extends AbstractModel implements Serializable {
 	
@@ -19,13 +21,14 @@ public class Referral extends AbstractModel implements Serializable {
 	@Column(name="referralId",length=32)
 	private String referralId;
 	
-	@Column(name="userId", nullable = false)
-	private Long userId;
+	@Column(name="partnerId", nullable = false)
+	private Long partnerId;
 	
-	@MapsId("userId")
+	@MapsId("partnerId")
 	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="userId")
-	private User user;
+	@JoinColumn(name="partnerId")
+	@JsonManagedReference(value="user-partner")
+	private User partner;
 	
 	@Column(name="description",length=255)
 	private String description;
@@ -57,20 +60,19 @@ public class Referral extends AbstractModel implements Serializable {
 		this.commission = commission;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public Long getPartnerId() {
+		return partnerId;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setPartnerId(Long partnerId) {
+		this.partnerId = partnerId;
 	}
 
-	public User getUser() {
-		return user;
+	public User getPartner() {
+		return partner;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setPartner(User partner) {
+		this.partner = partner;
 	}
-
 }
