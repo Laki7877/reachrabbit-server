@@ -10,8 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity(name="referral")
 public class Referral extends AbstractModel implements Serializable {
 	
@@ -24,7 +22,6 @@ public class Referral extends AbstractModel implements Serializable {
 	@Column(name="userId", nullable = false)
 	private Long userId;
 	
-	@JsonIgnore
 	@MapsId("userId")
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="userId")
