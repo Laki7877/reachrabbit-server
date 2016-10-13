@@ -4,7 +4,13 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="referral")
 public class Referral extends AbstractModel implements Serializable {
@@ -15,9 +21,14 @@ public class Referral extends AbstractModel implements Serializable {
 	@Column(name="referralId",length=32)
 	private String referralId;
 	
-	@Column(name="groupName",length=255)
-	private String groupName;
+	@Column(name="userId", nullable = false)
+	private Long userId;
 	
+	@JsonIgnore
+	@MapsId("userId")
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="userId")
+	private User user;
 	
 	@Column(name="description",length=255)
 	private String description;
@@ -31,14 +42,6 @@ public class Referral extends AbstractModel implements Serializable {
 
 	public void setReferralId(String referralId) {
 		this.referralId = referralId;
-	}
-
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
 	}
 
 	public String getDescription() {
@@ -55,6 +58,22 @@ public class Referral extends AbstractModel implements Serializable {
 
 	public void setCommission(Double commission) {
 		this.commission = commission;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

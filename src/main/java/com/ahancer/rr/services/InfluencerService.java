@@ -15,6 +15,7 @@ import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
 import com.ahancer.rr.daos.ProposalDao;
+import com.ahancer.rr.daos.ReferralDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Influencer;
@@ -50,6 +51,8 @@ public class InfluencerService {
 	private String uiHost;
 	@Autowired
 	private EncryptionUtil encrypt;
+	@Autowired
+	private ReferralDao referralDao;
 
 	public UserResponse updateInfluencerUser(Long userId, ProfileRequest request, String token) throws Exception {
 		User user = userDao.findOne(userId);
@@ -103,17 +106,18 @@ public class InfluencerService {
 		influencer.setIdCardNumber(request.getInfluencer().getIdCardNumber());
 		influencer.setIdCard(request.getInfluencer().getIdCard());
 		//Check if verify
-		influencer.setIsVerfy(false);
+		influencer.setIsVerify(false);
 		if(StringUtils.isNotEmpty(influencer.getFullname())
 				&& StringUtils.isNotEmpty(influencer.getAddress())
 				&& StringUtils.isNotEmpty(influencer.getIdCardNumber())
 				&& null != influencer.getIdCard() && 0L != influencer.getIdCard().getResourceId()) {
-			influencer.setIsVerfy(true);
+			influencer.setIsVerify(true);
 		}
 		user.setInfluencer(influencer);
 		user.setProfilePicture(request.getProfilePicture());
 		user = userDao.save(user);
 		UserResponse userResponse = Util.getUserResponse(user);
+		userResponse.getInfluencer().setInfluencerMedias(request.getInfluencer().getInfluencerMedias());
 		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
 		return userResponse;
 	}
@@ -147,10 +151,16 @@ public class InfluencerService {
 		user.setRole(Role.Influencer);
 		String hashPassword = encrypt.hashPassword(request.getPassword());
 		user.setPassword(hashPassword);
+		if(StringUtils.isNotEmpty(request.getRef())) {
+			Long count = referralDao.countByReferralId(request.getRef());
+			if(count > 0L){
+				user.setReferralId(request.getRef());
+			}
+		}
 		user = userDao.save(user);
 		//Setup user object
 		Influencer influencer = new Influencer();
-		influencer.setIsVerfy(false);
+		influencer.setIsVerify(false);
 		influencer.setInfluencerId(user.getUserId());
 		influencer.setInfluencerMedias(request.getInfluencerMedia());
 		//Check if media link exists

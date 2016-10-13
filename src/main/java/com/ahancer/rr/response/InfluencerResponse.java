@@ -30,7 +30,7 @@ public class InfluencerResponse implements Serializable {
 	private String fullname;
 	private String address;
 	private String idCardNumber;
-	private Boolean isVerfy;
+	private Boolean isVerify;
 	private Resource idCard;
 	
 	public InfluencerResponse(){
@@ -72,7 +72,7 @@ public class InfluencerResponse implements Serializable {
 		this.accountNumber = influencer.getAccountNumber();
 		this.accountName = influencer.getAccountName();
 		this.gender = influencer.getGender();
-		this.isVerfy = influencer.getIsVerfy();
+		this.isVerify = influencer.getIsVerify();
 	}
 
 	public Long getInfluencerId() {
@@ -179,12 +179,12 @@ public class InfluencerResponse implements Serializable {
 		this.address = address;
 	}
 
-	public Boolean getIsVerfy() {
-		return isVerfy;
+	public Boolean getIsVerify() {
+		return isVerify;
 	}
 
-	public void setIsVerfy(Boolean isVerfy) {
-		this.isVerfy = isVerfy;
+	public void setIsVerify(Boolean isVerify) {
+		this.isVerify = isVerify;
 	}
 
 	public String getIdCardNumber() {

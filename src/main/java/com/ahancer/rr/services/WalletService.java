@@ -50,7 +50,7 @@ public class WalletService {
 		if(null == wallet){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.not.exist");
 		}
-		if(null == wallet.getInfluencer().getIsVerfy() || !wallet.getInfluencer().getIsVerfy()) {
+		if(null == wallet.getInfluencer().getIsVerify() || !wallet.getInfluencer().getIsVerify()) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.wallet.infleucner.not.verify");
 		}
 		if(0 == wallet.getProposals().size()){

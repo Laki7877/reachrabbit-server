@@ -88,8 +88,8 @@ public class Influencer extends AbstractModel implements Serializable{
 	@JoinColumn(name="idCardId")
 	private Resource idCard;
 	
-	@Column(name="isVerfy")
-	private Boolean isVerfy;
+	@Column(name="isVerify")
+	private Boolean isVerify;
 	
 	public Influencer() {
 
@@ -198,13 +198,13 @@ public class Influencer extends AbstractModel implements Serializable{
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
-	public Boolean getIsVerfy() {
-		return isVerfy;
+
+	public Boolean getIsVerify() {
+		return isVerify;
 	}
 
-	public void setIsVerfy(Boolean isVerfy) {
-		this.isVerfy = isVerfy;
+	public void setIsVerify(Boolean isVerify) {
+		this.isVerify = isVerify;
 	}
 
 	public String getIdCardNumber() {

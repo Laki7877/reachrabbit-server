@@ -31,6 +31,8 @@ public class InfluencerSignUpRequest {
 	private String phoneNumber;
 
 	private Resource profilePicture;
+	
+	private String ref;
 
 	private Set<InfluencerMedia> influencerMedia = new HashSet<InfluencerMedia>(0);
 
@@ -84,4 +86,11 @@ public class InfluencerSignUpRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public String getRef() {
+		return ref;
+	}
+	public void setRef(String ref) {
+		this.ref = ref;
+	}
+	
 }
