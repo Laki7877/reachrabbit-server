@@ -17,6 +17,8 @@ public class ReferralRequest implements Serializable {
 	private String email;
 	
 	private String description;
+	
+	@NotNull(message="error.referral.commission")
 	private Double commission;
 
 	public ReferralRequest() {

@@ -48,6 +48,7 @@ public class ReferralService {
 		Referral referral = new Referral();
 		referral.setReferralId(UUID.randomUUID().toString().replace("-", ""));
 		referral.setUserId(user.getUserId());
+		referral.setCommission(request.getCommission());
 		referral.setDescription(request.getDescription());
 		referral = referralDao.save(referral);
 		referral.setUser(user);

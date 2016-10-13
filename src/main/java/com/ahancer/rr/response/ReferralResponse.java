@@ -13,6 +13,7 @@ public class ReferralResponse implements Serializable  {
 	private String referralId;
 	private String email;
 	private String description;
+	private Double commission;
 	private Long signUpCount;
 	private Long paidWorkRoomCount;
 	private Date createdAt;
@@ -28,6 +29,7 @@ public class ReferralResponse implements Serializable  {
 		this.email = referral.getUser().getEmail();
 		this.description = referral.getDescription();
 		this.referralId = referral.getReferralId();
+		this.commission = referral.getCommission();
 		this.createdAt = referral.getCreatedAt();
 	}
 	public String getReferralId() {
@@ -65,5 +67,11 @@ public class ReferralResponse implements Serializable  {
 	}
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+	public Double getCommission() {
+		return commission;
+	}
+	public void setCommission(Double commission) {
+		this.commission = commission;
 	}
 }
