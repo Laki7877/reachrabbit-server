@@ -77,6 +77,8 @@ public class ProposalService {
 	private CacheUtil cacheUtil;
 	@Value("${ui.host}")
 	private String uiHost;
+	@Value("${app.proposal.commission.percent}")
+	private Double commission;
 	private Map<Long,ConcurrentLinkedQueue<DeferredProposal>> proposalPollingMap;
 	public class PollingCounter implements Serializable{
 		private static final long serialVersionUID = 1L;
@@ -333,7 +335,7 @@ public class ProposalService {
 		proposal.setInfluencerId(influecnerId);
 		proposal.setMessageUpdatedAt(new Date());
 		proposal.setStatus(ProposalStatus.Selection);
-		proposal.setFee(Math.floor(proposal.getPrice()*0.18));
+		proposal.setFee(Math.floor(proposal.getPrice()*this.commission/100));
 		proposal.setRabbitFlag(false);
 		proposal.setHasPost(false);
 		proposal.setIsReferralPay(false);
