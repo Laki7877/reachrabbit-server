@@ -54,9 +54,9 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Get proposal pagination")
 	@RequestMapping(method=RequestMethod.GET)
 	@Authorization({Role.Influencer,Role.Brand, Role.Admin})
-	public Page<Proposal> getAllProposal(@RequestParam(name="status", required=true) ProposalStatus status
+	public Page<ProposalResponse> getAllProposal(@RequestParam(name="status", required=true) ProposalStatus status
 			, @RequestParam(name="search", required=false) String search,Pageable pageRequest, @RequestParam(name="campaignId", required=false) Long campaignId) throws Exception{
-		Page<Proposal> response = null;
+		Page<ProposalResponse> response = null;
 		switch(this.getUserRequest().getRole()){
 		case Brand:
 			response = proposalService.findAllByBrand(this.getUserRequest().getBrand().getBrandId(),status, search, pageRequest);
@@ -75,7 +75,7 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Get active proposal list")
 	@RequestMapping(method=RequestMethod.GET, value="/active")
 	@Authorization({Role.Influencer})
-	public List<Proposal> getAllActiveProposal() {
+	public List<ProposalResponse> getAllActiveProposal() {
 		return proposalService.findAllActiveByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	@ApiOperation(value = "Get count new message")
@@ -145,13 +145,13 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Update proposal")
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}")
 	@Authorization(Role.Influencer)
-	public Proposal updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal
+	public ProposalResponse updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		proposal = proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId(),locale);
-		proposalService.processInboxPolling(proposal.getInfluencerId());
-		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
-		proposalMessageService.processMessagePolling(proposal.getProposalId());
-		return proposal;
+		ProposalResponse response = proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId(),locale);
+		proposalService.processInboxPolling(response.getInfluencerId());
+		proposalService.processInboxPolling(response.getCampaign().getBrandId());
+		proposalMessageService.processMessagePolling(response.getProposalId());
+		return response;
 	}
 	@ApiOperation(value = "Update rabbit flag in proposal")
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/dismiss")
@@ -239,9 +239,9 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Update proposal status")
 	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/status/{status}")
 	@Authorization({Role.Brand})
-	public Proposal updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status
+	public ProposalResponse updateProposalStatus(@PathVariable Long proposalId,@PathVariable ProposalStatus status
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		Proposal proposal = proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId(), locale);
+		ProposalResponse proposal = proposalService.updateProposalStatusByBrand(proposalId, status, this.getUserRequest().getBrand().getBrandId(), locale);
 		proposalService.processInboxPolling(proposal.getInfluencerId());
 		proposalService.processInboxPolling(proposal.getCampaign().getBrandId());
 		proposalMessageService.processMessagePolling(proposal.getProposalId());

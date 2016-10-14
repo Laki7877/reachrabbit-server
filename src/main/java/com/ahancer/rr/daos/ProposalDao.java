@@ -17,6 +17,7 @@ import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.models.Media;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.response.ProposalDashboardResponse;
+import com.ahancer.rr.response.ProposalResponse;
 
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
@@ -28,18 +29,56 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Page<Proposal> findByInfluencerId(Long influencerId,Pageable pageable);
 	public Page<Proposal> findByInfluencerIdAndCampaignCampaignId(Long influencerId, Long campaignId, Pageable pageable);
 	public Page<Proposal> findByInfluencerIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(Long influencerId, Long campaignId, Date date, Pageable pageable);
-	public Page<Proposal> findByInfluencerIdAndStatusAndMessageUpdatedAtAfter(Long influencerId,ProposalStatus status, Date date, Pageable pageable);
-	public Page<Proposal> findByInfluencerIdAndStatusAndCampaignTitleContainingAndMessageUpdatedAtAfter(Long influencerId,ProposalStatus status, String search, Date date, Pageable pageable);
 	
-	public List<Proposal> findByInfluencerId(Long influencerId);
+	@Query("SELECT new com.ahancer.rr.response.ProposalResponse(p, 'Influencer') "
+			+ "FROM proposal p "
+			+ "WHERE p.influencerId = :influencerId "
+			+ "AND p.status = :status "
+			+ "AND p.messageUpdatedAt > :date ")
+	public Page<ProposalResponse> findByInfluencerIdAndStatusAndMessageUpdatedAtAfter(@Param("influencerId") Long influencerId,@Param("status") ProposalStatus status,@Param("date") Date date, Pageable pageable);
 	
-	public Page<Proposal> findByStatus(ProposalStatus status, Pageable pageable);
-	public Page<Proposal> findByStatusAndCampaignTitleContaining(ProposalStatus status, String search, Pageable pageable);
+	@Query("SELECT new com.ahancer.rr.response.ProposalResponse(p, 'Influencer') "
+			+ "FROM proposal p "
+			+ "WHERE p.influencerId = :influencerId "
+			+ "AND p.status = :status "
+			+ "AND p.campaign.title like CONCAT('%', :search , '%') "
+			+ "AND p.messageUpdatedAt > :date ")
+	public Page<ProposalResponse> findByInfluencerIdAndStatusAndCampaignTitleContainingAndMessageUpdatedAtAfter(@Param("influencerId") Long influencerId,@Param("status") ProposalStatus status,@Param("search") String search,@Param("date") Date date, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.ProposalResponse(p, 'Influencer') "
+			+ "FROM proposal p "
+			+ "WHERE p.influencerId = :influencerId ")
+	public List<ProposalResponse> findByInfluencerId(Long influencerId);
+	
+	@Query("SELECT new com.ahancer.rr.response.ProposalResponse(p, 'Admin') "
+			+ "FROM proposal p "
+			+ "WHERE p.status = :status ")
+	public Page<ProposalResponse> findByStatus(@Param("status") ProposalStatus status, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.ProposalResponse(p, 'Admin') "
+			+ "FROM proposal p "
+			+ "WHERE p.status = :status "
+			+ "AND p.campaign.title like CONCAT('%', :search , '%') " )
+	public Page<ProposalResponse> findByStatusAndCampaignTitleContaining(@Param("status") ProposalStatus status,@Param("search") String search, Pageable pageable);
 	
 	public Page<Proposal> findByCampaignBrandId(Long brandId,Pageable pageable);
-	public Page<Proposal> findByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(Long brandId,ProposalStatus status, Date date, Pageable pageable);
 	
-	public Page<Proposal> findByCampaignBrandIdAndStatusAndCampaignTitleContainingAndMessageUpdatedAtAfter(Long brandId,ProposalStatus status, String search, Date date, Pageable pageable);
+	
+	
+	@Query("SELECT new com.ahancer.rr.response.ProposalResponse(p, 'Brand') "
+			+ "FROM proposal p "
+			+ "WHERE p.campaign.brandId = :brandId "
+			+ "AND p.status = :status "
+			+ "AND p.messageUpdatedAt > :date ")
+	public Page<ProposalResponse> findByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(@Param("brandId") Long brandId,@Param("status") ProposalStatus status, @Param("date") Date date, Pageable pageable);
+	
+	@Query("SELECT new com.ahancer.rr.response.ProposalResponse(p, 'Brand') "
+			+ "FROM proposal p "
+			+ "WHERE p.campaign.brandId = :brandId "
+			+ "AND p.status = :status "
+			+ "AND p.campaign.title like CONCAT('%', :search , '%') "
+			+ "AND p.messageUpdatedAt > :date ")
+	public Page<ProposalResponse> findByCampaignBrandIdAndStatusAndCampaignTitleContainingAndMessageUpdatedAtAfter(@Param("brandId") Long brandId,@Param("status") ProposalStatus status,@Param("search") String search, @Param("date") Date date, Pageable pageable);
 	
 	public Page<Proposal> findByCampaignBrandIdAndCampaignCampaignId(Long brandId, Long campaignId, Pageable pageable);
 	public Page<Proposal> findByCampaignBrandIdAndCampaignCampaignIdAndMessageUpdatedAtAfter(Long brandId, Long campaignId, Date date, Pageable pageable);

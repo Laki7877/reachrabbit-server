@@ -39,12 +39,10 @@ import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.models.Wallet;
-import com.ahancer.rr.response.CartResponse;
 import com.ahancer.rr.response.ProposalCountResponse;
 import com.ahancer.rr.response.ProposalDashboardResponse;
 import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.response.UserResponse;
-import com.ahancer.rr.response.WalletResponse;
 import com.ahancer.rr.utils.CacheUtil;
 import com.ahancer.rr.utils.GZIPCompressionUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -198,8 +196,8 @@ public class ProposalService {
 		Long proposalCount = proposalDao.countByStatus(status);
 		return new ProposalCountResponse(proposalCount,0L);
 	}
-	public Page<Proposal> findAllByBrand(Long brandId,ProposalStatus status, String search,Pageable pageable) {
-		Page<Proposal> response = null;
+	public Page<ProposalResponse> findAllByBrand(Long brandId,ProposalStatus status, String search,Pageable pageable) {
+		Page<ProposalResponse> response = null;
 		Date date = Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 		if(StringUtils.isEmpty(search)){
 			response = proposalDao.findByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(brandId, status,  date, pageable);
@@ -213,28 +211,7 @@ public class ProposalService {
 		if(null == proposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
-		ProposalResponse response = new ProposalResponse();
-		response.setCampaign(proposal.getCampaign());
-		if(null != proposal.getCart()){
-			response.setCartId(proposal.getCartId());
-			response.setCart(new CartResponse(proposal.getCart()));
-		}
-		if(null != proposal.getWallet()){
-			response.setWalletId(proposal.getWalletId());
-			response.setWallet(new WalletResponse(proposal.getWallet()));
-		}
-		response.setCompleteDate(proposal.getCompleteDate());
-		response.setCompletionTime(proposal.getCompletionTime());
-		response.setDueDate(proposal.getDueDate());
-		response.setFee(proposal.getFee());
-		response.setInfluencer(proposal.getInfluencer());
-		response.setInfluencerId(proposal.getInfluencerId());
-		response.setMedia(proposal.getMedia());
-		response.setMessageUpdatedAt(proposal.getMessageUpdatedAt());
-		response.setPrice(proposal.getPrice());
-		response.setProposalId(proposal.getProposalId());
-		response.setStatus(proposal.getStatus());
-		response.setRabbitFlag(proposal.getRabbitFlag());
+		ProposalResponse response = new ProposalResponse(proposal,Role.Admin.toString());
 		return response;
 	}
 	public ProposalResponse findOneByBrand(Long proposalId,Long brandId) throws Exception {
@@ -243,28 +220,7 @@ public class ProposalService {
 		if(null == proposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
-		ProposalResponse response = new ProposalResponse();
-		response.setCampaign(proposal.getCampaign());
-		if(null != proposal.getCart()){
-			response.setCartId(proposal.getCartId());
-			response.setCart(new CartResponse(proposal.getCart()));
-		}
-		if(null != proposal.getWallet()){
-			response.setWalletId(proposal.getWalletId());
-			response.setWallet(new WalletResponse(proposal.getWallet()));
-		}
-		response.setCompleteDate(proposal.getCompleteDate());
-		response.setCompletionTime(proposal.getCompletionTime());
-		response.setDueDate(proposal.getDueDate());
-		response.setFee(proposal.getFee());
-		response.setInfluencer(proposal.getInfluencer());
-		response.setInfluencerId(proposal.getInfluencerId());
-		response.setMedia(proposal.getMedia());
-		response.setMessageUpdatedAt(proposal.getMessageUpdatedAt());
-		response.setPrice(proposal.getPrice());
-		response.setProposalId(proposal.getProposalId());
-		response.setStatus(proposal.getStatus());
-		response.setRabbitFlag(proposal.getRabbitFlag());
+		ProposalResponse response = new ProposalResponse(proposal,Role.Brand.toString());
 		return response;
 	}
 	public ProposalResponse findOneByInfluencer(Long proposalId,Long influencerId) throws Exception {
@@ -272,35 +228,14 @@ public class ProposalService {
 		if(null == proposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
-		ProposalResponse response = new ProposalResponse();
-		response.setCampaign(proposal.getCampaign());
-		if(null != proposal.getCart()){
-			response.setCartId(proposal.getCartId());
-			response.setCart(new CartResponse(proposal.getCart()));
-		}
-		if(null != proposal.getWallet()){
-			response.setWalletId(proposal.getWalletId());
-			response.setWallet(new WalletResponse(proposal.getWallet()));
-		}
-		response.setCompleteDate(proposal.getCompleteDate());
-		response.setCompletionTime(proposal.getCompletionTime());
-		response.setDueDate(proposal.getDueDate());
-		response.setFee(proposal.getFee());
-		response.setInfluencer(proposal.getInfluencer());
-		response.setInfluencerId(proposal.getInfluencerId());
-		response.setMedia(proposal.getMedia());
-		response.setMessageUpdatedAt(proposal.getMessageUpdatedAt());
-		response.setPrice(proposal.getPrice());
-		response.setProposalId(proposal.getProposalId());
-		response.setStatus(proposal.getStatus());
-		response.setRabbitFlag(proposal.getRabbitFlag());
+		ProposalResponse response = new ProposalResponse(proposal,Role.Influencer.toString());
 		return response;
 	}
-	public List<Proposal> findAllActiveByInfluencer(Long influencerId) {
+	public List<ProposalResponse> findAllActiveByInfluencer(Long influencerId) {
 		return proposalDao.findByInfluencerId(influencerId);
 	}
-	public Page<Proposal> findAllByInfluencer(Long influencerId,ProposalStatus status, String search,Pageable pageable) {
-		Page<Proposal> response = null;
+	public Page<ProposalResponse> findAllByInfluencer(Long influencerId,ProposalStatus status, String search,Pageable pageable) {
+		Page<ProposalResponse> response = null;
 		Date date = Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 		if(StringUtils.isEmpty(search)){
 			response = proposalDao.findByInfluencerIdAndStatusAndMessageUpdatedAtAfter(influencerId,status, date, pageable);
@@ -310,10 +245,9 @@ public class ProposalService {
 
 		return response;
 	}
-	public Page<Proposal> findAllByAdmin(ProposalStatus status, String search, Pageable pageable) {
-
-		Page<Proposal> response = null;
-		if(StringUtils.isEmpty(search)){
+	public Page<ProposalResponse> findAllByAdmin(ProposalStatus status, String search, Pageable pageable) {
+		Page<ProposalResponse> response = null;
+		if(StringUtils.isEmpty(search)) {
 			response = proposalDao.findByStatus(status, pageable);
 		} else {
 			response = proposalDao.findByStatusAndCampaignTitleContaining(status, search, pageable);
@@ -359,7 +293,7 @@ public class ProposalService {
 		emailService.send(to, subject, body);
 		return proposal;
 	}
-	public Proposal updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,Long influencerId, Locale local) throws Exception {
+	public ProposalResponse updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,Long influencerId, Locale local) throws Exception {
 		Proposal oldProposal = proposalDao.findByProposalIdAndInfluencerId(proposalId,influencerId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
@@ -381,9 +315,10 @@ public class ProposalService {
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		oldProposal = proposalDao.save(oldProposal);
 		rebotMessage.setUser(robotUser);
-		return oldProposal;
+		ProposalResponse response = new ProposalResponse(oldProposal, Role.Influencer.toString());
+		return response;
 	}
-	public Proposal updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale locale) throws Exception {
+	public ProposalResponse updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale locale) throws Exception {
 		Proposal oldProposal = proposalDao.findByProposalIdAndCampaignBrandId(proposalId,brandId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
@@ -435,7 +370,8 @@ public class ProposalService {
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		rebotMessage.setUser(robotUser);
 		oldProposal = proposalDao.save(oldProposal);
-		return oldProposal;
+		ProposalResponse response = new ProposalResponse(oldProposal, Role.Brand.toString());
+		return response;
 	}
 	public Proposal getAppliedProposal(Long influencerId, Long campaignId) {
 		return proposalDao.findByInfluencerIdAndCampaignCampaignId(influencerId,campaignId);
