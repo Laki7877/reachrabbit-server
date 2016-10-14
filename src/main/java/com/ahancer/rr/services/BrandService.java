@@ -19,6 +19,7 @@ import com.ahancer.rr.daos.ReferralDao;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Brand;
+import com.ahancer.rr.models.Referral;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.BrandSignUpRequest;
 import com.ahancer.rr.request.ProfileRequest;
@@ -62,9 +63,9 @@ public class BrandService {
 		user.setPassword(hashPassword);
 		user.setRole(Role.Brand);
 		if(StringUtils.isNotEmpty(request.getRef())) {
-			Long count = referralDao.countByReferralId(request.getRef());
-			if(count > 0L){
-				user.setReferralId(request.getRef());
+			Referral referral = referralDao.findOne(request.getRef());
+			if(null != referral) {
+				user.setReferral(referral);
 			}
 		}
 		user = userDao.save(user);

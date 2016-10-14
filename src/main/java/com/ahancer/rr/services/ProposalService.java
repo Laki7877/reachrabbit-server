@@ -496,7 +496,7 @@ public class ProposalService {
 	public Page<Proposal> getReferralProposal(String search, Pageable pageable){
 		Page<Proposal> page = null;
 		if(StringUtils.isEmpty(search)){
-			page = proposalDao.findAllByCampaignBrandUserReferralIdNotNull(pageable);
+			page = proposalDao.findAllByCampaignBrandUserReferralReferralIdNotNull(pageable);
 		} else {
 			
 		}

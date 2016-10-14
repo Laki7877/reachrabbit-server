@@ -21,6 +21,7 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Influencer;
 import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
+import com.ahancer.rr.models.Referral;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.InfluencerSignUpRequest;
 import com.ahancer.rr.request.PayoutRequest;
@@ -152,9 +153,9 @@ public class InfluencerService {
 		String hashPassword = encrypt.hashPassword(request.getPassword());
 		user.setPassword(hashPassword);
 		if(StringUtils.isNotEmpty(request.getRef())) {
-			Long count = referralDao.countByReferralId(request.getRef());
-			if(count > 0L){
-				user.setReferralId(request.getRef());
+			Referral referral = referralDao.findOne(request.getRef());
+			if(null != referral) {
+				user.setReferral(referral);
 			}
 		}
 		user = userDao.save(user);

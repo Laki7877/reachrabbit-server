@@ -1,6 +1,8 @@
 package com.ahancer.rr.models;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,7 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.Pattern;
@@ -21,7 +23,6 @@ import javax.validation.constraints.Pattern;
 import com.ahancer.rr.custom.type.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name="user")
 public class User extends AbstractModel implements Serializable {
@@ -64,15 +65,13 @@ public class User extends AbstractModel implements Serializable {
 	@JsonBackReference(value="user-influencer")
 	private Influencer influencer;
 
-	@Column(name="referralId")
-	private String referralId;
+	@ManyToOne(fetch=FetchType.EAGER ,cascade=CascadeType.MERGE)
+	@JoinColumn(name="referralId",nullable=true)
+	private Referral referral;
 	
 	@JsonIgnore
-	@MapsId("referralId")
-	@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.MERGE)
-	@JoinColumn(name="referralId",nullable=true)
-	@JsonManagedReference(value="user-referral")
-	private Referral referral;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "partner")
+	private Set<Referral> referrals = new HashSet<Referral>(0);
 
 
 	public User() {
@@ -151,13 +150,13 @@ public class User extends AbstractModel implements Serializable {
 		this.influencer = influencer;
 	}
 
-	public String getReferralId() {
-		return referralId;
-	}
-
-	public void setReferralId(String referralId) {
-		this.referralId = referralId;
-	}
+//	public String getReferralId() {
+//		return referralId;
+//	}
+//
+//	public void setReferralId(String referralId) {
+//		this.referralId = referralId;
+//	}
 
 	public Referral getReferral() {
 		return referral;
@@ -166,4 +165,13 @@ public class User extends AbstractModel implements Serializable {
 	public void setReferral(Referral referral) {
 		this.referral = referral;
 	}
+
+	public Set<Referral> getReferrals() {
+		return referrals;
+	}
+
+	public void setReferrals(Set<Referral> referrals) {
+		this.referrals = referrals;
+	}
+	
 }

@@ -1,6 +1,8 @@
 package com.ahancer.rr.models;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +10,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity(name="referral")
 public class Referral extends AbstractModel implements Serializable {
@@ -26,6 +32,10 @@ public class Referral extends AbstractModel implements Serializable {
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="partnerId")
 	private User partner;
+	
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY , mappedBy = "referral")
+	private Set<User> users = new HashSet<User>(0);
 	
 	@Column(name="description",length=255)
 	private String description;
@@ -71,5 +81,13 @@ public class Referral extends AbstractModel implements Serializable {
 
 	public void setPartner(User partner) {
 		this.partner = partner;
+	}
+
+	public Set<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 }
