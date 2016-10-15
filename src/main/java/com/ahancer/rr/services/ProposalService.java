@@ -448,7 +448,7 @@ public class ProposalService {
 		if(StringUtils.isEmpty(search)){
 			page = proposalDao.findAllByCampaignBrandUserReferralReferralIdNotNull(pageable);
 		} else {
-			
+			page = proposalDao.findAllByCampaignBrandUserReferralReferralIdNotNullAndSearch(search, pageable);
 		}
 		
 		return page;

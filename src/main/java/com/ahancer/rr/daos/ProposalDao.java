@@ -95,7 +95,19 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Long countByStatus(ProposalStatus status);
 	
+	
+	@Query("SELECT p "
+			+ "FROM proposal p "
+			+ "WHERE p.campaign.brand.user.referral.referralId IS NOT NULL ")
 	public Page<Proposal> findAllByCampaignBrandUserReferralReferralIdNotNull(Pageable pageable);
+	
+	@Query("SELECT p "
+			+ "FROM proposal p "
+			+ "WHERE p.campaign.brand.user.referral.referralId IS NOT NULL "
+			+ "AND (p.campaign.brand.user.referral.referralId LIKE CONCAT('%', :search , '%') "
+			+ "OR p.campaign.title LIKE CONCAT('%', :search , '%') "
+			+ "OR p.campaign.brand.brandName LIKE CONCAT('%', :search , '%') )")
+	public Page<Proposal> findAllByCampaignBrandUserReferralReferralIdNotNullAndSearch(@Param("search") String search, Pageable pageable);
 	
 	
 	public Long countByCampaignBrandIdAndStatus(Long brandId, ProposalStatus status);
