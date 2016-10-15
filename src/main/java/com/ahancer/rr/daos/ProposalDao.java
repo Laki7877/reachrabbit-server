@@ -137,6 +137,12 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 			+ "WHERE p.proposalId = :proposalId ")
 	public int updateHasPost(@Param("hasPost") Boolean hasPost, @Param("proposalId") Long proposalId);
 	
+	@Modifying
+	@Query("UPDATE proposal p "
+			+ "SET p.isReferralPay = :isReferralPay "
+			+ "WHERE p.proposalId = :proposalId ")
+	public int updateIsReferralPay(@Param("isReferralPay") Boolean isReferralPay, @Param("proposalId") Long proposalId);
+	
 	
 	@Query("SELECT new com.ahancer.rr.response.ProposalDashboardResponse(p.proposalId, p.influencerId, p.influencer, p.price, p.status) "
 			+ "FROM proposal p "

@@ -4,5 +4,6 @@ public enum DocumentType {
 	Fee,
 	TransferFee,
 	Base,
-	Tax
+	Tax,
+	Referral
 }

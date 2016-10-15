@@ -286,5 +286,10 @@ public class ProposalController extends AbstractController {
 	public Page<Proposal> getReferralProposal(@RequestParam(name="search", required=false) String search, Pageable pageRequest){
 		return proposalService.getReferralProposal(search, pageRequest);
 	}
-	
+	@ApiOperation(value = "Get referral")
+	@RequestMapping(method=RequestMethod.PUT,value="/{proposalId}/referral")
+	@Authorization({Role.Admin})
+	public Proposal updateReferralProposal(@PathVariable Long proposalId) throws Exception {
+		return proposalService.payReferralProposal(proposalId);
+	}
 }

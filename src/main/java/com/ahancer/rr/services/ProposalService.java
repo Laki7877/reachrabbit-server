@@ -24,19 +24,26 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import com.ahancer.rr.constants.ApplicationConstant;
+import com.ahancer.rr.custom.type.DocumentType;
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
+import com.ahancer.rr.custom.type.TransactionStatus;
+import com.ahancer.rr.custom.type.TransactionType;
 import com.ahancer.rr.custom.type.WalletStatus;
 import com.ahancer.rr.daos.CampaignDao;
 import com.ahancer.rr.daos.PostDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
+import com.ahancer.rr.daos.ReferralTransactionDocumentDao;
+import com.ahancer.rr.daos.TransactionDao;
 import com.ahancer.rr.daos.WalletDao;
 import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.models.Cart;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.ProposalMessage;
+import com.ahancer.rr.models.ReferralTransactionDocument;
+import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.response.ProposalCountResponse;
@@ -44,6 +51,7 @@ import com.ahancer.rr.response.ProposalDashboardResponse;
 import com.ahancer.rr.response.ProposalResponse;
 import com.ahancer.rr.response.UserResponse;
 import com.ahancer.rr.utils.CacheUtil;
+import com.ahancer.rr.utils.EncodeUtil;
 import com.ahancer.rr.utils.GZIPCompressionUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,6 +75,10 @@ public class ProposalService {
 	private CartService cartService;
 	@Autowired
 	private WalletDao walletDao;
+	@Autowired
+	private TransactionDao transactionDao;
+	@Autowired
+	private ReferralTransactionDocumentDao referralTransactionDocumentDao;
 	@Autowired
 	private PostDao postDao;
 	@Autowired
@@ -440,7 +452,33 @@ public class ProposalService {
 		}
 		
 		return page;
-		
+	}
+	
+	public Proposal payReferralProposal(Long proposalId) throws Exception{
+		Proposal proposal = proposalDao.findOne(proposalId);
+		if(null == proposal){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
+		}
+		//create transaction
+		Transaction transaction = new Transaction();
+		transaction.setAmount(Math.floor(proposal.getFee() * proposal.getCampaign().getBrand().getUser().getReferral().getCommission()));
+		transaction.setStatus(TransactionStatus.Complete);
+		transaction.setType(TransactionType.Referral);
+		transaction = transactionDao.save(transaction);
+		transaction.setTransactionNumber(EncodeUtil.encodeLong(transaction.getTransactionId()));
+		transaction = transactionDao.save(transaction);
+		//create document
+		ReferralTransactionDocument document = new ReferralTransactionDocument();
+		document.setProposalId(proposalId);
+		document.setReferralId(proposal.getCampaign().getBrand().getUser().getReferral().getReferralId());
+		document.setTransactionId(transaction.getTransactionId());
+		document.setType(DocumentType.Referral);
+		document.setAmount(transaction.getAmount());
+		document = referralTransactionDocumentDao.save(document);
+		//update flag
+		proposalDao.updateIsReferralPay(true, proposalId);
+		proposal.setIsReferralPay(true);		
+		return proposal;
 	}
 
 }

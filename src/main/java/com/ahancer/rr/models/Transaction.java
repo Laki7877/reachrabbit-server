@@ -82,6 +82,12 @@ public class Transaction implements Serializable {
 	@JsonManagedReference(value="transaction-influencer")
 	private Set<InfluencerTransactionDocument> influencerTransactionDocument = new HashSet<InfluencerTransactionDocument>(0);
 	
+	
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="transaction")
+	@PrimaryKeyJoinColumn
+	@JsonManagedReference(value="transaction-referral")
+	private Set<ReferralTransactionDocument> referralTransactionDocument = new HashSet<ReferralTransactionDocument>(0);
+	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="slipId")
 	private Resource slip;
@@ -205,6 +211,14 @@ public class Transaction implements Serializable {
 
 	public Resource getSlip() {
 		return slip;
+	}
+	
+	public Set<ReferralTransactionDocument> getReferralTransactionDocument() {
+		return referralTransactionDocument;
+	}
+
+	public void setReferralTransactionDocument(Set<ReferralTransactionDocument> referralTransactionDocument) {
+		this.referralTransactionDocument = referralTransactionDocument;
 	}
 
 	public void setSlip(Resource slip) {
