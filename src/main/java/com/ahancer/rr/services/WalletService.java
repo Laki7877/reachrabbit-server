@@ -80,6 +80,22 @@ public class WalletService {
 			baseDocument.setIdCardNumber(wallet.getInfluencer().getIdCardNumber());
 			baseDocument.setIdCard(wallet.getInfluencer().getIdCard());
 			baseDocument = influencerTransactionDocumentDao.save(baseDocument);
+			if(proposal.getCampaign().getBrand().getIsCompany()){
+				InfluencerTransactionDocument taxDocument = new InfluencerTransactionDocument();
+				taxDocument.setAccountName(request.getAccountName());
+				taxDocument.setAccountNumber(request.getAccountNumber());
+				taxDocument.setAmount(-(proposal.getPrice()*0.03));
+				taxDocument.setBank(request.getBank());
+				taxDocument.setTransactionId(transaction.getTransactionId());
+				taxDocument.setType(DocumentType.Tax);
+				taxDocument.setWalletId(wallet.getWalletId());
+				taxDocument.setFullname(wallet.getInfluencer().getFullname());
+				taxDocument.setAddress(wallet.getInfluencer().getAddress());
+				taxDocument.setIdCardNumber(wallet.getInfluencer().getIdCardNumber());
+				taxDocument.setIdCard(wallet.getInfluencer().getIdCard());
+				taxDocument = influencerTransactionDocumentDao.save(taxDocument);
+				sum = sum + taxDocument.getAmount();
+			}
 			//fee document
 			InfluencerTransactionDocument feeDocument = new InfluencerTransactionDocument();
 			feeDocument.setAccountName(request.getAccountName());
