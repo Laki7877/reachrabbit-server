@@ -461,7 +461,7 @@ public class ProposalService {
 		}
 		//create transaction
 		Transaction transaction = new Transaction();
-		transaction.setAmount(Math.floor(proposal.getFee() * proposal.getCampaign().getBrand().getUser().getReferral().getCommission()));
+		transaction.setAmount(Math.floor(proposal.getFee() * proposal.getCampaign().getBrand().getUser().getReferral().getCommission() / 100 ));
 		transaction.setUserId(proposal.getCampaign().getBrand().getUser().getReferral().getPartnerId());
 		transaction.setStatus(TransactionStatus.Complete);
 		transaction.setType(TransactionType.Referral);
