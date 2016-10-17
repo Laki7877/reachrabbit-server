@@ -23,6 +23,7 @@ import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.request.PayoutRequest;
+import com.ahancer.rr.response.WalletAmount;
 import com.ahancer.rr.utils.EncodeUtil;
 
 @Service
@@ -40,6 +41,8 @@ public class WalletService {
 	private EmailService emailService;
 	@Value("${email.admin}")
 	private String adminEmail;
+	@Value("${app.proposal.tax}")
+	private Double tax;
 
 	public Wallet findPendingByIndluencer(Long influencerId) {
 		return walletDao.findByInfluencerIdAndStatus(influencerId, WalletStatus.WaitForPayout);
@@ -142,6 +145,23 @@ public class WalletService {
 		emailService.send(to, subject, body);
 		
 		return transaction;
+	}
+	
+	public WalletAmount getWalletAmount(Long influencerId) {
+		WalletAmount response = new WalletAmount();
+		response.setAmount(0.0);
+		Wallet wallet = findPendingByIndluencer(influencerId);
+		if(null != wallet) {
+			Double sum = 0.0;
+			for(Proposal proposal : wallet.getProposals()) {
+				sum = sum + proposal.getPrice() - proposal.getFee();
+				if(proposal.getCampaign().getBrand().getIsCompany()){
+					sum = sum - (proposal.getPrice() * this.tax / 100);
+				}
+			}
+			response.setAmount(sum);
+		}
+		return response;
 	}
 
 }

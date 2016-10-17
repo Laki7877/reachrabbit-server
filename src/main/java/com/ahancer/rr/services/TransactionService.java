@@ -63,6 +63,8 @@ public class TransactionService {
 	private WalletDao walletDao;
 	@Value("${ui.host}")
 	private String uiHost;
+	@Value("${app.proposal.tax}")
+	private Double tax;
 	
 	public Transaction createTransactionByBrand(UserResponse user,Locale locale) throws Exception {
 		Long brandId = user.getBrand().getBrandId();
@@ -78,7 +80,7 @@ public class TransactionService {
 		Double sum = cart.getProposals().stream().mapToDouble(o -> o.getPrice()).sum();
 		Double tax = 0.0;
 		if(null != user.getBrand().getIsCompany() && user.getBrand().getIsCompany()) {
-			tax = sum * 0.03;
+			tax = sum * this.tax / 100;
 		}
 		Double total = sum - tax; 
 		transaction.setAmount(total);

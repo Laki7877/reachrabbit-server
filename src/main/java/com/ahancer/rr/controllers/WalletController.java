@@ -19,6 +19,7 @@ import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.Transaction;
 import com.ahancer.rr.models.Wallet;
 import com.ahancer.rr.request.PayoutRequest;
+import com.ahancer.rr.response.WalletAmount;
 import com.ahancer.rr.services.TransactionService;
 import com.ahancer.rr.services.WalletService;
 
@@ -59,6 +60,14 @@ public class WalletController extends AbstractController {
 		default:
 			throw new ResponseException(HttpStatus.METHOD_NOT_ALLOWED,"error.unauthorize");
 		}
+		return response;
+	}
+	@ApiOperation(value = "Get transaction from wallet")
+	@RequestMapping(value="/amount",method=RequestMethod.GET)
+	@Authorization({ Role.Influencer})
+	public WalletAmount getWalletAmount() throws Exception {
+		WalletAmount response = null;
+		response = walletService.getWalletAmount(this.getUserRequest().getInfluencer().getInfluencerId());
 		return response;
 	}
 }
