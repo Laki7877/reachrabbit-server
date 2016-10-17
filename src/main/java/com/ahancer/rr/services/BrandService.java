@@ -50,7 +50,7 @@ public class BrandService {
 
 	public User signUpBrand(BrandSignUpRequest request,Locale locale) throws Exception {
 		//Validate duplicate Email
-		int emailCount = userDao.countByEmail(request.getEmail());
+		int emailCount = userDao.countByEmailAndRole(request.getEmail(),Role.Brand);
 		if(0 < emailCount) {
 			throw new ResponseException(HttpStatus.INTERNAL_SERVER_ERROR,"error.email.duplicate");
 		}
@@ -97,7 +97,7 @@ public class BrandService {
 		//Validate duplicate Email
 		if(StringUtils.isNotEmpty(user.getEmail()) 
 				&& !user.getEmail().equals(request.getEmail())) {
-			int countEmail = userDao.countByEmail(request.getEmail());
+			int countEmail = userDao.countByEmailAndRole(request.getEmail(),Role.Brand);
 			if(0 < countEmail){
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
 			}

@@ -6,13 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.UserResponse;
 
 
 public interface UserDao extends CrudRepository<User, Long> {
 	
-	public User findByEmail(String email);
+	public User findByEmailAndRole(String email,Role role);
 	
 	@Query("SELECT u FROM user u "
 			+ "LEFT JOIN u.profilePicture r "
@@ -23,10 +24,7 @@ public interface UserDao extends CrudRepository<User, Long> {
 			+ "AND im.socialId=:socialId")
 	public User findBySocialIdAndMediaId(@Param("mediaId") String mediaId,@Param("socialId") String socialId);
 
-	@Query("SELECT COUNT(u) "
-			+ "FROM user u "
-			+ "WHERE u.email=:email")
-	public int countByEmail(@Param("email") String email);
+	public int countByEmailAndRole(@Param("email") String email,@Param("role") Role role);
 	
 	@Query("SELECT new com.ahancer.rr.response.UserResponse(u, 'Admin') " 
 			+ "FROM user u "

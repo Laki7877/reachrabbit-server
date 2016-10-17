@@ -88,7 +88,7 @@ public class InfluencerService {
 		//Validate duplicate Email
 		if(StringUtils.isNotEmpty(user.getEmail()) 
 				&& !user.getEmail().equals(request.getEmail())) {
-			int countEmail = userDao.countByEmail(request.getEmail());
+			int countEmail = userDao.countByEmailAndRole(request.getEmail(),Role.Influencer);
 			if(0 < countEmail){
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.email.duplicate");
 			}
@@ -139,7 +139,7 @@ public class InfluencerService {
 
 	public User signupInfluencer(InfluencerSignUpRequest request,Locale locale) throws ResponseException {
 		//Validate duplicate Email
-		int emailCount = userDao.countByEmail(request.getEmail());
+		int emailCount = userDao.countByEmailAndRole(request.getEmail(),Role.Influencer);
 		if(0 < emailCount) {
 			throw new ResponseException(HttpStatus.INTERNAL_SERVER_ERROR,"error.email.duplicate");
 		} 

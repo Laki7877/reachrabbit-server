@@ -5,7 +5,6 @@ import javax.validation.Valid;
 
 import org.jinstagram.exceptions.InstagramException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,11 +41,7 @@ public class AuthenticationController extends AbstractController {
 	public AuthenticationResponse brandAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
 			throws Exception {
 		AuthenticationResponse authen = authenticationService.brandAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword(), request.getRemoteAddr());
-		if(null == authen) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
-		}else {
-			return authen;
-		}
+		return authen;
 	}
 	@ApiOperation(value = "Authenthication by influencer using facebook")
 	@RequestMapping(value = "/facebook" ,method = RequestMethod.POST)
@@ -84,21 +79,13 @@ public class AuthenticationController extends AbstractController {
 	public AuthenticationResponse adminAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
 			throws Exception {
 		AuthenticationResponse authen = authenticationService.adminAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword(),request.getRemoteAddr());
-		if(null == authen) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
-		}else {
-			return authen;
-		}
+		return authen;
 	}
 	@ApiOperation(value = "Authenthication by god influencer")
 	@RequestMapping(value = "/influencer" ,method = RequestMethod.POST)
 	public AuthenticationResponse influencerAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
 			throws Exception {
 		AuthenticationResponse authen = authenticationService.influencerEmailAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword(),request.getRemoteAddr());
-		if(null == authen) {
-			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
-		}else {
-			return authen;
-		}
+		return authen;
 	}
 }

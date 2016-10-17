@@ -5,12 +5,14 @@ package com.ahancer.rr.services;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
+import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.TokenResponse;
@@ -31,9 +33,9 @@ public class AuthenticationService {
 	private EncryptionUtil encrypt;
 
 	public AuthenticationResponse brandAuthentication(String email, String password, String ip) throws Exception {
-		User user = userDao.findByEmail(email);
-		if(null == user || !encrypt.checkPassword(password, user.getPassword()) || user.getRole() != Role.Brand){
-			return null;
+		User user = userDao.findByEmailAndRole(email,Role.Brand);
+		if(null == user || !encrypt.checkPassword(password, user.getPassword())){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
 		} else {
 			TokenResponse tokenObject = new TokenResponse(user.getUserId(),ip,new Date());
 			String token = EncodeUtil.encodeObject(tokenObject);
@@ -44,9 +46,9 @@ public class AuthenticationService {
 		}
 	}
 	public AuthenticationResponse adminAuthentication(String email, String password, String ip) throws Exception {
-		User user = userDao.findByEmail(email);
-		if(null == user || !encrypt.checkPassword(password, user.getPassword()) || user.getRole() != Role.Admin){
-			return null;
+		User user = userDao.findByEmailAndRole(email,Role.Admin);
+		if(null == user || !encrypt.checkPassword(password, user.getPassword())){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
 		} else {
 			TokenResponse tokenObject = new TokenResponse(user.getUserId(),ip,new Date());
 			String token = EncodeUtil.encodeObject(tokenObject);
@@ -83,9 +85,9 @@ public class AuthenticationService {
 	}
 	
 	public AuthenticationResponse influencerEmailAuthentication(String email, String password, String ip) throws Exception  {
-		User user = userDao.findByEmail(email);
-		if(null == user || !encrypt.checkPassword(password, user.getPassword()) || user.getRole() != Role.Influencer){
-			return null;
+		User user = userDao.findByEmailAndRole(email,Role.Influencer);
+		if(null == user || !encrypt.checkPassword(password, user.getPassword()) ){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
 		} else {
 			TokenResponse tokenObject = new TokenResponse(user.getUserId(),ip,new Date());
 			String token = EncodeUtil.encodeObject(tokenObject);

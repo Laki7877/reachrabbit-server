@@ -14,6 +14,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.utils.EncryptionUtil;
@@ -66,7 +67,7 @@ public class SignUpControllerIT extends AbstractControllerIT{
 
 
 		//Afterward, try get check if userExist
-		User newUser = userDao.findByEmail("test@test.com");
+		User newUser = userDao.findByEmailAndRole("test@test.com",Role.Brand);
 
 		eUtil.checkPassword((String)user.get("password"), newUser.getPassword());
 		assertThat(newUser, allOf(

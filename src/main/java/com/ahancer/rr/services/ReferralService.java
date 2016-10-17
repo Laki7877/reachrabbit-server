@@ -35,7 +35,7 @@ public class ReferralService {
 	private ProposalDao proposalDao;
 	
 	public Referral createReferral(ReferralRequest request) throws Exception {
-		User user = userDao.findByEmail(request.getEmail());
+		User user = userDao.findByEmailAndRole(request.getEmail(),Role.Partner);
 		if(null == user) {
 			user = new User();
 			user.setEmail(request.getEmail());
