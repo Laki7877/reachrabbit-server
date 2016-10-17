@@ -132,7 +132,8 @@ public class ScheduledTask {
 				default:
 					break;
 				}
-				if(null != post){
+				if(null != post) {
+					post.setUrl(postModel.getUrl());
 					postService.createNewPostBySys(post);
 				}
 			} catch (Exception e) {
