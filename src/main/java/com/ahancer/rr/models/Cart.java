@@ -35,7 +35,7 @@ public class Cart extends AbstractModel implements Serializable {
 
 	@JsonIgnore
 	@MapsId("brandId")
-	@ManyToOne(fetch=FetchType.LAZY,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="brandId")
 	private Brand brand;
 	

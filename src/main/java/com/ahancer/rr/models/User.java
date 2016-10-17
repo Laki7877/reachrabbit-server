@@ -65,7 +65,7 @@ public class User extends AbstractModel implements Serializable {
 	@JsonBackReference(value="user-influencer")
 	private Influencer influencer;
 
-	@ManyToOne(fetch=FetchType.EAGER ,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="referralId",nullable=true)
 	private Referral referral;
 	

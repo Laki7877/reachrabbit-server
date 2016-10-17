@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -43,7 +42,7 @@ public class Campaign extends AbstractModel implements Serializable {
 	private Long brandId;
 
 	@MapsId("brandId")
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="brandId")
 	private Brand brand;
 	
@@ -77,7 +76,7 @@ public class Campaign extends AbstractModel implements Serializable {
 	@Column(name="productName",length=255)
 	private String productName;
 	
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="categoryId")
 	private Category category;
 	
@@ -92,7 +91,7 @@ public class Campaign extends AbstractModel implements Serializable {
 	@Column(name="website",length=255)
 	private String website;
 	
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="budgetId")
 	private Budget budget;
 

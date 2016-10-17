@@ -2,7 +2,6 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,6 +17,7 @@ import javax.persistence.OneToOne;
 
 import com.ahancer.rr.custom.type.DocumentType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="influencerTransactionDocument")
 public class InfluencerTransactionDocument extends AbstractModel implements Serializable {
@@ -40,10 +40,15 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 	@Column(name="walletId",nullable=false)
 	private Long walletId;
 
+	@JsonIgnore
 	@MapsId("walletId")
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="walletId")
 	private Wallet wallet;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="proposalId")
+	private Proposal proposal;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="bankId")
@@ -190,4 +195,21 @@ public class InfluencerTransactionDocument extends AbstractModel implements Seri
 	public void setFullname(String fullname) {
 		this.fullname = fullname;
 	}
+
+//	public Long getProposalId() {
+//		return proposalId;
+//	}
+//
+//	public void setProposalId(Long proposalId) {
+//		this.proposalId = proposalId;
+//	}
+
+	public Proposal getProposal() {
+		return proposal;
+	}
+
+	public void setProposal(Proposal proposal) {
+		this.proposal = proposal;
+	}
+	
 }

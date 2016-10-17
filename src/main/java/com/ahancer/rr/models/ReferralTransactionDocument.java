@@ -2,7 +2,6 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -40,7 +39,7 @@ public class ReferralTransactionDocument extends AbstractModel implements Serial
 	private String referralId;
 
 	@MapsId("referralId")
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="referralId")
 	private Referral referral;
 	
@@ -48,7 +47,7 @@ public class ReferralTransactionDocument extends AbstractModel implements Serial
 	private Long proposalId;
 
 	@MapsId("proposalId")
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="proposalId")
 	private Proposal proposal;
 	

@@ -33,7 +33,7 @@ public class Wallet extends AbstractModel implements Serializable {
 	private Long influencerId;
 
 	@MapsId("influencerId")
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="influencerId")
 	private Influencer influencer;
 	

@@ -71,6 +71,7 @@ public class WalletService {
 		double sum = 0.0;
 		for(Proposal proposal : wallet.getProposals()){
 			InfluencerTransactionDocument baseDocument = new InfluencerTransactionDocument();
+			baseDocument.setProposal(proposal);
 			baseDocument.setAccountName(request.getAccountName());
 			baseDocument.setAccountNumber(request.getAccountNumber());
 			baseDocument.setAmount(proposal.getPrice());
@@ -85,6 +86,7 @@ public class WalletService {
 			baseDocument = influencerTransactionDocumentDao.save(baseDocument);
 			if(proposal.getCampaign().getBrand().getIsCompany()){
 				InfluencerTransactionDocument taxDocument = new InfluencerTransactionDocument();
+				taxDocument.setProposal(proposal);
 				taxDocument.setAccountName(request.getAccountName());
 				taxDocument.setAccountNumber(request.getAccountNumber());
 				taxDocument.setAmount(-(proposal.getPrice()*0.03));
@@ -101,6 +103,7 @@ public class WalletService {
 			}
 			//fee document
 			InfluencerTransactionDocument feeDocument = new InfluencerTransactionDocument();
+			feeDocument.setProposal(proposal);
 			feeDocument.setAccountName(request.getAccountName());
 			feeDocument.setAccountNumber(request.getAccountNumber());
 			feeDocument.setAmount(-proposal.getFee());
@@ -124,6 +127,10 @@ public class WalletService {
 		transferFeeDocument.setTransactionId(transaction.getTransactionId());
 		transferFeeDocument.setType(DocumentType.TransferFee);
 		transferFeeDocument.setWalletId(wallet.getWalletId());
+		transferFeeDocument.setFullname(wallet.getInfluencer().getFullname());
+		transferFeeDocument.setAddress(wallet.getInfluencer().getAddress());
+		transferFeeDocument.setIdCardNumber(wallet.getInfluencer().getIdCardNumber());
+		transferFeeDocument.setIdCard(wallet.getInfluencer().getIdCard());
 		transferFeeDocument = influencerTransactionDocumentDao.save(transferFeeDocument);
 		sum += transferFeeDocument.getAmount();
 		

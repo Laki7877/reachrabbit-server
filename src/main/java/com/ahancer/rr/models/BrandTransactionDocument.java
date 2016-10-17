@@ -2,7 +2,6 @@ package com.ahancer.rr.models;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -40,7 +39,7 @@ public class BrandTransactionDocument extends AbstractModel implements Serializa
 	private Long cartId;
 
 	@MapsId("cartId")
-	@ManyToOne(fetch=FetchType.EAGER,cascade=CascadeType.MERGE)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="cartId")
 	private Cart cart;
 	

@@ -6,8 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity(name="budget")
 public class Budget implements Serializable {
 
@@ -23,7 +21,6 @@ public class Budget implements Serializable {
 	@Column(name="toBudget",scale=10,precision=3)
 	private Double toBudget;
 	
-	@JsonIgnore
 	@Column(name="isActive")
 	private Boolean isActive;
 	
