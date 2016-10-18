@@ -130,8 +130,8 @@ public class FacebookService {
 			}
 			
 			averageLikes = averageLikes.add(post.getLikes());
-			averageComments = averageLikes.add(post.getLikes());
-			averageShares = averageLikes.add(post.getLikes());
+			averageComments = averageComments.add(post.getComments());
+			averageShares = averageShares.add(post.getShares());
 			posts.add(post);
 		}
 		
