@@ -29,6 +29,7 @@ public class ProposalResponse {
 	private Long walletId;
 	private WalletResponse wallet;
 	private Boolean rabbitFlag;
+	private Boolean hasPost;
 	
 	public ProposalResponse(){
 		
@@ -38,6 +39,7 @@ public class ProposalResponse {
 		Role role = Role.valueOf(roleValue);
 		switch (role) {
 			case Admin:
+				this.hasPost = proposal.getHasPost();
 				break;
 			case Brand:
 				break;
@@ -204,4 +206,13 @@ public class ProposalResponse {
 	public void setRabbitFlag(Boolean rabbitFlag) {
 		this.rabbitFlag = rabbitFlag;
 	}
+
+	public Boolean getHasPost() {
+		return hasPost;
+	}
+
+	public void setHasPost(Boolean hasPost) {
+		this.hasPost = hasPost;
+	}
+	
 }
