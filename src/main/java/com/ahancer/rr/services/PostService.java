@@ -1,9 +1,12 @@
 package com.ahancer.rr.services;
 
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -65,8 +68,6 @@ public class PostService {
 			splitUrl = request.getUrl().split("/");
 			if(splitUrl.length == 1 && splitUrl[0].contains("_")) {
 				post.setSocialPostId(splitUrl[0]);
-			} else if(splitUrl.length < 5) {
-				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 			} else {
 				String pageId = StringUtils.EMPTY;
 				for(InfluencerMedia media : proposal.getInfluencer().getInfluencerMedias()){
@@ -78,29 +79,50 @@ public class PostService {
 				if(StringUtils.isEmpty(pageId)){
 					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.facebook.pageid.requre");
 				}
-				switch(splitUrl[4]){
-				case "photos":
-					if(splitUrl.length < 7) {
+				if (splitUrl.length == 4) {
+					String[] splitParam = splitUrl[3].split("\\?");
+					if(splitParam.length < 2){
 						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 					}
-					post.setSocialPostId(pageId + "_" + splitUrl[6]);
-					break;
-				case "videos":
-					if(splitUrl.length < 6) {
+					List<NameValuePair> args= URLEncodedUtils.parse(splitParam[1], Charset.defaultCharset());
+					boolean isMatch = false;
+					for (NameValuePair arg:args) {
+			            if ("story_fbid".equals(arg.getName())) {
+			            	isMatch = true;
+			                post.setSocialPostId(pageId + "_" + arg.getValue());
+			            }
+					}
+					if(!isMatch){
 						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 					}
-					post.setSocialPostId(pageId + "_" + splitUrl[5]);
-					break;
-				case "posts":
-					if(splitUrl.length < 6) {
-						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
-					}
-					post.setSocialPostId(pageId + "_" + splitUrl[5]);
-					break;
-				default:
+				} else if(splitUrl.length < 5) {
 					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+				} else {
+					switch(splitUrl[4]){
+					case "photos":
+						if(splitUrl.length < 7) {
+							throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+						}
+						post.setSocialPostId(pageId + "_" + splitUrl[6]);
+						break;
+					case "videos":
+						if(splitUrl.length < 6) {
+							throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+						}
+						post.setSocialPostId(pageId + "_" + splitUrl[5]);
+						break;
+					case "posts":
+						if(splitUrl.length < 6) {
+							throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+						}
+						post.setSocialPostId(pageId + "_" + splitUrl[5]);
+						break;
+					default:
+						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+					}
 				}
 			}
+			
 			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
 			if(count > 0L) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
