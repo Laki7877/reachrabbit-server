@@ -185,6 +185,7 @@ public class CampaignService {
 			User robotUser = robotService.getRobotUser();
 			for(Proposal proposal : proposalList) {
 				robotMessage.setProposal(proposal);
+				robotMessage.setReferenceId(UUID.randomUUID().toString());
 				proposalMessageService.createProposalMessage(proposal.getProposalId()
 						, robotMessage
 						, robotUser.getUserId()

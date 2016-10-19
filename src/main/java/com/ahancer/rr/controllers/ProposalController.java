@@ -150,7 +150,7 @@ public class ProposalController extends AbstractController {
 		ProposalResponse response = proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId(),locale);
 		proposalService.processInboxPolling(response.getInfluencerId());
 		proposalService.processInboxPolling(response.getCampaign().getBrandId());
-		proposalMessageService.processMessagePolling(response.getProposalId());
+		proposalMessageService.processMessagePolling(proposalId);
 		return response;
 	}
 	@ApiOperation(value = "Update rabbit flag in proposal")

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -321,6 +322,7 @@ public class ProposalService {
 		rebotMessage.setIsInfluencerRead(true);
 		String message = messageSource.getMessage("robot.proposal.message", null, local).replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
 		rebotMessage.setMessage(message);
+		rebotMessage.setReferenceId(UUID.randomUUID().toString());
 		rebotMessage.setProposalId(proposal.getProposalId());
 		User robotUser = robotService.getRobotUser();
 		rebotMessage.setUserId(robotUser.getUserId());
@@ -379,6 +381,7 @@ public class ProposalService {
 		User robotUser = robotService.getRobotUser();
 		rebotMessage.setProposalId(oldProposal.getProposalId());
 		rebotMessage.setUserId(robotUser.getUserId());
+		rebotMessage.setReferenceId(UUID.randomUUID().toString());
 		rebotMessage = proposalMessageDao.save(rebotMessage);
 		rebotMessage.setUser(robotUser);
 		oldProposal = proposalDao.save(oldProposal);
