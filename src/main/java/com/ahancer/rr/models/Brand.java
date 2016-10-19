@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
@@ -30,7 +31,8 @@ public class Brand extends AbstractModel implements Serializable {
 	@Column(name="brandName",length=255)
 	private String brandName;
 	
-	@Column(name="about",length=255)
+	@Lob
+	@Column(name="about")
 	private String about;
 	
 	@Column(name="website",length=255)

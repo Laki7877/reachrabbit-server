@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,7 +92,7 @@ public class ProfileController extends AbstractController{
 	@ApiOperation(value = "Update profile")
 	@RequestMapping(method=RequestMethod.PUT)
 	@Authorization({Role.Influencer, Role.Brand})
-	public UserResponse updateProfile(@RequestBody ProfileRequest request) throws Exception {
+	public UserResponse updateProfile(@Valid @RequestBody ProfileRequest request) throws Exception {
 		UserResponse ownUser = this.getUserRequest();
 		if(ownUser.getRole().equals(Role.Brand)) {
 			return brandService.updateBrandUser(ownUser.getUserId(), request, this.getTokenRequest());

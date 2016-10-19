@@ -2,6 +2,8 @@ package com.ahancer.rr.response;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Size;
+
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.Brand;
 
@@ -9,12 +11,18 @@ public class BrandResponse implements Serializable {
 
 	private static final long serialVersionUID = 4549371860913222596L;
 	private Long brandId;
+	@Size(max=255,message="error.brand.name.length")
 	private String brandName;
+	@Size(max=2500,message="error.brand.about.lengthh")
 	private String about;
+	@Size(max=255,message="error.brand.website.length")
 	private String website;
 	private UserResponse user;
+	@Size(max=255,message="error.brand.company.name.length")
 	private String companyName;
+	@Size(max=1000,message="error.brand.company.address.length")
 	private String companyAddress;
+	@Size(max=255,message="error.brand.company.taxid.length")
 	private String companyTaxId;
 	private Boolean isCompany;
 	public BrandResponse(){

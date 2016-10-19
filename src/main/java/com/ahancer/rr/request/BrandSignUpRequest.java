@@ -31,13 +31,13 @@ public class BrandSignUpRequest implements Serializable {
 	@Size(min=1,max=100,message="error.brand.name.length")
 	private String brandName;
 	
-	@Size(max=255,message="error.brand.companyName.length")
+	@Size(max=255,message="error.brand.company.name.length")
 	private String companyName;
 	
-	@Size(max=1000,message="error.brand.companyAddress.length")
+	@Size(max=1000,message="error.brand.company.address.length")
 	private String companyAddress;
 	
-	@Size(max=255,message="error.brand.companyTaxId.length")
+	@Size(max=255,message="error.brand.company.taxid.length")
 	private String companyTaxId;
 	
 	private Boolean isCompany;

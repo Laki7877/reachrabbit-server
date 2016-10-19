@@ -3,6 +3,9 @@ package com.ahancer.rr.request;
 import java.io.Serializable;
 
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
 
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.response.BrandResponse;
@@ -11,8 +14,12 @@ import com.ahancer.rr.response.InfluencerResponse;
 public class ProfileRequest implements Serializable {
 	
 	private static final long serialVersionUID = -5114386336899455015L;
+	@Size(min=1,max=100,message="error.name.length")
 	private String name;
+	@Size(min=3,max=100,message="error.email.length")
+	@Email(message="error.email.invalid")
 	private String email;
+	@Size(min=8,max=100,message="error.password.length")
 	private String password;
 	private Resource profilePicture;
 	@Pattern(regexp="[0-9]*", message="error.phone")
