@@ -98,17 +98,19 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	@Query("SELECT p "
 			+ "FROM proposal p "
-			+ "WHERE p.campaign.brand.user.referral.referralId IS NOT NULL ")
-	public Page<Proposal> findAllByCampaignBrandUserReferralReferralIdNotNull(Pageable pageable);
+			+ "WHERE p.campaign.brand.user.referral.referralId IS NOT NULL "
+			+ "AND p.status in :statuses ")
+	public Page<Proposal> findAllByCampaignBrandUserReferralReferralIdNotNull(@Param("statuses") Collection<ProposalStatus> statuses, Pageable pageable);
 	
 	@Query("SELECT p "
 			+ "FROM proposal p "
 			+ "WHERE p.campaign.brand.user.referral.referralId IS NOT NULL "
+			+ "AND p.status in :statuses "
 			+ "AND (p.campaign.brand.user.referral.referralId LIKE CONCAT('%', :search , '%') "
 			+ "OR p.campaign.title LIKE CONCAT('%', :search , '%') "
 			+ "OR p.campaign.brand.brandName LIKE CONCAT('%', :search , '%') "
 			+ "OR p.campaign.brand.user.referral.partner.email LIKE CONCAT('%', :search , '%') )")
-	public Page<Proposal> findAllByCampaignBrandUserReferralReferralIdNotNullAndSearch(@Param("search") String search, Pageable pageable);
+	public Page<Proposal> findAllByCampaignBrandUserReferralReferralIdNotNullAndSearch(@Param("statuses") Collection<ProposalStatus> statuses,@Param("search") String search, Pageable pageable);
 	
 	
 	public Long countByCampaignBrandIdAndStatus(Long brandId, ProposalStatus status);

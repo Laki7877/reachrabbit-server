@@ -445,10 +445,13 @@ public class ProposalService {
 	
 	public Page<Proposal> getReferralProposal(String search, Pageable pageable){
 		Page<Proposal> page = null;
+		List<ProposalStatus> statues = new ArrayList<ProposalStatus>();
+		statues.add(ProposalStatus.Working);
+		statues.add(ProposalStatus.Complete);
 		if(StringUtils.isEmpty(search)){
-			page = proposalDao.findAllByCampaignBrandUserReferralReferralIdNotNull(pageable);
+			page = proposalDao.findAllByCampaignBrandUserReferralReferralIdNotNull(statues,pageable);
 		} else {
-			page = proposalDao.findAllByCampaignBrandUserReferralReferralIdNotNullAndSearch(search, pageable);
+			page = proposalDao.findAllByCampaignBrandUserReferralReferralIdNotNullAndSearch(statues,search, pageable);
 		}
 		
 		return page;
