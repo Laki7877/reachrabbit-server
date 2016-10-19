@@ -145,7 +145,7 @@ public class WalletService {
 		String body = messageSource.getMessage("email.admin.influencer.payout.message",null,locale)
 				.replace("{{Influencer Name}}", wallet.getInfluencer().getUser().getName())
 				.replace("{{Payout Amount}}", transaction.getAmount().toString())
-				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
+				.replace("{{Transaction Id}}", transaction.getTransactionNumber())
 				.replace("{{Bank Name}}", request.getBank().getBankName())
 				.replace("{{Bank Account Number}}", request.getAccountNumber())
 				.replace("{{Bank Account Name}}", request.getAccountName());

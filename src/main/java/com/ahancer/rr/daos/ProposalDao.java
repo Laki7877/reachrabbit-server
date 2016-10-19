@@ -106,7 +106,8 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 			+ "WHERE p.campaign.brand.user.referral.referralId IS NOT NULL "
 			+ "AND (p.campaign.brand.user.referral.referralId LIKE CONCAT('%', :search , '%') "
 			+ "OR p.campaign.title LIKE CONCAT('%', :search , '%') "
-			+ "OR p.campaign.brand.brandName LIKE CONCAT('%', :search , '%') )")
+			+ "OR p.campaign.brand.brandName LIKE CONCAT('%', :search , '%') "
+			+ "OR p.campaign.brand.user.referral.partner.email LIKE CONCAT('%', :search , '%') )")
 	public Page<Proposal> findAllByCampaignBrandUserReferralReferralIdNotNullAndSearch(@Param("search") String search, Pageable pageable);
 	
 	

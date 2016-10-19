@@ -120,12 +120,12 @@ public class TransactionService {
 		
 		String to = user.getEmail();
 		String subject = messageSource.getMessage("email.brand.cart.checkout.subject",null,locale)
-				.replace("{{transaction id}}", transaction.getTransactionNumber());
+				.replace("{{Transaction Id}}", transaction.getTransactionNumber());
 		String body = messageSource.getMessage("email.brand.cart.checkout.message",null,locale)
-				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
+				.replace("{{Transaction Id}}", transaction.getTransactionNumber())
 				.replace("{{Total Price}}", String.valueOf(transaction.getAmount()))
 				.replace("{{Host}}", uiHost)
-				.replace("{{CartId}}", String.valueOf(cart.getCartId()));
+				.replace("{{Cart Id}}", String.valueOf(cart.getCartId()));
 		emailService.send(to, subject, body);
 		
 		return transaction;
@@ -208,7 +208,7 @@ public class TransactionService {
 				robotMessage.setMessage(message
 						.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
 						.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
-						.replace("{{ProposalId}}", String.valueOf(proposal.getProposalId())));
+						.replace("{{Proposal Id}}", String.valueOf(proposal.getProposalId())));
 				robotMessage.setProposal(proposal);
 				//long polling
 				proposalMessageService.createProposalMessage(proposal.getProposalId()
@@ -225,16 +225,17 @@ public class TransactionService {
 				body = superBody
 						.replace("{{Brand Name}}", proposal.getCampaign().getBrand().getBrandName())
 						.replace("{{Campaign Name}}", proposal.getCampaign().getTitle())
-						.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName());
+						.replace("{{Influencer Name}}", proposal.getInfluencer().getUser().getName())
+						.replace("{{Proposal Id}}", String.valueOf(proposal.getProposalId()));
 				emailService.send(to, subject, body);
 			}
 		}
 		//send email to brand
 		to = transaction.getUser().getEmail();
 		subject = messageSource.getMessage("email.brand.admin.confirm.checkout.subject",null,locale)
-				.replace("{{Transaction ID}}", transaction.getTransactionNumber());
+				.replace("{{Transaction Id}}", transaction.getTransactionNumber());
 		body = messageSource.getMessage("email.brand.admin.confirm.checkout.message",null,locale)
-				.replace("{{Transaction ID}}", transaction.getTransactionNumber())
+				.replace("{{Transaction Id}}", transaction.getTransactionNumber())
 				.replace("{{Brand Name}}", transaction.getUser().getBrand().getBrandName())
 				.replace("{{Total Price}}", String.valueOf(transaction.getAmount()))
 				.replace("{{Host}}", uiHost);
