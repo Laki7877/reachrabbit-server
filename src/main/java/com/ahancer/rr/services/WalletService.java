@@ -162,7 +162,8 @@ public class WalletService {
 			Double sum = 0.0;
 			for(Proposal proposal : wallet.getProposals()) {
 				sum = sum + proposal.getPrice() - proposal.getFee();
-				if(proposal.getCampaign().getBrand().getIsCompany()){
+				Boolean isCompany = proposal.getCampaign().getBrand().getIsCompany();
+				if(null != isCompany && isCompany){
 					sum = sum - Math.floor(proposal.getPrice() * this.tax / 100);
 				}
 			}
