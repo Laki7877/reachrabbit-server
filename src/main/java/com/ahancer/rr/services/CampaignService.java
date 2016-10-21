@@ -30,6 +30,7 @@ import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.request.CampaignRequest;
 import com.ahancer.rr.response.CampaignResponse;
+import com.ahancer.rr.response.InfluencerResponse;
 import com.ahancer.rr.response.UserResponse;
 
 @Service
@@ -237,14 +238,12 @@ public class CampaignService {
 			default:
 				break;
 			}
-
 		} else {
 			if(StringUtils.isEmpty(search)) {
 				response = campaignDao.findByBrandId(brandId, pageable);
 			} else {
 				response = campaignDao.findByBrandIdAndSearch(brandId, search, pageable);
 			}
-
 		}
 		return response;
 	}
@@ -253,7 +252,11 @@ public class CampaignService {
 		return campaignDao.findByBrandIdAndStatus(brandId, Arrays.asList(CampaignStatus.Open));
 	}
 
-	public Page<CampaignResponse> findAllOpen(String mediaFilter,Long influencerId,Pageable pageable) {		
+	public Page<CampaignResponse> findAllOpen(String mediaFilter,InfluencerResponse influencer,Pageable pageable) throws Exception {
+		if(influencer.getInfluencerMedias().size() == 0){
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.campaign.influencer.no.media.link");
+		}
+		Long influencerId = influencer.getInfluencerId();
 		Page<CampaignResponse> response = null;
 		if(StringUtils.isNotEmpty(mediaFilter)) {
 			response =  campaignDao.findByStatusAndMedia(Arrays.asList(CampaignStatus.Open), Arrays.asList(mediaFilter), pageable);

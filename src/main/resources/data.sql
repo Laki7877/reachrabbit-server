@@ -65,11 +65,11 @@ SET FOREIGN_KEY_CHECKS = 1;
 --INSERT INTO completionTime (completionTime,day,isActive) VALUES ('3 สัปดาห์',21,true);
 --INSERT INTO completionTime (completionTime,day,isActive) VALUES ('4 สัปดาห์',28,true);
 --
---INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (1, 500, 1000, true);
---INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (2, 1000, 2000, true);
---INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (3, 2000, 5000, true);
---INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (4, 5000, 10000, true);
---INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (5, 10000, 50000, true);
---INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (6, 50000, 100000, true);
---INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (7, 100000, 500000, true);
+--INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (1, 0, 1000, true);
+--INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (2, 0, 2000, true);
+--INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (3, 0, 5000, true);
+--INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (4, 0, 10000, true);
+--INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (5, 0, 50000, true);
+--INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (6, 0, 100000, true);
+--INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (7, 0, 500000, true);
 --
