@@ -278,6 +278,10 @@ public class ProposalService {
 		if(0 < count){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.already.proposal");
 		}
+		Date today = new Date();
+		if(campaign.getProposalDeadline().compareTo(today) < 0) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.expire");
+		}
 		proposal.setCampaign(campaign);
 		proposal.setInfluencerId(influecnerId);
 		proposal.setMessageUpdatedAt(new Date());
