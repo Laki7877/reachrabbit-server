@@ -299,6 +299,7 @@ public class ProposalService {
 		firstMessage.setProposal(proposal);
 		firstMessage.setProposalId(proposal.getProposalId());
 		firstMessage.setUserId(influecnerId);
+		firstMessage.setReferenceId(UUID.randomUUID().toString());
 		firstMessage = proposalMessageDao.save(firstMessage);
 		String to = campaign.getBrand().getUser().getEmail();
 		String subject = messageSource.getMessage("email.brand.new.proposal.subject",null,locale);
