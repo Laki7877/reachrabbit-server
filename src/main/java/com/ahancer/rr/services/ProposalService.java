@@ -323,7 +323,7 @@ public class ProposalService {
 		oldProposal.setDescription(proposal.getDescription());
 		//Insert robot message
 		ProposalMessage rebotMessage = new ProposalMessage();
-		rebotMessage.setIsBrandRead(true);
+		rebotMessage.setIsBrandRead(false);
 		rebotMessage.setIsInfluencerRead(true);
 		String message = messageSource.getMessage("robot.proposal.message", null, local).replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
 		rebotMessage.setMessage(message);
