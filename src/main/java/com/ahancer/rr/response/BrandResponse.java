@@ -41,7 +41,6 @@ public class BrandResponse implements Serializable {
 				this.companyName = brand.getCompanyName();
 				this.companyAddress = brand.getCompanyAddress();
 				this.companyTaxId = brand.getCompanyTaxId();
-				this.isCompany = brand.getIsCompany();
 				break;
 			case Brand:
 				user.setEmail(brand.getUser().getEmail());
@@ -49,13 +48,13 @@ public class BrandResponse implements Serializable {
 				this.companyName = brand.getCompanyName();
 				this.companyAddress = brand.getCompanyAddress();
 				this.companyTaxId = brand.getCompanyTaxId();
-				this.isCompany = brand.getIsCompany();
 				break;
 			case Influencer:
 				break;
 			default:
 				break;
 		}
+		this.isCompany = brand.getIsCompany();
 		this.brandId = brand.getBrandId();
 		this.brandName = brand.getBrandName();
 		this.about = brand.getAbout();

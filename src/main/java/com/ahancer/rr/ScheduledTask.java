@@ -109,6 +109,8 @@ public class ScheduledTask {
 	public void getPostInfoDaily() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -historyDays);
+		Calendar dataCal = Calendar.getInstance();
+		dataCal.add(Calendar.DATE, -1);
 		List<UpdatePostResponse> postList = postService.getUpdatePost(cal.getTime());
 		for(UpdatePostResponse postModel : postList) {
 			Post post = null;
@@ -134,6 +136,7 @@ public class ScheduledTask {
 				}
 				if(null != post) {
 					post.setUrl(postModel.getUrl());
+					post.setDataDate(dataCal.getTime());
 					postService.createNewPostBySys(post);
 				}
 			} catch (Exception e) {

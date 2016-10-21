@@ -60,6 +60,7 @@ public class PostService {
 		Post post = new Post();
 		post.setProposalId(proposalId);
 		post.setMediaId(request.getMedia().getMediaId());
+		@SuppressWarnings("unused")
 		Post tmpPost = null;
 		String[] splitUrl = null;
 		Long count = 0L;
@@ -122,8 +123,7 @@ public class PostService {
 					}
 				}
 			}
-			
-			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
+			count = postDao.countByMediaIdAndSocialPostId(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
 			if(count > 0L) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
 			}
@@ -135,7 +135,7 @@ public class PostService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 			}
 			post.setSocialPostId(splitUrl[4]);
-			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
+			count = postDao.countByMediaIdAndSocialPostId(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
 			if(count > 0L) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
 			}
@@ -151,7 +151,7 @@ public class PostService {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
 			}
 			post.setSocialPostId(splitUrl[1]);
-			count = postDao.countByMediaIdAndSocialPostIdAndCreatedAt(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
+			count = postDao.countByMediaIdAndSocialPostId(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
 			if(count > 0L) {
 				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
 			}
@@ -160,11 +160,16 @@ public class PostService {
 		default:
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.invalid.media");
 		}
-		post.setCommentCount(tmpPost.getCommentCount());
-		post.setLikeCount(tmpPost.getLikeCount());
-		post.setShareCount(tmpPost.getShareCount());
-		post.setViewCount(tmpPost.getViewCount());
+//		post.setCommentCount(tmpPost.getCommentCount());
+//		post.setLikeCount(tmpPost.getLikeCount());
+//		post.setShareCount(tmpPost.getShareCount());
+//		post.setViewCount(tmpPost.getViewCount());
+		post.setCommentCount(0L);
+		post.setLikeCount(0L);
+		post.setShareCount(0L);
+		post.setViewCount(0L);
 		post.setUrl(request.getUrl());
+		post.setDataDate(new Date());
 		post = postDao.save(post);
 		proposal.setHasPost(true);
 		proposal = proposalDao.save(proposal);

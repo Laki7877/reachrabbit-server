@@ -1,6 +1,7 @@
 package com.ahancer.rr.models;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -54,6 +57,11 @@ public class Post extends AbstractModel implements Serializable {
 	
 	@Column(name="viewCount")
 	private Long viewCount;
+	
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name="dataDate")
+	private Date dataDate;
 	
 	@Column(name="url")
 	private String url;
@@ -144,6 +152,14 @@ public class Post extends AbstractModel implements Serializable {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public Date getDataDate() {
+		return dataDate;
+	}
+
+	public void setDataDate(Date dataDate) {
+		this.dataDate = dataDate;
 	}
 	
 }
