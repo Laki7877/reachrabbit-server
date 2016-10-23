@@ -9,9 +9,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.ahancer.rr.constants.ApplicationConstant;
 import com.ahancer.rr.custom.type.ResourceType;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity(name="resource")
 public class Resource extends AbstractModel implements Serializable{
@@ -28,9 +31,15 @@ public class Resource extends AbstractModel implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private ResourceType resourceType;
 	
+	@Transient
+	@JsonSerialize
+	@JsonDeserialize
+	private String url;
+	
 	public Resource() {
 
 	}
+	
 	public String getUrl() {
 		return "https://" + ApplicationConstant.Bucket +".s3-ap-southeast-1.amazonaws.com/" + this.getResourcePath();
 	}

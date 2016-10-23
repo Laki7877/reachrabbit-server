@@ -3,11 +3,11 @@ SET FOREIGN_KEY_CHECKS = 1;
 --INSERT INTO resource (resourcePath) VALUES ('placeholder-profile-picture-bot.png');
 --INSERT INTO user (email,password,name,role,profilePictureId) VALUES ('bot@reachrabbitbot.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','Rabbit Bot','Bot',1);
 --INSERT INTO user (email,password,name,role) VALUES ('admin@reachrabbit.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am admin','Admin');
---INSERT INTO user (email,password,name,role) VALUES ('brand@reachrabbit.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am brand','Brand');
---INSERT INTO user (email,password,name,role) VALUES ('influencer@reachrabbit.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am influencer','Influencer');
+---- INSERT INTO user (email,password,name,role) VALUES ('brand@reachrabbit.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am brand','Brand');
+---- INSERT INTO user (email,password,name,role) VALUES ('influencer@reachrabbit.com','$2a$12$FI2mwDCMCDH76sJ0RnqYF.NA9VMIHxFslRnm8SvFAgYk29fxY75vS','I am influencer','Influencer');
 --
---INSERT INTO brand (brandName, brandId) VALUES ('My Brand', 3);
---INSERT INTO influencer (influencerId) VALUES (4);
+---- INSERT INTO brand (brandName, brandId) VALUES ('My Brand', 3);
+---- INSERT INTO influencer (influencerId) VALUES (4);
 --INSERT INTO bank (bankId,bankName,isActive) VALUES ('002','ธนาคารกรุงเทพ จำกัด (มหาชน)',true);
 --INSERT INTO bank (bankId,bankName,isActive) VALUES ('004','ธนาคารกสิกรไทย จำกัด (มหาชน)',true);
 --INSERT INTO bank (bankId,bankName,isActive) VALUES ('005','ธนาคารเอบีเอ็น แอมโร เอ็น.วี.',false);
@@ -72,4 +72,3 @@ SET FOREIGN_KEY_CHECKS = 1;
 --INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (5, 0, 50000, true);
 --INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (6, 0, 100000, true);
 --INSERT INTO budget (budgetId, fromBudget, toBudget, isActive) VALUES (7, 0, 500000, true);
---
