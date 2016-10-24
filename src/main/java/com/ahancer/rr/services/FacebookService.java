@@ -69,9 +69,9 @@ public class FacebookService {
 	public Post getPostInfo(String postId) throws ResponseException {
 		Gson gson = new Gson();
 		Facebook fb = getInstance(getAppAccessToken());
-		org.springframework.social.facebook.api.Post post = fb.fetchObject(postId, org.springframework.social.facebook.api.Post.class, "comments.limit(0).summary(true),likes.limit(0).summary(true),shares");
+		org.springframework.social.facebook.api.Post post = fb.fetchObject(postId, org.springframework.social.facebook.api.Post.class, "comments.limit(0).summary(true),likes.limit(0).summary(true),shares,reactions.limit(0).summary(true)");
 		JsonObject ext = gson.toJsonTree(post).getAsJsonObject().getAsJsonObject("extraData");
-		Long likes = ext.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsLong();
+		Long likes = ext.getAsJsonObject("reactions").getAsJsonObject("summary").get("total_count").getAsLong();
 		Long comments = ext.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsLong();
 		Long shares = (long) post.getShares();
 		Post postModel = new Post();

@@ -1,13 +1,16 @@
 package com.ahancer.rr.services;
 
 import java.nio.charset.Charset;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,23 +27,21 @@ import com.ahancer.rr.response.UpdatePostResponse;
 @Service
 @Transactional(rollbackFor=Exception.class)
 public class PostService {
-	
 	@Autowired
 	private PostDao postDao;
-	
 	@Autowired
 	private ProposalDao proposalDao;
-	
 	@Autowired
 	private FacebookService facebookService;
-	
 	@Autowired
 	private InstagramService instagramService;
-	
 	@Autowired
 	private YoutubeService youtubeService;
-	
-	
+	@Autowired
+	private EmailService emailService;
+	@Value("${app.dashboard.history.days}")
+	private Integer historyDays;
+
 	public List<UpdatePostResponse> getUpdatePost(Date minDate){
 		return postDao.findUpdatePost(minDate);
 	}
@@ -160,10 +161,6 @@ public class PostService {
 		default:
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.invalid.media");
 		}
-//		post.setCommentCount(tmpPost.getCommentCount());
-//		post.setLikeCount(tmpPost.getLikeCount());
-//		post.setShareCount(tmpPost.getShareCount());
-//		post.setViewCount(tmpPost.getViewCount());
 		post.setCommentCount(0L);
 		post.setLikeCount(0L);
 		post.setShareCount(0L);
@@ -174,6 +171,45 @@ public class PostService {
 		proposal.setHasPost(true);
 		proposal = proposalDao.save(proposal);
 		return post;
+	}
+	
+	public void createPostSchedule(Date dataDate){
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -historyDays);
+		List<UpdatePostResponse> postList = getUpdatePost(cal.getTime());
+		for(UpdatePostResponse postModel : postList) {
+			Post post = null;
+			try {
+				switch (postModel.getMediaId()){
+				case "facebook":
+					post = facebookService.getPostInfo(postModel.getSocialPostId());
+					post.setProposalId(postModel.getProposalId());
+					post.setMediaId("facebook");
+					break;
+				case "instagram":
+					post = instagramService.getPostInfo(postModel.getSocialPostId());
+					post.setProposalId(postModel.getProposalId());
+					post.setMediaId("instagram");
+					break;
+				case "google":
+					post = youtubeService.getPostInfo(postModel.getSocialPostId());
+					post.setProposalId(postModel.getProposalId());
+					post.setMediaId("google");
+					break;
+				default:
+					break;
+				}
+				if(null != post) {
+					post.setUrl(postModel.getUrl());
+					post.setDataDate(dataDate);
+					createNewPostBySys(post);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				String trace = ExceptionUtils.getStackTrace(e);
+				emailService.send("laki7877@gmail.com", "Stack trace update post information", trace);
+			}
+		}
 	}
 	
 	public List<UpdatePostResponse> getListPost(Long proposalId){
