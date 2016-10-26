@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.InfluencerMedia;
+import com.ahancer.rr.models.Referral;
 import com.ahancer.rr.models.Resource;
 import com.ahancer.rr.models.User;
 
@@ -18,6 +19,7 @@ public class UserResponse implements Serializable {
 	private InfluencerResponse influencer;
 	private BrandResponse brand;
 	private Role role;
+	private Referral referral;
 	
 	public UserResponse(){
 		
@@ -36,6 +38,7 @@ public class UserResponse implements Serializable {
 				if(null != user.getBrand()) {
 					brand = new BrandResponse(user.getBrand(),roleValue);
 				}
+				this.referral = user.getReferral();
 				break;
 			case Brand:
 				influencer = new InfluencerResponse(user.getInfluencer(),roleValue);
@@ -145,5 +148,12 @@ public class UserResponse implements Serializable {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	
+
+	public Referral getReferral() {
+		return referral;
+	}
+
+	public void setReferral(Referral referral) {
+		this.referral = referral;
+	}
 }
