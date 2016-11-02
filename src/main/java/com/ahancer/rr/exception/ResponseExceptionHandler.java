@@ -2,6 +2,7 @@ package com.ahancer.rr.exception;
 
 import java.util.Locale;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @ControllerAdvice
 public class ResponseExceptionHandler  {
+	
+	private static final Logger logger = Logger.getLogger(ResponseExceptionHandler.class);
 
 	@Autowired
 	private MessageSource messageSource;
@@ -34,6 +37,7 @@ public class ResponseExceptionHandler  {
 			String msg = messageSource.getMessage(responseEx.getMessage(),null,locale);
 			responseEx.setMessage(msg);
 		}else {
+			logger.error("Exception caught",ex);
 			responseEx = new ResponseException(ex.getMessage()); 
 		}
 		return new ResponseEntity<>(responseEx.getResponseMessage(), responseEx.getStatusCode());

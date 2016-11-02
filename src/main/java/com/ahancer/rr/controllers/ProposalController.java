@@ -33,9 +33,9 @@ import com.ahancer.rr.response.UpdatePostResponse;
 import com.ahancer.rr.services.CartService;
 import com.ahancer.rr.services.PostService;
 import com.ahancer.rr.services.ProposalMessageService;
-import com.ahancer.rr.services.ProposalMessageService.DeferredProposalMessage;
 import com.ahancer.rr.services.ProposalService;
-import com.ahancer.rr.services.ProposalService.DeferredProposal;
+import com.ahancer.rr.services.impl.ProposalMessageServiceImpl.DeferredProposalMessage;
+import com.ahancer.rr.services.impl.ProposalServiceImpl.DeferredProposal;
 import com.ahancer.rr.utils.Util;
 
 import io.swagger.annotations.ApiOperation;
@@ -75,7 +75,7 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Get active proposal list")
 	@RequestMapping(method=RequestMethod.GET, value="/active")
 	@Authorization({Role.Influencer})
-	public List<ProposalResponse> getAllActiveProposal() {
+	public List<ProposalResponse> getAllActiveProposal() throws Exception {
 		return proposalService.findAllActiveByInfluencer(this.getUserRequest().getInfluencer().getInfluencerId());
 	}
 	@ApiOperation(value = "Get count new message")
@@ -271,7 +271,7 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Get post from proposal")
 	@RequestMapping(method=RequestMethod.GET,value="/{proposalId}/post")
 	@Authorization({Role.Admin})
-	public List<UpdatePostResponse> getListOfPost(@PathVariable Long proposalId){
+	public List<UpdatePostResponse> getListOfPost(@PathVariable Long proposalId) throws Exception {
 		return postService.getListPost(proposalId);
 	}
 	@ApiOperation(value = "Delete post from proposal")
@@ -283,7 +283,7 @@ public class ProposalController extends AbstractController {
 	@ApiOperation(value = "Get referral")
 	@RequestMapping(method=RequestMethod.GET,value="/referral")
 	@Authorization({Role.Admin})
-	public Page<Proposal> getReferralProposal(@RequestParam(name="search", required=false) String search, Pageable pageRequest){
+	public Page<Proposal> getReferralProposal(@RequestParam(name="search", required=false) String search, Pageable pageRequest) throws Exception{
 		return proposalService.getReferralProposal(search, pageRequest);
 	}
 	@ApiOperation(value = "Get referral")

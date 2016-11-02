@@ -3,14 +3,13 @@ package com.ahancer.rr.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.jinstagram.exceptions.InstagramException;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ahancer.rr.exception.ResponseException;
 import com.ahancer.rr.request.AuthenticationRequest;
 import com.ahancer.rr.request.OAuthenticationRequest;
 import com.ahancer.rr.response.AuthenticationResponse;
@@ -26,6 +25,9 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController extends AbstractController {
+	
+	private static final Logger logger = Logger.getLogger(AuthenticationController.class);
+	
 	@Autowired
 	private HttpServletRequest request;
 	@Autowired
@@ -66,18 +68,21 @@ public class AuthenticationController extends AbstractController {
 	}
 	@ApiOperation(value = "Check instagram token")
 	@RequestMapping(value = "/instagram/check" ,method = RequestMethod.GET)
-	public Boolean instagramCheck() throws ResponseException, InstagramException {
+	public Boolean instagramCheck() throws Exception {
 		return instagramService.checkAdminToken();
 	}	
 	@ApiOperation(value = "Refresh instagram token")
 	@RequestMapping(value = "/instagram/refresh" ,method = RequestMethod.POST)
-	public void instagramRefresh(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws ResponseException, InstagramException {
+	public void instagramRefresh(@Valid @RequestBody OAuthenticationRequest oauthenticationRequest) throws Exception {
 		instagramService.refreshAdminToken(instagramService.getAccessToken(oauthenticationRequest.getCode(), oauthenticationRequest.getRedirectUri()));
 	}
 	@ApiOperation(value = "Authenthication by admin")
 	@RequestMapping(value = "/admin" ,method = RequestMethod.POST)
 	public AuthenticationResponse adminAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
 			throws Exception {
+		logger.info("Info");
+		logger.warn("Warning");
+		logger.error("Error");
 		AuthenticationResponse authen = authenticationService.adminAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword(),request.getRemoteAddr());
 		return authen;
 	}

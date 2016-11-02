@@ -42,7 +42,7 @@ public class ProfileController extends AbstractController{
 	@Autowired
 	private FacebookService facebookService;
 	@Autowired
-	private YoutubeService ytService;
+	private YoutubeService youtubeService;
 	@Autowired
 	private InstagramService instagramService;
 	@ApiOperation(value = "Get current profile")
@@ -59,7 +59,7 @@ public class ProfileController extends AbstractController{
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
 		}
 		String socialId = user.getSocialId("google");
-		return ytService.getVideoFeed(socialId);
+		return youtubeService.getVideoFeed(socialId);
 	}
 	@ApiOperation(value = "Get facebook current profile")
 	@RequestMapping(value="/facebook", method=RequestMethod.GET)
@@ -122,7 +122,7 @@ public class ProfileController extends AbstractController{
 	@RequestMapping(value="/{userId}/google", method=RequestMethod.GET)
 	public YouTubeProfileResponse getYoutube(@PathVariable Long userId) throws Exception {
 		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
-		return ytService.getVideoFeed(user.getSocialId("google"));
+		return youtubeService.getVideoFeed(user.getSocialId("google"));
 	}
 	@ApiOperation(value = "Validate instagram")
 	@Authorization({Role.Influencer})

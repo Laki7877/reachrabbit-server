@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+  <appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
+    <dsn>http://49b3a0896230423badd96c0ce6f222ec:26d60dafb87b45dd88451dc432bb970d@app.reachrabbit.com:9000/1?options</dsn>
+    <tags>tag1:value1,tag2:value2</tags>
+  </appender>
+  <root level="error">
+    <appender-ref ref="Sentry"/>
+  </root>
+</configuration>

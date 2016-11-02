@@ -10,11 +10,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.models.Campaign;
 import com.ahancer.rr.response.CampaignResponse;
 
+@Repository
 public interface CampaignDao extends CrudRepository<Campaign, Long> {
 	
 	@Query("SELECT new com.ahancer.rr.response.CampaignResponse(c, 'Influencer') "

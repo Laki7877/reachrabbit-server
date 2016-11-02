@@ -5,12 +5,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.models.User;
 import com.ahancer.rr.response.UserResponse;
 
-
+@Repository
 public interface UserDao extends CrudRepository<User, Long> {
 	
 	public User findByEmailAndRole(String email,Role role);
@@ -48,7 +49,6 @@ public interface UserDao extends CrudRepository<User, Long> {
 			+ "WHERE u.role='Influencer' "
 			+ "AND (u.email LIKE CONCAT('%', :search, '%') OR u.name LIKE CONCAT('%', :search, '%'))")
 	public Page<UserResponse> findAllInfluencer(@Param("search") String search, Pageable pageable);
-	
 	
 	public Long countByReferralReferralId(String referralId);
 	

@@ -4,9 +4,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.ahancer.rr.models.InfluencerMedia;
 
+@Repository
 public interface InfluencerMediaDao extends CrudRepository<InfluencerMedia, Long> {
 
 	@Query("SELECT COUNT(im)"

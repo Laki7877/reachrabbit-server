@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.ahancer.rr.custom.type.CampaignStatus;
 import com.ahancer.rr.custom.type.ProposalStatus;
@@ -19,6 +20,7 @@ import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.response.ProposalDashboardResponse;
 import com.ahancer.rr.response.ProposalResponse;
 
+@Repository
 public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Proposal findByProposalIdAndInfluencerId(Long proposalId,Long influencerId);

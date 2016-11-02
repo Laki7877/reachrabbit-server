@@ -34,7 +34,7 @@ import com.ahancer.rr.filter.AuthorizationFilter;
 @EnableAsync
 @EnableScheduling
 public class ReachrabbitServerApplication extends WebMvcConfigurerAdapter implements SchedulingConfigurer,AsyncConfigurer, CommandLineRunner {
-
+	
 	public static void main(String[] args) {
 		SpringApplication.run(ReachrabbitServerApplication.class, args);
 	}

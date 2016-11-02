@@ -24,7 +24,7 @@ public class PostController {
 	@ApiOperation(value = "Adhoc run post schedule")
 	@RequestMapping(method=RequestMethod.POST)
 	@Authorization({Role.Admin})
-	public void runAdhocSchedule(@RequestBody(required=true) Date dataDate){
+	public void runAdhocSchedule(@RequestBody(required=true) Date dataDate) throws Exception{
 		postService.createPostSchedule(dataDate);
 	}
 

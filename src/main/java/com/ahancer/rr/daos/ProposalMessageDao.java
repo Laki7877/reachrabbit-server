@@ -10,12 +10,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.models.ProposalMessage;
 import com.ahancer.rr.response.MessageCountResponse;
 import com.ahancer.rr.response.ProposalMessageResponse;
 
+@Repository
 public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long> {
 	
 	public Long countByProposalCampaignBrandIdAndIsBrandReadFalseAndProposalStatus(Long brandId,ProposalStatus status);

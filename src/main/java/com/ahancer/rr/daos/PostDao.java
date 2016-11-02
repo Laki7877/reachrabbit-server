@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.ahancer.rr.models.Post;
 import com.ahancer.rr.response.PostAggregateResponse;
 import com.ahancer.rr.response.UpdatePostResponse;
 
+@Repository
 public interface PostDao extends CrudRepository<Post, Long> {
 	
 	@Query("SELECT new com.ahancer.rr.response.UpdatePostResponse(p.socialPostId, p.mediaId, p.proposalId, p.url) "
