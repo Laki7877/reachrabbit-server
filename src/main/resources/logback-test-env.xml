@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<include resource="org/springframework/boot/logging/logback/base.xml" /> 
-	<logger name="org.springframework.web" level="DEBUG" />
-<!--
-	<appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
-		<dsn>http://83f9fdd1faa84898a4fc200f190018bd:03b33603744a412881501e0e3a872a0d@localhost:9000/1?options
-		</dsn>
-		<tags>tag1:value1,tag2:value2</tags>
-	</appender>
-	<root level="error">
-		<appender-ref ref="Sentry" />
-	</root>
-	
 	<appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
 		<dsn>https://221d627487f94e779a9e31d7fe267dcc:6ea8defd7d694503b7491f9af6b5ee2e@sentry.io/110982?options
 		</dsn>
 		<tags>tag1:value1,tag2:value2</tags>
+		<!-- Optional, allows to select the ravenFactory -->
+		<!--<ravenFactory>com.getsentry.raven.DefaultRavenFactory</ravenFactory> -->
 	</appender>
-	<root level="error">
+	<root level="warn">
 		<appender-ref ref="Sentry" />
 	</root>
--->
 </configuration>
-
