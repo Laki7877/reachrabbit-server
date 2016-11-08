@@ -3,7 +3,6 @@ package com.ahancer.rr.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +25,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/auth")
 public class AuthenticationController extends AbstractController {
 	
-	private static final Logger logger = Logger.getLogger(AuthenticationController.class);
+	//private static final Logger logger = Logger.getLogger(AuthenticationController.class);
 	
 	@Autowired
 	private HttpServletRequest request;
@@ -80,9 +79,6 @@ public class AuthenticationController extends AbstractController {
 	@RequestMapping(value = "/admin" ,method = RequestMethod.POST)
 	public AuthenticationResponse adminAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
 			throws Exception {
-		logger.info("Info");
-		logger.warn("Warning");
-		logger.error("Error");
 		AuthenticationResponse authen = authenticationService.adminAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword(),request.getRemoteAddr());
 		return authen;
 	}
