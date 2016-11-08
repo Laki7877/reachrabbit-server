@@ -4,11 +4,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ahancer.rr.annotations.Authorization;
+import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.request.AuthenticationRequest;
 import com.ahancer.rr.request.OAuthenticationRequest;
 import com.ahancer.rr.response.AuthenticationResponse;
@@ -87,6 +90,14 @@ public class AuthenticationController extends AbstractController {
 	public AuthenticationResponse influencerAuthenticationRequest(@Valid @RequestBody AuthenticationRequest authenticationRequest) 
 			throws Exception {
 		AuthenticationResponse authen = authenticationService.influencerEmailAuthentication(authenticationRequest.getEmail(), authenticationRequest.getPassword(),request.getRemoteAddr());
+		return authen;
+	}
+	
+	@ApiOperation(value = "Get login as token")
+	@RequestMapping(value="/{userId}/loginas", method=RequestMethod.GET)
+	@Authorization(Role.Admin)
+	public AuthenticationResponse getInfluencers(@PathVariable long userId) throws Exception {
+		AuthenticationResponse authen = authenticationService.adminLoginAs(userId, request.getRemoteAddr());
 		return authen;
 	}
 }
