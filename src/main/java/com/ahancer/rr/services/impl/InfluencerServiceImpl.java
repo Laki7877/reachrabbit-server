@@ -1,5 +1,7 @@
 package com.ahancer.rr.services.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.constants.ApplicationConstant;
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
@@ -62,6 +65,9 @@ public class InfluencerServiceImpl implements InfluencerService {
 		if(user == null || !Role.Influencer.equals(user.getRole())) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
+		List<ProposalStatus> proposalStatuses = new ArrayList<ProposalStatus>();
+		proposalStatuses.add(ProposalStatus.Working);
+		proposalStatuses.add(ProposalStatus.Complete);
 		for(InfluencerMedia link2 : user.getInfluencer().getInfluencerMedias()) {
 			boolean has = false;
 			for(InfluencerMedia link: request.getInfluencer().getInfluencerMedias()) {
@@ -73,7 +79,7 @@ public class InfluencerServiceImpl implements InfluencerService {
 				}
 			}
 			if(!has) {
-				if(proposalDao.countByInfluencerIdAndMediaMediaId(userId, link2.getMedia().getMediaId()) > 0) {
+				if(proposalDao.countByInfluencerIdAndMediaMediaIdAndStatusIn(userId, link2.getMedia().getMediaId(),proposalStatuses) > 0) {
 					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.has.proposals");
 				}
 			}
