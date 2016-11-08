@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+	<include resource="org/springframework/boot/logging/logback/base.xml" /> 
+	<logger name="org.springframework.web" level="DEBUG" />
 	<appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
 		<dsn>https://221d627487f94e779a9e31d7fe267dcc:6ea8defd7d694503b7491f9af6b5ee2e@sentry.io/110982?options
 		</dsn>
