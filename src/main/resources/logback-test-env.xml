@@ -7,7 +7,7 @@
 		<!-- Optional, allows to select the ravenFactory -->
 		<!--<ravenFactory>com.getsentry.raven.DefaultRavenFactory</ravenFactory> -->
 	</appender>
-	<root level="warn">
+	<root level="error">
 		<appender-ref ref="Sentry" />
 	</root>
 </configuration>
