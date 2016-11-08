@@ -1,5 +1,7 @@
 package com.ahancer.rr.controllers;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +15,9 @@ import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.UserDao;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.response.AuthenticationResponse;
 import com.ahancer.rr.response.UserResponse;
+import com.ahancer.rr.services.AuthenticationService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -21,6 +25,10 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/users")
 public class UserController extends AbstractController {
+	@Autowired
+	private AuthenticationService authenticationService;
+	@Autowired
+	private HttpServletRequest request;
 	@Autowired
 	private UserDao userDao;
 	@ApiOperation(value = "Get user from user id")
@@ -46,5 +54,13 @@ public class UserController extends AbstractController {
 			return userDao.findAllInfluencer(pageable);
 		}
 		return userDao.findAllInfluencer(search, pageable);
+	}
+	
+	@ApiOperation(value = "Get login as token")
+	@RequestMapping(value="/{userId}/loginas", method=RequestMethod.GET)
+	@Authorization(Role.Admin)
+	public AuthenticationResponse getInfluencers(@PathVariable long userId) throws Exception {
+		AuthenticationResponse authen = authenticationService.adminLoginAs(userId, request.getRemoteAddr());
+		return authen;
 	}
 }
