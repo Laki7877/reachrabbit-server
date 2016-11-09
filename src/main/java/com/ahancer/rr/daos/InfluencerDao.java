@@ -8,4 +8,6 @@ import com.ahancer.rr.models.Influencer;
 @Repository
 public interface InfluencerDao extends CrudRepository<Influencer, Long> {
 	
+	public Double findCommissionByInfluencerId(Long influencerId);
+	
 }

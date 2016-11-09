@@ -91,6 +91,9 @@ public class Influencer extends AbstractModel implements Serializable{
 	@Column(name="isVerify")
 	private Boolean isVerify;
 	
+	@Column(name="commission",scale=10,precision=2)
+	private Double commission;
+	
 	public Influencer() {
 
 	}
@@ -221,6 +224,14 @@ public class Influencer extends AbstractModel implements Serializable{
 
 	public void setIdCard(Resource idCard) {
 		this.idCard = idCard;
+	}
+
+	public Double getCommission() {
+		return commission;
+	}
+
+	public void setCommission(Double commission) {
+		this.commission = commission;
 	}
 	
 }

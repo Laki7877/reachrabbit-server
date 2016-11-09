@@ -32,6 +32,7 @@ import com.ahancer.rr.custom.type.TransactionStatus;
 import com.ahancer.rr.custom.type.TransactionType;
 import com.ahancer.rr.custom.type.WalletStatus;
 import com.ahancer.rr.daos.CampaignDao;
+import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.PostDao;
 import com.ahancer.rr.daos.ProposalDao;
 import com.ahancer.rr.daos.ProposalMessageDao;
@@ -65,6 +66,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional(rollbackFor=Exception.class)
 public class ProposalServiceImpl implements ProposalService {
 	private final static Long timeout = 60000L;
+	@Autowired
+	private InfluencerDao influencerDao;
 	@Autowired
 	private ProposalDao proposalDao;
 	@Autowired
@@ -298,8 +301,8 @@ public class ProposalServiceImpl implements ProposalService {
 	
 	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,UserResponse user,Locale locale) throws Exception {
 		Campaign campaign = campaignDao.findOne(campaignId);
-		Long influecnerId = user.getInfluencer().getInfluencerId();
-		long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influecnerId, campaign.getCampaignId());
+		Long influencerId = user.getInfluencer().getInfluencerId();
+		long count = proposalDao.countByInfluencerInfluencerIdAndCampaignCampaignId(influencerId, campaign.getCampaignId());
 		if(0 < count){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.already.proposal");
 		}
@@ -308,10 +311,14 @@ public class ProposalServiceImpl implements ProposalService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.campaign.proposal.expire");
 		}
 		proposal.setCampaign(campaign);
-		proposal.setInfluencerId(influecnerId);
+		proposal.setInfluencerId(influencerId);
 		proposal.setMessageUpdatedAt(new Date());
 		proposal.setStatus(ProposalStatus.Selection);
-		proposal.setFee(Math.floor(proposal.getPrice()*this.commission/100));
+		Double influencerCommission = influencerDao.findCommissionByInfluencerId(influencerId);
+		Double com = influencerCommission == null 
+				||  influencerCommission <= 0 
+				|| influencerCommission > 100 ? this.commission : influencerCommission;
+		proposal.setFee(Math.floor(proposal.getPrice()*com/100));
 		proposal.setRabbitFlag(false);
 		proposal.setHasPost(false);
 		proposal.setIsReferralPay(false);
@@ -323,7 +330,7 @@ public class ProposalServiceImpl implements ProposalService {
 		firstMessage.setMessage(proposal.getDescription());
 		firstMessage.setProposal(proposal);
 		firstMessage.setProposalId(proposal.getProposalId());
-		firstMessage.setUserId(influecnerId);
+		firstMessage.setUserId(influencerId);
 		firstMessage.setReferenceId(UUID.randomUUID().toString());
 		firstMessage = proposalMessageDao.save(firstMessage);
 		String to = campaign.getBrand().getUser().getEmail();
@@ -337,7 +344,8 @@ public class ProposalServiceImpl implements ProposalService {
 		return proposal;
 	}
 	
-	public ProposalResponse updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,Long influencerId, Locale local) throws Exception {
+	public ProposalResponse updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,UserResponse user, Locale local) throws Exception {
+		Long influencerId = user.getInfluencer().getInfluencerId();
 		Proposal oldProposal = proposalDao.findByProposalIdAndInfluencerId(proposalId,influencerId);
 		if(null == oldProposal){
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
@@ -345,13 +353,18 @@ public class ProposalServiceImpl implements ProposalService {
 		oldProposal.setMedia(proposal.getMedia());
 		oldProposal.setCompletionTime(proposal.getCompletionTime());
 		oldProposal.setPrice(proposal.getPrice());
-		oldProposal.setFee(Math.floor(oldProposal.getPrice()*0.18));
+		Double influencerCommission = influencerDao.findCommissionByInfluencerId(influencerId);
+		Double com = influencerCommission == null 
+				||  influencerCommission <= 0 
+				|| influencerCommission > 100 ? this.commission : influencerCommission;
+		oldProposal.setFee(Math.floor(proposal.getPrice()*com/100));
 		oldProposal.setDescription(proposal.getDescription());
 		//Insert robot message
 		ProposalMessage rebotMessage = new ProposalMessage();
 		rebotMessage.setIsBrandRead(false);
 		rebotMessage.setIsInfluencerRead(true);
-		String message = messageSource.getMessage("robot.proposal.message", null, local).replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
+		String message = messageSource.getMessage("robot.proposal.message", null, local)
+				.replace("{{Influencer Name}}", oldProposal.getInfluencer().getUser().getName());
 		rebotMessage.setMessage(message);
 		rebotMessage.setReferenceId(UUID.randomUUID().toString());
 		rebotMessage.setProposalId(proposal.getProposalId());

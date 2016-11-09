@@ -147,7 +147,7 @@ public class ProposalController extends AbstractController {
 	@Authorization(Role.Influencer)
 	public ProposalResponse updateProposal(@PathVariable Long proposalId,@RequestBody Proposal proposal
 			,@RequestHeader(value="Accept-Language",required=false,defaultValue="th") Locale locale) throws Exception {
-		ProposalResponse response = proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest().getInfluencer().getInfluencerId(),locale);
+		ProposalResponse response = proposalService.updateCampaignProposalByInfluencer(proposalId, proposal, this.getUserRequest(),locale);
 		proposalService.processInboxPolling(response.getInfluencerId());
 		proposalService.processInboxPolling(response.getCampaign().getBrandId());
 		proposalMessageService.processMessagePolling(proposalId);

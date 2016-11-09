@@ -26,6 +26,7 @@ import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.Referral;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.request.InfluencerCommissionRequest;
 import com.ahancer.rr.request.InfluencerSignUpRequest;
 import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
@@ -59,6 +60,8 @@ public class InfluencerServiceImpl implements InfluencerService {
 	private EncryptionUtil encrypt;
 	@Autowired
 	private ReferralDao referralDao;
+	@Value("${app.proposal.commission.percent}")
+	private Double defaultCommission;
 
 	public UserResponse updateInfluencerUser(Long userId, ProfileRequest request, String token) throws Exception {
 		User user = userDao.findOne(userId);
@@ -114,6 +117,7 @@ public class InfluencerServiceImpl implements InfluencerService {
 		influencer.setFullname(request.getInfluencer().getFullname());
 		influencer.setIdCardNumber(request.getInfluencer().getIdCardNumber());
 		influencer.setIdCard(request.getInfluencer().getIdCard());
+		influencer.setCommission(this.defaultCommission);
 		//Check if verify
 		influencer.setIsVerify(false);
 		if(StringUtils.isNotEmpty(influencer.getFullname())
@@ -142,6 +146,22 @@ public class InfluencerServiceImpl implements InfluencerService {
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
 		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+		return userResponse;
+	}
+	
+	public UserResponse updateCommission(InfluencerCommissionRequest commission, Long influencerId) throws Exception{
+		User oldUser = userDao.findOne(influencerId);
+		if(null == oldUser) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
+		}
+		if(null == commission.getCommission()
+				|| commission.getCommission() < 0
+				|| commission.getCommission() > 100) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.invalid.commission");
+		}
+		oldUser.getInfluencer().setCommission(commission.getCommission());
+		User user = userDao.save(oldUser);
+		UserResponse userResponse = Util.getUserResponse(user);
 		return userResponse;
 	}
 
@@ -191,6 +211,6 @@ public class InfluencerServiceImpl implements InfluencerService {
 		emailService.send(to, subject, body);
 
 		return user;
-	}
+	} 
 
 }
