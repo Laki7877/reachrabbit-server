@@ -213,14 +213,16 @@ public class ProposalServiceImpl implements ProposalService {
 	}
 	
 	public ProposalCountResponse countByBrand(Long brandId, ProposalStatus status) throws Exception {
-		Long proposalCount = proposalDao.countByCampaignBrandIdAndStatus(brandId, status);
-		Long unreadBrand = proposalMessageDao.countByProposalCampaignBrandIdAndIsBrandReadFalseAndProposalStatus(brandId, status);
+		Date date = Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		Long proposalCount = proposalDao.countByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(brandId, status,date);
+		Long unreadBrand = proposalMessageDao.countByProposalCampaignBrandIdAndIsBrandReadFalseAndProposalStatusAndProposalMessageUpdatedAtAfter(brandId, status, date);
 		return new ProposalCountResponse(proposalCount,unreadBrand);
 	}
 	
 	public ProposalCountResponse countByInfluencer(Long influencerId, ProposalStatus status) throws Exception {
-		Long proposalCount = proposalDao.countByInfluencerInfluencerIdAndStatus(influencerId, status);
-		Long unreadInfluencer = proposalMessageDao.countByProposalInfluencerIdAndIsInfluencerReadFalseAndProposalStatus(influencerId,status);
+		Date date = Date.from(LocalDate.now().minusDays(activeDay).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		Long proposalCount = proposalDao.countByInfluencerInfluencerIdAndStatusAndMessageUpdatedAtAfter(influencerId, status,date);
+		Long unreadInfluencer = proposalMessageDao.countByProposalInfluencerIdAndIsInfluencerReadFalseAndProposalStatusAndProposalMessageUpdatedAtAfter(influencerId,status,date);
 		return new ProposalCountResponse(proposalCount,unreadInfluencer);
 	}
 	
