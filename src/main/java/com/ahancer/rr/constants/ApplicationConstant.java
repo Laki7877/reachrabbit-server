@@ -13,6 +13,9 @@ public final class ApplicationConstant {
 	public final static String UserRequestCache = "UserRequestCache";
 	public final static String TemporaryFolder = "temporary";
 	public final static String DashboardRequestCache = "DashboardRequestCache";
+	public final static String MDCUserKey = "User";
+	public final static String MDCBrowserKey = "Browser";
+	public final static String MDCUserSystem = "ReachRabbitSys";
 	
 	
 	public static String Bucket;

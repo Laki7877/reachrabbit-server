@@ -43,21 +43,25 @@ public class ResponseExceptionHandler  {
 			FieldError error = result.getFieldError();
 			String msg = messageSource.getMessage(error.getDefaultMessage(),null,locale);
 			responseEx = new ResponseException(HttpStatus.BAD_REQUEST, msg);
-		}else if(ex instanceof ResponseException) {
+		} else if(ex instanceof ResponseException) {
 			responseEx = (ResponseException)ex;
 			String msg = messageSource.getMessage(responseEx.getMessage(),null,locale);
 			responseEx.setMessage(msg);
-		}else {
-			if(null != request){
+		} else {
+			if(null != request) {
 				Object user = request.getAttribute(ApplicationConstant.UserRequest);
-				if(user instanceof UserResponse){
-					UserResponse userResponse = (UserResponse)user;
-					MDC.put("User", userResponse.getEmail());
+				if(null != user && user instanceof UserResponse) {
+					UserResponse userResponse = (UserResponse) user;
+					MDC.put(ApplicationConstant.MDCUserKey, userResponse.getEmail());
+				} else {
+					MDC.put(ApplicationConstant.MDCUserKey, ApplicationConstant.MDCUserSystem);
 				}
 				String browserName = request.getHeader(ApplicationConstant.UserAgentHeader);
 				if(StringUtils.isNotEmpty(browserName)){
-					 MDC.put("Browser", browserName);
+					 MDC.put(ApplicationConstant.MDCBrowserKey, browserName);
 				}
+			} else {
+				MDC.put(ApplicationConstant.MDCUserKey, ApplicationConstant.MDCUserSystem);
 			}
 			logger.error("Exception caught",ex);
 			responseEx = new ResponseException(ex.getMessage()); 

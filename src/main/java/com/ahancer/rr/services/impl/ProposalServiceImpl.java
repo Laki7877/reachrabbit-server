@@ -72,7 +72,7 @@ public class ProposalServiceImpl implements ProposalService {
 	private ProposalDao proposalDao;
 	@Autowired
 	private ProposalMessageDao proposalMessageDao;
-	private final int activeDay = 21;
+	
 	@Autowired
 	private CampaignDao campaignDao;
 	@Autowired
@@ -91,6 +91,8 @@ public class ProposalServiceImpl implements ProposalService {
 	private PostDao postDao;
 	@Autowired
 	private EmailService emailService;
+	@Value("${app.proposal.inbox.message.day}")
+	private Integer activeDay;
 	@Autowired
 	private CacheUtil cacheUtil;
 	@Value("${ui.host}")
