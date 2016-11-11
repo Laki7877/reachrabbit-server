@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<include resource="org/springframework/boot/logging/logback/base.xml" /> 
-	<logger name="org.springframework.web" level="DEBUG" />
-<!--
-	<appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
-		<dsn>http://83f9fdd1faa84898a4fc200f190018bd:03b33603744a412881501e0e3a872a0d@localhost:9000/1?options
-		</dsn>
-		<tags>tag1:value1,tag2:value2</tags>
-	</appender>
-	<root level="error">
-		<appender-ref ref="Sentry" />
-	</root>
-	
 	<appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
 		<dsn>https://221d627487f94e779a9e31d7fe267dcc:6ea8defd7d694503b7491f9af6b5ee2e@sentry.io/110982?options
 		</dsn>
+		<!-- Optional, provide release version of your application -->
+		<release>v3.0.0</release>
+		<!-- Optional, provide environment your application is running in -->
+		<environment>development</environment>
+		<!-- Optional, override the server name (rather than looking it up dynamically) -->
+		<serverName>bella</serverName>
+		<!-- Optional, provide tags -->
 		<tags>tag1:value1,tag2:value2</tags>
+		<!-- Optional, provide tag names to be extracted from MDC when using SLF4J -->
+		<extraTags>User,Browser,ProposalId,MediaId</extraTags>
 	</appender>
 	<root level="error">
 		<appender-ref ref="Sentry" />
 	</root>
--->
 </configuration>
 

@@ -6,9 +6,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,6 @@ import com.ahancer.rr.models.Post;
 import com.ahancer.rr.models.Proposal;
 import com.ahancer.rr.request.PostRequest;
 import com.ahancer.rr.response.UpdatePostResponse;
-import com.ahancer.rr.services.EmailService;
 import com.ahancer.rr.services.FacebookService;
 import com.ahancer.rr.services.InstagramService;
 import com.ahancer.rr.services.PostService;
@@ -32,6 +33,9 @@ import com.ahancer.rr.services.YoutubeService;
 @Component
 @Transactional(rollbackFor=Exception.class)
 public class PostServiceImpl implements PostService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
+	
 	@Autowired
 	private PostDao postDao;
 	@Autowired
@@ -42,8 +46,6 @@ public class PostServiceImpl implements PostService {
 	private InstagramService instagramService;
 	@Autowired
 	private YoutubeService youtubeService;
-	@Autowired
-	private EmailService emailService;
 	@Value("${app.dashboard.history.days}")
 	private Integer historyDays;
 
@@ -211,8 +213,10 @@ public class PostServiceImpl implements PostService {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				String trace = ExceptionUtils.getStackTrace(e);
-				emailService.send("laki7877@gmail.com", "Stack trace update post information", trace);
+				MDC.put("User", "system");
+				MDC.put("ProposalId", postModel.getProposalId().toString());
+				MDC.put("MediaId", postModel.getMediaId());
+				logger.error("Exception caught",e);
 			}
 		}
 	}
