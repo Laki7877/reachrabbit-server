@@ -15,7 +15,7 @@
 		<!-- Optional, provide tag names to be extracted from MDC when using SLF4J -->
 		<extraTags>User,Browser,ProposalId,MediaId</extraTags>
 	</appender>
-	<root level="error">
+	<root level="warn">
 		<appender-ref ref="Sentry" />
 	</root>
 </configuration>
