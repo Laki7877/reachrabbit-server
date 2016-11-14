@@ -36,7 +36,7 @@ public interface ProposalService {
 	public Page<ProposalResponse> findAllByAdmin(ProposalStatus status, String search, Pageable pageable) throws Exception;
 	public Page<Proposal> findAll(Pageable pageable) throws Exception;
 	public Proposal createCampaignProposalByInfluencer(Long campaignId, Proposal proposal,UserResponse user,Locale locale) throws Exception;
-	public ProposalResponse updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,Long influencerId, Locale local) throws Exception;
+	public ProposalResponse updateCampaignProposalByInfluencer(Long proposalId, Proposal proposal,UserResponse user, Locale local) throws Exception;
 	public ProposalResponse updateProposalStatusByBrand(Long proposalId,ProposalStatus status, Long brandId, Locale locale) throws Exception;
 	public Proposal getAppliedProposal(Long influencerId, Long campaignId) throws Exception;
 	public void dismissProposalNotification(Long proposalId, Long influencerId) throws Exception;

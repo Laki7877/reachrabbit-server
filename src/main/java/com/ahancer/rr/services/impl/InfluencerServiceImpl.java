@@ -1,5 +1,7 @@
 package com.ahancer.rr.services.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ahancer.rr.constants.ApplicationConstant;
+import com.ahancer.rr.custom.type.ProposalStatus;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.daos.InfluencerDao;
 import com.ahancer.rr.daos.InfluencerMediaDao;
@@ -23,6 +26,7 @@ import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.models.InfluencerMediaId;
 import com.ahancer.rr.models.Referral;
 import com.ahancer.rr.models.User;
+import com.ahancer.rr.request.InfluencerCommissionRequest;
 import com.ahancer.rr.request.InfluencerSignUpRequest;
 import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
@@ -56,12 +60,17 @@ public class InfluencerServiceImpl implements InfluencerService {
 	private EncryptionUtil encrypt;
 	@Autowired
 	private ReferralDao referralDao;
+	@Value("${app.proposal.commission.percent}")
+	private Double defaultCommission;
 
 	public UserResponse updateInfluencerUser(Long userId, ProfileRequest request, String token) throws Exception {
 		User user = userDao.findOne(userId);
 		if(user == null || !Role.Influencer.equals(user.getRole())) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
 		}
+		List<ProposalStatus> proposalStatuses = new ArrayList<ProposalStatus>();
+		proposalStatuses.add(ProposalStatus.Working);
+		proposalStatuses.add(ProposalStatus.Complete);
 		for(InfluencerMedia link2 : user.getInfluencer().getInfluencerMedias()) {
 			boolean has = false;
 			for(InfluencerMedia link: request.getInfluencer().getInfluencerMedias()) {
@@ -73,7 +82,7 @@ public class InfluencerServiceImpl implements InfluencerService {
 				}
 			}
 			if(!has) {
-				if(proposalDao.countByInfluencerIdAndMediaMediaId(userId, link2.getMedia().getMediaId()) > 0) {
+				if(proposalDao.countByInfluencerIdAndMediaMediaIdAndStatusIn(userId, link2.getMedia().getMediaId(),proposalStatuses) > 0) {
 					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.has.proposals");
 				}
 			}
@@ -108,6 +117,7 @@ public class InfluencerServiceImpl implements InfluencerService {
 		influencer.setFullname(request.getInfluencer().getFullname());
 		influencer.setIdCardNumber(request.getInfluencer().getIdCardNumber());
 		influencer.setIdCard(request.getInfluencer().getIdCard());
+		influencer.setCommission(this.defaultCommission);
 		//Check if verify
 		influencer.setIsVerify(false);
 		if(StringUtils.isNotEmpty(influencer.getFullname())
@@ -136,6 +146,22 @@ public class InfluencerServiceImpl implements InfluencerService {
 		User user = userDao.save(oldUser);
 		UserResponse userResponse = Util.getUserResponse(user);
 		cacheUtil.updateCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+		return userResponse;
+	}
+	
+	public UserResponse updateCommission(InfluencerCommissionRequest commission, Long influencerId) throws Exception{
+		User oldUser = userDao.findOne(influencerId);
+		if(null == oldUser) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.not.found");
+		}
+		if(null == commission.getCommission()
+				|| commission.getCommission() < 0
+				|| commission.getCommission() > 100) {
+			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.invalid.commission");
+		}
+		oldUser.getInfluencer().setCommission(commission.getCommission());
+		User user = userDao.save(oldUser);
+		UserResponse userResponse = Util.getUserResponse(user);
 		return userResponse;
 	}
 
@@ -185,6 +211,6 @@ public class InfluencerServiceImpl implements InfluencerService {
 		emailService.send(to, subject, body);
 
 		return user;
-	}
+	} 
 
 }

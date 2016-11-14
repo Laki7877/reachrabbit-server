@@ -100,5 +100,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return response;
 		}
 	}
+	
+	public AuthenticationResponse adminLoginAs(long userId, String ip ) throws Exception {
+		User user = userDao.findOne(userId);
+		if(null == user){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.unauthorize");
+		} else {
+			TokenResponse tokenObject = new TokenResponse(user.getUserId(),ip,new Date());
+			String token = EncodeUtil.encodeObject(tokenObject);
+			UserResponse userResponse = Util.getUserResponse(user);
+			cacheUtil.putCacheObject(ApplicationConstant.UserRequestCache, token, userResponse);
+			AuthenticationResponse response = new AuthenticationResponse(token);
+			return response;
+		}
+	}
 
 }

@@ -4,11 +4,17 @@ import java.io.File;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.connector.Connector;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,7 +40,7 @@ import com.ahancer.rr.filter.AuthorizationFilter;
 @EnableAsync
 @EnableScheduling
 public class ReachrabbitServerApplication extends WebMvcConfigurerAdapter implements SchedulingConfigurer,AsyncConfigurer, CommandLineRunner {
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(ReachrabbitServerApplication.class, args);
 	}
@@ -53,7 +59,7 @@ public class ReachrabbitServerApplication extends WebMvcConfigurerAdapter implem
 		source.setUseCodeAsDefaultMessage(true);
 		return source;
 	}
-
+	
 	@Override
 	public Executor getAsyncExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

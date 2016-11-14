@@ -24,24 +24,26 @@ public class AuthorizationFilter implements HandlerInterceptor {
 			throws Exception {
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		com.ahancer.rr.annotations.Authorization role = handlerMethod.getMethodAnnotation(com.ahancer.rr.annotations.Authorization.class);
-		
+
 		if(role != null) {
 			UserResponse user = (UserResponse) request.getAttribute(ApplicationConstant.UserRequest);
-			if(0 == role.value().length) {
-				// Check with all roles
-				Role[] roles = Role.values();
-				if(ArrayUtils.contains(roles, user.getRole())) {
-					return true; 
+			if(null != user) {
+				if(0 == role.value().length) {
+					// Check with all roles
+					Role[] roles = Role.values();
+					if(ArrayUtils.contains(roles, user.getRole())) {
+						return true; 
+					}
+				} else if(ArrayUtils.contains(role.value(), user.getRole())) {
+					// found role
+					return true;
 				}
-			} else if(ArrayUtils.contains(role.value(), user.getRole())) {
-				// found role
-				return true;
 			}
 		} else {
 			// no annotation, so just pass on
 			return true;
 		}
-		
+
 		// Some authentication error by role
 		response.sendError(405);
 		return false;
@@ -51,14 +53,14 @@ public class AuthorizationFilter implements HandlerInterceptor {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

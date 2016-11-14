@@ -8,10 +8,14 @@ public final class ApplicationConstant {
 	
 	public final static String UserRequest = "UserRequest";
 	public final static String TokenAttribute = "UserToken";
+	public final static String UserAgentHeader = "User-Agent";
 	public final static String TokenHeader = "X-Auth-Token";
 	public final static String UserRequestCache = "UserRequestCache";
 	public final static String TemporaryFolder = "temporary";
 	public final static String DashboardRequestCache = "DashboardRequestCache";
+	public final static String MDCUserKey = "User";
+	public final static String MDCBrowserKey = "Browser";
+	public final static String MDCUserSystem = "ReachRabbitSys";
 	
 	
 	public static String Bucket;

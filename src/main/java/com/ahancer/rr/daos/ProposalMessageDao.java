@@ -20,9 +20,9 @@ import com.ahancer.rr.response.ProposalMessageResponse;
 @Repository
 public interface ProposalMessageDao extends CrudRepository<ProposalMessage, Long> {
 	
-	public Long countByProposalCampaignBrandIdAndIsBrandReadFalseAndProposalStatus(Long brandId,ProposalStatus status);
+	public Long countByProposalCampaignBrandIdAndIsBrandReadFalseAndProposalStatusAndProposalMessageUpdatedAtAfter(Long brandId,ProposalStatus status, Date date);
 	public Long countByProposalCampaignBrandIdAndIsBrandReadFalse(Long brandId);
-	public Long countByProposalInfluencerIdAndIsInfluencerReadFalseAndProposalStatus(Long influencerId,ProposalStatus status);
+	public Long countByProposalInfluencerIdAndIsInfluencerReadFalseAndProposalStatusAndProposalMessageUpdatedAtAfter(Long influencerId,ProposalStatus status, Date date);
 	
 	public Long countByProposalInfluencerIdAndIsInfluencerReadFalse(Long influencerId);
 	public Long countByProposalProposalIdAndProposalCampaignBrandIdAndIsBrandReadFalse(Long proposalId, Long brandId);

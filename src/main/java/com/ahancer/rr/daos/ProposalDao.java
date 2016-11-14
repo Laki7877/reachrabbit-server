@@ -93,7 +93,7 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	
 	public Long countByProposalIdAndCampaignBrandId(Long proposalId,Long brandId);
 	
-	public Long countByInfluencerInfluencerIdAndStatus(Long influencerId, ProposalStatus status);
+	public Long countByInfluencerInfluencerIdAndStatusAndMessageUpdatedAtAfter(Long influencerId, ProposalStatus status, Date date);
 	
 	public Long countByStatus(ProposalStatus status);
 	
@@ -115,12 +115,12 @@ public interface ProposalDao extends CrudRepository<Proposal, Long> {
 	public Page<Proposal> findAllByCampaignBrandUserReferralReferralIdNotNullAndSearch(@Param("statuses") Collection<ProposalStatus> statuses,@Param("search") String search, Pageable pageable);
 	
 	
-	public Long countByCampaignBrandIdAndStatus(Long brandId, ProposalStatus status);
+	public Long countByCampaignBrandIdAndStatusAndMessageUpdatedAtAfter(Long brandId, ProposalStatus status,Date date);
 	public Long countByCampaignBrandIdAndInfluencerId(Long brandId, Long influencerId);
 	
 	public Long countByCampaignBrandUserReferralReferralIdAndStatusIn(String referralId,Collection<ProposalStatus> statuses);
 	
-	public Long countByInfluencerIdAndMediaMediaId(Long influencerId, String mediaId);
+	public Long countByInfluencerIdAndMediaMediaIdAndStatusIn(Long influencerId, String mediaId,Collection<ProposalStatus> statuses);
 	
 	@Modifying
 	@Query("UPDATE proposal cp SET messageUpdatedAt=:messageUpdatedAt "

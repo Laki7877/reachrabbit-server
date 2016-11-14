@@ -3,11 +3,18 @@
 	<appender name="Sentry" class="com.getsentry.raven.logback.SentryAppender">
 		<dsn>https://221d627487f94e779a9e31d7fe267dcc:6ea8defd7d694503b7491f9af6b5ee2e@sentry.io/110982?options
 		</dsn>
+		<!-- Optional, provide release version of your application -->
+		<release>v3.0.0</release>
+		<!-- Optional, provide environment your application is running in -->
+		<environment>test</environment>
+		<!-- Optional, override the server name (rather than looking it up dynamically) -->
+		<serverName>edward</serverName>
+		<!-- Optional, provide tags -->
 		<tags>tag1:value1,tag2:value2</tags>
-		<!-- Optional, allows to select the ravenFactory -->
-		<!--<ravenFactory>com.getsentry.raven.DefaultRavenFactory</ravenFactory> -->
+		<!-- Optional, provide tag names to be extracted from MDC when using SLF4J -->
+		<extraTags>User,Browser,ProposalId,MediaId</extraTags>
 	</appender>
-	<root level="error">
+	<root level="warn">
 		<appender-ref ref="Sentry" />
 	</root>
 </configuration>

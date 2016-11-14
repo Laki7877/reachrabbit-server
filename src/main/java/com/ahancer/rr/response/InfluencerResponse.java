@@ -32,6 +32,7 @@ public class InfluencerResponse implements Serializable {
 	private String idCardNumber;
 	private Boolean isVerify;
 	private Resource idCard;
+	private Double commission;
 	
 	public InfluencerResponse(){
 		
@@ -47,6 +48,11 @@ public class InfluencerResponse implements Serializable {
 			case Admin:
 				user.setEmail(influencer.getUser().getEmail());
 				user.setPhoneNumber(influencer.getUser().getPhoneNumber());
+				this.fullname = influencer.getFullname();
+				this.address = influencer.getAddress();
+				this.idCardNumber = influencer.getIdCardNumber();
+				this.idCard = influencer.getIdCard();
+				this.commission = influencer.getCommission();
 				break;
 			case Brand:
 				break;
@@ -57,6 +63,7 @@ public class InfluencerResponse implements Serializable {
 				this.address = influencer.getAddress();
 				this.idCardNumber = influencer.getIdCardNumber();
 				this.idCard = influencer.getIdCard();
+				this.commission = influencer.getCommission();
 				break;
 			default:
 				break;
@@ -201,6 +208,14 @@ public class InfluencerResponse implements Serializable {
 
 	public void setIdCard(Resource idCard) {
 		this.idCard = idCard;
+	}
+
+	public Double getCommission() {
+		return commission;
+	}
+
+	public void setCommission(Double commission) {
+		this.commission = commission;
 	}
 
 }
