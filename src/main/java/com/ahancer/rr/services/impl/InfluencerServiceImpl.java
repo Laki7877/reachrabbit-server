@@ -121,7 +121,6 @@ public class InfluencerServiceImpl implements InfluencerService {
 		influencer.setFullname(request.getInfluencer().getFullname());
 		influencer.setIdCardNumber(request.getInfluencer().getIdCardNumber());
 		influencer.setIdCard(request.getInfluencer().getIdCard());
-		influencer.setCommission(this.defaultCommission);
 		//Check if verify
 		influencer.setIsVerify(false);
 		if(StringUtils.isNotEmpty(influencer.getFullname())
@@ -196,6 +195,7 @@ public class InfluencerServiceImpl implements InfluencerService {
 		influencer.setIsVerify(false);
 		influencer.setInfluencerId(user.getUserId());
 		influencer.setInfluencerMedias(request.getInfluencerMedia());
+		influencer.setCommission(this.defaultCommission);
 		//Check if media link exists
 		for(InfluencerMedia link : influencer.getInfluencerMedias()) {
 			if(influencerMediaDao.countByMediaIdAndSocialId(link.getMedia().getMediaId(), link.getSocialId()) > 0) {
