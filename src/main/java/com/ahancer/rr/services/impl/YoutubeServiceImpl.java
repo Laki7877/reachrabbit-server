@@ -157,7 +157,7 @@ public class YoutubeServiceImpl implements YoutubeService {
 		
 		Channel channel = channelsList.get(0);
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
-		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getSnippet().getTitle(), null, channel.getStatistics().getSubscriberCount()));
+		pages.add(new OAuthenticationResponse.Page(channel.getId(), channel.getSnippet().getTitle(), null, channel.getStatistics().getSubscriberCount(), false));
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(channel.getId(), "google", ip);
 		
