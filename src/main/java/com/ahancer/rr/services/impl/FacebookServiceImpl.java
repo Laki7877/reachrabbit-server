@@ -94,6 +94,7 @@ public class FacebookServiceImpl implements FacebookService {
 		
 		//New facebook profile object
 		FacebookProfileResponse resp = new FacebookProfileResponse();
+		resp.setIsPage(true);
 		
 		resp.setId(page.getId());
 		resp.setName(page.getName());
