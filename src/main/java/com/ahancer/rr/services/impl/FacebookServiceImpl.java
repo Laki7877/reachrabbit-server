@@ -162,7 +162,7 @@ public class FacebookServiceImpl implements FacebookService {
 		if(accounts.size() == 0) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.facebook.nopage");
 		}
-		String profilePic = "https://graph.facebook.com/"+fbUser.getId()+"/picture"; 
+		String profilePic = "https://graph.facebook.com/"+fbUser.getId()+"/picture?type=large"; 
 		pages.add(new OAuthenticationResponse.Page(null,fbUser.getName(),profilePic,BigInteger.valueOf(1),false));
 		for(Account account : accounts) {
 			Page page = fb.fetchObject(account.getId(), Page.class, "engagement", "name", "picture.type(large)", "id");
