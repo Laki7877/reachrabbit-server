@@ -177,9 +177,9 @@ public class TransactionServiceImpl implements TransactionService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.invalid.status");
 		}
 		Date now = new Date();
-		if(now.after(transaction.getExpiredAt())){
-			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.expired");
-		}
+//		if(now.after(transaction.getExpiredAt())){
+//			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.transaction.expired");
+//		}
 		//update transaction status
 		transaction.setCompletedAt(now);
 		transaction.setStatus(TransactionStatus.Complete);
