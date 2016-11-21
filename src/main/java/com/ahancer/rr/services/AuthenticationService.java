@@ -14,4 +14,5 @@ public interface AuthenticationService {
 	public User getUserById(Long userId) throws Exception;
 	public AuthenticationResponse influencerEmailAuthentication(String email, String password, String ip) throws Exception;
 	public AuthenticationResponse adminLoginAs(long userId, String ip ) throws Exception;
+	public void logout(String token) throws Exception;
 }
