@@ -213,7 +213,7 @@ public class InstagramServiceImpl implements InstagramService {
 
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(userInfo.getId(), "instagram", ip);
 		List<OAuthenticationResponse.Page> pages = new ArrayList<OAuthenticationResponse.Page>();
-		pages.add(new OAuthenticationResponse.Page(userInfo.getId(), userInfo.getFullName(), userInfo.getProfilePicture(), BigInteger.valueOf(userInfo.getCounts().getFollowedBy())));
+		pages.add(new OAuthenticationResponse.Page(userInfo.getId(), userInfo.getFullName(), userInfo.getProfilePicture(), BigInteger.valueOf(userInfo.getCounts().getFollowedBy()),false));
 
 		if(auth == null) {
 			OAuthenticationResponse oauth = new OAuthenticationResponse();

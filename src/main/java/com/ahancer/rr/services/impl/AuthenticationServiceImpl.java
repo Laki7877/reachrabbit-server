@@ -115,4 +115,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 	}
 
+	public void logout(String token) throws Exception {
+		cacheUtil.removeCacheObject(ApplicationConstant.UserRequestCache, token);
+	}
+
 }

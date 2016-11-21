@@ -26,13 +26,15 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 		private String name;
 		private BigInteger count;
 		private String picture;
+		private Boolean isPage;
 		
-		public Page(String id, String name, String picture, BigInteger count) {
+		public Page(String id, String name, String picture, BigInteger count, Boolean isPage) {
 			super();
 			this.id = id;
 			this.count = count;
 			this.name = name;
 			this.picture = picture;
+			this.isPage = isPage;
 		}
 		
 		public BigInteger getCount() {
@@ -63,6 +65,14 @@ public class OAuthenticationResponse extends AuthenticationResponse implements S
 
 		public void setPicture(String picture) {
 			this.picture = picture;
+		}
+
+		public Boolean getIsPage() {
+			return isPage;
+		}
+
+		public void setIsPage(Boolean isPage) {
+			this.isPage = isPage;
 		}	
 	}
 	

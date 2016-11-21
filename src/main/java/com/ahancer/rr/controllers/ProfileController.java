@@ -2,6 +2,7 @@ package com.ahancer.rr.controllers;
 
 import javax.validation.Valid;
 
+import org.parboiled.common.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahancer.rr.annotations.Authorization;
 import com.ahancer.rr.custom.type.Role;
 import com.ahancer.rr.exception.ResponseException;
+import com.ahancer.rr.models.InfluencerMedia;
 import com.ahancer.rr.request.InstagramAuthenticationRequest;
 import com.ahancer.rr.request.PayoutRequest;
 import com.ahancer.rr.request.ProfileRequest;
@@ -69,8 +71,23 @@ public class ProfileController extends AbstractController{
 		if(!Role.Influencer.equals(user.getRole())) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.user.not.found");
 		}
+		
 		String pageId = user.getPageId("facebook");
-		return facebookService.getProfile(pageId);
+		FacebookProfileResponse response = null;
+		if(StringUtils.isNotEmpty(pageId)){
+			response = facebookService.getProfile(pageId);
+		} else {
+			response = new FacebookProfileResponse();
+			response.setIsPage(false);
+			response.setName(user.getName());
+			for(InfluencerMedia media : user.getInfluencer().getInfluencerMedias()){
+				if("facebook".equals(media.getMedia().getMediaId())) {
+					response.setLink("https://facebook.com/" + media.getSocialId());
+					break;
+				}
+			}
+		}
+		return response;
 	}
 	@ApiOperation(value = "Get instagram current profile")
 	@RequestMapping(value="/instagram", method=RequestMethod.GET)

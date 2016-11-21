@@ -24,7 +24,9 @@ public class CacheUtil {
 	}
 	public void removeCacheObject(String cacheName,Object key) {
 		Cache cache = cacheManager.getCache(cacheName);
-		cache.putIfAbsent(key, null);
+		if(null != cache){
+			cache.putIfAbsent(key, null);
+		}
 	}
 	public void updateCacheObject(String cacheName,Object key,Object newValue) {
 		removeCacheObject(cacheName,key);

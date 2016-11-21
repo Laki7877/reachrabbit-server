@@ -81,6 +81,8 @@ public class FacebookProfileResponse implements Serializable{
 	
 	private List<Post> posts;
 	
+	private Boolean isPage;
+	
 	
 	public BigInteger getAverageLikes() {
 		return averageLikes;
@@ -136,5 +138,10 @@ public class FacebookProfileResponse implements Serializable{
 	public void setPosts(List<Post> posts) {
 		this.posts = posts;
 	}
-	
+	public Boolean getIsPage() {
+		return isPage;
+	}
+	public void setIsPage(Boolean isPage) {
+		this.isPage = isPage;
+	}
 }

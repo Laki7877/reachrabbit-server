@@ -16,7 +16,9 @@ public final class ApplicationConstant {
 	public final static String MDCUserKey = "User";
 	public final static String MDCBrowserKey = "Browser";
 	public final static String MDCUserSystem = "ReachRabbitSys";
-	
+	public final static String MDCErrorCodeKey = "ErrorCode";
+	public final static String MDCRequestPathKey = "Path";
+	public final static String MDCRequestBodyKey = "Body";
 	
 	public static String Bucket;
 

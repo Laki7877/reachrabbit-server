@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.parboiled.common.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,22 +50,26 @@ public class ResponseExceptionHandler  {
 			responseEx.setMessage(msg);
 		} else {
 			if(null != request) {
+				MDC.put(ApplicationConstant.MDCRequestPathKey, request.getPathInfo());
 				Object user = request.getAttribute(ApplicationConstant.UserRequest);
 				if(null != user && user instanceof UserResponse) {
 					UserResponse userResponse = (UserResponse) user;
 					MDC.put(ApplicationConstant.MDCUserKey, userResponse.getEmail());
-				} else {
-					MDC.put(ApplicationConstant.MDCUserKey, ApplicationConstant.MDCUserSystem);
 				}
 				String browserName = request.getHeader(ApplicationConstant.UserAgentHeader);
 				if(StringUtils.isNotEmpty(browserName)){
 					 MDC.put(ApplicationConstant.MDCBrowserKey, browserName);
 				}
+				
 			} else {
 				MDC.put(ApplicationConstant.MDCUserKey, ApplicationConstant.MDCUserSystem);
 			}
+			String errorCode = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
+			MDC.put(ApplicationConstant.MDCErrorCodeKey, errorCode);
 			logger.error("Exception caught",ex);
-			responseEx = new ResponseException(ex.getMessage()); 
+			String msg = messageSource.getMessage("error.external",null,locale);
+			msg = "["+ errorCode + "] " + msg;
+			responseEx = new ResponseException(msg);
 		}
 		return new ResponseEntity<>(responseEx.getResponseMessage(), responseEx.getStatusCode());
 	}

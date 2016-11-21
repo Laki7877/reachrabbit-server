@@ -94,6 +94,7 @@ public class FacebookServiceImpl implements FacebookService {
 		
 		//New facebook profile object
 		FacebookProfileResponse resp = new FacebookProfileResponse();
+		resp.setIsPage(true);
 		
 		resp.setId(page.getId());
 		resp.setName(page.getName());
@@ -161,11 +162,12 @@ public class FacebookServiceImpl implements FacebookService {
 		if(accounts.size() == 0) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.influencer.media.facebook.nopage");
 		}
-		
+		String profilePic = "https://graph.facebook.com/"+fbUser.getId()+"/picture?type=large"; 
+		pages.add(new OAuthenticationResponse.Page(null,fbUser.getName(),profilePic,BigInteger.valueOf(1),false));
 		for(Account account : accounts) {
 			Page page = fb.fetchObject(account.getId(), Page.class, "engagement", "name", "picture.type(large)", "id");
 			String url = ((LinkedHashMap<String, LinkedHashMap<String, String>>)page.getExtraData().get("picture")).get("data").get("url");
-			pages.add(new OAuthenticationResponse.Page(account.getId(), page.getName(), url, BigInteger.valueOf(page.getEngagement().getCount())));
+			pages.add(new OAuthenticationResponse.Page(account.getId(), page.getName(), url, BigInteger.valueOf(page.getEngagement().getCount()),true));
 		}
 		
 		AuthenticationResponse auth = authenticationService.influencerAuthentication(fbUser.getId(), "facebook", ip);
