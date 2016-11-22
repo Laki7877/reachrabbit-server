@@ -127,7 +127,22 @@ public class ProfileController extends AbstractController{
 	@RequestMapping(value="/{userId}/facebook", method=RequestMethod.GET)
 	public FacebookProfileResponse getFacebook(@PathVariable Long userId) throws Exception {
 		UserResponse user = userService.findUserById(this.getUserRequest().getUserId(),userId,this.getUserRequest().getRole());
-		return facebookService.getProfile(user.getPageId("facebook"));
+		String pageId = user.getPageId("facebook");
+		FacebookProfileResponse response = null;
+		if(StringUtils.isNotEmpty(pageId)){
+			response = facebookService.getProfile(pageId);
+		} else {
+			response = new FacebookProfileResponse();
+			response.setIsPage(false);
+			response.setName(user.getName());
+			for(InfluencerMedia media : user.getInfluencer().getInfluencerMedias()){
+				if("facebook".equals(media.getMedia().getMediaId())) {
+					response.setLink("https://facebook.com/" + media.getSocialId());
+					break;
+				}
+			}
+		}
+		return response;
 	}
 	@ApiOperation(value = "Get instagram user profile")
 	@RequestMapping(value="/{userId}/instagram", method=RequestMethod.GET)
