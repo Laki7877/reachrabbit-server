@@ -129,33 +129,37 @@ public class ProposalMessageServiceImpl implements ProposalMessageService {
 	}
 
 	public ProposalMessage createProposalMessage(Long proposalId, ProposalMessage message,Long userId,Role userRole) throws Exception {
+		ProposalMessage modal = new ProposalMessage();
+		modal.setIsInfluencerRead(false);
+		modal.setIsBrandRead(false);
+		modal.setMessage(message.getMessage());
+		modal.setReferenceId(message.getReferenceId());
+		modal.setResources(message.getResources());
 		int updateCount = 0;
-		message.setIsInfluencerRead(false);
-		message.setIsBrandRead(false);
 		if(Role.Influencer.equals(userRole)){
 			updateCount = proposalDao.updateMessageUpdatedAtByInfluencer(proposalId, userId,new Date());
-			message.setIsInfluencerRead(true);
-			message.setIsBrandRead(false);
+			modal.setIsInfluencerRead(true);
+			modal.setIsBrandRead(false);
 		}else if(Role.Brand.equals(userRole)){
 			long porposalCount = proposalDao.countByProposalIdAndCampaignBrandId(proposalId,userId);
 			if(0 >= porposalCount){
 				throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 			}
 			updateCount = proposalDao.updateMessageUpdatedAtByProposal(proposalId,new Date());
-			message.setIsInfluencerRead(false);
-			message.setIsBrandRead(true);
+			modal.setIsInfluencerRead(false);
+			modal.setIsBrandRead(true);
 		}else if(Role.Bot.equals(userRole)){
 			updateCount = proposalDao.updateMessageUpdatedAtByProposal(proposalId,new Date());
 		}
 		if(0 >= updateCount) {
 			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.proposal.not.exist");
 		}
-		message.setUserId(userId);
-		message.setProposalId(proposalId);
-		message = proposalMessageDao.save(message);
-		message.setUser(userDao.findOne(userId));
-		message.setProposal(proposalDao.findOne(proposalId));
-		return message;
+		modal.setUserId(userId);
+		modal.setProposalId(proposalId);
+		modal = proposalMessageDao.save(modal);
+		modal.setUser(userDao.findOne(userId));
+		modal.setProposal(proposalDao.findOne(proposalId));
+		return modal;
 	}
 
 	public Page<ProposalMessageResponse> findByProposalForBrand(Long proposalId, Long brandId, Date before, Pageable pageable) throws Exception {
