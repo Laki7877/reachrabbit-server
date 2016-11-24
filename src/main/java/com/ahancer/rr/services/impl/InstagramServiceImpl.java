@@ -180,9 +180,20 @@ public class InstagramServiceImpl implements InstagramService {
 		}
 		InstagramProfileResponse response = new InstagramProfileResponse();
 		response.setUsername(user.get("username").getAsString());
-		response.setName(user.get("full_name").getAsString());
-		response.setFollowers(user.get("followed_by").getAsJsonObject().get("count").getAsBigInteger());
-		response.setTotalPosts(media.get("count").getAsBigInteger());
+		if(user.has("full_name")){
+			response.setName(user.get("full_name").getAsString());
+		} else {
+			response.setName(response.getUsername());
+		}
+		if(user.has("followed_by")){
+			JsonObject followBy = user.get("followed_by").getAsJsonObject();
+			if(followBy.has("count")){
+				response.setFollowers(followBy.get("count").getAsBigInteger());
+			}
+		}
+		if(media.has("count")){
+			response.setTotalPosts(media.get("count").getAsBigInteger());
+		}
 		response.setAverageComments(BigInteger.valueOf(0L));
 		response.setAverageLikes(BigInteger.valueOf(0L));
 		if(0 != posts.size()) {

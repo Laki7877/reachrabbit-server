@@ -111,6 +111,9 @@ public class YoutubeServiceImpl implements YoutubeService {
 		YouTube.Channels.List chanlist = youtube.channels().list("snippet,contentDetails,statistics");
 		chanlist.setKey(apiKey).setId(channelId);
 		ChannelListResponse chanResult = chanlist.execute();
+		if(chanResult.getItems().size() == 0){
+			throw new ResponseException(HttpStatus.BAD_REQUEST,"error.profile.youtube.not.public");
+		}
 		Channel chan = chanResult.getItems().get(0);
 		
 		List<PlaylistItem> pl = new ArrayList<>();
