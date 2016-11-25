@@ -4,7 +4,7 @@
 		<dsn>https://221d627487f94e779a9e31d7fe267dcc:6ea8defd7d694503b7491f9af6b5ee2e@sentry.io/110982?options
 		</dsn>
 		<!-- Optional, provide release version of your application -->
-		<release>v3.0.2</release>
+		<release>v3.0.3</release>
 		<!-- Optional, provide environment your application is running in -->
 		<environment>development</environment>
 		<!-- Optional, override the server name (rather than looking it up dynamically) -->
