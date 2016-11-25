@@ -125,8 +125,26 @@ public class FacebookServiceImpl implements FacebookService {
 			if(o.has("message")) {
 				post.setMessage(o.getAsJsonPrimitive("message").getAsString());
 			}
-			post.setLikes(o.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsBigInteger());
-			post.setComments(o.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsBigInteger());
+			post.setLikes(BigInteger.valueOf(0));
+			if(o.has("likes") && !o.getAsJsonObject("likes").isJsonNull()){
+				JsonObject likes = o.getAsJsonObject("likes");
+				if(likes.has("summary") && !likes.getAsJsonObject("summary").isJsonNull()){
+					JsonObject summary = likes.getAsJsonObject("summary");
+					if(summary.has("total_count") && summary.get("total_count").isJsonPrimitive()){
+						post.setLikes(o.getAsJsonObject("likes").getAsJsonObject("summary").get("total_count").getAsBigInteger());
+					}
+				}
+			}
+			post.setComments(BigInteger.valueOf(0));
+			if(o.has("comments") && !o.getAsJsonObject("comments").isJsonNull()){
+				JsonObject commentes = o.getAsJsonObject("comments");
+				if(commentes.has("summary") && !commentes.getAsJsonObject("summary").isJsonNull()){
+					JsonObject summary = commentes.getAsJsonObject("summary");
+					if(summary.has("total_count") && summary.get("total_count").isJsonPrimitive()){
+						post.setComments(o.getAsJsonObject("comments").getAsJsonObject("summary").get("total_count").getAsBigInteger());
+					}
+				}
+			}
 			
 			if(o.has("shares")) {
 				post.setShares(o.getAsJsonObject("shares").get("count").getAsBigInteger());

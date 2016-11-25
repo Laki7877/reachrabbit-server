@@ -1,0 +1,10 @@
+docker run -v /etc/localtime:/etc/localtime:ro -e S3_ACCESS_KEY_ID=AKIAIEMT7NOW4XSK2F5A -e S3_SECRET_ACCESS_KEY=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 -e S3_BUCKET=reachrabbit-db-backup -e S3_PREFIX=backup -e MYSQL_USER=root -e MYSQL_PASSWORD=root -e MYSQL_HOST=mysql -e MYSQLDUMP_DATABASE=reachrabbitdb -e SCHEDULE=@daily --link mysql:mysql -d --name backup schickling/mysql-backup-s3
+
+
+
+docker run -v /etc/localtime:/etc/localtime:ro -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d  --name mysql mysql:latest
+
+
+docker run -v /etc/localtime:/etc/localtime:ro -p 443:443 -p 80:80 -d --name client ahancercompany/reachrabbit-client:v2.0.0
+
+docker run -v /etc/localtime:/etc/localtime:ro -e SPRING_PROFILES_ACTIVE=production -e MAVEN_OPTS=-Xmx1024m -p 8443:8443 --link mysql:mysql --link redis:redis -d --name server ahancercompany/reachrabbit-server:v3.0.2
