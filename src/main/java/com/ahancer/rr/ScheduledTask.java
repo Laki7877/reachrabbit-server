@@ -90,6 +90,7 @@ public class ScheduledTask {
 	}
 	
 	@Scheduled(cron="0 10 0 * * *")
+	//@Scheduled(fixedRate=100000)
 	@Transactional(rollbackFor=Exception.class)
 	public void getPostInfoDaily() throws Exception {
 		Calendar dataCal = Calendar.getInstance();

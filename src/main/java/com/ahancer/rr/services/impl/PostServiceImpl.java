@@ -1,5 +1,9 @@
 package com.ahancer.rr.services.impl;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
@@ -66,6 +70,7 @@ public class PostServiceImpl implements PostService {
 			throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.invalid");
 		}
 		Post post = new Post();
+		post.setIsPersonalAccountPost(true);
 		post.setProposalId(proposalId);
 		post.setMediaId(request.getMedia().getMediaId());
 		@SuppressWarnings("unused")
@@ -75,20 +80,53 @@ public class PostServiceImpl implements PostService {
 		switch(request.getMedia().getMediaId()){
 		case "facebook":
 			splitUrl = request.getUrl().split("/");
+			String pageId = StringUtils.EMPTY;
 			if(splitUrl.length == 1 && splitUrl[0].contains("_")) {
 				post.setSocialPostId(splitUrl[0]);
 			} else {
-				String pageId = StringUtils.EMPTY;
+				boolean isFbRegister = false;
 				for(InfluencerMedia media : proposal.getInfluencer().getInfluencerMedias()){
 					if(media.getMedia().getMediaId().equals("facebook")){
+						isFbRegister = true;
 						pageId = media.getPageId();
 						break;
 					}
 				}
 				if(StringUtils.isEmpty(pageId)){
-					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.facebook.pageid.requre");
+					if(!isFbRegister){
+						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.facebook.pageid.requre");
+					}
+					else {
+						
+						//String url = "https://www.facebook.com/KieChioz/posts/1210717579022931";
+
+						URL obj = new URL(request.getUrl());
+						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+						// optional default is GET
+						con.setRequestMethod("GET");
+
+						//add request header
+						//con.setRequestProperty("User-Agent", USER_AGENT);
+
+						int responseCode = con.getResponseCode();
+						if(responseCode != 200) {
+							throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+						}
+						BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+						String inputLine;
+						StringBuffer response = new StringBuffer();
+						while ((inputLine = in.readLine()) != null) {
+							response.append(inputLine);
+						}
+						in.close();
+						con.disconnect();
+						if(!response.toString().contains("likecount:") && !response.toString().contains("commentcount:")){
+							throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+						}
+					}
 				}
-				if (splitUrl.length == 4) {
+				else if (splitUrl.length == 4) {
 					String[] splitParam = splitUrl[3].split("\\?");
 					if(splitParam.length < 2){
 						throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
@@ -131,11 +169,14 @@ public class PostServiceImpl implements PostService {
 					}
 				}
 			}
-			count = postDao.countByMediaIdAndSocialPostId(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
-			if(count > 0L) {
-				throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
+			if(!StringUtils.isEmpty(post.getSocialPostId())){
+				count = postDao.countByMediaIdAndSocialPostId(post.getProposalId(), post.getMediaId(), post.getSocialPostId());
+				if(count > 0L) {
+					throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.proposal.duplicate");
+				}
+				tmpPost = facebookService.getPostInfo(post.getSocialPostId());
+				post.setIsPersonalAccountPost(false);
 			}
-			tmpPost = facebookService.getPostInfo(post.getSocialPostId());
 			break;
 		case "instagram":
 			splitUrl = request.getUrl().split("/");
@@ -189,7 +230,30 @@ public class PostServiceImpl implements PostService {
 			try {
 				switch (postModel.getMediaId()){
 				case "facebook":
-					post = facebookService.getPostInfo(postModel.getSocialPostId());
+					if(!postModel.getIsPersonalAccountPost()){
+						post = facebookService.getPostInfo(postModel.getSocialPostId());
+					} else {
+						URL obj = new URL(postModel.getUrl());
+						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+						con.setRequestMethod("GET");
+						BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+						String inputLine;
+						StringBuffer response = new StringBuffer();
+						while ((inputLine = in.readLine()) != null) {
+							response.append(inputLine);
+						}
+						in.close();
+						con.disconnect();
+						if(!response.toString().contains("likecount:") && !response.toString().contains("commentcount:")){
+							throw new ResponseException(HttpStatus.BAD_REQUEST, "error.post.url.invalid");
+						}
+						post = new Post();
+						post.setViewCount(0L);
+						post.setCommentCount(Long.parseLong(response.toString().split("commentcount:")[1].split(",")[0]));
+						post.setLikeCount(Long.parseLong(response.toString().split("likecount:")[1].split(",")[0]));
+						post.setShareCount(Long.parseLong(response.toString().split("sharecount:")[1].split(",")[0]));
+						post.setSocialPostId(null);
+					}
 					post.setProposalId(postModel.getProposalId());
 					post.setMediaId("facebook");
 					break;
@@ -209,6 +273,7 @@ public class PostServiceImpl implements PostService {
 				if(null != post) {
 					post.setUrl(postModel.getUrl());
 					post.setDataDate(dataDate);
+					post.setIsPersonalAccountPost(postModel.getIsPersonalAccountPost());
 					createNewPostBySys(post);
 				}
 			} catch (Exception e) {
