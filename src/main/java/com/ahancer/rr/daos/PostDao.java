@@ -16,16 +16,16 @@ import com.ahancer.rr.response.UpdatePostResponse;
 @Repository
 public interface PostDao extends CrudRepository<Post, Long> {
 	
-	@Query("SELECT new com.ahancer.rr.response.UpdatePostResponse(p.socialPostId, p.mediaId, p.proposalId, p.url) "
+	@Query("SELECT new com.ahancer.rr.response.UpdatePostResponse(p.socialPostId, p.mediaId, p.proposalId, p.url, p.isPersonalAccountPost) "
 			+ "FROM post p "
-			+ "GROUP BY p.socialPostId, p.mediaId, p.proposalId, p.url "
+			+ "GROUP BY p.socialPostId, p.mediaId, p.proposalId, p.url, p.isPersonalAccountPost "
 			+ "HAVING MIN(dataDate) > :minDate")
 	public List<UpdatePostResponse> findUpdatePost(@Param("minDate") Date minDate);
 	
-	@Query("SELECT new com.ahancer.rr.response.UpdatePostResponse(p.socialPostId, p.mediaId, p.proposalId, p.url, p.media) "
+	@Query("SELECT new com.ahancer.rr.response.UpdatePostResponse(p.socialPostId, p.mediaId, p.proposalId, p.url, p.media, p.isPersonalAccountPost) "
 			+ "FROM post p "
 			+ "WHERE p.proposalId = :proposalId "
-			+ "GROUP BY p.socialPostId, p.mediaId, p.proposalId, p.url ")
+			+ "GROUP BY p.socialPostId, p.mediaId, p.proposalId, p.url, p.isPersonalAccountPost ")
 	public List<UpdatePostResponse> findPostByProposalId(@Param("proposalId") Long proposalId);
 	
 	@Modifying

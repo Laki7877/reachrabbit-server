@@ -26,7 +26,7 @@ public class Post extends AbstractModel implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long postId;
 	
-	@Column(name="socialPostId",length=255,nullable=false)
+	@Column(name="socialPostId",length=255)
 	private String socialPostId;
 	
 	@Column(name="proposalId",nullable=false)
@@ -62,6 +62,9 @@ public class Post extends AbstractModel implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="dataDate")
 	private Date dataDate;
+	
+	@Column(name="isPersonalAccountPost")
+	private Boolean isPersonalAccountPost;
 	
 	@Column(name="url")
 	private String url;
@@ -160,6 +163,14 @@ public class Post extends AbstractModel implements Serializable {
 
 	public void setDataDate(Date dataDate) {
 		this.dataDate = dataDate;
+	}
+
+	public Boolean getIsPersonalAccountPost() {
+		return isPersonalAccountPost;
+	}
+
+	public void setIsPersonalAccountPost(Boolean isPersonalAccountPost) {
+		this.isPersonalAccountPost = isPersonalAccountPost;
 	}
 	
 }

@@ -13,22 +13,25 @@ public class UpdatePostResponse implements Serializable {
 	private Media media;
 	private Long proposalId;
 	private String url;
+	private Boolean isPersonalAccountPost;
 	
 	
-	public UpdatePostResponse(String socialPostId, String mediaId, Long proposalId, String url){
+	public UpdatePostResponse(String socialPostId, String mediaId, Long proposalId, String url, Boolean isPersonalAccountPost){
 		this.socialPostId = socialPostId;
 		this.mediaId = mediaId;
 		this.proposalId = proposalId;
 		this.url = url;
+		this.isPersonalAccountPost = isPersonalAccountPost;
 	}
 	
 	
-	public UpdatePostResponse(String socialPostId, String mediaId, Long proposalId, String url, Media media){
+	public UpdatePostResponse(String socialPostId, String mediaId, Long proposalId, String url, Media media, Boolean isPersonalAccountPost){
 		this.socialPostId = socialPostId;
 		this.mediaId = mediaId;
 		this.proposalId = proposalId;
 		this.url = url;
 		this.media = media;
+		this.isPersonalAccountPost = isPersonalAccountPost;
 	}
 
 	public String getSocialPostId() {
@@ -70,4 +73,14 @@ public class UpdatePostResponse implements Serializable {
 	public void setMedia(Media media) {
 		this.media = media;
 	}
+
+	public Boolean getIsPersonalAccountPost() {
+		return isPersonalAccountPost;
+	}
+
+	public void setIsPersonalAccountPost(Boolean isPersonalAccountPost) {
+		this.isPersonalAccountPost = isPersonalAccountPost;
+	}
+	
+	
 }
