@@ -5,7 +5,7 @@
 		<dsn>http://49b3a0896230423badd96c0ce6f222ec:26d60dafb87b45dd88451dc432bb970d@app.reachrabbit.com:9000/1?options
 		</dsn>
 		<!-- Optional, provide release version of your application -->
-		<release>v3.0.3</release>
+		<release>v3.1.0</release>
 		<!-- Optional, provide environment your application is running in -->
 		<environment>production</environment>
 		<!-- Optional, override the server name (rather than looking it up dynamically) -->
