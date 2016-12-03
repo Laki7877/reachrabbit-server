@@ -1,7 +1,7 @@
 package com.ahancer.rr.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -40,22 +40,27 @@ public class S3Util {
 		return amazonS3Client.getResourceUrl(bucket, key);
 	}
 	
-	public PutObjectResult upload(String filePath,String bucket, String uploadKey) throws FileNotFoundException {
+	public PutObjectResult upload(String filePath,String bucket, String uploadKey) throws Exception {
 		return upload(new FileInputStream(filePath), bucket, uploadKey);
 	}
 
-	public PutObjectResult upload(InputStream inputStream, String bucket, String uploadKey) {
+	public PutObjectResult upload(InputStream inputStream, String bucket, String uploadKey) throws Exception {
 		return upload(inputStream, bucket, uploadKey, new ObjectMetadata());
 	}
-	public PutObjectResult upload(InputStream inputStream, String bucket, String uploadKey, ObjectMetadata metaData) {
-		PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, uploadKey, inputStream, metaData);
+	
+	public PutObjectResult upload(InputStream inputStream, String bucket, String uploadKey, ObjectMetadata metaData) throws Exception {
+		byte[] bytes = IOUtils.toByteArray(inputStream);
+		metaData.setContentLength(bytes.length);
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+		PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, uploadKey, byteArrayInputStream, metaData);
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
 		PutObjectResult putObjectResult = amazonS3Client.putObject(putObjectRequest);
 		IOUtils.closeQuietly(inputStream, null);
+		IOUtils.closeQuietly(byteArrayInputStream, null);
 		return putObjectResult;
 	}
 
-	public PutObjectResult upload(MultipartFile file, String bucket, String uploadKey) throws IOException {
+	public PutObjectResult upload(MultipartFile file, String bucket, String uploadKey) throws Exception {
 		ObjectMetadata metaData = new ObjectMetadata();
 		metaData.setContentType(file.getContentType());
 		return upload(file.getInputStream(), bucket, uploadKey, metaData);
@@ -65,7 +70,7 @@ public class S3Util {
 		amazonS3Client.deleteObject(bucket, key);
 	}
 	
-	public List<PutObjectResult> upload(MultipartFile[] multipartFiles, String bucket) {
+	public List<PutObjectResult> upload(MultipartFile[] multipartFiles, String bucket) throws Exception {
 		List<PutObjectResult> putObjectResults = new ArrayList<>();
 
 		Arrays.stream(multipartFiles)
@@ -73,7 +78,7 @@ public class S3Util {
 				.forEach(multipartFile -> {
 					try {
 						putObjectResults.add(upload(multipartFile.getInputStream(),bucket, multipartFile.getOriginalFilename()));
-					} catch (IOException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				});
